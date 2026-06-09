@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://apiroute.subrouter.ai/api/:path*"
+    },
+    {
+      "source": "/v1/:path*",
+      "destination": "https://apiroute.subrouter.ai/v1/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
