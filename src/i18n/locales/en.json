@@ -179,6 +179,7 @@
     "appMarket.moreComingDesc": "When new AI apps go live, their entrance, source code, images, and usage notes will be shown here.",
 
     "subDist.nav": "Relay Site Setup",
+    "subDist.navShort": "Relay Site",
     "subDist.dashboardEntry": "Launch a relay site you can price and promote",
     "subDist.badge": "Relay Site Setup",
     "subDist.title": "Build Your Own AI API Relay Site",
@@ -202,6 +203,7 @@
     "subDist.siteSlug": "Site Slug",
     "subDist.siteSlugHelp": "This will become your relay site identifier and cannot be changed after payment.",
     "subDist.paymentMethod": "Payment Method",
+    "subDist.paymentCrypto": "Crypto",
     "subDist.chain": "Blockchain",
     "subDist.token": "Token",
     "subDist.payAndOpen": "Pay to Build {{symbol}}{{price}}",
@@ -608,6 +610,7 @@
     "dashboard.topupDesc": "Buy or redeem a package voucher",
 
   "nav.logs": "Usage Logs",
+    "nav.logsShort": "Logs",
 
     "dashboard.logs": "Call Logs",
     "dashboard.viewLogs": "View usage details",

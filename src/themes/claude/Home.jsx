@@ -73,7 +73,7 @@ export default function ClaudeHome() {
   const recommendedId = previewPackages.find((pkg) => Number(pkg.duration) === 30)?.id
     || previewPackages[1]?.id;
   const shopUrl = normalizeExternalUrl(site?.top_up_link);
-  const homeContent = getHomeContent(site, t);
+  const homeContent = getHomeContent(site, t, i18n.resolvedLanguage);
 
   const workflowSteps = [
     {

@@ -453,6 +453,11 @@
   color: #3D3024;
 }
 
+.language-select option {
+  background: #ffffff;
+  color: #1f2937;
+}
+
 /* Claude theme follows the operating system color scheme. */
 html[data-color-scheme='dark'] .theme-claude {
   color-scheme: dark;
@@ -548,6 +553,11 @@ html[data-color-scheme='dark'] .theme-claude .route-section-title {
 }
 
 html[data-color-scheme='dark'] .theme-claude .package-redeem-select option {
+  background: #1f1916;
+  color: #f5ede7;
+}
+
+html[data-color-scheme='dark'] .theme-claude .language-select option {
   background: #1f1916;
   color: #f5ede7;
 }

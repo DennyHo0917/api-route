@@ -33,7 +33,7 @@ export default function LanguageSwitch({ className = '' }) {
       <select
         value={currentLanguage}
         onChange={handleLanguageChange}
-        className="bg-transparent text-current outline-none"
+        className="language-select bg-transparent text-current outline-none"
         aria-label={t('common.changeLanguage')}
       >
         {DIST_SITE_LANGUAGES.map((language) => (

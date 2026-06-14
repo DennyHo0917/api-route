@@ -11,7 +11,8 @@ import {
   isSiteNavActive,
 } from '../../utils/navigation';
 
-const PUBLIC_CORE_PATHS = ['/', '/pricing', '/packages', '/apps'];
+const PUBLIC_CORE_PATHS = ['/', '/pricing', '/packages', '/apps', '/sub-site'];
+const AUTH_DESKTOP_PATHS = ['/', '/pricing', '/packages', '/sub-site', '/dashboard', '/tokens', '/logs', '/topup'];
 const USER_CORE_PATHS = ['/dashboard', '/tokens', '/logs', '/topup'];
 
 function getSupportLink(site) {
@@ -45,11 +46,14 @@ export default function ClaudeLayout() {
   const rawSiteName = site?.name || 'API-Route';
   const siteName = rawSiteName.toLowerCase() === 'api-route' ? 'API-Route' : rawSiteName;
   const visibleNavItems = getVisibleNavItems(getSiteNavItems({ t, site }), user);
-  const corePaths = user
-    ? [...PUBLIC_CORE_PATHS, ...USER_CORE_PATHS]
-    : PUBLIC_CORE_PATHS;
+  const corePaths = user ? AUTH_DESKTOP_PATHS : PUBLIC_CORE_PATHS;
   const desktopNavItems = visibleNavItems.filter((item) => corePaths.includes(item.to));
   const isNavActive = (to) => isSiteNavActive(location.pathname, to);
+  const getNavLabel = (item) => {
+    if (item.to === '/sub-site') return t('subDist.navShort');
+    if (item.to === '/logs') return t('nav.logsShort');
+    return item.label;
+  };
   const supportLink = getSupportLink(site);
   const supportLabel = supportLink?.isTelegram
     ? t('nav.telegramSupport')
@@ -97,7 +101,7 @@ export default function ClaudeLayout() {
                     : 'text-[#766657] hover:bg-white/60 hover:text-[#3D3024]'
                 }`}
               >
-                {item.label}
+                {getNavLabel(item)}
               </Link>
             ))}
           </nav>

@@ -11,6 +11,15 @@ function normalizeHost(value) {
   return String(value).replace(/^https?:\/\//, '').replace(/\/+$/, '');
 }
 
+function getPaymentMethodLabel(method, t) {
+  if (!method) return '';
+  const type = String(method.type || '').toLowerCase();
+  if (type === 'crypto') return t('subDist.paymentCrypto');
+  if (type === 'stripe') return 'Stripe';
+  if (type === 'creem') return 'Creem';
+  return method.name || method.type;
+}
+
 function submitEpayForm(resData) {
   const params = resData.data;
   const url = resData.url;
@@ -74,6 +83,7 @@ export default function SubDistributor() {
     () => paymentMethods.find((item) => item.type === form.payment_method),
     [paymentMethods, form.payment_method]
   );
+  const currentPayMethodLabel = getPaymentMethodLabel(currentPayMethod, t) || form.payment_method;
   const paymentReturned = useMemo(
     () => new URLSearchParams(location.search).get('payment') === 'return',
     [location.search]
@@ -292,7 +302,7 @@ export default function SubDistributor() {
                         checked={form.payment_method === method.type}
                         onChange={() => setForm({ ...form, payment_method: method.type })}
                       />
-                      <div className="text-sm font-medium text-page">{method.name || method.type}</div>
+                      <div className="text-sm font-medium text-page">{getPaymentMethodLabel(method, t)}</div>
                     </label>
                   ))}
                 </div>
@@ -324,7 +334,7 @@ export default function SubDistributor() {
               </button>
 
               <p className="text-xs text-page-muted">
-                {t('subDist.currentUserHint', { user: user.display_name || user.username || 'User', method: currentPayMethod?.name || form.payment_method })}
+                {t('subDist.currentUserHint', { user: user.display_name || user.username || 'User', method: currentPayMethodLabel })}
               </p>
               <p className="text-xs text-page-muted">
                 {t('subDist.postPayHint')}
