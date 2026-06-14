@@ -5,15 +5,21 @@ import { Toaster } from 'react-hot-toast';
 import App from './App';
 import { AuthProvider } from './context/AuthContext';
 import { SiteProvider } from './context/SiteContext';
-import { getRouterBasename } from './i18n/languageUtils';
+import { getRouterBasename, normalizeLanguagePath } from './i18n/languageUtils';
 import './i18n';
 import './index.css';
 
-if (window.location.pathname.toLowerCase() === '/en') {
+const normalizedLanguagePath = normalizeLanguagePath(
+  window.location.pathname,
+  window.location.search,
+  window.location.hash,
+);
+
+if (normalizedLanguagePath) {
   window.history.replaceState(
     window.history.state,
     '',
-    `/en/${window.location.search}${window.location.hash}`,
+    normalizedLanguagePath,
   );
 }
 

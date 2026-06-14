@@ -2,6 +2,8 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import en from './locales/en.json';
+import ja from './locales/ja.json';
+import ko from './locales/ko.json';
 import zh from './locales/zh.json';
 import {
   APP_LANGUAGE_CODES,
@@ -22,7 +24,7 @@ i18n
     load: 'all',
     supportedLngs: APP_LANGUAGE_CODES,
     nonExplicitSupportedLngs: true,
-    resources: { en, zh },
+    resources: { en, ja, ko, zh },
     fallbackLng: 'en',
     interpolation: { escapeValue: false },
     detection: {

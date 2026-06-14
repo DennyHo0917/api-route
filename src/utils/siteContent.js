@@ -20,9 +20,17 @@ const firstText = (...values) => {
 
 const isObject = (value) => value && typeof value === 'object' && !Array.isArray(value);
 
+const normalizeContentLanguage = (language) => {
+  const lang = String(language || '').toLowerCase();
+  if (lang.startsWith('zh')) return 'zh';
+  if (lang.startsWith('ja')) return 'ja';
+  if (lang.startsWith('ko')) return 'ko';
+  return 'en';
+};
+
 const getLocalizedText = (source, language) => {
   if (!isObject(source)) return '';
-  const lang = String(language || '').startsWith('zh') ? 'zh' : 'en';
+  const lang = normalizeContentLanguage(language);
   return firstText(
     source[lang],
     source[`${lang}-CN`],
@@ -36,13 +44,13 @@ const isChineseText = (value) => /[\u3400-\u9fff]/.test(String(value || ''));
 
 const localizedFirstText = (language, translatedFallback, ...values) => {
   const hasLanguage = Boolean(language);
-  const lang = String(language || '').startsWith('zh') ? 'zh' : 'en';
+  const lang = normalizeContentLanguage(language);
   for (const value of values) {
     const localized = getLocalizedText(value, lang);
     if (localized) return localized;
     if (typeof value === 'string' && value.trim()) {
       const text = value.trim();
-      if (!hasLanguage || lang !== 'en' || !isChineseText(text)) return text;
+      if (!hasLanguage || lang === 'zh' || !isChineseText(text)) return text;
     }
   }
   return translatedFallback;

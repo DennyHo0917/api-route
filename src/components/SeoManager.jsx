@@ -2,10 +2,10 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { useSite } from '../context/SiteContext';
-import { getLocalizedPath } from '../i18n/languageUtils';
+import { DIST_SITE_LANGUAGES, getLocalizedPath, normalizeAppLanguage } from '../i18n/languageUtils';
 
 const DEFAULT_SITE_URL = 'https://api-route.com';
-const INDEXABLE_PATHS = new Set(['/', '/pricing', '/packages', '/apps']);
+const INDEXABLE_PATHS = new Set(['/', '/pricing', '/packages', '/apps', '/sub-site']);
 
 const SEO_COPY = {
   zh: {
@@ -24,6 +24,10 @@ const SEO_COPY = {
     apps: {
       title: 'AI 应用与客户端接入',
       description: '查看可接入 API-Route 的 AI 应用与客户端，通过统一 API 地址和密钥快速开始使用。',
+    },
+    subSite: {
+      title: 'AI API 中转站搭建',
+      description: '开通可独立访问、支持收款、定价和推广的 AI API 中转站，并在支付后自动启用管理权限。',
     },
     private: {
       title: '用户中心',
@@ -51,6 +55,10 @@ const SEO_COPY = {
       title: 'AI Apps and Client Integrations',
       description: 'Connect supported AI apps and clients to API-Route with one API endpoint and access key.',
     },
+    subSite: {
+      title: 'AI API Relay Site Setup',
+      description: 'Launch an independent AI API relay site with payments, pricing, promotion, and automatic management access after payment.',
+    },
     private: {
       title: 'Account',
       description: 'API-Route account area.',
@@ -59,6 +67,66 @@ const SEO_COPY = {
     locale: 'en_US',
     language: 'en',
     serviceType: 'Multi-model AI API aggregation and routing service',
+  },
+  ja: {
+    home: {
+      title: '複数モデル対応の AI API プラットフォーム',
+      description: 'OpenAI 互換 API から主要 AI モデルへまとめてアクセス。統一された利用量管理、わかりやすい料金、安定したルーティングを提供します。',
+    },
+    pricing: {
+      title: 'AI API モデルと料金',
+      description: 'API-Route で利用できるモデル、入力・出力料金、課金方式を比較できます。',
+    },
+    packages: {
+      title: 'AI API プランとコード',
+      description: 'プランのクォータ、有効期間、利用シーンを確認し、コードを使ってすぐに有効化できます。',
+    },
+    apps: {
+      title: 'AI アプリとクライアント連携',
+      description: '統一 API エンドポイントとキーで接続できる AI アプリやクライアントを確認できます。',
+    },
+    subSite: {
+      title: 'AI API 中継サイト構築',
+      description: '訪問・決済・価格設定・販売に対応した独立 AI API 中継サイトを立ち上げ、支払い後に管理権限を自動で有効化します。',
+    },
+    private: {
+      title: 'アカウント',
+      description: 'API-Route アカウント管理エリア。',
+    },
+    keywords: 'AI API,API 集約,OpenAI 互換 API,LLM API,マルチモデル API,API-Route',
+    locale: 'ja_JP',
+    language: 'ja',
+    serviceType: '複数モデル対応 AI API 集約・ルーティングサービス',
+  },
+  ko: {
+    home: {
+      title: '멀티 모델 AI API 플랫폼',
+      description: 'OpenAI 호환 API 하나로 주요 AI 모델을 연결하고, 통합 사용량 관리와 투명한 요금, 안정적인 라우팅을 제공합니다.',
+    },
+    pricing: {
+      title: 'AI API 모델 및 요금',
+      description: 'API-Route에서 지원하는 모델, 입력·출력 요금, 과금 방식을 비교하세요.',
+    },
+    packages: {
+      title: 'AI API 플랜과 코드',
+      description: '플랜 쿼터, 유효 기간, 사용 시나리오를 확인하고 코드를 사용해 바로 활성화할 수 있습니다.',
+    },
+    apps: {
+      title: 'AI 앱 및 클라이언트 연동',
+      description: '통합 API 엔드포인트와 키로 연결할 수 있는 AI 앱과 클라이언트를 확인하세요.',
+    },
+    subSite: {
+      title: 'AI API 릴레이 사이트 구축',
+      description: '방문, 결제, 가격 설정, 판매를 지원하는 독립 AI API 릴레이 사이트를 만들고 결제 후 관리 권한을 자동으로 활성화합니다.',
+    },
+    private: {
+      title: '계정',
+      description: 'API-Route 계정 관리 영역.',
+    },
+    keywords: 'AI API,API 집약,OpenAI 호환 API,LLM API,멀티 모델 API,API-Route',
+    locale: 'ko_KR',
+    language: 'ko',
+    serviceType: '멀티 모델 AI API 집약 및 라우팅 서비스',
   },
 };
 
@@ -137,6 +205,7 @@ function getPageCopy(pathname, copy) {
   if (pathname === '/pricing') return copy.pricing;
   if (pathname === '/packages') return copy.packages;
   if (pathname === '/apps') return copy.apps;
+  if (pathname === '/sub-site') return copy.subSite;
   return copy.private;
 }
 
@@ -222,15 +291,13 @@ export default function SeoManager() {
 
   useEffect(() => {
     const pathname = normalizePath(location.pathname);
-    const languageKey = i18n.resolvedLanguage?.startsWith('zh') ? 'zh' : 'en';
+    const languageKey = normalizeAppLanguage(i18n.resolvedLanguage);
     const copy = SEO_COPY[languageKey];
     const page = getPageCopy(pathname, copy);
     const siteName = normalizeSiteName(site?.name);
     const siteUrl = getSiteUrl();
     const canonicalPath = getLocalizedPath(pathname, languageKey);
     const canonicalUrl = `${siteUrl}${canonicalPath}`;
-    const chineseUrl = `${siteUrl}${getLocalizedPath(pathname, 'zh')}`;
-    const englishUrl = `${siteUrl}${getLocalizedPath(pathname, 'en')}`;
     const languageHomeUrl = `${siteUrl}${getLocalizedPath('/', languageKey)}`;
     const indexable = INDEXABLE_PATHS.has(pathname);
     const pageTitle = `${page.title} | ${siteName}`;
@@ -274,9 +341,11 @@ export default function SeoManager() {
 
     upsertLink('canonical', canonicalUrl);
     if (indexable) {
-      upsertAlternateLink('zh-CN', chineseUrl);
-      upsertAlternateLink('en', englishUrl);
-      upsertAlternateLink('x-default', chineseUrl);
+      DIST_SITE_LANGUAGES.forEach(({ code }) => {
+        const hrefLang = code === 'zh' ? 'zh-CN' : code;
+        upsertAlternateLink(hrefLang, `${siteUrl}${getLocalizedPath(pathname, code)}`);
+      });
+      upsertAlternateLink('x-default', `${siteUrl}${getLocalizedPath(pathname, 'zh')}`);
     } else {
       removeAlternateLinks();
     }

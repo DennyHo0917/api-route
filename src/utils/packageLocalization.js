@@ -5,8 +5,8 @@ const exactNameKeys = {
   月卡: 'packages.planMonthly',
 };
 
-function isEnglish(language) {
-  return String(language || '').toLowerCase().startsWith('en');
+function shouldLocalizeFromChinese(language) {
+  return !String(language || '').toLowerCase().startsWith('zh');
 }
 
 function formatTierAmount(value) {
@@ -15,7 +15,7 @@ function formatTierAmount(value) {
 
 export function getLocalizedPackageName(pkg, t, language) {
   const name = String(pkg?.name || '').trim();
-  if (!name || !isEnglish(language)) return name;
+  if (!name || !shouldLocalizeFromChinese(language)) return name;
 
   const exactKey = exactNameKeys[name];
   if (exactKey) return t(exactKey);
@@ -43,7 +43,7 @@ export function getLocalizedPackageName(pkg, t, language) {
 
 export function getLocalizedPackageDescription(pkg, t, language) {
   const description = String(pkg?.description || '').trim();
-  if (!description || !isEnglish(language)) return description;
+  if (!description || !shouldLocalizeFromChinese(language)) return description;
 
   if (/[\u3400-\u9fff]/u.test(description) && Number(pkg?.duration) > 0) {
     const duration = Number(pkg.duration);

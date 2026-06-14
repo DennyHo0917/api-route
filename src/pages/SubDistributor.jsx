@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import { createSubDistributorOrder, getSubDistributorInfo } from '../api';
 import { useAuth } from '../context/AuthContext';
 import { useSite, useCurrency } from '../context/SiteContext';
+import { getLocalizedPath } from '../i18n/languageUtils';
 
 function normalizeHost(value) {
   if (!value) return '';
@@ -45,7 +46,7 @@ function submitEpayForm(resData) {
 }
 
 export default function SubDistributor() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user, refreshUser, loading: authLoading } = useAuth();
   const { site } = useSite();
   const { symbol, fmtCNY } = useCurrency();
@@ -149,7 +150,7 @@ export default function SubDistributor() {
         name: form.name.trim(),
         slug: form.slug.trim().toLowerCase(),
         payment_method: form.payment_method,
-        return_url: `${window.location.origin}/sub-site?payment=return`,
+        return_url: `${window.location.origin}${getLocalizedPath('/sub-site', i18n.resolvedLanguage)}?payment=return`,
       };
       if (form.payment_method === 'crypto') {
         payload.chain = form.chain;

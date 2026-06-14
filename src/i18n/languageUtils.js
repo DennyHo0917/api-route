@@ -1,9 +1,16 @@
 export const DIST_SITE_LANGUAGE_STORAGE_KEY = 'dist_site_i18nextLng';
-export const ENGLISH_PATH_PREFIX = '/en';
+
+export const LANGUAGE_PATH_PREFIXES = {
+  en: '/en',
+  ja: '/ja',
+  ko: '/ko',
+};
 
 export const DIST_SITE_LANGUAGES = [
   { code: 'zh', label: '中文' },
   { code: 'en', label: 'EN' },
+  { code: 'ja', label: '日本語' },
+  { code: 'ko', label: '한국어' },
 ];
 
 export const APP_LANGUAGE_CODES = DIST_SITE_LANGUAGES.map(({ code }) => code);
@@ -26,29 +33,39 @@ export const normalizeAppLanguage = (language) => {
 
 export const getPathLanguage = (pathname = '/') => {
   const normalizedPath = String(pathname || '/').toLowerCase();
-  return normalizedPath === ENGLISH_PATH_PREFIX || normalizedPath.startsWith(`${ENGLISH_PATH_PREFIX}/`)
-    ? 'en'
-    : 'zh';
+  const match = Object.entries(LANGUAGE_PATH_PREFIXES)
+    .find(([, prefix]) => normalizedPath === prefix || normalizedPath.startsWith(`${prefix}/`));
+  return match ? match[0] : 'zh';
 };
 
 export const stripLanguagePrefix = (pathname = '/') => {
   const normalizedPath = String(pathname || '/') || '/';
-  if (normalizedPath.toLowerCase() === ENGLISH_PATH_PREFIX) return '/';
-  if (normalizedPath.toLowerCase().startsWith(`${ENGLISH_PATH_PREFIX}/`)) {
-    return normalizedPath.slice(ENGLISH_PATH_PREFIX.length) || '/';
+  const lowerPath = normalizedPath.toLowerCase();
+  const match = Object.values(LANGUAGE_PATH_PREFIXES)
+    .find((prefix) => lowerPath === prefix || lowerPath.startsWith(`${prefix}/`));
+  if (match) {
+    return normalizedPath.slice(match.length) || '/';
   }
   return normalizedPath;
 };
 
 export const getLocalizedPath = (pathname, language) => {
   const routePath = stripLanguagePrefix(pathname);
-  if (normalizeAppLanguage(language) !== 'en') return routePath;
-  return routePath === '/' ? `${ENGLISH_PATH_PREFIX}/` : `${ENGLISH_PATH_PREFIX}${routePath}`;
+  const prefix = LANGUAGE_PATH_PREFIXES[normalizeAppLanguage(language)];
+  if (!prefix) return routePath;
+  return routePath === '/' ? `${prefix}/` : `${prefix}${routePath}`;
 };
 
 export const getRouterBasename = (pathname = '/') => (
-  getPathLanguage(pathname) === 'en' ? ENGLISH_PATH_PREFIX : '/'
+  LANGUAGE_PATH_PREFIXES[getPathLanguage(pathname)] || '/'
 );
+
+export const normalizeLanguagePath = (pathname = '/', search = '', hash = '') => {
+  const language = getPathLanguage(pathname);
+  const prefix = LANGUAGE_PATH_PREFIXES[language];
+  if (!prefix || pathname.toLowerCase() !== prefix) return '';
+  return `${prefix}/${search}${hash}`;
+};
 
 export const getStoredAppLanguage = () => {
   if (typeof window === 'undefined') return '';
