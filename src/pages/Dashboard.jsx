@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import {
   getUserUsage,
-  redeemCode,
   getAffCode,
   transferAffQuota,
   getAffEarnings,
@@ -23,8 +22,6 @@ export default function Dashboard() {
   const { symbol, rate } = useCurrency();
   const { site } = useSite();
   const [usage, setUsage] = useState(null);
-  const [redeemInput, setRedeemInput] = useState('');
-  const [redeeming, setRedeeming] = useState(false);
 
   // Invitation / Aff
   const [affLink, setAffLink] = useState('');
@@ -68,23 +65,6 @@ export default function Dashboard() {
   useEffect(() => {
     loadData();
   }, [loadData]);
-
-  const handleRedeem = async (e) => {
-    e.preventDefault();
-    if (!redeemInput.trim()) return;
-    setRedeeming(true);
-    try {
-      const res = await redeemCode(redeemInput.trim());
-      if (res.data.success) {
-        toast.success(t('dashboard.redeemSuccess'));
-        setRedeemInput('');
-        await Promise.all([loadData(), refreshUser()]);
-      }
-    } catch (err) {
-      /* interceptor */
-    }
-    setRedeeming(false);
-  };
 
   const loadAffEarnings = async () => {
     setAffEarningsLoading(true);
@@ -353,18 +333,10 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="glass rounded-2xl p-6">
           <h2 className="text-lg font-semibold text-page mb-4">{t('dashboard.redeemCode')}</h2>
-          <form onSubmit={handleRedeem} className="flex gap-3">
-            <input
-              type="text"
-              value={redeemInput}
-              onChange={(e) => setRedeemInput(e.target.value)}
-              className="input flex-1"
-              placeholder={t('dashboard.enterCode')}
-            />
-            <button type="submit" disabled={redeeming} className="btn-primary whitespace-nowrap">
-              {redeeming ? t('dashboard.redeeming') : t('dashboard.redeem')}
-            </button>
-          </form>
+          <p className="text-sm text-page-secondary mb-4">{t('topup.redeemHint')}</p>
+          <Link to="/topup" className="btn-primary inline-flex">
+            {t('topup.redeemPackage')}
+          </Link>
         </div>
 
         <div className="glass rounded-2xl p-6">

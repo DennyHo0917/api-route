@@ -160,7 +160,8 @@ export const deleteToken = (id) => api.delete(`/api/dist/token/${id}`);
 
 // ===== Purchase =====
 export const redeemCode = (key) => api.post('/api/dist/topup/redeem', { key }); // backend field is "key"
-export const subscribePackage = (packageId) => api.post('/api/dist/package/subscribe', { package_id: packageId });
+export const subscribePackage = (packageId, config) =>
+  api.post('/api/dist/package/subscribe', { package_id: packageId }, config);
 export const getActiveSubscriptions = (config) =>
   api.get('/api/dist/package/subscriptions', config);
 

@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useSite } from '../context/SiteContext';
 import { ExternalLink, TicketPercent } from 'lucide-react';
 import {
-  getUserUsage, redeemCode, getTopupInfo,
+  getUserUsage, redeemCode, getTopupInfo, getSitePackages, subscribePackage,
   createEpayOrder, createStripeOrder, createCreemOrder,
   createCryptoOrder, getCryptoOrderStatus, getTopupHistory,
   Q,
@@ -12,6 +12,8 @@ import {
 import { useCurrency } from '../context/SiteContext';
 import CountUp from '../components/bits/CountUp';
 import toast from 'react-hot-toast';
+
+const PENDING_PACKAGE_KEY = 'dist_pending_package_activation';
 
 function normalizeExternalUrl(value) {
   const trimmed = String(value || '').trim();
@@ -114,6 +116,9 @@ export default function Topup() {
   // Redeem code
   const [redeemInput, setRedeemInput] = useState('');
   const [redeeming, setRedeeming] = useState(false);
+  const [packages, setPackages] = useState([]);
+  const [selectedPackageId, setSelectedPackageId] = useState('');
+  const [pendingPackage, setPendingPackage] = useState(null);
 
   // Online topup
   const [amount, setAmount] = useState('');
@@ -163,6 +168,28 @@ export default function Topup() {
 
   useEffect(() => { loadData(); }, [loadData]);
 
+  useEffect(() => {
+    const queryPackageId = new URLSearchParams(window.location.search).get('package_id');
+    if (queryPackageId && /^\d+$/.test(queryPackageId)) {
+      setSelectedPackageId(queryPackageId);
+    }
+
+    try {
+      const pending = JSON.parse(localStorage.getItem(PENDING_PACKAGE_KEY) || 'null');
+      if (pending?.id) setPendingPackage(pending);
+    } catch {
+      localStorage.removeItem(PENDING_PACKAGE_KEY);
+    }
+
+    getSitePackages()
+      .then((res) => {
+        if (res.data.success) {
+          setPackages((res.data.data || []).filter((pkg) => pkg.enabled !== false));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   const quota = usage?.quota ?? user?.quota ?? 0;
   const usedQuota = usage?.used_quota ?? user?.used_quota ?? 0;
   const packageUsedQuota = usage?.package_used_quota ?? user?.package_used_quota ?? 0;
@@ -185,19 +212,101 @@ export default function Topup() {
     return Math.max(minTopup, Math.round(numeric / rate));
   }, [minTopup, rate]);
 
-  // Redeem
+  const savePendingPackage = useCallback((pkg) => {
+    const pending = {
+      id: Number(pkg.id),
+      name: pkg.name,
+      price: Number(pkg.price),
+    };
+    localStorage.setItem(PENDING_PACKAGE_KEY, JSON.stringify(pending));
+    setPendingPackage(pending);
+    return pending;
+  }, []);
+
+  const clearPendingPackage = useCallback(() => {
+    localStorage.removeItem(PENDING_PACKAGE_KEY);
+    setPendingPackage(null);
+  }, []);
+
+  const activatePackage = useCallback(async (pkg) => {
+    savePendingPackage(pkg);
+    try {
+      const res = await subscribePackage(pkg.id, { skipErrorHandler: true });
+      if (!res.data.success) {
+        throw new Error(res.data.message || t('topup.packageActivationFailed'));
+      }
+
+      clearPendingPackage();
+      toast.success(t('topup.packageActivated', { name: pkg.name }));
+      await Promise.all([
+        loadData(),
+        refreshUser({ skipErrorHandler: true }),
+      ]);
+      return true;
+    } catch (error) {
+      toast.error(error?.response?.data?.message || error.message || t('topup.packageActivationFailed'));
+      await Promise.all([
+        loadData().catch(() => null),
+        refreshUser({ skipErrorHandler: true }).catch(() => null),
+      ]);
+      return false;
+    }
+  }, [clearPendingPackage, loadData, refreshUser, savePendingPackage, t]);
+
+  const selectedPackage = useMemo(
+    () => packages.find((pkg) => String(pkg.id) === String(selectedPackageId)) || null,
+    [packages, selectedPackageId],
+  );
+
+  // Redeem the code, then immediately spend the credited amount on its package.
   const handleRedeem = async (e) => {
     e.preventDefault();
     if (!redeemInput.trim()) return;
+    if (!selectedPackage) {
+      toast.error(t('topup.choosePackage'));
+      return;
+    }
+
     setRedeeming(true);
     try {
+      const beforeUser = await refreshUser({ skipErrorHandler: true }).catch(() => null);
       const res = await redeemCode(redeemInput.trim());
       if (res.data.success) {
-        toast.success(t('topup.redeemSuccess'));
         setRedeemInput('');
-        await Promise.all([loadData(), refreshUser()]);
+        const afterUser = await refreshUser({ skipErrorHandler: true }).catch(() => null);
+        const beforeQuota = Number(beforeUser?.quota);
+        const afterQuota = Number(afterUser?.quota);
+
+        let packageToActivate = selectedPackage;
+        if (Number.isFinite(beforeQuota) && Number.isFinite(afterQuota) && afterQuota > beforeQuota) {
+          const creditedAmount = ((afterQuota - beforeQuota) / Q) * rate;
+          const matchingPackages = packages.filter(
+            (pkg) => Math.abs(Number(pkg.price) - creditedAmount) <= 0.02,
+          );
+
+          if (matchingPackages.length === 1) {
+            packageToActivate = matchingPackages[0];
+            setSelectedPackageId(String(packageToActivate.id));
+          } else if (
+            Math.abs(Number(selectedPackage.price) - creditedAmount) > 0.02
+          ) {
+            toast.error(t('topup.codeAmountMismatch'));
+            await loadData();
+            setRedeeming(false);
+            return;
+          }
+        }
+
+        await activatePackage(packageToActivate);
       }
     } catch (err) { /* interceptor */ }
+    setRedeeming(false);
+  };
+
+  const retryPendingActivation = async () => {
+    if (!pendingPackage) return;
+    setRedeeming(true);
+    await activatePackage(pendingPackage);
     setRedeeming(false);
   };
 
@@ -810,7 +919,35 @@ export default function Topup() {
             </a>
           )}
         </div>
+        {pendingPackage && (
+          <div className="mb-4 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4">
+            <p className="text-sm text-page-warning">
+              {t('topup.pendingPackageActivation', { name: pendingPackage.name })}
+            </p>
+            <button
+              type="button"
+              onClick={retryPendingActivation}
+              disabled={redeeming}
+              className="btn-secondary mt-3"
+            >
+              {redeeming ? t('topup.activatingPackage') : t('topup.retryPackageActivation')}
+            </button>
+          </div>
+        )}
         <form onSubmit={handleRedeem} className="flex flex-col gap-3 sm:flex-row">
+          <select
+            value={selectedPackageId}
+            onChange={(e) => setSelectedPackageId(e.target.value)}
+            className="input sm:max-w-xs"
+            disabled={redeeming}
+          >
+            <option value="">{t('topup.choosePackage')}</option>
+            {packages.map((pkg) => (
+              <option key={pkg.id} value={pkg.id}>
+                {pkg.name} - {symbol}{Number(pkg.price).toFixed(2)}
+              </option>
+            ))}
+          </select>
           <input
             type="text"
             value={redeemInput}
@@ -819,7 +956,7 @@ export default function Topup() {
             placeholder={t('topup.enterRedeemCode')}
           />
           <button type="submit" disabled={redeeming} className="btn-primary justify-center whitespace-nowrap">
-            {redeeming ? t('topup.redeeming') : t('topup.redeem')}
+            {redeeming ? t('topup.activatingPackage') : t('topup.redeemPackage')}
           </button>
         </form>
       </div>
