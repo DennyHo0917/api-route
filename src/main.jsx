@@ -5,12 +5,23 @@ import { Toaster } from 'react-hot-toast';
 import App from './App';
 import { AuthProvider } from './context/AuthContext';
 import { SiteProvider } from './context/SiteContext';
+import { getRouterBasename } from './i18n/languageUtils';
 import './i18n';
 import './index.css';
 
+if (window.location.pathname.toLowerCase() === '/en') {
+  window.history.replaceState(
+    window.history.state,
+    '',
+    `/en/${window.location.search}${window.location.hash}`,
+  );
+}
+
+const routerBasename = getRouterBasename(window.location.pathname);
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename={routerBasename}>
       <SiteProvider>
         <AuthProvider>
           <App />

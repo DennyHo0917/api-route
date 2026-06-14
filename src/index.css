@@ -95,15 +95,29 @@
     --page-bg: #FAF6F1;
     --page-spinner: rgba(217,119,87,0.8);
     --page-spinner-track: rgba(217,119,87,0.2);
+    --page-text: 61 48 36;
+    --page-text-secondary: 117 100 84;
+    --page-text-muted: 151 132 114;
+    --page-label: 83 67 54;
     --page-link: 217 119 87;
-    --page-card-bg: rgba(255,255,255,0.7);
+    --page-card-bg: rgba(255,255,255,0.78);
     --page-card-border: #E8DDD0;
+    --page-input-bg: rgba(255,255,255,0.88);
+    --page-input-border: #D9C5B2;
     --page-select-bg: rgba(255,251,247,0.98);
     --page-select-panel-bg: rgba(255,251,247,0.99);
     --page-surface: rgba(61,48,36,0.04);
     --page-surface-hover: rgba(61,48,36,0.08);
     --page-divider: #E8DDD0;
     --page-inset: rgba(61,48,36,0.06);
+    --page-success: 47 133 90;
+    --page-success-text: 47 133 90;
+    --page-warning: 190 112 47;
+    --page-warning-text: 174 91 36;
+    --page-danger: 190 65 65;
+    --page-danger-text: 190 65 65;
+    --page-info: 167 83 57;
+    --page-info-text: 167 83 57;
   }
 
   .theme-starter {
@@ -356,6 +370,8 @@
 .theme-claude .glass,
 .theme-claude .glass-sm {
   border-color: #E8DDD0;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 16px 45px rgba(82, 61, 43, 0.07);
 }
 
 .theme-claude .input {
@@ -372,6 +388,323 @@
 }
 .theme-claude .btn-secondary:hover {
   background-color: rgba(217,119,87,0.05);
+}
+
+.theme-claude .bg-brand-500 {
+  background-color: #D97757 !important;
+}
+
+.theme-claude .border-brand-500\/30 {
+  border-color: rgba(217,119,87,0.3) !important;
+}
+
+.theme-claude .border-t-brand-500 {
+  border-top-color: #D97757 !important;
+}
+
+.theme-claude .from-brand-500 {
+  --tw-gradient-from: #D97757 var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgb(217 119 87 / 0) var(--tw-gradient-to-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+
+.theme-claude .to-purple-500 {
+  --tw-gradient-to: #E6A27E var(--tw-gradient-to-position) !important;
+}
+
+.theme-claude .shadow-brand-500\/25 {
+  --tw-shadow-color: rgba(217,119,87,0.22) !important;
+}
+
+.route-hero {
+  background:
+    radial-gradient(circle at 12% 10%, rgba(217,119,87,0.12), transparent 28%),
+    radial-gradient(circle at 88% 5%, rgba(226,190,151,0.18), transparent 30%),
+    linear-gradient(180deg, #fffaf5 0%, #faf6f1 100%);
+}
+
+.route-grid-bg {
+  background-image:
+    linear-gradient(rgba(95, 71, 51, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(95, 71, 51, 0.055) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(to bottom, black, transparent 85%);
+}
+
+.route-kicker {
+  color: #C56547;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.route-section-title {
+  margin-top: 0.5rem;
+  color: #3D3024;
+  font-size: clamp(1.75rem, 4vw, 2.45rem);
+  font-weight: 750;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+}
+
+.theme-claude .package-redeem-select option {
+  background: #FFFDFB;
+  color: #3D3024;
+}
+
+/* Claude theme follows the operating system color scheme. */
+html[data-color-scheme='dark'] .theme-claude {
+  color-scheme: dark;
+  --page-bg: #15110f;
+  --page-spinner: rgba(232, 154, 124, 0.9);
+  --page-spinner-track: rgba(232, 154, 124, 0.2);
+  --page-text: 245 237 231;
+  --page-text-secondary: 195 178 165;
+  --page-text-muted: 153 133 119;
+  --page-label: 225 211 200;
+  --page-link: 232 154 124;
+  --page-card-bg: rgba(38, 30, 26, 0.88);
+  --page-card-border: #493a31;
+  --page-input-bg: rgba(31, 25, 22, 0.94);
+  --page-input-border: #57453a;
+  --page-select-bg: rgba(31, 25, 22, 0.98);
+  --page-select-panel-bg: rgba(31, 25, 22, 0.99);
+  --page-surface: rgba(255, 255, 255, 0.045);
+  --page-surface-hover: rgba(255, 255, 255, 0.085);
+  --page-divider: #40342d;
+  --page-inset: rgba(0, 0, 0, 0.24);
+  --page-success: 92 190 132;
+  --page-success-text: 111 207 151;
+  --page-warning: 226 161 91;
+  --page-warning-text: 235 174 106;
+  --page-danger: 226 112 112;
+  --page-danger-text: 235 126 126;
+  --page-info: 232 154 124;
+  --page-info-text: 232 154 124;
+  color: rgb(var(--page-text));
+}
+
+html[data-color-scheme='dark'] body.theme-claude {
+  background: #15110f;
+}
+
+html[data-color-scheme='dark'] .theme-claude ::-webkit-scrollbar-thumb {
+  background: #56463c;
+}
+
+html[data-color-scheme='dark'] .theme-claude .glass,
+html[data-color-scheme='dark'] .theme-claude .glass-sm {
+  border-color: #493a31;
+  background: rgba(38, 30, 26, 0.88);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.24);
+}
+
+html[data-color-scheme='dark'] .theme-claude .modal-overlay .glass,
+html[data-color-scheme='dark'] .theme-claude .modal-overlay .glass-sm {
+  background: rgba(31, 25, 22, 0.98);
+}
+
+html[data-color-scheme='dark'] .theme-claude .select-panel {
+  background: rgba(31, 25, 22, 0.99);
+  border-color: #493a31;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+}
+
+html[data-color-scheme='dark'] .theme-claude .input {
+  background: rgba(31, 25, 22, 0.94);
+  border-color: #57453a;
+  color: #f5ede7;
+}
+
+html[data-color-scheme='dark'] .theme-claude .btn-secondary {
+  border-color: #57453a;
+  color: #e1d3c8;
+}
+
+html[data-color-scheme='dark'] .theme-claude .btn-secondary:hover {
+  background: rgba(232, 154, 124, 0.09);
+}
+
+html[data-color-scheme='dark'] .theme-claude .route-hero {
+  background:
+    radial-gradient(circle at 12% 10%, rgba(217, 119, 87, 0.15), transparent 30%),
+    radial-gradient(circle at 88% 5%, rgba(145, 92, 63, 0.14), transparent 32%),
+    linear-gradient(180deg, #1c1714 0%, #15110f 100%);
+}
+
+html[data-color-scheme='dark'] .theme-claude .route-grid-bg {
+  background-image:
+    linear-gradient(rgba(232, 210, 194, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232, 210, 194, 0.05) 1px, transparent 1px);
+}
+
+html[data-color-scheme='dark'] .theme-claude .route-kicker {
+  color: #e89a7c;
+}
+
+html[data-color-scheme='dark'] .theme-claude .route-section-title {
+  color: #f5ede7;
+}
+
+html[data-color-scheme='dark'] .theme-claude .package-redeem-select option {
+  background: #1f1916;
+  color: #f5ede7;
+}
+
+html[data-color-scheme='dark'] .theme-claude [class~='bg-[#FAF6F1]'] {
+  background-color: #15110f !important;
+}
+
+html[data-color-scheme='dark'] .theme-claude [class~='bg-[#FAF6F1]/92'] {
+  background-color: rgba(21, 17, 15, 0.92) !important;
+}
+
+html[data-color-scheme='dark'] .theme-claude [class~='bg-[#F1E8DE]'] {
+  background-color: #1d1815 !important;
+}
+
+html[data-color-scheme='dark'] .theme-claude [class~='bg-white'],
+html[data-color-scheme='dark'] .theme-claude [class~='bg-white/55'],
+html[data-color-scheme='dark'] .theme-claude [class~='bg-white/60'],
+html[data-color-scheme='dark'] .theme-claude [class~='bg-white/65'],
+html[data-color-scheme='dark'] .theme-claude [class~='bg-white/70'],
+html[data-color-scheme='dark'] .theme-claude [class~='bg-white/75'],
+html[data-color-scheme='dark'] .theme-claude [class~='bg-white/78'],
+html[data-color-scheme='dark'] .theme-claude [class~='bg-white/80'] {
+  background-color: rgba(38, 30, 26, 0.9) !important;
+}
+
+html[data-color-scheme='dark'] .theme-claude [class~='bg-[#FFF1E7]'] {
+  background-color: #38251e !important;
+}
+
+html[data-color-scheme='dark'] .theme-claude [class~='bg-[#FFF3E9]'],
+html[data-color-scheme='dark'] .theme-claude [class~='bg-[#FFF5EC]'],
+html[data-color-scheme='dark'] .theme-claude [class~='bg-[#FFF7F1]'],
+html[data-color-scheme='dark'] .theme-claude [class~='bg-[#FFF9F4]'],
+html[data-color-scheme='dark'] .theme-claude [class~='bg-[#FBF2EA]'],
+html[data-color-scheme='dark'] .theme-claude [class~='bg-[#FBF4ED]'],
+html[data-color-scheme='dark'] .theme-claude [class~='bg-[#FBF4ED]/70'],
+html[data-color-scheme='dark'] .theme-claude [class~='bg-[#FAF5F0]'],
+html[data-color-scheme='dark'] .theme-claude [class~='bg-[#F8EAE0]'],
+html[data-color-scheme='dark'] .theme-claude [class~='bg-[#F6EADF]'],
+html[data-color-scheme='dark'] .theme-claude [class~='bg-[#F5EBE2]'],
+html[data-color-scheme='dark'] .theme-claude [class~='bg-[#F0E5DB]'] {
+  background-color: #2c231e !important;
+}
+
+html[data-color-scheme='dark'] .theme-claude [class~='bg-[#E8D6C8]'],
+html[data-color-scheme='dark'] .theme-claude [class~='bg-[#E2CFC0]'] {
+  background-color: #49382f !important;
+}
+
+html[data-color-scheme='dark'] .theme-claude [class~='bg-[#E9B8A4]/35'] {
+  background-color: rgba(130, 66, 48, 0.3) !important;
+}
+
+html[data-color-scheme='dark'] .theme-claude [class~='bg-[#E8D7B7]/50'] {
+  background-color: rgba(112, 76, 47, 0.26) !important;
+}
+
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#382B21]'],
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#3D3024]'],
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#49382C]'],
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#4B3B30]'],
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#57463A]'],
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#59483A]'],
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#5E4D40]'],
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#5E4E40]'],
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#665548]'],
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#6B5D4F]'] {
+  color: #f2e9e2 !important;
+}
+
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#756454]'],
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#766657]'],
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#786657]'],
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#7D6B5B]'],
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#806D5D]'],
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#806F60]'],
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#897665]'],
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#8B7D6E]'],
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#8C7867]'],
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#8D7867]'],
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#927E6C]'],
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#947F6D]'],
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#9B8876]'],
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#A89685]'],
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#A9826B]'],
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#B68D75]'],
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#B6A391]'] {
+  color: #bda99a !important;
+}
+
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#8F5D48]'],
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#9C583F]'],
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#B75F43]'],
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#C56547]'],
+html[data-color-scheme='dark'] .theme-claude [class~='text-[#D97757]'] {
+  color: #e89a7c !important;
+}
+
+html[data-color-scheme='dark'] .theme-claude [class~='border-[#D9BBA6]'],
+html[data-color-scheme='dark'] .theme-claude [class~='border-[#D9C5B2]'],
+html[data-color-scheme='dark'] .theme-claude [class~='border-[#DCC8B8]'],
+html[data-color-scheme='dark'] .theme-claude [class~='border-[#DCCBBD]'],
+html[data-color-scheme='dark'] .theme-claude [class~='border-[#DDC9B9]'],
+html[data-color-scheme='dark'] .theme-claude [class~='border-[#DDCCBE]'],
+html[data-color-scheme='dark'] .theme-claude [class~='border-[#E1D1C3]'],
+html[data-color-scheme='dark'] .theme-claude [class~='border-[#E2CDBE]'],
+html[data-color-scheme='dark'] .theme-claude [class~='border-[#E2D1C3]'],
+html[data-color-scheme='dark'] .theme-claude [class~='border-[#E3D4C7]'],
+html[data-color-scheme='dark'] .theme-claude [class~='border-[#E4CFC0]'],
+html[data-color-scheme='dark'] .theme-claude [class~='border-[#E5D4C6]'],
+html[data-color-scheme='dark'] .theme-claude [class~='border-[#E5D7CB]'],
+html[data-color-scheme='dark'] .theme-claude [class~='border-[#E6C7B3]'],
+html[data-color-scheme='dark'] .theme-claude [class~='border-[#E6D1C1]'],
+html[data-color-scheme='dark'] .theme-claude [class~='border-[#E6D4C6]'],
+html[data-color-scheme='dark'] .theme-claude [class~='border-[#E6D6C8]'],
+html[data-color-scheme='dark'] .theme-claude [class~='border-[#E6D7CA]'],
+html[data-color-scheme='dark'] .theme-claude [class~='border-[#E6D8CC]'],
+html[data-color-scheme='dark'] .theme-claude [class~='border-[#E7D7CA]'],
+html[data-color-scheme='dark'] .theme-claude [class~='border-[#E7D8CB]'],
+html[data-color-scheme='dark'] .theme-claude [class~='border-[#E8D6C8]'],
+html[data-color-scheme='dark'] .theme-claude [class~='border-[#E8DDD0]'],
+html[data-color-scheme='dark'] .theme-claude [class~='border-[#EAD7C8]'],
+html[data-color-scheme='dark'] .theme-claude [class~='border-[#EADCD0]'],
+html[data-color-scheme='dark'] .theme-claude [class~='border-[#EEE2D7]'] {
+  border-color: #493a31 !important;
+}
+
+html[data-color-scheme='dark'] .theme-claude [class~='ring-[#E8DDD0]'] {
+  --tw-ring-color: #493a31 !important;
+}
+
+html[data-color-scheme='dark'] .theme-claude [class~='hover:bg-white']:hover,
+html[data-color-scheme='dark'] .theme-claude [class~='hover:bg-white/60']:hover,
+html[data-color-scheme='dark'] .theme-claude [class~='hover:bg-white/70']:hover,
+html[data-color-scheme='dark'] .theme-claude [class~='hover:bg-[#FFF8F2]']:hover,
+html[data-color-scheme='dark'] .theme-claude [class~='hover:bg-[#FFF9F4]']:hover,
+html[data-color-scheme='dark'] .theme-claude [class~='hover:bg-[#F8EAE0]']:hover,
+html[data-color-scheme='dark'] .theme-claude [class~='hover:bg-[#F0E5DB]']:hover,
+html[data-color-scheme='dark'] .theme-claude [class~='hover:bg-[#E6D6C8]']:hover {
+  background-color: #342922 !important;
+}
+
+html[data-color-scheme='dark'] .theme-claude [class~='hover:text-[#3D3024]']:hover {
+  color: #fff7f1 !important;
+}
+
+html[data-color-scheme='dark'] .theme-claude [class~='hover:text-[#A84F34]']:hover,
+html[data-color-scheme='dark'] .theme-claude [class~='hover:text-[#B75F43]']:hover,
+html[data-color-scheme='dark'] .theme-claude [class~='hover:text-[#C4613F]']:hover,
+html[data-color-scheme='dark'] .theme-claude [class~='hover:text-[#D97757]']:hover {
+  color: #f0a083 !important;
+}
+
+html[data-color-scheme='dark'] .theme-claude [class*='shadow-[0_'] {
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.25) !important;
 }
 
 /* New distributor theme shared-page skins */

@@ -1,9 +1,27 @@
 import { useTranslation } from 'react-i18next';
-import { DIST_SITE_LANGUAGES, normalizeAppLanguage } from '../i18n/languageUtils';
+import {
+  DIST_SITE_LANGUAGES,
+  DIST_SITE_LANGUAGE_STORAGE_KEY,
+  getLocalizedPath,
+  normalizeAppLanguage,
+} from '../i18n/languageUtils';
 
 export default function LanguageSwitch({ className = '' }) {
   const { i18n, t } = useTranslation();
   const currentLanguage = normalizeAppLanguage(i18n.resolvedLanguage || i18n.language);
+  const handleLanguageChange = (event) => {
+    const nextLanguage = normalizeAppLanguage(event.target.value);
+    if (nextLanguage === currentLanguage) return;
+
+    try {
+      window.localStorage.setItem(DIST_SITE_LANGUAGE_STORAGE_KEY, nextLanguage);
+    } catch {
+      // The language path remains authoritative when storage is unavailable.
+    }
+
+    const nextPath = getLocalizedPath(window.location.pathname, nextLanguage);
+    window.location.assign(`${nextPath}${window.location.search}${window.location.hash}`);
+  };
 
   return (
     <label className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs transition-colors ${className}`}>
@@ -14,7 +32,7 @@ export default function LanguageSwitch({ className = '' }) {
       </svg>
       <select
         value={currentLanguage}
-        onChange={(event) => i18n.changeLanguage(event.target.value)}
+        onChange={handleLanguageChange}
         className="bg-transparent text-current outline-none"
         aria-label={t('common.changeLanguage')}
       >

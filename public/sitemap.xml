@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml"
+>
+  <url>
+    <loc>https://api-route.com/</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/" />
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://api-route.com/en/</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/" />
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://api-route.com/pricing</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/pricing" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/pricing" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/pricing" />
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://api-route.com/en/pricing</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/pricing" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/pricing" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/pricing" />
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://api-route.com/packages</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/packages" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/packages" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/packages" />
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://api-route.com/en/packages</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/packages" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/packages" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/packages" />
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://api-route.com/apps</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/apps" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/apps" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/apps" />
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://api-route.com/en/apps</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/apps" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/apps" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/apps" />
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+</urlset>

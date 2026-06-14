@@ -29,6 +29,12 @@ function getDevPreviewTheme() {
   return new URLSearchParams(window.location.search).get('preview_theme') || '';
 }
 
+function getDevPreviewColorScheme() {
+  if (!import.meta.env.DEV || typeof window === 'undefined') return '';
+  const value = new URLSearchParams(window.location.search).get('preview_color_scheme');
+  return value === 'dark' || value === 'light' ? value : '';
+}
+
 function upsertMeta(name, content) {
   if (!content) return;
   let meta = document.querySelector(`meta[name="${name}"]`);
@@ -60,7 +66,6 @@ function applySiteDocumentMeta(site) {
   const iconUrl = site?.favicon || site?.logo;
 
   if (siteName) {
-    document.title = siteName;
     upsertMeta('application-name', siteName);
     upsertMeta('apple-mobile-web-app-title', siteName);
   }
@@ -78,6 +83,30 @@ function applySiteDocumentMeta(site) {
 export function SiteProvider({ children }) {
   const [site, setSite] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    const previewColorScheme = getDevPreviewColorScheme();
+    const applyColorScheme = () => {
+      const colorScheme = previewColorScheme || (media.matches ? 'dark' : 'light');
+      document.documentElement.dataset.colorScheme = colorScheme;
+      const themeColor = document.querySelector('meta[name="theme-color"]');
+      if (themeColor) {
+        themeColor.content = colorScheme === 'dark' ? '#15110F' : '#FAF6F1';
+      }
+    };
+
+    applyColorScheme();
+    if (!previewColorScheme) {
+      media.addEventListener?.('change', applyColorScheme);
+      media.addListener?.(applyColorScheme);
+    }
+
+    return () => {
+      media.removeEventListener?.('change', applyColorScheme);
+      media.removeListener?.(applyColorScheme);
+    };
+  }, []);
 
   useEffect(() => {
     const previewTheme = getDevPreviewTheme();

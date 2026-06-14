@@ -2,7 +2,17 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { useSite } from '../context/SiteContext';
-import { ExternalLink, TicketPercent } from 'lucide-react';
+import {
+  ArrowRight,
+  CircleAlert,
+  CheckCircle2,
+  ExternalLink,
+  KeyRound,
+  ShoppingBag,
+  TicketCheck,
+  TicketPercent,
+  WalletCards,
+} from 'lucide-react';
 import {
   getUserUsage, redeemCode, getTopupInfo, getSitePackages, subscribePackage,
   createEpayOrder, createStripeOrder, createCreemOrder,
@@ -11,6 +21,7 @@ import {
 } from '../api';
 import { useCurrency } from '../context/SiteContext';
 import CountUp from '../components/bits/CountUp';
+import { getLocalizedPackageName } from '../utils/packageLocalization';
 import toast from 'react-hot-toast';
 
 const PENDING_PACKAGE_KEY = 'dist_pending_package_activation';
@@ -104,7 +115,7 @@ function closePendingPaymentWindow(paymentWindow) {
 }
 
 export default function Topup() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user, refreshUser } = useAuth();
   const { site } = useSite();
   const { symbol, rate } = useCurrency();
@@ -237,7 +248,9 @@ export default function Topup() {
       }
 
       clearPendingPackage();
-      toast.success(t('topup.packageActivated', { name: pkg.name }));
+      toast.success(t('topup.packageActivated', {
+        name: getLocalizedPackageName(pkg, t, i18n.resolvedLanguage),
+      }));
       await Promise.all([
         loadData(),
         refreshUser({ skipErrorHandler: true }),
@@ -251,7 +264,7 @@ export default function Topup() {
       ]);
       return false;
     }
-  }, [clearPendingPackage, loadData, refreshUser, savePendingPackage, t]);
+  }, [clearPendingPackage, i18n.resolvedLanguage, loadData, refreshUser, savePendingPackage, t]);
 
   const selectedPackage = useMemo(
     () => packages.find((pkg) => String(pkg.id) === String(selectedPackageId)) || null,
@@ -594,41 +607,63 @@ export default function Topup() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-10">
-      <div className="mb-8">
-        <h1 className="text-2xl font-heading font-bold text-page mb-1">{t('topup.title')}</h1>
-        <p className="text-sm text-page-secondary">{t('topup.subtitle')}</p>
+    <div className="mx-auto flex max-w-6xl flex-col px-5 py-10 md:px-8 md:py-14">
+      <div className="order-1 mb-8">
+        <p className="route-kicker">{t('topup.eyebrow')}</p>
+        <h1 className="mt-2 text-3xl font-bold tracking-[-0.035em] text-page md:text-4xl">{t('topup.title')}</h1>
+        <p className="mt-3 max-w-2xl text-sm leading-7 text-page-secondary md:text-base">{t('topup.subtitle')}</p>
+
+        <div className="mt-6 flex flex-col gap-4 rounded-2xl border border-brand-500/30 bg-brand-500/10 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+          <div className="flex items-start gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-500/15 text-brand-600">
+              <CircleAlert size={20} />
+            </span>
+            <div>
+              <p className="font-semibold text-page">{t('topup.mainlandBalanceNoticeTitle')}</p>
+              <p className="mt-1 text-sm leading-6 text-page-secondary">
+                {t('topup.mainlandBalanceNoticeDesc')}
+              </p>
+            </div>
+          </div>
+          <a
+            href="https://faka.api-route.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#D97757] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#C4613F]"
+          >
+            <ShoppingBag size={16} />
+            {t('topup.mainlandBalanceNoticeAction')}
+            <ExternalLink size={14} />
+          </a>
+        </div>
       </div>
 
       {/* Balance Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
-        <div className="glass rounded-2xl p-6">
-          <p className="text-sm text-page-secondary mb-2">{t('dashboard.balance')}</p>
-          <div className="text-3xl font-bold text-page">
+      <div className="order-3 mb-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <div className="glass rounded-2xl p-4">
+          <p className="mb-1 text-xs text-page-secondary">{t('dashboard.balance')}</p>
+          <div className="text-xl font-bold text-page">
             {symbol}<CountUp from={0} to={balanceDollars} duration={1.5} decimals={2} />
           </div>
-          <p className="text-xs text-page-muted mt-1">{t('dashboard.quotaUnits', { count: quota.toLocaleString() })}</p>
         </div>
 
-        <div className="glass rounded-2xl p-6">
-          <p className="text-sm text-page-secondary mb-2">{t('dashboard.used')}</p>
-          <div className="text-3xl font-bold text-page">
+        <div className="glass rounded-2xl p-4">
+          <p className="mb-1 text-xs text-page-secondary">{t('dashboard.used')}</p>
+          <div className="text-xl font-bold text-page">
             {symbol}<CountUp from={0} to={usedQuota / Q * rate} duration={1.5} decimals={2} />
           </div>
-          <p className="text-xs text-page-muted mt-1">{t('dashboard.quotaUnits', { count: usedQuota.toLocaleString() })}</p>
         </div>
 
-        <div className="glass rounded-2xl p-6">
-          <p className="text-sm text-page-secondary mb-2">{t('dashboard.packageUsed')}</p>
-          <div className="text-3xl font-bold text-page">
+        <div className="glass rounded-2xl p-4">
+          <p className="mb-1 text-xs text-page-secondary">{t('dashboard.packageUsed')}</p>
+          <div className="text-xl font-bold text-page">
             {symbol}<CountUp from={0} to={packageUsedQuota / Q * rate} duration={1.5} decimals={2} />
           </div>
-          <p className="text-xs text-page-muted mt-1">{t('dashboard.quotaUnits', { count: packageUsedQuota.toLocaleString() })}</p>
         </div>
 
-        <div className="glass rounded-2xl p-6">
-          <p className="text-sm text-page-secondary mb-2">{t('dashboard.totalRequests')}</p>
-          <div className="text-3xl font-bold text-page">
+        <div className="glass rounded-2xl p-4">
+          <p className="mb-1 text-xs text-page-secondary">{t('dashboard.totalRequests')}</p>
+          <div className="text-xl font-bold text-page">
             <CountUp from={0} to={requestCount} duration={1.5} />
           </div>
         </div>
@@ -636,7 +671,7 @@ export default function Topup() {
 
       {/* Online Topup */}
       {site?.enable_topup && (enableOnline || enableStripe || enableCreem || enableCrypto) && (topupPayMethods.length > 0 || enableCrypto) && (
-        <div className="glass rounded-2xl p-6 mb-6">
+        <div className="order-4 mb-6 rounded-2xl border border-[#E6D8CC] bg-white/65 p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-semibold text-page">{t('topup.onlineTopup')}</h2>
             <button
@@ -863,7 +898,7 @@ export default function Topup() {
 
       {/* History */}
       {showHistory && (
-        <div className="glass rounded-2xl p-6 mb-6">
+        <div className="order-5 mb-6 glass rounded-2xl p-6">
           <h2 className="text-lg font-semibold text-page mb-4">{t('topup.history')}</h2>
           {historyLoading ? (
             <div className="flex justify-center py-8">
@@ -898,67 +933,168 @@ export default function Topup() {
       )}
 
       {/* Redeem Code */}
-      <div className="glass rounded-2xl p-6">
-        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div className="min-w-0">
-            <h2 className="text-lg font-semibold text-page">{t('topup.redeemTitle')}</h2>
-            <p className="mt-1 text-sm text-page-secondary">
-              {redeemCodeShopUrl ? t('topup.redeemShopHint') : t('topup.redeemHint')}
-            </p>
+      <div className="order-2 mb-8 overflow-hidden rounded-[28px] border border-[#DDCCBE] bg-white/80 shadow-[0_24px_65px_rgba(96,69,48,0.1)]">
+        <div className="grid lg:grid-cols-[1.2fr_0.8fr]">
+          <div className="p-6 sm:p-8">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div className="min-w-0">
+                <span className="inline-flex items-center gap-2 rounded-full bg-[#F8EAE0] px-3 py-1.5 text-xs font-semibold text-[#C56547]">
+                  <TicketCheck size={14} />
+                  {t('topup.redeemTitle')}
+                </span>
+                <h2 className="mt-4 text-2xl font-semibold tracking-tight text-[#3D3024]">
+                  {t('topup.redeemHeading')}
+                </h2>
+                <p className="mt-2 max-w-xl text-sm leading-6 text-[#806D5D]">
+                  {redeemCodeShopUrl ? t('topup.redeemShopHint') : t('topup.redeemHint')}
+                </p>
+              </div>
+              {redeemCodeShopUrl && (
+                <a
+                  href={redeemCodeShopUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#D97757] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#E38969]"
+                >
+                  <ShoppingBag size={16} />
+                  {t('topup.buyRedeemCode')}
+                  <ExternalLink size={14} />
+                </a>
+              )}
+            </div>
+
+            {pendingPackage && (
+              <div className="mt-5 rounded-2xl border border-amber-500/25 bg-amber-500/10 p-4">
+                <p className="text-sm text-page-warning">
+                  {t('topup.pendingPackageActivation', {
+                    name: getLocalizedPackageName(pendingPackage, t, i18n.resolvedLanguage),
+                  })}
+                </p>
+                <button
+                  type="button"
+                  onClick={retryPendingActivation}
+                  disabled={redeeming}
+                  className="mt-3 rounded-full border border-[#D9C5B2] px-4 py-2 text-xs font-semibold text-[#6B5D4F] hover:bg-white"
+                >
+                  {redeeming ? t('topup.activatingPackage') : t('topup.retryPackageActivation')}
+                </button>
+              </div>
+            )}
+
+            {selectedPackage && (
+              <div className="mt-6 flex items-center justify-between rounded-2xl border border-[#E5D4C6] bg-[#FFF7F1] px-4 py-3">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#A9826B]">
+                    {t('topup.currentPackage')}
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-[#3D3024]">
+                    {getLocalizedPackageName(selectedPackage, t, i18n.resolvedLanguage)}
+                  </p>
+                </div>
+                <p className="text-xl font-bold text-[#C56547]">
+                  {symbol}{Number(selectedPackage.price).toFixed(2)}
+                </p>
+              </div>
+            )}
+
+            <form onSubmit={handleRedeem} className="mt-6 space-y-3">
+              <label className="block">
+                <span className="mb-2 block text-xs font-medium text-[#766657]">
+                  {t('topup.choosePackage')}
+                </span>
+                <select
+                  value={selectedPackageId}
+                  onChange={(e) => setSelectedPackageId(e.target.value)}
+                  className="package-redeem-select input h-12"
+                  disabled={redeeming}
+                >
+                  <option value="">{t('topup.choosePackage')}</option>
+                  {packages.map((pkg) => (
+                    <option key={pkg.id} value={pkg.id}>
+                      {getLocalizedPackageName(pkg, t, i18n.resolvedLanguage)} - {symbol}{Number(pkg.price).toFixed(2)}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="block">
+                <span className="mb-2 block text-xs font-medium text-[#766657]">
+                  {t('topup.enterRedeemCode')}
+                </span>
+                <input
+                  type="text"
+                  value={redeemInput}
+                  onChange={(e) => setRedeemInput(e.target.value)}
+                  className="input h-12 font-mono"
+                  placeholder={t('topup.enterRedeemCode')}
+                />
+              </label>
+              <button
+                type="submit"
+                disabled={redeeming}
+                className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[#D97757] px-5 text-sm font-semibold text-white transition-colors hover:bg-[#E38969] disabled:opacity-50"
+              >
+                <TicketPercent size={17} />
+                {redeeming ? t('topup.activatingPackage') : t('topup.redeemPackage')}
+                {!redeeming && <ArrowRight size={16} />}
+              </button>
+            </form>
           </div>
-          {redeemCodeShopUrl && (
-            <a
-              href={redeemCodeShopUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-brand-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-brand-500/20 transition-all hover:bg-brand-600"
-            >
-              <TicketPercent size={16} />
-              {t('topup.buyRedeemCode')}
-              <ExternalLink size={14} />
-            </a>
-          )}
+
+          <aside className="border-t border-[#E6D7CA] bg-[#FBF2EA] p-6 sm:p-8 lg:border-l lg:border-t-0">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#C56547]">
+              {t('topup.stepsTitle')}
+            </p>
+            <div className="mt-6 space-y-6">
+              {[
+                {
+                  icon: ShoppingBag,
+                  title: t('topup.stepBuyTitle'),
+                  description: t('topup.stepBuyDesc'),
+                },
+                {
+                  icon: TicketCheck,
+                  title: t('topup.stepRedeemTitle'),
+                  description: t('topup.stepRedeemDesc'),
+                },
+                {
+                  icon: KeyRound,
+                  title: t('topup.stepActivateTitle'),
+                  description: t('topup.stepActivateDesc'),
+                },
+              ].map(({ icon: Icon, title, description }, index) => (
+                <div key={title} className="flex gap-4">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-[#E4CFC0] bg-white/70 text-[#C56547]">
+                    <Icon size={18} />
+                  </span>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold text-[#A9826B]">0{index + 1}</span>
+                      <h3 className="text-sm font-semibold text-[#3D3024]">{title}</h3>
+                    </div>
+                    <p className="mt-1 text-xs leading-5 text-[#806D5D]">{description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-8 rounded-2xl border border-[#E2CDBE] bg-white/65 p-4">
+              <div className="flex items-center gap-2 text-sm font-semibold text-[#3D3024]">
+                <CheckCircle2 size={17} className="text-[#C56547]" />
+                {t('topup.automaticActivation')}
+              </div>
+              <p className="mt-2 text-xs leading-5 text-[#806D5D]">
+                {t('topup.automaticActivationDesc')}
+              </p>
+            </div>
+
+            {hasAnyPayment && (
+              <div className="mt-5 flex items-start gap-3 text-xs leading-5 text-[#8D7867]">
+                <WalletCards size={16} className="mt-0.5 shrink-0" />
+                <span>{t('topup.balanceOptionHint')}</span>
+              </div>
+            )}
+          </aside>
         </div>
-        {pendingPackage && (
-          <div className="mb-4 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4">
-            <p className="text-sm text-page-warning">
-              {t('topup.pendingPackageActivation', { name: pendingPackage.name })}
-            </p>
-            <button
-              type="button"
-              onClick={retryPendingActivation}
-              disabled={redeeming}
-              className="btn-secondary mt-3"
-            >
-              {redeeming ? t('topup.activatingPackage') : t('topup.retryPackageActivation')}
-            </button>
-          </div>
-        )}
-        <form onSubmit={handleRedeem} className="flex flex-col gap-3 sm:flex-row">
-          <select
-            value={selectedPackageId}
-            onChange={(e) => setSelectedPackageId(e.target.value)}
-            className="input sm:max-w-xs"
-            disabled={redeeming}
-          >
-            <option value="">{t('topup.choosePackage')}</option>
-            {packages.map((pkg) => (
-              <option key={pkg.id} value={pkg.id}>
-                {pkg.name} - {symbol}{Number(pkg.price).toFixed(2)}
-              </option>
-            ))}
-          </select>
-          <input
-            type="text"
-            value={redeemInput}
-            onChange={(e) => setRedeemInput(e.target.value)}
-            className="input flex-1"
-            placeholder={t('topup.enterRedeemCode')}
-          />
-          <button type="submit" disabled={redeeming} className="btn-primary justify-center whitespace-nowrap">
-            {redeeming ? t('topup.activatingPackage') : t('topup.redeemPackage')}
-          </button>
-        </form>
       </div>
     </div>
   );

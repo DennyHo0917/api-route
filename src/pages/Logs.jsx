@@ -306,17 +306,18 @@ export default function Logs() {
   }, [rate, symbol, t]);
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-10">
+    <div className="mx-auto max-w-7xl px-5 py-10 md:px-8 md:py-14">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-heading font-bold text-page mb-1">{t('logs.title')}</h1>
-        <p className="text-sm text-page-secondary">{t('logs.subtitle')}</p>
+      <div className="mb-8 rounded-[28px] border border-[#E5D7CB] bg-white/65 px-6 py-7 shadow-[0_18px_50px_rgba(82,61,43,0.06)] sm:px-8">
+        <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-[#C56547]">API Activity</p>
+        <h1 className="text-3xl font-heading font-bold tracking-tight text-[#3D3024]">{t('logs.title')}</h1>
+        <p className="mt-2 text-sm leading-6 text-[#806D5D]">{t('logs.subtitle')}</p>
       </div>
       <LogSubnav active="logs" />
 
       {/* Filters */}
       <form
-        className="glass rounded-2xl p-4 mb-6"
+        className="mb-6 rounded-[24px] border border-[#E5D7CB] bg-white/75 p-5 shadow-[0_16px_45px_rgba(82,61,43,0.06)]"
         onSubmit={(event) => {
           event.preventDefault();
           applyFilters();
@@ -386,49 +387,49 @@ export default function Logs() {
             />
           </div>
           <div className="flex gap-2 lg:col-span-2">
-            <button type="button" onClick={() => setQuickRange(0)} className="btn-secondary flex-1 px-3 text-xs">
+            <button type="button" onClick={() => setQuickRange(0)} className="flex-1 rounded-xl border border-[#E2D1C3] bg-[#FFF9F4] px-3 py-2.5 text-xs font-semibold text-[#766657] transition-colors hover:border-[#D8BBA7] hover:bg-[#F8EAE0] hover:text-[#B75F43]">
               {t('logs.today')}
             </button>
-            <button type="button" onClick={() => setQuickRange(7)} className="btn-secondary flex-1 px-3 text-xs">
+            <button type="button" onClick={() => setQuickRange(7)} className="flex-1 rounded-xl border border-[#E2D1C3] bg-[#FFF9F4] px-3 py-2.5 text-xs font-semibold text-[#766657] transition-colors hover:border-[#D8BBA7] hover:bg-[#F8EAE0] hover:text-[#B75F43]">
               {t('logs.last7Days')}
             </button>
-            <button type="button" onClick={() => setQuickRange(30)} className="btn-secondary flex-1 px-3 text-xs">
+            <button type="button" onClick={() => setQuickRange(30)} className="flex-1 rounded-xl border border-[#E2D1C3] bg-[#FFF9F4] px-3 py-2.5 text-xs font-semibold text-[#766657] transition-colors hover:border-[#D8BBA7] hover:bg-[#F8EAE0] hover:text-[#B75F43]">
               {t('logs.last30Days')}
             </button>
           </div>
         </div>
         <div className="mt-3 flex flex-wrap justify-end gap-2">
-          <button type="submit" className="btn-primary inline-flex items-center gap-2 text-sm" disabled={loading}>
+          <button type="submit" className="inline-flex items-center gap-2 rounded-full bg-[#D97757] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#C4613F] disabled:cursor-not-allowed disabled:opacity-50" disabled={loading}>
             <Search className="h-4 w-4" />
             {t('logs.search')}
           </button>
-          <button type="button" onClick={resetFilters} className="btn-secondary inline-flex items-center gap-2 text-sm">
+          <button type="button" onClick={resetFilters} className="inline-flex items-center gap-2 rounded-full border border-[#D9C5B2] bg-white/70 px-5 py-2.5 text-sm font-semibold text-[#6B5D4F] transition-colors hover:bg-[#F8EAE0]">
             <RotateCcw className="h-4 w-4" />
             {t('logs.clearFilter')}
           </button>
         </div>
       </form>
 
-      <div className="glass rounded-2xl p-3 mb-6 flex flex-wrap gap-2">
+      <div className="mb-6 grid grid-cols-2 gap-3 rounded-[24px] border border-[#E5D7CB] bg-white/65 p-4 shadow-[0_16px_45px_rgba(82,61,43,0.05)] lg:grid-cols-4">
         {loadingStat ? (
           <>
-            <div className="h-8 w-32 rounded-lg bg-page-surface animate-pulse" />
-            <div className="h-8 w-24 rounded-lg bg-page-surface animate-pulse" />
-            <div className="h-8 w-24 rounded-lg bg-page-surface animate-pulse" />
-            <div className="h-8 w-32 rounded-lg bg-page-surface animate-pulse" />
+            <div className="h-16 rounded-2xl bg-[#F5EBE2] animate-pulse" />
+            <div className="h-16 rounded-2xl bg-[#F5EBE2] animate-pulse" />
+            <div className="h-16 rounded-2xl bg-[#F5EBE2] animate-pulse" />
+            <div className="h-16 rounded-2xl bg-[#F5EBE2] animate-pulse" />
           </>
         ) : (
           <>
-            <span className="rounded-lg border border-page-divider bg-page-surface px-3 py-1.5 text-sm font-medium text-page">
+            <span className="rounded-2xl border border-[#E7D8CB] bg-[#FFF9F4] px-4 py-5 text-sm font-semibold text-[#57463A]">
               {t('logs.totalCost')}: {formatQuotaAmount(symbol, rate, stat.quota, false)}
             </span>
-            <span className="rounded-lg border border-page-divider bg-page-surface px-3 py-1.5 text-sm font-medium text-page">
+            <span className="rounded-2xl border border-[#E7D8CB] bg-[#FFF9F4] px-4 py-5 text-sm font-semibold text-[#57463A]">
               RPM: {formatTokens(stat.rpm)}
             </span>
-            <span className="rounded-lg border border-page-divider bg-page-surface px-3 py-1.5 text-sm font-medium text-page">
+            <span className="rounded-2xl border border-[#E7D8CB] bg-[#FFF9F4] px-4 py-5 text-sm font-semibold text-[#57463A]">
               TPM: {formatTokens(stat.tpm)}
             </span>
-            <span className="rounded-lg border border-page-divider bg-page-surface px-3 py-1.5 text-sm font-medium text-page">
+            <span className="rounded-2xl border border-[#E7D8CB] bg-[#FFF9F4] px-4 py-5 text-sm font-semibold text-[#57463A]">
               {t('logs.totalTokens')}: {formatTokens(stat.token)}
             </span>
           </>
@@ -436,10 +437,10 @@ export default function Logs() {
       </div>
 
       {/* Table */}
-      <div className="glass rounded-2xl overflow-hidden">
+      <div className="overflow-hidden rounded-[24px] border border-[#E5D7CB] bg-white/78 shadow-[0_18px_50px_rgba(82,61,43,0.06)]">
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="w-8 h-8 border-2 border-brand-500/30 border-t-brand-500 rounded-full animate-spin" />
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#D97757]/25 border-t-[#D97757]" />
           </div>
         ) : logs.length === 0 ? (
           <div className="text-center py-16 text-page-secondary">
@@ -451,7 +452,7 @@ export default function Logs() {
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-page-divider">
+                  <tr className="border-b border-[#E8DDD0] bg-[#FBF4ED]">
                     <th className="w-8"></th>
                     <th className="text-left px-4 py-3 font-medium text-page-secondary">{t('logs.time')}</th>
                     <th className="text-left px-4 py-3 font-medium text-page-secondary">{t('logs.model')}</th>
@@ -472,7 +473,7 @@ export default function Logs() {
                     return (
                       <React.Fragment key={i}>
                         <tr
-                          className={`border-b border-page-divider last:border-0 hover:bg-page-surface transition-colors ${hasExpandData ? 'cursor-pointer' : ''}`}
+                          className={`border-b border-[#EEE2D7] last:border-0 hover:bg-[#FFF8F2] transition-colors ${hasExpandData ? 'cursor-pointer' : ''}`}
                           onClick={() => hasExpandData && toggleRow(log.id)}
                         >
                           <td className="px-2 py-3 text-page-secondary">
@@ -509,7 +510,7 @@ export default function Logs() {
                           </td>
                         </tr>
                         {isExpanded && hasExpandData && (
-                          <tr className="border-b border-page-divider last:border-0 bg-page-surface/50">
+                          <tr className="border-b border-[#EEE2D7] last:border-0 bg-[#FBF4ED]/70">
                             <td colSpan="9" className="px-4 py-3">
                               <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-2 text-sm">
                                 {expandData.map((item, idx) => (
@@ -530,7 +531,7 @@ export default function Logs() {
             </div>
 
             {/* Mobile cards */}
-            <div className="md:hidden divide-y divide-page-divider">
+            <div className="divide-y divide-[#EEE2D7] md:hidden">
               {logs.map((log, i) => {
                 const expandData = getExpandData(log);
                 const hasExpandData = expandData.length > 0;
@@ -597,7 +598,7 @@ export default function Logs() {
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page <= 1}
-              className="btn-secondary text-sm px-3 py-1.5 disabled:opacity-30"
+              className="rounded-full border border-[#D9C5B2] bg-white/70 px-4 py-2 text-sm font-semibold text-[#6B5D4F] transition-colors hover:bg-[#F8EAE0] disabled:opacity-30"
             >
               {t('logs.prev')}
             </button>
@@ -607,7 +608,7 @@ export default function Logs() {
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page >= totalPages}
-              className="btn-secondary text-sm px-3 py-1.5 disabled:opacity-30"
+              className="rounded-full border border-[#D9C5B2] bg-white/70 px-4 py-2 text-sm font-semibold text-[#6B5D4F] transition-colors hover:bg-[#F8EAE0] disabled:opacity-30"
             >
               {t('logs.next')}
             </button>

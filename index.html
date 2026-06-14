@@ -1,19 +1,80 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="通过一个兼容 OpenAI 格式的 API 接入多种主流大模型，提供统一调用、清晰计费、套餐管理与稳定路由。" />
+    <meta name="keywords" content="AI API,API 聚合,OpenAI 兼容接口,大模型 API,多模型 API,模型中转,API-Route" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="application-name" content="API-Route" />
+    <meta name="author" content="API-Route" />
+    <meta name="theme-color" content="#FAF6F1" />
+    <link rel="canonical" href="https://api-route.com/" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="API-Route" />
+    <meta property="og:title" content="多模型 AI API 聚合与统一调用平台 | API-Route" />
+    <meta property="og:description" content="通过一个兼容 OpenAI 格式的 API 接入多种主流大模型，提供统一调用、清晰计费、套餐管理与稳定路由。" />
+    <meta property="og:url" content="https://api-route.com/" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="多模型 AI API 聚合与统一调用平台 | API-Route" />
+    <meta name="twitter:description" content="通过一个兼容 OpenAI 格式的 API 接入多种主流大模型，提供统一调用、清晰计费、套餐管理与稳定路由。" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-    <title>AI Platform</title>
+    <script id="seo-structured-data" type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://api-route.com/#organization",
+            "name": "API-Route",
+            "url": "https://api-route.com/"
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://api-route.com/#website",
+            "url": "https://api-route.com/",
+            "name": "API-Route",
+            "description": "多模型 AI API 聚合与统一调用平台",
+            "inLanguage": "zh-CN",
+            "publisher": {
+              "@id": "https://api-route.com/#organization"
+            }
+          },
+          {
+            "@type": "Service",
+            "@id": "https://api-route.com/#service",
+            "name": "API-Route",
+            "serviceType": "多模型 AI API 聚合与统一调用服务",
+            "url": "https://api-route.com/",
+            "areaServed": "Worldwide",
+            "provider": {
+              "@id": "https://api-route.com/#organization"
+            }
+          }
+        ]
+      }
+    </script>
+    <title>多模型 AI API 聚合与统一调用平台 | API-Route</title>
   </head>
   <body class="antialiased">
     <script>
-      // Restore theme class from cache to prevent flash on reload
+      // Restore theme and system color scheme before React mounts to prevent flash.
       try {
         var tc = localStorage.getItem('dist-theme-class');
         if (tc) document.body.className = tc + ' antialiased';
+        var previewScheme = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
+          ? new URLSearchParams(location.search).get('preview_color_scheme')
+          : '';
+        var systemScheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var colorScheme = /^(dark|light)$/.test(previewScheme) ? previewScheme : systemScheme;
+        document.documentElement.dataset.colorScheme = colorScheme;
+        var themeColor = document.querySelector('meta[name="theme-color"]');
+        if (themeColor) themeColor.content = colorScheme === 'dark' ? '#15110F' : '#FAF6F1';
       } catch(e) {}
     </script>
     <div id="root"></div>

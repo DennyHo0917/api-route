@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getSiteModels, getSitePackages, Q } from '../../api';
+import { localizePackage } from '../../utils/packageLocalization';
 
 const previewModels = [
   { id: 'preview-1', model_name: 'gpt-4o-mini', display_name: 'GPT-4o Mini', enabled: true },
@@ -54,6 +56,7 @@ const devPreviewTheme =
     : '';
 
 export function useHomeData() {
+  const { t, i18n } = useTranslation();
   const [models, setModels] = useState(devPreviewTheme ? previewModels : []);
   const [packages, setPackages] = useState(devPreviewTheme ? previewPackages : []);
 
@@ -64,7 +67,12 @@ export function useHomeData() {
   }, []);
 
   const enabledModels = useMemo(() => models.filter(m => m.enabled !== false), [models]);
-  const visiblePackages = useMemo(() => packages.filter(p => p.enabled), [packages]);
+  const visiblePackages = useMemo(
+    () => packages
+      .filter((pkg) => pkg.enabled)
+      .map((pkg) => localizePackage(pkg, t, i18n.resolvedLanguage)),
+    [i18n.resolvedLanguage, packages, t],
+  );
 
   return { models, packages, enabledModels, visiblePackages };
 }

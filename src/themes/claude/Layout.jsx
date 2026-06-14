@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Headset, LogOut, Menu, UserRound, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useSite } from '../../context/SiteContext';
 import LanguageSwitch from '../../components/LanguageSwitch';
@@ -10,6 +11,29 @@ import {
   isSiteNavActive,
 } from '../../utils/navigation';
 
+const PUBLIC_CORE_PATHS = ['/', '/pricing', '/packages', '/apps'];
+const USER_CORE_PATHS = ['/dashboard', '/tokens', '/logs', '/topup'];
+
+function getSupportLink(site) {
+  const announcement = String(site?.announcement || '');
+  const telegramMatch = announcement.match(/https?:\/\/(?:www\.)?(?:t\.me|telegram\.me)\/[^\s<>"']+/i);
+  if (telegramMatch) {
+    return {
+      href: telegramMatch[0].replace(/[，。！？；：,.!?;:)）\]}]+$/u, ''),
+      isTelegram: true,
+    };
+  }
+
+  if (site?.contact_email) {
+    return {
+      href: `mailto:${site.contact_email}`,
+      isTelegram: false,
+    };
+  }
+
+  return null;
+}
+
 export default function ClaudeLayout() {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
@@ -18,109 +42,171 @@ export default function ClaudeLayout() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const siteName = site?.name || 'AI Platform';
-
+  const rawSiteName = site?.name || 'API-Route';
+  const siteName = rawSiteName.toLowerCase() === 'api-route' ? 'API-Route' : rawSiteName;
   const visibleNavItems = getVisibleNavItems(getSiteNavItems({ t, site }), user);
+  const corePaths = user
+    ? [...PUBLIC_CORE_PATHS, ...USER_CORE_PATHS]
+    : PUBLIC_CORE_PATHS;
+  const desktopNavItems = visibleNavItems.filter((item) => corePaths.includes(item.to));
   const isNavActive = (to) => isSiteNavActive(location.pathname, to);
+  const supportLink = getSupportLink(site);
+  const supportLabel = supportLink?.isTelegram
+    ? t('nav.telegramSupport')
+    : t('nav.contactSupport');
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
+  };
 
   return (
     <div className="theme-light theme-claude min-h-screen flex flex-col bg-[#FAF6F1] text-[#3D3024]">
-      {/* Announcement */}
-      {site?.announcement && (
-        <div className="bg-[#D97757] text-center py-2.5 px-4">
-          <p className="text-sm text-white font-medium">{site.announcement}</p>
-        </div>
-      )}
-
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-[#FAF6F1]/85 backdrop-blur-xl border-b border-[#E8DDD0]">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3 group">
+      <header className="sticky top-0 z-50 border-b border-[#E8DDD0] bg-[#FAF6F1]/92 backdrop-blur-xl">
+        <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between gap-5 px-5 md:px-8">
+          <Link to="/" className="flex shrink-0 items-center gap-3 group">
             {site?.logo ? (
-              <img src={site.logo} alt={siteName} className="h-8 w-auto" />
+              <img src={site.logo} alt={siteName} className="h-9 w-9 rounded-xl object-contain" />
             ) : (
-              <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-[#D97757] to-[#C4613F] flex items-center justify-center text-white font-bold text-sm shadow-sm">
-                {siteName.charAt(0)}
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#D97757] text-sm font-bold text-white shadow-sm">
+                {siteName.charAt(0).toUpperCase()}
               </div>
             )}
-            <span className="text-lg font-semibold text-[#3D3024] group-hover:text-[#D97757] transition-colors">
-              {siteName}
-            </span>
+            <div>
+              <span className="block text-[17px] font-bold leading-none text-[#3D3024] transition-colors group-hover:text-[#D97757]">
+                {siteName}
+              </span>
+              <span className="mt-1 hidden text-[10px] font-medium uppercase tracking-[0.18em] text-[#9B8876] sm:block">
+                Unified AI Gateway
+              </span>
+            </div>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-1">
-            {visibleNavItems.map((n) => (
+          <nav className="hidden min-w-0 items-center gap-1 lg:flex">
+            {desktopNavItems.map((item) => (
               <Link
-                key={n.to}
-                to={n.to}
-                className={`px-3.5 py-2 text-sm rounded-lg transition-all ${
-                  isNavActive(n.to)
-                    ? 'text-[#D97757] bg-[#D97757]/8 font-medium'
-                    : 'text-[#6B5D4F] hover:text-[#3D3024] hover:bg-[#E8DDD0]/50'
+                key={item.to}
+                to={item.to}
+                className={`whitespace-nowrap rounded-full px-3 py-2 text-sm transition-all ${
+                  isNavActive(item.to)
+                    ? 'bg-white text-[#3D3024] shadow-sm ring-1 ring-[#E8DDD0] font-semibold'
+                    : 'text-[#766657] hover:bg-white/60 hover:text-[#3D3024]'
                 }`}
               >
-                {n.label}
+                {item.label}
               </Link>
             ))}
           </nav>
 
-          <div className="flex items-center gap-2">
-            <LanguageSwitch className="text-[#8B7D6E] hover:text-[#3D3024] hover:bg-[#E8DDD0]/50" />
+          <div className="flex shrink-0 items-center gap-1.5">
+            {supportLink && (
+              <a
+                href={supportLink.href}
+                target={supportLink.isTelegram ? '_blank' : undefined}
+                rel={supportLink.isTelegram ? 'noopener noreferrer' : undefined}
+                className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#E5D4C6] bg-white/65 text-[#8F5D48] transition-colors hover:border-[#D8BBA7] hover:bg-[#FFF9F4] hover:text-[#C4613F] lg:inline-flex"
+                title={supportLabel}
+                aria-label={supportLabel}
+              >
+                <Headset size={17} />
+              </a>
+            )}
+            <LanguageSwitch className="text-[#8B7D6E] hover:bg-white/70 hover:text-[#3D3024]" />
 
             {user ? (
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-[#6B5D4F] hidden sm:block">{user.display_name || user.username}</span>
-                <button
-                  onClick={async () => { await logout(); navigate('/'); }}
-                  className="text-sm text-[#8B7D6E] hover:text-[#3D3024] transition-colors"
+              <>
+                <Link
+                  to="/account"
+                  className="hidden items-center gap-2 rounded-full border border-[#E8DDD0] bg-white/70 px-3 py-2 text-sm font-medium text-[#5E4E40] transition-colors hover:border-[#D9C5B2] hover:bg-white sm:flex"
                 >
-                  {t('nav.logout')}
+                  <UserRound size={15} />
+                  <span className="max-w-24 truncate">{user.display_name || user.username}</span>
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="hidden rounded-full p-2.5 text-[#8B7D6E] transition-colors hover:bg-white hover:text-[#D97757] sm:block"
+                  title={t('nav.logout')}
+                >
+                  <LogOut size={17} />
                 </button>
-              </div>
+              </>
             ) : (
               <>
-                <Link to="/login" className="text-sm text-[#6B5D4F] hover:text-[#3D3024] px-3 py-2 hidden sm:block transition-colors">
+                <Link
+                  to="/login"
+                  className="hidden px-3 py-2 text-sm font-medium text-[#6B5D4F] transition-colors hover:text-[#3D3024] sm:block"
+                >
                   {t('nav.login')}
                 </Link>
-                <Link to="/register" className="px-5 py-2 rounded-full bg-[#D97757] text-white text-sm font-medium hover:bg-[#C4613F] transition-colors shadow-sm">
+                <Link
+                  to="/register"
+                  className="hidden rounded-full bg-[#D97757] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#C4613F] sm:block"
+                >
                   {t('nav.signUp')}
                 </Link>
               </>
             )}
 
             <button
-              className="md:hidden p-2 rounded-lg hover:bg-[#E8DDD0]/50 transition-colors"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="rounded-full p-2.5 text-[#6B5D4F] transition-colors hover:bg-white lg:hidden"
+              onClick={() => setMobileMenuOpen((open) => !open)}
               aria-label="Toggle menu"
             >
-              <svg className="w-5 h-5 text-[#6B5D4F]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                {mobileMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
         </div>
 
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-[#E8DDD0] bg-[#FAF6F1]">
-            <nav className="max-w-6xl mx-auto px-6 py-3 flex flex-col gap-1">
-              {visibleNavItems.map((n) => (
+          <div className="border-t border-[#E8DDD0] bg-[#FAF6F1] lg:hidden">
+            <nav className="mx-auto grid max-w-7xl gap-1 px-5 py-4 md:grid-cols-2 md:px-8">
+              {visibleNavItems.map((item) => (
                 <Link
-                  key={n.to}
-                  to={n.to}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`px-3 py-2.5 text-sm rounded-lg transition-colors ${
-                    isNavActive(n.to)
-                      ? 'text-[#D97757] bg-[#D97757]/8 font-medium'
-                      : 'text-[#6B5D4F] hover:text-[#3D3024] hover:bg-[#E8DDD0]/50'
+                  key={item.to}
+                  to={item.to}
+                  className={`rounded-xl px-4 py-3 text-sm transition-colors ${
+                    isNavActive(item.to)
+                      ? 'bg-white font-semibold text-[#D97757] shadow-sm'
+                      : 'text-[#6B5D4F] hover:bg-white/70 hover:text-[#3D3024]'
                   }`}
                 >
-                  {n.label}
+                  {item.label}
                 </Link>
               ))}
+              {supportLink && (
+                <a
+                  href={supportLink.href}
+                  target={supportLink.isTelegram ? '_blank' : undefined}
+                  rel={supportLink.isTelegram ? 'noopener noreferrer' : undefined}
+                  className="flex items-center gap-2 rounded-xl border border-[#E5D4C6] bg-white/65 px-4 py-3 text-sm font-semibold text-[#8F5D48] transition-colors hover:bg-[#FFF9F4] hover:text-[#C4613F]"
+                >
+                  <Headset size={17} />
+                  {supportLabel}
+                </a>
+              )}
+              {!user && (
+                <>
+                  <Link to="/login" className="rounded-xl px-4 py-3 text-sm text-[#6B5D4F] hover:bg-white/70">
+                    {t('nav.login')}
+                  </Link>
+                  <Link to="/register" className="mt-2 rounded-xl bg-[#D97757] px-4 py-3 text-center text-sm font-semibold text-white md:mt-0">
+                    {t('nav.signUp')}
+                  </Link>
+                </>
+              )}
+              {user && (
+                <button
+                  onClick={handleLogout}
+                  className="mt-2 flex items-center gap-2 rounded-xl px-4 py-3 text-left text-sm text-[#D97757] hover:bg-white/70"
+                >
+                  <LogOut size={16} />
+                  {t('nav.logout')}
+                </button>
+              )}
             </nav>
           </div>
         )}
@@ -128,15 +214,26 @@ export default function ClaudeLayout() {
 
       <main className="flex-1"><Outlet /></main>
 
-      <footer className="border-t border-[#E8DDD0] mt-auto bg-[#F5EEE6]">
-        <div className="max-w-6xl mx-auto px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-[#8B7D6E]">&copy; {new Date().getFullYear()} {siteName}.</p>
-          <div className="flex items-center gap-4">
-            {site?.contact_email && (
-              <a href={`mailto:${site.contact_email}`} className="text-sm text-[#8B7D6E] hover:text-[#D97757] transition-colors">
-                {t('nav.contact')}
+      <footer className="mt-auto border-t border-[#E8DDD0] bg-[#F1E8DE]">
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 px-5 py-10 md:flex-row md:items-center md:justify-between md:px-8">
+          <div>
+            <p className="font-semibold text-[#3D3024]">{siteName}</p>
+            <p className="mt-1 text-sm text-[#8B7D6E]">One API for the models you use.</p>
+          </div>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-[#766657]">
+            <Link to="/pricing" className="hover:text-[#D97757]">{t('nav.pricing')}</Link>
+            <Link to="/packages" className="hover:text-[#D97757]">{t('nav.packages')}</Link>
+            {supportLink && (
+              <a
+                href={supportLink.href}
+                target={supportLink.isTelegram ? '_blank' : undefined}
+                rel={supportLink.isTelegram ? 'noopener noreferrer' : undefined}
+                className="hover:text-[#D97757]"
+              >
+                {supportLabel}
               </a>
             )}
+            <span className="text-[#A89685]">&copy; {new Date().getFullYear()}</span>
           </div>
         </div>
       </footer>

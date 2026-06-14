@@ -2,6 +2,7 @@ import React, { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import AuthGuard from './components/AuthGuard';
 import NotificationBell from './components/NotificationBell';
+import SeoManager from './components/SeoManager';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 
 const Login = lazy(() => import('./pages/Login'));
@@ -61,6 +62,7 @@ function ThemedRoutes() {
 export default function App() {
   return (
     <ThemeProvider>
+      <SeoManager />
       <ThemedRoutes />
     </ThemeProvider>
   );

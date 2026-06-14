@@ -6,13 +6,19 @@ import zh from './locales/zh.json';
 import {
   APP_LANGUAGE_CODES,
   DIST_SITE_LANGUAGE_STORAGE_KEY,
+  getPathLanguage,
   normalizeAppLanguage,
 } from './languageUtils';
+
+const pathLanguage = typeof window === 'undefined'
+  ? 'zh'
+  : getPathLanguage(window.location.pathname);
 
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
+    lng: pathLanguage,
     load: 'all',
     supportedLngs: APP_LANGUAGE_CODES,
     nonExplicitSupportedLngs: true,
