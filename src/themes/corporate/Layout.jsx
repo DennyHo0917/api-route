@@ -138,6 +138,9 @@ export default function CorporateLayout() {
               <p className="text-xs text-slate-400 mt-1">&copy; {new Date().getFullYear()} {siteName}. All rights reserved.</p>
             </div>
             <div className="flex items-center gap-6">
+              <Link to="/faq" className="text-sm text-slate-400 hover:text-slate-600 transition-colors">
+                {t('nav.faq')}
+              </Link>
               {site?.contact_email && (
                 <a href={`mailto:${site.contact_email}`} className="text-sm text-slate-400 hover:text-slate-600 transition-colors">
                   {t('nav.contact')}

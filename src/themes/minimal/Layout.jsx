@@ -109,11 +109,14 @@ export default function MinimalLayout() {
       <footer className="border-t border-neutral-800/40 mt-auto">
         <div className="max-w-5xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-3">
           <p className="text-xs text-neutral-600">&copy; {new Date().getFullYear()} {siteName}</p>
-          {site?.contact_email && (
-            <a href={`mailto:${site.contact_email}`} className="text-xs text-neutral-600 hover:text-white transition-colors">
-              {t('nav.contact')}
-            </a>
-          )}
+          <div className="flex flex-wrap items-center gap-4">
+            <Link to="/faq" className="text-xs text-neutral-600 hover:text-white transition-colors">{t('nav.faq')}</Link>
+            {site?.contact_email && (
+              <a href={`mailto:${site.contact_email}`} className="text-xs text-neutral-600 hover:text-white transition-colors">
+                {t('nav.contact')}
+              </a>
+            )}
+          </div>
         </div>
       </footer>
     </div>

@@ -12,6 +12,7 @@ const Tokens = lazy(() => import('./pages/Tokens'));
 const Packages = lazy(() => import('./pages/Packages'));
 const Pricing = lazy(() => import('./pages/Pricing'));
 const AppMarket = lazy(() => import('./pages/AppMarket'));
+const Faq = lazy(() => import('./pages/Faq'));
 const Topup = lazy(() => import('./pages/Topup'));
 const Logs = lazy(() => import('./pages/Logs'));
 const Tasks = lazy(() => import('./pages/Tasks'));
@@ -38,6 +39,7 @@ function ThemedRoutes() {
           <Route path="/packages" element={<Packages />} />
           <Route path="/apps" element={<AppMarket />} />
           <Route path="/sub-site" element={<SubDistributor />} />
+          <Route path="/faq" element={<Faq />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 

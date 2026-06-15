@@ -227,6 +227,7 @@ export default function ClaudeLayout() {
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-[#766657]">
             <Link to="/pricing" className="hover:text-[#D97757]">{t('nav.pricing')}</Link>
             <Link to="/packages" className="hover:text-[#D97757]">{t('nav.packages')}</Link>
+            <Link to="/faq" className="hover:text-[#D97757]">{t('nav.faq')}</Link>
             {supportLink && (
               <a
                 href={supportLink.href}

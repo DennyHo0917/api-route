@@ -5,7 +5,7 @@ import { useSite } from '../context/SiteContext';
 import { DIST_SITE_LANGUAGES, getLocalizedPath, normalizeAppLanguage } from '../i18n/languageUtils';
 
 const DEFAULT_SITE_URL = 'https://api-route.com';
-const INDEXABLE_PATHS = new Set(['/', '/pricing', '/packages', '/apps', '/sub-site']);
+const INDEXABLE_PATHS = new Set(['/', '/pricing', '/packages', '/apps', '/sub-site', '/faq']);
 const LANGUAGE_HREFLANGS = {
   zh: 'zh-CN',
   en: 'en',
@@ -41,6 +41,16 @@ const SEO_COPY = {
       title: 'AI API 中转站搭建',
       description: '开通可独立访问、支持收款、定价和推广的 AI API 中转站，并在支付后自动启用管理权限。',
     },
+    faq: {
+      title: 'AI API 使用常见问题',
+      description: '了解 API-Route 的 OpenAI 兼容 API、Base URL 配置、模型调用、套餐兑换、加密货币支付、客户端接入和中转站搭建问题。',
+      questions: [
+        ['API-Route 是否兼容 OpenAI API？', '是。常见的 OpenAI-compatible 客户端通常只需要配置本站提供的 Base URL 和你创建的 API Key。'],
+        ['在哪里查看 API 调用地址？', '首页会展示可用 API 端点，登录后也可以在 API 密钥页面创建密钥并复制到客户端使用。'],
+        ['套餐和兑换码怎么使用？', '购买套餐兑换码后，在账号内输入兑换码即可自动激活对应套餐。'],
+        ['支持加密货币支付吗？', '如果站点开启了加密货币支付，相关订单页面会展示网络、代币、地址和支付金额。'],
+      ],
+    },
     private: {
       title: '用户中心',
       description: 'API-Route 用户中心。',
@@ -70,6 +80,16 @@ const SEO_COPY = {
     subSite: {
       title: 'AI API Relay Site Setup',
       description: 'Launch an independent AI API relay site with payments, pricing, promotion, and automatic management access after payment.',
+    },
+    faq: {
+      title: 'AI API FAQ',
+      description: 'Learn how API-Route handles OpenAI-compatible API access, Base URL setup, model usage, plans, redeem codes, crypto payments, client integrations, and relay site setup.',
+      questions: [
+        ['Is API-Route compatible with the OpenAI API?', 'Yes. Most OpenAI-compatible clients only need this site’s Base URL and the API key you create in the dashboard.'],
+        ['Where do I find the API endpoint?', 'The homepage shows available API endpoints, and signed-in users can create API keys from the API Keys page.'],
+        ['How do plans and redeem codes work?', 'Purchase a matching redeem code, sign in, enter the code, and the system activates the plan automatically.'],
+        ['Do you support crypto payments?', 'If crypto payments are enabled, the order page will show the required network, token, address, and amount.'],
+      ],
     },
     private: {
       title: 'Account',
@@ -101,6 +121,16 @@ const SEO_COPY = {
       title: 'AI API 中継サイト構築',
       description: '訪問・決済・価格設定・販売に対応した独立 AI API 中継サイトを立ち上げ、支払い後に管理権限を自動で有効化します。',
     },
+    faq: {
+      title: 'AI API よくある質問',
+      description: 'API-Route の OpenAI 互換 API、Base URL 設定、モデル利用、プラン、コード、暗号資産決済、クライアント連携、中継サイト構築について確認できます。',
+      questions: [
+        ['API-Route は OpenAI API と互換性がありますか？', 'はい。多くの OpenAI 互換クライアントでは、このサイトの Base URL と作成した API キーを設定するだけで利用できます。'],
+        ['API エンドポイントはどこで確認できますか？', 'トップページに利用可能な API エンドポイントが表示され、ログイン後は API キー画面でキーを作成できます。'],
+        ['プランとコードはどのように使いますか？', '対応するコードを購入し、ログイン後に入力すると該当プランが自動で有効化されます。'],
+        ['暗号資産で支払えますか？', '暗号資産決済が有効な場合、注文画面にネットワーク、トークン、アドレス、金額が表示されます。'],
+      ],
+    },
     private: {
       title: 'アカウント',
       description: 'API-Route アカウント管理エリア。',
@@ -130,6 +160,16 @@ const SEO_COPY = {
     subSite: {
       title: 'AI API 릴레이 사이트 구축',
       description: '방문, 결제, 가격 설정, 판매를 지원하는 독립 AI API 릴레이 사이트를 만들고 결제 후 관리 권한을 자동으로 활성화합니다.',
+    },
+    faq: {
+      title: 'AI API 자주 묻는 질문',
+      description: 'API-Route의 OpenAI 호환 API, Base URL 설정, 모델 사용, 플랜, 리딤 코드, 암호화폐 결제, 클라이언트 연동, 릴레이 사이트 구축을 확인하세요.',
+      questions: [
+        ['API-Route는 OpenAI API와 호환되나요?', '네. 대부분의 OpenAI 호환 클라이언트에서 이 사이트의 Base URL과 생성한 API 키를 설정하면 사용할 수 있습니다.'],
+        ['API 엔드포인트는 어디에서 확인하나요?', '홈페이지에서 사용 가능한 API 엔드포인트를 확인할 수 있고, 로그인 후 API 키 페이지에서 키를 만들 수 있습니다.'],
+        ['플랜과 리딤 코드는 어떻게 사용하나요?', '해당 리딤 코드를 구매한 뒤 로그인 상태에서 입력하면 맞는 플랜이 자동으로 활성화됩니다.'],
+        ['암호화폐 결제를 지원하나요?', '암호화폐 결제가 활성화된 경우 주문 화면에 네트워크, 토큰, 주소, 금액이 표시됩니다.'],
+      ],
     },
     private: {
       title: '계정',
@@ -230,6 +270,7 @@ function getPageCopy(pathname, copy) {
   if (pathname === '/packages') return copy.packages;
   if (pathname === '/apps') return copy.apps;
   if (pathname === '/sub-site') return copy.subSite;
+  if (pathname === '/faq') return copy.faq;
   return copy.private;
 }
 
@@ -241,6 +282,7 @@ function setStructuredData({
   languageHomeUrl,
   logoUrl,
   pageTitle,
+  page,
   serviceType,
   siteName,
   siteUrl,
@@ -297,6 +339,25 @@ function setStructuredData({
       areaServed: 'Worldwide',
       availableLanguage,
       provider: { '@id': organizationId },
+    });
+  }
+
+  if (Array.isArray(page?.questions) && page.questions.length > 0) {
+    graph.push({
+      '@type': 'FAQPage',
+      '@id': `${canonicalUrl}#faq`,
+      url: canonicalUrl,
+      name: pageTitle,
+      inLanguage: language,
+      isPartOf: { '@id': `${canonicalUrl}#webpage` },
+      mainEntity: page.questions.map(([question, answer]) => ({
+        '@type': 'Question',
+        name: question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: answer,
+        },
+      })),
     });
   }
 
@@ -389,6 +450,7 @@ export default function SeoManager() {
       language: copy.language,
       languageHomeUrl,
       logoUrl,
+      page,
       pageTitle,
       serviceType: copy.serviceType,
       siteName,
