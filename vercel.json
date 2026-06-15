@@ -29,7 +29,7 @@
   ],
   "headers": [
     {
-      "source": "^/(login|register|dashboard|tokens|logs|tasks|topup|account)$",
+      "source": "/login",
       "headers": [
         {
           "key": "X-Robots-Tag",
@@ -38,7 +38,133 @@
       ]
     },
     {
-      "source": "^/(en|ja|ko)/(login|register|dashboard|tokens|logs|tasks|topup|account)$",
+      "source": "/:lang/login",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/register",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/:lang/register",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/dashboard",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/:lang/dashboard",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/tokens",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/:lang/tokens",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/logs",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/:lang/logs",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/tasks",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/:lang/tasks",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/topup",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/:lang/topup",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/account",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/:lang/account",
       "headers": [
         {
           "key": "X-Robots-Tag",
@@ -57,11 +183,67 @@
       "destination": "https://apiroute.subrouter.ai/v1/:path*"
     },
     {
-      "source": "^/(login|register|dashboard|tokens|logs|tasks|topup|account)$",
+      "source": "/login",
       "destination": "/index.html"
     },
     {
-      "source": "^/(en|ja|ko)/(login|register|dashboard|tokens|logs|tasks|topup|account)$",
+      "source": "/:lang/login",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/register",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/:lang/register",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/dashboard",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/:lang/dashboard",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/tokens",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/:lang/tokens",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/logs",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/:lang/logs",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/tasks",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/:lang/tasks",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/topup",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/:lang/topup",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/account",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/:lang/account",
       "destination": "/index.html"
     }
   ]
