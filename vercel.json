@@ -184,67 +184,67 @@
     },
     {
       "source": "/login",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/:lang/login",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/register",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/:lang/register",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/dashboard",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/:lang/dashboard",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/tokens",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/:lang/tokens",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/logs",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/:lang/logs",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/tasks",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/:lang/tasks",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/topup",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/:lang/topup",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/account",
-      "destination": "/index.html"
+      "destination": "/"
     },
     {
       "source": "/:lang/account",
-      "destination": "/index.html"
+      "destination": "/"
     }
   ]
 }
