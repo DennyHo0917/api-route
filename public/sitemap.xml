@@ -163,4 +163,44 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+  <url>
+    <loc>https://api-route.com/sub-site</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/sub-site" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/sub-site" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://api-route.com/ja/sub-site" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://api-route.com/ko/sub-site" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/sub-site" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://api-route.com/en/sub-site</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/sub-site" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/sub-site" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://api-route.com/ja/sub-site" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://api-route.com/ko/sub-site" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/sub-site" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://api-route.com/ja/sub-site</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/sub-site" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/sub-site" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://api-route.com/ja/sub-site" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://api-route.com/ko/sub-site" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/sub-site" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://api-route.com/ko/sub-site</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/sub-site" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/sub-site" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://api-route.com/ja/sub-site" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://api-route.com/ko/sub-site" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/sub-site" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>

@@ -6,6 +6,18 @@ import { DIST_SITE_LANGUAGES, getLocalizedPath, normalizeAppLanguage } from '../
 
 const DEFAULT_SITE_URL = 'https://api-route.com';
 const INDEXABLE_PATHS = new Set(['/', '/pricing', '/packages', '/apps', '/sub-site']);
+const LANGUAGE_HREFLANGS = {
+  zh: 'zh-CN',
+  en: 'en',
+  ja: 'ja',
+  ko: 'ko',
+};
+const LANGUAGE_LOCALES = {
+  zh: 'zh_CN',
+  en: 'en_US',
+  ja: 'ja_JP',
+  ko: 'ko_KR',
+};
 
 const SEO_COPY = {
   zh: {
@@ -200,6 +212,18 @@ function removeAlternateLinks() {
   document.head.querySelectorAll('link[rel="alternate"][hreflang]').forEach((link) => link.remove());
 }
 
+function syncOgLocaleAlternates(currentLanguage) {
+  document.head.querySelectorAll('meta[property="og:locale:alternate"]').forEach((meta) => meta.remove());
+  Object.entries(LANGUAGE_LOCALES)
+    .filter(([code]) => code !== currentLanguage)
+    .forEach(([, locale]) => {
+      const meta = document.createElement('meta');
+      meta.setAttribute('property', 'og:locale:alternate');
+      meta.setAttribute('content', locale);
+      document.head.appendChild(meta);
+    });
+}
+
 function getPageCopy(pathname, copy) {
   if (pathname === '/') return copy.home;
   if (pathname === '/pricing') return copy.pricing;
@@ -229,6 +253,7 @@ function setStructuredData({
     return;
   }
 
+  const availableLanguage = DIST_SITE_LANGUAGES.map(({ code }) => LANGUAGE_HREFLANGS[code] || code);
   const organizationId = `${siteUrl}/#organization`;
   const websiteId = `${languageHomeUrl}#website`;
   const graph = [
@@ -246,6 +271,7 @@ function setStructuredData({
       name: siteName,
       description,
       inLanguage: language,
+      availableLanguage,
       publisher: { '@id': organizationId },
     },
     {
@@ -269,6 +295,7 @@ function setStructuredData({
       url: siteUrl,
       description,
       areaServed: 'Worldwide',
+      availableLanguage,
       provider: { '@id': organizationId },
     });
   }
@@ -311,6 +338,7 @@ export default function SeoManager() {
 
     upsertMeta('meta[name="description"]', { name: 'description', content: page.description });
     upsertMeta('meta[name="keywords"]', { name: 'keywords', content: copy.keywords });
+    upsertMeta('meta[name="language"]', { name: 'language', content: copy.language });
     upsertMeta('meta[name="robots"]', { name: 'robots', content: robots });
     upsertMeta('meta[name="googlebot"]', { name: 'googlebot', content: robots });
     upsertMeta('meta[name="application-name"]', { name: 'application-name', content: siteName });
@@ -326,6 +354,7 @@ export default function SeoManager() {
     upsertMeta('meta[property="og:description"]', { property: 'og:description', content: page.description });
     upsertMeta('meta[property="og:url"]', { property: 'og:url', content: canonicalUrl });
     upsertMeta('meta[property="og:locale"]', { property: 'og:locale', content: copy.locale });
+    syncOgLocaleAlternates(languageKey);
 
     upsertMeta('meta[name="twitter:card"]', { name: 'twitter:card', content: logoUrl ? 'summary_large_image' : 'summary' });
     upsertMeta('meta[name="twitter:title"]', { name: 'twitter:title', content: pageTitle });
@@ -333,16 +362,20 @@ export default function SeoManager() {
 
     if (logoUrl) {
       upsertMeta('meta[property="og:image"]', { property: 'og:image', content: logoUrl });
+      upsertMeta('meta[property="og:image:alt"]', { property: 'og:image:alt', content: pageTitle });
       upsertMeta('meta[name="twitter:image"]', { name: 'twitter:image', content: logoUrl });
+      upsertMeta('meta[name="twitter:image:alt"]', { name: 'twitter:image:alt', content: pageTitle });
     } else {
       removeMeta('meta[property="og:image"]');
+      removeMeta('meta[property="og:image:alt"]');
       removeMeta('meta[name="twitter:image"]');
+      removeMeta('meta[name="twitter:image:alt"]');
     }
 
     upsertLink('canonical', canonicalUrl);
     if (indexable) {
       DIST_SITE_LANGUAGES.forEach(({ code }) => {
-        const hrefLang = code === 'zh' ? 'zh-CN' : code;
+        const hrefLang = LANGUAGE_HREFLANGS[code] || code;
         upsertAlternateLink(hrefLang, `${siteUrl}${getLocalizedPath(pathname, code)}`);
       });
       upsertAlternateLink('x-default', `${siteUrl}${getLocalizedPath(pathname, 'zh')}`);
