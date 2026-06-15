@@ -3,4 +3,4 @@ Allow: /
 Disallow: /api/
 Disallow: /v1/
 
-Sitemap: https://api-route.com/sitemap.xml
+Sitemap: https://www.api-route.com/sitemap.xml

@@ -12,6 +12,9 @@
     "nav.account": "Account",
     "nav.contact": "Contact",
     "nav.faq": "FAQ",
+    "notFound.title": "Page not found",
+    "notFound.description": "The requested page does not exist, has moved, or the address is incorrect.",
+    "notFound.backHome": "Back to home",
     "common.close": "Close",
 
     "home.heroTagline": "AI API Platform",

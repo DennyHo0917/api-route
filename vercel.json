@@ -1,7 +1,35 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/price",
+      "destination": "/pricing",
+      "permanent": true
+    },
+    {
+      "source": "/en/price",
+      "destination": "/en/pricing",
+      "permanent": true
+    },
+    {
+      "source": "/ja/price",
+      "destination": "/ja/pricing",
+      "permanent": true
+    },
+    {
+      "source": "/ko/price",
+      "destination": "/ko/pricing",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
-      "source": "/login",
+      "source": "/:path(login|register|dashboard|tokens|logs|tasks|topup|account)",
       "headers": [
         {
           "key": "X-Robots-Tag",
@@ -10,151 +38,7 @@
       ]
     },
     {
-      "source": "/register",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow, noarchive"
-        }
-      ]
-    },
-    {
-      "source": "/sub-site",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow, noarchive"
-        }
-      ]
-    },
-    {
-      "source": "/dashboard",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow, noarchive"
-        }
-      ]
-    },
-    {
-      "source": "/tokens",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow, noarchive"
-        }
-      ]
-    },
-    {
-      "source": "/logs",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow, noarchive"
-        }
-      ]
-    },
-    {
-      "source": "/tasks",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow, noarchive"
-        }
-      ]
-    },
-    {
-      "source": "/topup",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow, noarchive"
-        }
-      ]
-    },
-    {
-      "source": "/account",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow, noarchive"
-        }
-      ]
-    },
-    {
-      "source": "/en/login",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow, noarchive"
-        }
-      ]
-    },
-    {
-      "source": "/en/register",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow, noarchive"
-        }
-      ]
-    },
-    {
-      "source": "/en/sub-site",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow, noarchive"
-        }
-      ]
-    },
-    {
-      "source": "/en/dashboard",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow, noarchive"
-        }
-      ]
-    },
-    {
-      "source": "/en/tokens",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow, noarchive"
-        }
-      ]
-    },
-    {
-      "source": "/en/logs",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow, noarchive"
-        }
-      ]
-    },
-    {
-      "source": "/en/tasks",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow, noarchive"
-        }
-      ]
-    },
-    {
-      "source": "/en/topup",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow, noarchive"
-        }
-      ]
-    },
-    {
-      "source": "/en/account",
+      "source": "/:lang(en|ja|ko)/:path(login|register|dashboard|tokens|logs|tasks|topup|account)",
       "headers": [
         {
           "key": "X-Robots-Tag",
@@ -173,7 +57,11 @@
       "destination": "https://apiroute.subrouter.ai/v1/:path*"
     },
     {
-      "source": "/(.*)",
+      "source": "/:path(login|register|dashboard|tokens|logs|tasks|topup|account)",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/:lang(en|ja|ko)/:path(login|register|dashboard|tokens|logs|tasks|topup|account)",
       "destination": "/index.html"
     }
   ]

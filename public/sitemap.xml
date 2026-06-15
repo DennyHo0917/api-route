@@ -4,242 +4,242 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml"
 >
   <url>
-    <loc>https://api-route.com/</loc>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://api-route.com/ja/" />
-    <xhtml:link rel="alternate" hreflang="ko" href="https://api-route.com/ko/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/" />
+    <loc>https://www.api-route.com/</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/en/" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/" />
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://api-route.com/en/</loc>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://api-route.com/ja/" />
-    <xhtml:link rel="alternate" hreflang="ko" href="https://api-route.com/ko/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/" />
+    <loc>https://www.api-route.com/en/</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/en/" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/" />
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://api-route.com/ja/</loc>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://api-route.com/ja/" />
-    <xhtml:link rel="alternate" hreflang="ko" href="https://api-route.com/ko/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/" />
+    <loc>https://www.api-route.com/ja/</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/en/" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/" />
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://api-route.com/ko/</loc>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://api-route.com/ja/" />
-    <xhtml:link rel="alternate" hreflang="ko" href="https://api-route.com/ko/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/" />
+    <loc>https://www.api-route.com/ko/</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/en/" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/" />
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://api-route.com/pricing</loc>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/pricing" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/pricing" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://api-route.com/ja/pricing" />
-    <xhtml:link rel="alternate" hreflang="ko" href="https://api-route.com/ko/pricing" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/pricing" />
+    <loc>https://www.api-route.com/pricing</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/pricing" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/en/pricing" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/pricing" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/pricing" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/pricing" />
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://api-route.com/en/pricing</loc>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/pricing" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/pricing" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://api-route.com/ja/pricing" />
-    <xhtml:link rel="alternate" hreflang="ko" href="https://api-route.com/ko/pricing" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/pricing" />
+    <loc>https://www.api-route.com/en/pricing</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/pricing" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/en/pricing" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/pricing" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/pricing" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/pricing" />
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://api-route.com/ja/pricing</loc>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/pricing" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/pricing" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://api-route.com/ja/pricing" />
-    <xhtml:link rel="alternate" hreflang="ko" href="https://api-route.com/ko/pricing" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/pricing" />
+    <loc>https://www.api-route.com/ja/pricing</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/pricing" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/en/pricing" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/pricing" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/pricing" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/pricing" />
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://api-route.com/ko/pricing</loc>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/pricing" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/pricing" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://api-route.com/ja/pricing" />
-    <xhtml:link rel="alternate" hreflang="ko" href="https://api-route.com/ko/pricing" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/pricing" />
+    <loc>https://www.api-route.com/ko/pricing</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/pricing" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/en/pricing" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/pricing" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/pricing" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/pricing" />
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://api-route.com/packages</loc>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/packages" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/packages" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://api-route.com/ja/packages" />
-    <xhtml:link rel="alternate" hreflang="ko" href="https://api-route.com/ko/packages" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/packages" />
+    <loc>https://www.api-route.com/packages</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/packages" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/en/packages" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/packages" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/packages" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/packages" />
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://api-route.com/en/packages</loc>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/packages" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/packages" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://api-route.com/ja/packages" />
-    <xhtml:link rel="alternate" hreflang="ko" href="https://api-route.com/ko/packages" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/packages" />
+    <loc>https://www.api-route.com/en/packages</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/packages" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/en/packages" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/packages" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/packages" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/packages" />
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://api-route.com/ja/packages</loc>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/packages" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/packages" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://api-route.com/ja/packages" />
-    <xhtml:link rel="alternate" hreflang="ko" href="https://api-route.com/ko/packages" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/packages" />
+    <loc>https://www.api-route.com/ja/packages</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/packages" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/en/packages" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/packages" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/packages" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/packages" />
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://api-route.com/ko/packages</loc>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/packages" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/packages" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://api-route.com/ja/packages" />
-    <xhtml:link rel="alternate" hreflang="ko" href="https://api-route.com/ko/packages" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/packages" />
+    <loc>https://www.api-route.com/ko/packages</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/packages" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/en/packages" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/packages" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/packages" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/packages" />
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://api-route.com/apps</loc>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/apps" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/apps" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://api-route.com/ja/apps" />
-    <xhtml:link rel="alternate" hreflang="ko" href="https://api-route.com/ko/apps" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/apps" />
+    <loc>https://www.api-route.com/apps</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/apps" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/en/apps" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/apps" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/apps" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/apps" />
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://api-route.com/en/apps</loc>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/apps" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/apps" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://api-route.com/ja/apps" />
-    <xhtml:link rel="alternate" hreflang="ko" href="https://api-route.com/ko/apps" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/apps" />
+    <loc>https://www.api-route.com/en/apps</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/apps" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/en/apps" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/apps" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/apps" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/apps" />
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://api-route.com/ja/apps</loc>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/apps" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/apps" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://api-route.com/ja/apps" />
-    <xhtml:link rel="alternate" hreflang="ko" href="https://api-route.com/ko/apps" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/apps" />
+    <loc>https://www.api-route.com/ja/apps</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/apps" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/en/apps" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/apps" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/apps" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/apps" />
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://api-route.com/ko/apps</loc>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/apps" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/apps" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://api-route.com/ja/apps" />
-    <xhtml:link rel="alternate" hreflang="ko" href="https://api-route.com/ko/apps" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/apps" />
+    <loc>https://www.api-route.com/ko/apps</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/apps" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/en/apps" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/apps" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/apps" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/apps" />
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://api-route.com/sub-site</loc>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/sub-site" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/sub-site" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://api-route.com/ja/sub-site" />
-    <xhtml:link rel="alternate" hreflang="ko" href="https://api-route.com/ko/sub-site" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/sub-site" />
+    <loc>https://www.api-route.com/sub-site</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/sub-site" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/en/sub-site" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/sub-site" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/sub-site" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/sub-site" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://api-route.com/en/sub-site</loc>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/sub-site" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/sub-site" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://api-route.com/ja/sub-site" />
-    <xhtml:link rel="alternate" hreflang="ko" href="https://api-route.com/ko/sub-site" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/sub-site" />
+    <loc>https://www.api-route.com/en/sub-site</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/sub-site" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/en/sub-site" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/sub-site" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/sub-site" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/sub-site" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://api-route.com/ja/sub-site</loc>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/sub-site" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/sub-site" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://api-route.com/ja/sub-site" />
-    <xhtml:link rel="alternate" hreflang="ko" href="https://api-route.com/ko/sub-site" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/sub-site" />
+    <loc>https://www.api-route.com/ja/sub-site</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/sub-site" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/en/sub-site" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/sub-site" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/sub-site" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/sub-site" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://api-route.com/ko/sub-site</loc>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/sub-site" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/sub-site" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://api-route.com/ja/sub-site" />
-    <xhtml:link rel="alternate" hreflang="ko" href="https://api-route.com/ko/sub-site" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/sub-site" />
+    <loc>https://www.api-route.com/ko/sub-site</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/sub-site" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/en/sub-site" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/sub-site" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/sub-site" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/sub-site" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://api-route.com/faq</loc>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/faq" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/faq" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://api-route.com/ja/faq" />
-    <xhtml:link rel="alternate" hreflang="ko" href="https://api-route.com/ko/faq" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/faq" />
+    <loc>https://www.api-route.com/faq</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/faq" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/en/faq" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/faq" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/faq" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/faq" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://api-route.com/en/faq</loc>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/faq" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/faq" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://api-route.com/ja/faq" />
-    <xhtml:link rel="alternate" hreflang="ko" href="https://api-route.com/ko/faq" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/faq" />
+    <loc>https://www.api-route.com/en/faq</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/faq" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/en/faq" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/faq" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/faq" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/faq" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://api-route.com/ja/faq</loc>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/faq" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/faq" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://api-route.com/ja/faq" />
-    <xhtml:link rel="alternate" hreflang="ko" href="https://api-route.com/ko/faq" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/faq" />
+    <loc>https://www.api-route.com/ja/faq</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/faq" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/en/faq" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/faq" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/faq" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/faq" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://api-route.com/ko/faq</loc>
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://api-route.com/faq" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://api-route.com/en/faq" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://api-route.com/ja/faq" />
-    <xhtml:link rel="alternate" hreflang="ko" href="https://api-route.com/ko/faq" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://api-route.com/faq" />
+    <loc>https://www.api-route.com/ko/faq</loc>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/faq" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/en/faq" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/faq" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/faq" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/faq" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

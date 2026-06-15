@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import AuthGuard from './components/AuthGuard';
 import NotificationBell from './components/NotificationBell';
 import SeoManager from './components/SeoManager';
@@ -18,6 +18,7 @@ const Logs = lazy(() => import('./pages/Logs'));
 const Tasks = lazy(() => import('./pages/Tasks'));
 const SubDistributor = lazy(() => import('./pages/SubDistributor'));
 const Account = lazy(() => import('./pages/Account'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 const Loading = () => (
   <div className="flex items-center justify-center min-h-screen" style={{ background: 'var(--page-bg)' }}>
@@ -54,7 +55,9 @@ function ThemedRoutes() {
           </Route>
         </Route>
 
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route element={<Layout />}>
+          <Route path="*" element={<NotFound />} />
+        </Route>
       </Routes>
       <NotificationBell />
     </Suspense>

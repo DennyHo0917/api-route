@@ -4,8 +4,9 @@ import { useLocation } from 'react-router-dom';
 import { useSite } from '../context/SiteContext';
 import { DIST_SITE_LANGUAGES, getLocalizedPath, normalizeAppLanguage } from '../i18n/languageUtils';
 
-const DEFAULT_SITE_URL = 'https://api-route.com';
+const DEFAULT_SITE_URL = 'https://www.api-route.com';
 const INDEXABLE_PATHS = new Set(['/', '/pricing', '/packages', '/apps', '/sub-site', '/faq']);
+const PRIVATE_PATHS = new Set(['/login', '/register', '/dashboard', '/tokens', '/logs', '/tasks', '/topup', '/account']);
 const LANGUAGE_HREFLANGS = {
   zh: 'zh-CN',
   en: 'en',
@@ -58,6 +59,10 @@ const SEO_COPY = {
       title: '用户中心',
       description: 'API-Route 用户中心。',
     },
+    notFound: {
+      title: '页面不存在',
+      description: '你访问的页面不存在、已被移动或地址有误。',
+    },
     keywords: 'AI API,API 聚合,OpenAI 兼容接口,大模型 API,多模型 API,模型中转,API-Route',
     locale: 'zh_CN',
     language: 'zh-CN',
@@ -100,6 +105,10 @@ const SEO_COPY = {
     private: {
       title: 'Account',
       description: 'API-Route account area.',
+    },
+    notFound: {
+      title: 'Page Not Found',
+      description: 'The requested page does not exist, has moved, or the address is incorrect.',
     },
     keywords: 'AI API,API aggregation,OpenAI compatible API,LLM API,multi-model API,API-Route',
     locale: 'en_US',
@@ -144,6 +153,10 @@ const SEO_COPY = {
       title: 'アカウント',
       description: 'API-Route アカウント管理エリア。',
     },
+    notFound: {
+      title: 'ページが見つかりません',
+      description: '指定されたページは存在しないか、移動された可能性があります。',
+    },
     keywords: 'AI API,API 集約,OpenAI 互換 API,LLM API,マルチモデル API,API-Route',
     locale: 'ja_JP',
     language: 'ja',
@@ -187,6 +200,10 @@ const SEO_COPY = {
       title: '계정',
       description: 'API-Route 계정 관리 영역.',
     },
+    notFound: {
+      title: '페이지를 찾을 수 없습니다',
+      description: '요청한 페이지가 없거나 이동되었거나 주소가 잘못되었습니다.',
+    },
     keywords: 'AI API,API 집약,OpenAI 호환 API,LLM API,멀티 모델 API,API-Route',
     locale: 'ko_KR',
     language: 'ko',
@@ -209,7 +226,9 @@ function getSiteUrl() {
   const configured = String(import.meta.env.VITE_PUBLIC_SITE_URL || '').trim();
   const candidate = configured || DEFAULT_SITE_URL;
   try {
-    return new URL(candidate).origin;
+    const url = new URL(candidate);
+    if (url.hostname === 'api-route.com') url.hostname = 'www.api-route.com';
+    return url.origin;
   } catch {
     return DEFAULT_SITE_URL;
   }
@@ -393,7 +412,8 @@ export default function SeoManager() {
     const pathname = normalizePath(location.pathname);
     const languageKey = normalizeAppLanguage(i18n.resolvedLanguage);
     const copy = SEO_COPY[languageKey];
-    const page = getPageCopy(pathname, copy);
+    const knownPath = INDEXABLE_PATHS.has(pathname) || PRIVATE_PATHS.has(pathname);
+    const page = knownPath ? getPageCopy(pathname, copy) : copy.notFound;
     const siteName = normalizeSiteName(site?.name);
     const siteUrl = getSiteUrl();
     const canonicalPath = getLocalizedPath(pathname, languageKey);
@@ -445,7 +465,11 @@ export default function SeoManager() {
       removeMeta('meta[name="twitter:image:alt"]');
     }
 
-    upsertLink('canonical', canonicalUrl);
+    if (knownPath) {
+      upsertLink('canonical', canonicalUrl);
+    } else {
+      document.head.querySelector('link[rel="canonical"]')?.remove();
+    }
     if (indexable) {
       DIST_SITE_LANGUAGES.forEach(({ code }) => {
         const hrefLang = LANGUAGE_HREFLANGS[code] || code;

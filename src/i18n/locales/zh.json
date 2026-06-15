@@ -12,6 +12,9 @@
     "nav.account": "账户",
     "nav.contact": "联系我们",
     "nav.faq": "常见问题",
+    "notFound.title": "页面不存在",
+    "notFound.description": "你访问的页面不存在、已被移动或地址有误。",
+    "notFound.backHome": "返回首页",
     "common.close": "关闭",
 
     "home.heroTagline": "AI API 平台",
