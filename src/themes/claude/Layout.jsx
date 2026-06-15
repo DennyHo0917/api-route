@@ -225,8 +225,7 @@ export default function ClaudeLayout() {
             <p className="mt-1 text-sm text-[#8B7D6E]">One API for the models you use.</p>
           </div>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-[#766657]">
-            <Link to="/pricing" className="hover:text-[#D97757]">{t('nav.pricing')}</Link>
-            <Link to="/packages" className="hover:text-[#D97757]">{t('nav.packages')}</Link>
+            <Link to="/apps" className="hover:text-[#D97757]">{t('nav.apps')}</Link>
             <Link to="/faq" className="hover:text-[#D97757]">{t('nav.faq')}</Link>
             {supportLink && (
               <a

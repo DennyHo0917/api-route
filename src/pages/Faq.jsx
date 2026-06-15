@@ -52,6 +52,18 @@ const FAQ_COPY = {
             answer: '应用市场会列出当前推荐的客户端和内置应用。只要客户端支持自定义 OpenAI-compatible Base URL 和 API Key，通常都可以接入本站。',
           },
           {
+            question: '如何在 VSCode 中配置 API-Route 并使用 gpt5.5？',
+            answer: '推荐使用 cc switch 一键导入配置。以 gpt5.5 为例，在 cc switch 中模型选择 gpt5.5，工具选择 cursor，导入目标选择 codex，然后执行导入。导入后在 VSCode 对应的 AI/Codex 配置中使用该模型和 API-Route 的密钥即可。',
+          },
+          {
+            question: '如何给 Codex app 配置 API-Route？',
+            answer: '先在本站创建 API Key，并确认 API 调用地址。然后通过 cc switch 选择要使用的模型，导入目标选择 codex，一键写入配置。完成后在 Codex app 中确认模型名称、Base URL 和密钥对应即可开始调用。',
+          },
+          {
+            question: 'Claude Code 如何配置 API-Route？',
+            answer: 'Claude Code 的关键是让客户端使用 API-Route 提供的 Base URL、API Key 和模型名称。你可以手动填入这些信息，也可以用 cc switch 生成并导入配置，减少模型名、密钥和端点填错的概率。',
+          },
+          {
             question: 'API Key 是否安全？',
             answer: '请只在你信任的客户端中保存 API Key。创建后如果怀疑泄露，可以在 API 密钥页面禁用或删除旧密钥，再创建新的密钥继续使用。',
           },
@@ -128,6 +140,18 @@ const FAQ_COPY = {
           {
             question: 'Which clients or apps can I use?',
             answer: 'The App Market lists recommended clients and built-in apps. In general, any client that supports a custom OpenAI-compatible Base URL and API key can connect to this site.',
+          },
+          {
+            question: 'How do I configure API-Route in VSCode and use gpt5.5?',
+            answer: 'We recommend using cc switch for one-click import. For example, to use gpt5.5 in VSCode, select gpt5.5 as the model in cc switch, choose cursor as the tool, set the import target to codex, then import the configuration. After that, use the imported API-Route profile in your VSCode AI/Codex setup.',
+          },
+          {
+            question: 'How do I configure API-Route for the Codex app?',
+            answer: 'Create an API key on this site and confirm the API endpoint first. In cc switch, choose the model you want to use and set the import target to codex. After import, check that the Codex app is using the expected model name, Base URL, and API key.',
+          },
+          {
+            question: 'How do I configure Claude Code with API-Route?',
+            answer: 'Claude Code needs the API-Route Base URL, API key, and model name. You can enter them manually, or use cc switch to generate and import the configuration so the endpoint, key, and model are less likely to be mistyped.',
           },
           {
             question: 'How should I protect my API key?',
@@ -208,6 +232,18 @@ const FAQ_COPY = {
             answer: 'アプリページには推奨クライアントと連携アプリを掲載しています。カスタムの OpenAI 互換 Base URL と API キーを設定できるクライアントなら、多くの場合そのまま接続できます。',
           },
           {
+            question: 'VSCode で API-Route を設定し、gpt5.5 を使うには？',
+            answer: 'cc switch のワンクリック取り込みをおすすめします。gpt5.5 を使う場合は、cc switch でモデルに gpt5.5、ツールに cursor、取り込み先に codex を選び、設定を取り込みます。その後、VSCode 側の AI/Codex 設定で取り込まれた API-Route プロファイルを使います。',
+          },
+          {
+            question: 'Codex app に API-Route を設定するには？',
+            answer: 'まずこのサイトで API キーを作成し、API エンドポイントを確認します。cc switch で利用したいモデルを選び、取り込み先を codex にして設定を取り込みます。完了後、Codex app 側でモデル名、Base URL、API キーが想定どおりか確認してください。',
+          },
+          {
+            question: 'Claude Code で API-Route を使うには？',
+            answer: 'Claude Code では API-Route の Base URL、API キー、モデル名を設定します。手動で入力することもできますが、cc switch で設定を生成して取り込むと、端点・キー・モデル名の入力ミスを減らせます。',
+          },
+          {
             question: 'API キーはどのように管理すべきですか？',
             answer: 'API キーは信頼できるクライアントにだけ保存してください。漏えいが疑われる場合は、API キー画面で古いキーを無効化または削除し、新しいキーを作成します。',
           },
@@ -284,6 +320,18 @@ const FAQ_COPY = {
           {
             question: '어떤 클라이언트나 앱을 사용할 수 있나요?',
             answer: '앱 페이지에서 추천 클라이언트와 연동 앱을 확인할 수 있습니다. 사용자 지정 OpenAI 호환 Base URL과 API 키를 지원하는 클라이언트라면 대부분 연결할 수 있습니다.',
+          },
+          {
+            question: 'VSCode에서 API-Route를 설정하고 gpt5.5를 사용하려면 어떻게 하나요?',
+            answer: 'cc switch의 원클릭 가져오기를 권장합니다. gpt5.5를 예로 들면 cc switch에서 모델은 gpt5.5, 도구는 cursor, 가져오기 대상은 codex로 선택한 뒤 설정을 가져오세요. 이후 VSCode의 AI/Codex 설정에서 가져온 API-Route 프로필을 사용하면 됩니다.',
+          },
+          {
+            question: 'Codex app에 API-Route를 설정하려면 어떻게 하나요?',
+            answer: '먼저 이 사이트에서 API 키를 만들고 API 엔드포인트를 확인하세요. cc switch에서 사용할 모델을 고르고 가져오기 대상을 codex로 선택해 설정을 가져옵니다. 완료 후 Codex app에서 모델명, Base URL, API 키가 맞는지 확인하세요.',
+          },
+          {
+            question: 'Claude Code에서 API-Route를 사용하려면 어떻게 설정하나요?',
+            answer: 'Claude Code에는 API-Route의 Base URL, API 키, 모델명을 설정해야 합니다. 직접 입력할 수도 있지만 cc switch로 설정을 생성하고 가져오면 엔드포인트, 키, 모델명을 잘못 입력할 가능성을 줄일 수 있습니다.',
           },
           {
             question: 'API 키는 어떻게 보호해야 하나요?',

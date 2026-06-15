@@ -132,6 +132,9 @@ export default function CleanLayout() {
         <div className="max-w-6xl mx-auto px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-gray-400">&copy; {new Date().getFullYear()} {siteName}.</p>
           <div className="flex items-center gap-4">
+            <Link to="/apps" className="text-sm text-gray-400 hover:text-gray-600 transition-colors">
+              {t('nav.apps')}
+            </Link>
             <Link to="/faq" className="text-sm text-gray-400 hover:text-gray-600 transition-colors">
               {t('nav.faq')}
             </Link>

@@ -220,6 +220,7 @@ export default function BrandLayout({ variant }) {
         <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-8 text-sm opacity-70 sm:px-6 md:flex-row md:items-center md:justify-between">
           <p>&copy; {new Date().getFullYear()} {siteName}</p>
           <div className="flex flex-wrap items-center gap-4">
+            <Link to="/apps" className="font-semibold hover:opacity-100">{t('nav.apps')}</Link>
             <Link to="/faq" className="font-semibold hover:opacity-100">{t('nav.faq')}</Link>
             {site?.contact_email && (
               <a href={`mailto:${site.contact_email}`} className="font-semibold hover:opacity-100">

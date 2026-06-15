@@ -95,6 +95,43 @@ export default function ClaudeHome() {
       description: t('home.stepCreateKeyDesc'),
     },
   ];
+  const audienceCards = [
+    {
+      icon: Braces,
+      title: t('home.audienceDevelopersTitle'),
+      description: t('home.audienceDevelopersDesc'),
+      to: '/pricing',
+      linkLabel: t('home.audiencePricingLink'),
+    },
+    {
+      icon: Layers3,
+      title: t('home.audienceSaasTitle'),
+      description: t('home.audienceSaasDesc'),
+      to: '/pricing',
+      linkLabel: t('home.audiencePricingLink'),
+    },
+    {
+      icon: KeyRound,
+      title: t('home.audienceCodingToolsTitle'),
+      description: t('home.audienceCodingToolsDesc'),
+      to: '/faq',
+      linkLabel: t('home.audienceSetupLink'),
+    },
+    {
+      icon: Sparkles,
+      title: t('home.audienceCreatorsTitle'),
+      description: t('home.audienceCreatorsDesc'),
+      to: '/apps',
+      linkLabel: t('home.audienceAppsLink'),
+    },
+    {
+      icon: ShieldCheck,
+      title: t('home.audienceRelayTitle'),
+      description: t('home.audienceRelayDesc'),
+      to: '/sub-site',
+      linkLabel: t('home.audienceRelayLink'),
+    },
+  ];
 
   return (
     <div className="overflow-hidden">
@@ -213,6 +250,42 @@ export default function ClaudeHome() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-5 py-14 md:px-8 md:py-20">
+        <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="route-kicker">{t('home.audienceEyebrow')}</p>
+            <h2 className="route-section-title">{t('home.audienceTitle')}</h2>
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-[#7D6B5B] md:text-base">
+              {t('home.audienceSubtitle')}
+            </p>
+          </div>
+          <Link to="/faq" className="inline-flex items-center gap-2 text-sm font-semibold text-[#C56547] hover:text-[#A84F34]">
+            {t('nav.faq')}
+            <ArrowRight size={15} />
+          </Link>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+          {audienceCards.map(({ icon: Icon, title, description, to, linkLabel }) => (
+            <Link
+              key={title}
+              to={to}
+              className="group flex min-h-[210px] flex-col rounded-[22px] border border-[#E5D7CB] bg-white/65 p-5 shadow-[0_14px_40px_rgba(82,61,43,0.04)] transition-all hover:-translate-y-0.5 hover:border-[#D8BBA7] hover:bg-white"
+            >
+              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#D97757]/10 text-[#C56547]">
+                <Icon size={20} />
+              </span>
+              <h3 className="mt-5 text-base font-semibold leading-6 text-[#3D3024]">{title}</h3>
+              <p className="mt-2 flex-1 text-sm leading-6 text-[#7D6B5B]">{description}</p>
+              <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-[#C56547] group-hover:text-[#A84F34]">
+                {linkLabel}
+                <ArrowRight size={14} />
+              </span>
+            </Link>
+          ))}
         </div>
       </section>
 
