@@ -29,7 +29,7 @@
   ],
   "headers": [
     {
-      "source": "/:path(login|register|dashboard|tokens|logs|tasks|topup|account)",
+      "source": "/(login|register|dashboard|tokens|logs|tasks|topup|account)",
       "headers": [
         {
           "key": "X-Robots-Tag",
@@ -38,7 +38,7 @@
       ]
     },
     {
-      "source": "/:lang(en|ja|ko)/:path(login|register|dashboard|tokens|logs|tasks|topup|account)",
+      "source": "/(en|ja|ko)/(login|register|dashboard|tokens|logs|tasks|topup|account)",
       "headers": [
         {
           "key": "X-Robots-Tag",
@@ -57,11 +57,11 @@
       "destination": "https://apiroute.subrouter.ai/v1/:path*"
     },
     {
-      "source": "/:path(login|register|dashboard|tokens|logs|tasks|topup|account)",
+      "source": "/(login|register|dashboard|tokens|logs|tasks|topup|account)",
       "destination": "/index.html"
     },
     {
-      "source": "/:lang(en|ja|ko)/:path(login|register|dashboard|tokens|logs|tasks|topup|account)",
+      "source": "/(en|ja|ko)/(login|register|dashboard|tokens|logs|tasks|topup|account)",
       "destination": "/index.html"
     }
   ]
