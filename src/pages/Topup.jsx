@@ -127,6 +127,7 @@ export default function Topup() {
   // Redeem code
   const [redeemInput, setRedeemInput] = useState('');
   const [redeeming, setRedeeming] = useState(false);
+  const [redeemMode, setRedeemMode] = useState('package');
   const [packages, setPackages] = useState([]);
   const [selectedPackageId, setSelectedPackageId] = useState('');
   const [pendingPackage, setPendingPackage] = useState(null);
@@ -180,8 +181,13 @@ export default function Topup() {
   useEffect(() => { loadData(); }, [loadData]);
 
   useEffect(() => {
-    const queryPackageId = new URLSearchParams(window.location.search).get('package_id');
+    const searchParams = new URLSearchParams(window.location.search);
+    const queryPackageId = searchParams.get('package_id');
+    if (searchParams.get('mode') === 'balance') {
+      setRedeemMode('balance');
+    }
     if (queryPackageId && /^\d+$/.test(queryPackageId)) {
+      setRedeemMode('package');
       setSelectedPackageId(queryPackageId);
     }
 
@@ -271,11 +277,11 @@ export default function Topup() {
     [packages, selectedPackageId],
   );
 
-  // Redeem the code, then immediately spend the credited amount on its package.
+  // Balance mode stops after crediting; package mode immediately subscribes.
   const handleRedeem = async (e) => {
     e.preventDefault();
     if (!redeemInput.trim()) return;
-    if (!selectedPackage) {
+    if (redeemMode === 'package' && !selectedPackage) {
       toast.error(t('topup.choosePackage'));
       return;
     }
@@ -286,6 +292,16 @@ export default function Topup() {
       const res = await redeemCode(redeemInput.trim());
       if (res.data.success) {
         setRedeemInput('');
+        if (redeemMode === 'balance') {
+          await Promise.all([
+            loadData(),
+            refreshUser({ skipErrorHandler: true }),
+          ]);
+          toast.success(t('topup.balanceRedeemed'));
+          setRedeeming(false);
+          return;
+        }
+
         const afterUser = await refreshUser({ skipErrorHandler: true }).catch(() => null);
         const beforeQuota = Number(beforeUser?.quota);
         const afterQuota = Number(afterUser?.quota);
@@ -597,6 +613,42 @@ export default function Topup() {
     }
     return methods;
   }, [payMethods, enableCreem, creemProducts, creemMinTopup]);
+
+  const redeemSteps = redeemMode === 'balance'
+    ? [
+      {
+        icon: ShoppingBag,
+        title: t('topup.balanceStepBuyTitle'),
+        description: t('topup.balanceStepBuyDesc'),
+      },
+      {
+        icon: TicketCheck,
+        title: t('topup.balanceStepRedeemTitle'),
+        description: t('topup.balanceStepRedeemDesc'),
+      },
+      {
+        icon: WalletCards,
+        title: t('topup.balanceStepCreditTitle'),
+        description: t('topup.balanceStepCreditDesc'),
+      },
+    ]
+    : [
+      {
+        icon: ShoppingBag,
+        title: t('topup.stepBuyTitle'),
+        description: t('topup.stepBuyDesc'),
+      },
+      {
+        icon: TicketCheck,
+        title: t('topup.stepRedeemTitle'),
+        description: t('topup.stepRedeemDesc'),
+      },
+      {
+        icon: KeyRound,
+        title: t('topup.stepActivateTitle'),
+        description: t('topup.stepActivateDesc'),
+      },
+    ];
 
   if (loading) {
     return (
@@ -943,7 +995,9 @@ export default function Topup() {
                   {t('topup.redeemTitle')}
                 </span>
                 <h2 className="mt-4 text-2xl font-semibold tracking-tight text-[#3D3024]">
-                  {t('topup.redeemHeading')}
+                  {redeemMode === 'balance'
+                    ? t('topup.redeemBalanceHeading')
+                    : t('topup.redeemHeading')}
                 </h2>
                 <p className="mt-2 max-w-xl text-sm leading-6 text-[#806D5D]">
                   {redeemCodeShopUrl ? t('topup.redeemShopHint') : t('topup.redeemHint')}
@@ -963,7 +1017,7 @@ export default function Topup() {
               )}
             </div>
 
-            {pendingPackage && (
+            {redeemMode === 'package' && pendingPackage && (
               <div className="mt-5 rounded-2xl border border-amber-500/25 bg-amber-500/10 p-4">
                 <p className="text-sm text-page-warning">
                   {t('topup.pendingPackageActivation', {
@@ -981,7 +1035,51 @@ export default function Topup() {
               </div>
             )}
 
-            {selectedPackage && (
+            <div className="mt-6">
+              <p className="mb-2 text-xs font-medium text-[#766657]">
+                {t('topup.redeemModeLabel')}
+              </p>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={() => setRedeemMode('package')}
+                  disabled={redeeming}
+                  className={`rounded-2xl border p-4 text-left transition-colors ${
+                    redeemMode === 'package'
+                      ? 'border-[#D97757] bg-[#FFF3EB]'
+                      : 'border-[#E5D4C6] bg-white/70 hover:border-[#D8BBA7]'
+                  }`}
+                >
+                  <span className="flex items-center gap-2 text-sm font-semibold text-[#3D3024]">
+                    <TicketCheck size={17} className="text-[#C56547]" />
+                    {t('topup.packageMode')}
+                  </span>
+                  <span className="mt-2 block text-xs leading-5 text-[#806D5D]">
+                    {t('topup.packageModeDesc')}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRedeemMode('balance')}
+                  disabled={redeeming}
+                  className={`rounded-2xl border p-4 text-left transition-colors ${
+                    redeemMode === 'balance'
+                      ? 'border-[#D97757] bg-[#FFF3EB]'
+                      : 'border-[#E5D4C6] bg-white/70 hover:border-[#D8BBA7]'
+                  }`}
+                >
+                  <span className="flex items-center gap-2 text-sm font-semibold text-[#3D3024]">
+                    <WalletCards size={17} className="text-[#C56547]" />
+                    {t('topup.balanceMode')}
+                  </span>
+                  <span className="mt-2 block text-xs leading-5 text-[#806D5D]">
+                    {t('topup.balanceModeDesc')}
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            {redeemMode === 'package' && selectedPackage && (
               <div className="mt-6 flex items-center justify-between rounded-2xl border border-[#E5D4C6] bg-[#FFF7F1] px-4 py-3">
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#A9826B]">
@@ -998,24 +1096,26 @@ export default function Topup() {
             )}
 
             <form onSubmit={handleRedeem} className="mt-6 space-y-3">
-              <label className="block">
-                <span className="mb-2 block text-xs font-medium text-[#766657]">
-                  {t('topup.choosePackage')}
-                </span>
-                <select
-                  value={selectedPackageId}
-                  onChange={(e) => setSelectedPackageId(e.target.value)}
-                  className="package-redeem-select input h-12"
-                  disabled={redeeming}
-                >
-                  <option value="">{t('topup.choosePackage')}</option>
-                  {packages.map((pkg) => (
-                    <option key={pkg.id} value={pkg.id}>
-                      {getLocalizedPackageName(pkg, t, i18n.resolvedLanguage)} - {symbol}{Number(pkg.price).toFixed(2)}
-                    </option>
-                  ))}
-                </select>
-              </label>
+              {redeemMode === 'package' && (
+                <label className="block">
+                  <span className="mb-2 block text-xs font-medium text-[#766657]">
+                    {t('topup.choosePackage')}
+                  </span>
+                  <select
+                    value={selectedPackageId}
+                    onChange={(e) => setSelectedPackageId(e.target.value)}
+                    className="package-redeem-select input h-12"
+                    disabled={redeeming}
+                  >
+                    <option value="">{t('topup.choosePackage')}</option>
+                    {packages.map((pkg) => (
+                      <option key={pkg.id} value={pkg.id}>
+                        {getLocalizedPackageName(pkg, t, i18n.resolvedLanguage)} - {symbol}{Number(pkg.price).toFixed(2)}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
               <label className="block">
                 <span className="mb-2 block text-xs font-medium text-[#766657]">
                   {t('topup.enterRedeemCode')}
@@ -1034,7 +1134,11 @@ export default function Topup() {
                 className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[#D97757] px-5 text-sm font-semibold text-white transition-colors hover:bg-[#E38969] disabled:opacity-50"
               >
                 <TicketPercent size={17} />
-                {redeeming ? t('topup.activatingPackage') : t('topup.redeemPackage')}
+                {redeeming
+                  ? t('topup.redeeming')
+                  : redeemMode === 'balance'
+                    ? t('topup.redeemBalance')
+                    : t('topup.redeemPackage')}
                 {!redeeming && <ArrowRight size={16} />}
               </button>
             </form>
@@ -1045,23 +1149,7 @@ export default function Topup() {
               {t('topup.stepsTitle')}
             </p>
             <div className="mt-6 space-y-6">
-              {[
-                {
-                  icon: ShoppingBag,
-                  title: t('topup.stepBuyTitle'),
-                  description: t('topup.stepBuyDesc'),
-                },
-                {
-                  icon: TicketCheck,
-                  title: t('topup.stepRedeemTitle'),
-                  description: t('topup.stepRedeemDesc'),
-                },
-                {
-                  icon: KeyRound,
-                  title: t('topup.stepActivateTitle'),
-                  description: t('topup.stepActivateDesc'),
-                },
-              ].map(({ icon: Icon, title, description }, index) => (
+              {redeemSteps.map(({ icon: Icon, title, description }, index) => (
                 <div key={title} className="flex gap-4">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-[#E4CFC0] bg-white/70 text-[#C56547]">
                     <Icon size={18} />
@@ -1080,10 +1168,14 @@ export default function Topup() {
             <div className="mt-8 rounded-2xl border border-[#E2CDBE] bg-white/65 p-4">
               <div className="flex items-center gap-2 text-sm font-semibold text-[#3D3024]">
                 <CheckCircle2 size={17} className="text-[#C56547]" />
-                {t('topup.automaticActivation')}
+                {redeemMode === 'balance'
+                  ? t('topup.balanceDirectCredit')
+                  : t('topup.automaticActivation')}
               </div>
               <p className="mt-2 text-xs leading-5 text-[#806D5D]">
-                {t('topup.automaticActivationDesc')}
+                {redeemMode === 'balance'
+                  ? t('topup.balanceDirectCreditDesc')
+                  : t('topup.automaticActivationDesc')}
               </p>
             </div>
 
