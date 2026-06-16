@@ -1,8 +1,12 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { FAQ_COPY } from '../src/content/faqCopy.js';
 
 const SITE_URL = 'https://www.api-route.com';
+const DEFAULT_OG_IMAGE_URL = 'https://img.api-route.com/3.png';
+const DEFAULT_OG_IMAGE_WIDTH = '157';
+const DEFAULT_OG_IMAGE_HEIGHT = '148';
 const DIST_DIR = new URL('../dist/', import.meta.url);
 const TEMPLATE_PATH = new URL('index.html', DIST_DIR);
 
@@ -12,6 +16,25 @@ const languages = {
   ja: { prefix: '/ja', hrefLang: 'ja', htmlLang: 'ja', locale: 'ja_JP' },
   ko: { prefix: '/ko', hrefLang: 'ko', htmlLang: 'ko', locale: 'ko_KR' },
 };
+
+const getFaqCopy = (language) => FAQ_COPY[language] || FAQ_COPY.en;
+const faqPrerenderCopy = Object.fromEntries(
+  Object.keys(languages).map((language) => {
+    const copy = getFaqCopy(language);
+    return [language, [copy.title, copy.subtitle]];
+  }),
+);
+const faqPrerenderQuestions = Object.fromEntries(
+  Object.keys(languages).map((language) => {
+    const copy = getFaqCopy(language);
+    return [
+      language,
+      copy.sections.flatMap((section) => (
+        section.items.map((item) => [item.question, item.answer])
+      )),
+    ];
+  }),
+);
 
 const pages = {
   home: {
@@ -26,10 +49,32 @@ const pages = {
   pricing: {
     path: '/pricing',
     copy: {
-      zh: ['AI API 模型价格与费率', '查看 API-Route 支持的模型、输入输出费率与计费方式，按实际需求选择适合的 AI API。'],
-      en: ['AI API Models and Pricing', 'Compare supported AI models, input and output rates, and billing methods available through API-Route.'],
-      ja: ['AI API モデルと料金', 'API-Route で利用できるモデル、入力・出力料金、課金方式を比較できます。'],
-      ko: ['AI API 모델 및 요금', 'API-Route에서 지원하는 모델, 입력·출력 요금, 과금 방식을 비교하세요.'],
+      zh: ['AI API 模型价格与费率', '比较 API-Route 支持模型的输入价格、输出价格、缓存费用、按次计费和官方参考价，按聊天、代码、长文本、图片或视频场景选择 AI API。'],
+      en: ['AI API Pricing, Model Rates and Token Costs', 'Compare API-Route model rates for input tokens, output tokens, cache reads, cache creation, per-call pricing, and official reference prices across chat, coding, long-context, image, and video workloads.'],
+      ja: ['AI API モデルと料金', 'API-Route で利用できるモデルの入力料金、出力料金、キャッシュ料金、回数課金、公式参考価格を比較し、チャット、コード、長文、画像、動画に合う AI API を選べます。'],
+      ko: ['AI API 모델 및 요금', 'API-Route에서 지원하는 모델의 입력 요금, 출력 요금, 캐시 요금, 호출당 과금, 공식 참고가를 비교하고 채팅, 코딩, 긴 문서, 이미지, 영상 작업에 맞는 AI API를 선택하세요.'],
+    },
+    sections: {
+      zh: [
+        ['价格表包含什么', ['输入价格：prompt、上下文和工具输入消耗的价格', '输出价格：模型生成内容消耗的价格', '缓存价格：长上下文和重复前缀调用的费用', '官方参考价：用于对照公开官方价格']],
+        ['如何估算成本', ['文本调用成本约等于输入量乘输入单价，加上输出量乘输出单价，再加缓存相关费用', '图片、音频、视频或按次模型按规格、秒数或固定调用价计算']],
+        ['如何选择模型', ['轻量聊天优先看单价和稳定性', '代码和复杂推理优先看能力、输出价格和稳定路线', '长文本重点比较上下文长度和缓存价格', '图片、音频、视频查看按次、按秒或分辨率规格计费']],
+      ],
+      en: [
+        ['What the pricing table includes', ['Input price for prompts, context, and tool input', 'Output price for generated content', 'Cache pricing for long context and repeated prefixes', 'Official reference rates for public price comparison']],
+        ['How to estimate cost', ['Text API cost is roughly input volume times input rate plus output volume times output rate plus cache-related cost', 'Image, audio, video, and per-call models follow displayed specs, seconds, or fixed call prices']],
+        ['How to choose a model', ['Light chat starts with low rates and healthy status', 'Coding and reasoning compare capability, output cost, and stable routes', 'Long-context work compares context length and cache rates', 'Image, audio, and video work checks per-call, per-second, or resolution-based pricing']],
+      ],
+      ja: [
+        ['料金表に含まれるもの', ['入力料金：プロンプト、コンテキスト、ツール入力の費用', '出力料金：モデルが生成した内容の費用', 'キャッシュ料金：長いコンテキストや繰り返し前置きの費用', '公式参考価格：公開公式価格との比較']],
+        ['費用の見積もり方', ['テキスト API の費用は入力量×入力単価、出力量×出力単価、キャッシュ関連費用の合計が目安です', '画像、音声、動画、回数課金モデルは仕様、秒数、固定単価に従います']],
+        ['モデルの選び方', ['軽いチャットは単価とオンライン状態を確認', 'コードや推論は能力、出力コスト、安定した経路を比較', '長文ではコンテキスト長とキャッシュ料金を比較', '画像、音声、動画は回数、秒数、解像度ごとの料金を確認']],
+      ],
+      ko: [
+        ['요금표에 포함된 항목', ['입력 요금: 프롬프트, 컨텍스트, 도구 입력 비용', '출력 요금: 모델이 생성한 내용의 비용', '캐시 요금: 긴 컨텍스트와 반복 프롬프트 비용', '공식 참고가: 공개 공식 가격과 비교']],
+        ['비용 예측 방법', ['텍스트 API 비용은 입력량×입력 단가, 출력량×출력 단가, 캐시 관련 비용을 합산해 대략 계산합니다', '이미지, 오디오, 영상, 호출당 과금 모델은 표시된 사양, 초, 고정 호출가를 따릅니다']],
+        ['모델 선택 방법', ['가벼운 채팅은 낮은 요금과 온라인 상태를 우선 확인', '코딩과 추론은 성능, 출력 비용, 안정적인 경로를 비교', '긴 문서는 컨텍스트 길이와 캐시 요금을 비교', '이미지, 오디오, 영상은 호출, 초, 해상도 기준 요금을 확인']],
+      ],
     },
   },
   packages: {
@@ -113,12 +158,8 @@ const pages = {
   },
   faq: {
     path: '/faq',
-    copy: {
-      zh: ['AI API 使用常见问题', '了解 API-Route 的 OpenAI 兼容 API、Base URL 配置、模型调用、套餐兑换、加密货币支付、客户端接入和独立平台问题。'],
-      en: ['AI API FAQ', 'Learn how API-Route handles OpenAI-compatible API access, Base URL setup, model usage, plans, redeem codes, crypto payments, client integrations, and branded platform setup.'],
-      ja: ['AI API よくある質問', 'API-Route の OpenAI 互換 API、Base URL 設定、モデル利用、プラン、コード、暗号資産決済、クライアント連携、専用 AI API プラットフォームについて確認できます。'],
-      ko: ['AI API 자주 묻는 질문', 'API-Route의 OpenAI 호환 API, Base URL 설정, 모델 사용, 플랜, 리딤 코드, 암호화폐 결제, 클라이언트 연동, 전용 AI API 플랫폼을 확인하세요.'],
-    },
+    copy: faqPrerenderCopy,
+    questions: faqPrerenderQuestions,
   },
 };
 
@@ -165,6 +206,7 @@ const replaceMeta = (html, language, page) => {
         '@id': `${SITE_URL}/#organization`,
         name: 'API-Route',
         url: `${SITE_URL}/`,
+        logo: DEFAULT_OG_IMAGE_URL,
       },
       {
         '@type': 'WebPage',
@@ -206,8 +248,17 @@ const replaceMeta = (html, language, page) => {
     .replace(/<meta property="og:description" content="[^"]*" \/>/, `<meta property="og:description" content="${escapeHtml(description)}" />`)
     .replace(/<meta property="og:url" content="[^"]*" \/>/, `<meta property="og:url" content="${canonicalUrl}" />`)
     .replace(/<meta property="og:locale" content="[^"]*" \/>/, `<meta property="og:locale" content="${languages[language].locale}" />`)
+    .replace(/<meta property="og:image" content="[^"]*" \/>/, `<meta property="og:image" content="${DEFAULT_OG_IMAGE_URL}" />`)
+    .replace(/<meta property="og:image:secure_url" content="[^"]*" \/>/, `<meta property="og:image:secure_url" content="${DEFAULT_OG_IMAGE_URL}" />`)
+    .replace(/<meta property="og:image:type" content="[^"]*" \/>/, '<meta property="og:image:type" content="image/png" />')
+    .replace(/<meta property="og:image:width" content="[^"]*" \/>/, `<meta property="og:image:width" content="${DEFAULT_OG_IMAGE_WIDTH}" />`)
+    .replace(/<meta property="og:image:height" content="[^"]*" \/>/, `<meta property="og:image:height" content="${DEFAULT_OG_IMAGE_HEIGHT}" />`)
+    .replace(/<meta property="og:image:alt" content="[^"]*" \/>/, `<meta property="og:image:alt" content="${escapeHtml(pageTitle)}" />`)
+    .replace(/<meta name="twitter:card" content="[^"]*" \/>/, '<meta name="twitter:card" content="summary_large_image" />')
     .replace(/<meta name="twitter:title" content="[^"]*" \/>/, `<meta name="twitter:title" content="${escapeHtml(pageTitle)}" />`)
     .replace(/<meta name="twitter:description" content="[^"]*" \/>/, `<meta name="twitter:description" content="${escapeHtml(description)}" />`)
+    .replace(/<meta name="twitter:image" content="[^"]*" \/>/, `<meta name="twitter:image" content="${DEFAULT_OG_IMAGE_URL}" />`)
+    .replace(/<meta name="twitter:image:alt" content="[^"]*" \/>/, `<meta name="twitter:image:alt" content="${escapeHtml(pageTitle)}" />`)
     .replace(/<script id="seo-structured-data" type="application\/ld\+json">.*?<\/script>/s, `<script id="seo-structured-data" type="application/ld+json">${JSON.stringify(structuredData).replaceAll('<', '\\u003c')}</script>`)
     .replace('<div id="root"></div>', `<div id="root">${snapshot}</div>`);
 };

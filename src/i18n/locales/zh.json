@@ -376,8 +376,8 @@
     "downloads.providerDocs": "接入文档",
     "downloads.releases": "官方 Releases",
 
-    "pricing.title": "模型定价",
-    "pricing.subtitle": "透明的按量付费定价。价格以每百万 token 计。",
+    "pricing.title": "AI API 模型价格与费率",
+    "pricing.subtitle": "比较输入、输出、缓存和按次计费价格，按聊天、代码、长文本、图片或视频场景选择模型。",
     "pricing.searchPlaceholder": "搜索模型...",
     "pricing.noMatch": "没有匹配的模型",
     "pricing.noModels": "暂无可用模型",

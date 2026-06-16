@@ -376,8 +376,8 @@
     "downloads.providerDocs": "Provider docs",
     "downloads.releases": "Official releases",
 
-    "pricing.title": "Model Pricing",
-    "pricing.subtitle": "Transparent, pay-as-you-go pricing for all available models. Prices shown per 1M tokens.",
+    "pricing.title": "AI API Pricing and Model Rates",
+    "pricing.subtitle": "Compare input, output, cache, and per-call rates, then choose models for chat, coding, long-context, image, or video workloads.",
     "pricing.searchPlaceholder": "Search models...",
     "pricing.noMatch": "No models match your search",
     "pricing.noModels": "No models available",

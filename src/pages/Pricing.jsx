@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronDown, ChevronRight, ExternalLink } from 'lucide-react';
+import { Calculator, ChevronDown, ChevronRight, ExternalLink, Gauge, Layers, WalletCards } from 'lucide-react';
 import { getSiteModels } from '../api';
 import { useCurrency } from '../context/SiteContext';
+import { normalizeAppLanguage } from '../i18n/languageUtils';
 import { getOfficialPrice } from '../utils/officialEquiv';
 
 const MODEL_TYPE_OPTIONS = [
@@ -28,6 +29,138 @@ const PARAM_NAME_SET = new Set([
   'duration_seconds',
 ]);
 const NUMBER_PATTERN = '[+-]?(?:\\d+\\.?\\d*|\\.\\d+)(?:[eE][+-]?\\d+)?';
+const PRICE_GUIDE_ICONS = [WalletCards, Calculator, Layers];
+
+const PRICING_GUIDE_COPY = {
+  zh: {
+    cards: [
+      {
+        title: '怎么看价格',
+        body: '文本模型通常按输入、输出、缓存读取和缓存创建计费；图片、音频、视频模型可能按次、按秒或按规格计费。',
+      },
+      {
+        title: '怎么估算成本',
+        body: '先估算平均输入 token、输出 token 和调用次数，再套入表格价格。正式消耗以调用日志和账户记录为准。',
+      },
+      {
+        title: '怎么选择模型',
+        body: '轻量聊天看单价和稳定性，代码与推理看能力，长文本看上下文和缓存价格，图片视频看规格与按次价格。',
+      },
+    ],
+    explainTitle: '价格表包含什么',
+    explain: [
+      ['输入价格', '用户 prompt、上下文和工具输入消耗的价格。'],
+      ['输出价格', '模型生成内容消耗的价格，通常和输入价格不同。'],
+      ['缓存价格', '适合长上下文或重复前缀调用，用来降低重复读取成本。'],
+      ['官方参考价', '用于对照公开官方价格，实际扣费以本站价格和调用日志为准。'],
+    ],
+    estimateTitle: '快速估算公式',
+    estimateBody: '文本调用成本约等于输入量 × 输入单价 + 输出量 × 输出单价 + 缓存相关费用。图片、音频、视频或按次模型会按表格里的规格、秒数或固定调用价计算。',
+    chooseTitle: '按场景筛选模型',
+    choose: [
+      '日常聊天、摘要、翻译：优先看低输入/输出价格和在线状态。',
+      '代码、复杂推理、Agent：优先看模型能力、输出价格和稳定路线。',
+      '长文档、知识库、重复提示词：重点比较缓存读取和缓存创建价格。',
+      '图片、音频、视频：查看是否按次、按秒或分辨率规格计费。',
+    ],
+  },
+  en: {
+    cards: [
+      {
+        title: 'How to read prices',
+        body: 'Text models usually charge for input, output, cache reads, and cache creation. Image, audio, and video models may use per-call, per-second, or spec-based pricing.',
+      },
+      {
+        title: 'How to estimate cost',
+        body: 'Estimate average input tokens, output tokens, and request volume, then apply the table rates. Actual usage is recorded in logs and account records.',
+      },
+      {
+        title: 'How to choose models',
+        body: 'For light chat, compare price and stability. For coding or reasoning, compare capability. For long context, compare cache rates.',
+      },
+    ],
+    explainTitle: 'What the pricing table includes',
+    explain: [
+      ['Input price', 'Cost for prompts, context, and tool input sent to a model.'],
+      ['Output price', 'Cost for generated text, which often differs from input pricing.'],
+      ['Cache price', 'Useful for long context or repeated prefixes, helping reduce repeated context cost.'],
+      ['Official reference', 'A comparison column for public official rates. Actual billing follows API-Route rates and usage logs.'],
+    ],
+    estimateTitle: 'Quick cost estimate',
+    estimateBody: 'Text API cost is roughly input volume × input rate + output volume × output rate + cache-related cost. Image, audio, video, and per-call models follow the displayed spec, seconds, or fixed call price.',
+    chooseTitle: 'Filter models by workload',
+    choose: [
+      'Chat, summaries, translation: start with low input/output rates and healthy status.',
+      'Coding, reasoning, agents: compare capability, output cost, and stable routes.',
+      'Long documents and repeated prompts: compare cache read and cache creation rates.',
+      'Image, audio, video: check per-call, per-second, resolution, or spec-based pricing.',
+    ],
+  },
+  ja: {
+    cards: [
+      {
+        title: '料金の見方',
+        body: 'テキストモデルは入力、出力、キャッシュ読み取り、キャッシュ作成で課金されることが多く、画像・音声・動画は回数、秒数、仕様単位になる場合があります。',
+      },
+      {
+        title: '費用の見積もり方',
+        body: '平均入力 token、出力 token、呼び出し回数を見積もり、表の料金に当てはめます。実際の消費は利用ログとアカウント記録で確認します。',
+      },
+      {
+        title: 'モデルの選び方',
+        body: '軽いチャットは単価と安定性、コードや推論は能力、長文ではコンテキストとキャッシュ料金を重視します。',
+      },
+    ],
+    explainTitle: '料金表に含まれるもの',
+    explain: [
+      ['入力料金', 'プロンプト、コンテキスト、ツール入力にかかる料金です。'],
+      ['出力料金', 'モデルが生成した内容にかかる料金で、入力料金と異なることがあります。'],
+      ['キャッシュ料金', '長いコンテキストや繰り返しの前置きで、再利用コストを抑えるための料金です。'],
+      ['公式参考価格', '公開されている公式価格との比較です。実際の課金は API-Route の料金と利用ログに従います。'],
+    ],
+    estimateTitle: '簡単な費用見積もり',
+    estimateBody: 'テキスト API の費用は、おおよそ入力量 × 入力単価 + 出力量 × 出力単価 + キャッシュ関連費用です。画像、音声、動画、回数課金モデルは表の仕様、秒数、固定単価に従います。',
+    chooseTitle: '用途別にモデルを選ぶ',
+    choose: [
+      'チャット、要約、翻訳: 低い入出力料金とオンライン状態を確認します。',
+      'コード、推論、Agent: 能力、出力コスト、安定した経路を比較します。',
+      '長文ドキュメント、繰り返しプロンプト: キャッシュ読み取りと作成料金を比較します。',
+      '画像、音声、動画: 回数、秒数、解像度、仕様ごとの料金を確認します。',
+    ],
+  },
+  ko: {
+    cards: [
+      {
+        title: '요금표 읽는 법',
+        body: '텍스트 모델은 보통 입력, 출력, 캐시 읽기, 캐시 생성 기준으로 과금되며 이미지, 오디오, 영상 모델은 호출, 초, 사양 기준일 수 있습니다.',
+      },
+      {
+        title: '비용 예측 방법',
+        body: '평균 입력 token, 출력 token, 호출 횟수를 추정한 뒤 표의 요금을 적용합니다. 실제 사용량은 로그와 계정 기록을 기준으로 확인합니다.',
+      },
+      {
+        title: '모델 선택 방법',
+        body: '가벼운 채팅은 단가와 안정성, 코딩과 추론은 성능, 긴 문서는 컨텍스트와 캐시 요금을 중심으로 비교하세요.',
+      },
+    ],
+    explainTitle: '요금표에 포함된 항목',
+    explain: [
+      ['입력 요금', '프롬프트, 컨텍스트, 도구 입력에 적용되는 비용입니다.'],
+      ['출력 요금', '모델이 생성한 내용에 적용되는 비용이며 입력 요금과 다를 수 있습니다.'],
+      ['캐시 요금', '긴 컨텍스트나 반복 프롬프트에서 재사용 비용을 줄이는 데 쓰입니다.'],
+      ['공식 참고가', '공개 공식 가격과 비교하기 위한 항목입니다. 실제 과금은 API-Route 요금과 사용 로그를 따릅니다.'],
+    ],
+    estimateTitle: '간단한 비용 계산',
+    estimateBody: '텍스트 API 비용은 대략 입력량 × 입력 단가 + 출력량 × 출력 단가 + 캐시 관련 비용입니다. 이미지, 오디오, 영상, 호출당 과금 모델은 표의 사양, 초, 고정 호출가를 따릅니다.',
+    chooseTitle: '작업에 맞게 모델 고르기',
+    choose: [
+      '채팅, 요약, 번역: 낮은 입출력 요금과 온라인 상태를 먼저 확인합니다.',
+      '코딩, 추론, 에이전트: 성능, 출력 비용, 안정적인 경로를 비교합니다.',
+      '긴 문서와 반복 프롬프트: 캐시 읽기와 캐시 생성 요금을 비교합니다.',
+      '이미지, 오디오, 영상: 호출, 초, 해상도, 사양 기준 요금을 확인합니다.',
+    ],
+  },
+};
 
 function splitTopLevelMultiply(expr = '') {
   const parts = [];
@@ -169,7 +302,7 @@ function isTieredExprPrice(item) {
 }
 
 export default function Pricing() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { symbol, rate, cnyRate } = useCurrency();
   const [models, setModels] = useState([]);
   const [vendors, setVendors] = useState([]);
@@ -178,6 +311,8 @@ export default function Pricing() {
   const [modelType, setModelType] = useState('');
   const [loading, setLoading] = useState(true);
   const [expandedModels, setExpandedModels] = useState(() => new Set());
+  const language = normalizeAppLanguage(i18n.resolvedLanguage || i18n.language);
+  const guideCopy = PRICING_GUIDE_COPY[language] || PRICING_GUIDE_COPY.en;
 
   useEffect(() => {
     getSiteModels()
@@ -351,6 +486,63 @@ export default function Pricing() {
           {t('pricing.subtitle')}
         </p>
       </div>
+
+      <section className="mb-8 grid gap-4 lg:grid-cols-3">
+        {guideCopy.cards.map((card, index) => {
+          const Icon = PRICE_GUIDE_ICONS[index] || WalletCards;
+          return (
+            <article key={card.title} className="rounded-xl border border-page-divider bg-page-surface p-5 shadow-sm">
+              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-500/10 text-page-link">
+                <Icon className="h-5 w-5" />
+              </span>
+              <h2 className="mt-4 text-base font-semibold text-page">{card.title}</h2>
+              <p className="mt-2 text-sm leading-6 text-page-secondary">{card.body}</p>
+            </article>
+          );
+        })}
+      </section>
+
+      <section className="mb-8 grid gap-4 lg:grid-cols-[1fr_0.9fr]">
+        <div className="rounded-xl border border-page-divider bg-page-surface p-5 shadow-sm">
+          <div className="mb-4 flex items-center gap-2">
+            <WalletCards className="h-5 w-5 text-page-link" />
+            <h2 className="text-lg font-semibold text-page">{guideCopy.explainTitle}</h2>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {guideCopy.explain.map(([title, body]) => (
+              <div key={title} className="rounded-lg border border-page-divider bg-page-inset p-4">
+                <h3 className="text-sm font-semibold text-page">{title}</h3>
+                <p className="mt-1.5 text-sm leading-6 text-page-secondary">{body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid gap-4">
+          <div className="rounded-xl border border-page-divider bg-page-surface p-5 shadow-sm">
+            <div className="mb-3 flex items-center gap-2">
+              <Calculator className="h-5 w-5 text-page-link" />
+              <h2 className="text-lg font-semibold text-page">{guideCopy.estimateTitle}</h2>
+            </div>
+            <p className="text-sm leading-7 text-page-secondary">{guideCopy.estimateBody}</p>
+          </div>
+
+          <div className="rounded-xl border border-page-divider bg-page-surface p-5 shadow-sm">
+            <div className="mb-3 flex items-center gap-2">
+              <Gauge className="h-5 w-5 text-page-link" />
+              <h2 className="text-lg font-semibold text-page">{guideCopy.chooseTitle}</h2>
+            </div>
+            <ul className="space-y-2 text-sm leading-6 text-page-secondary">
+              {guideCopy.choose.map((item) => (
+                <li key={item} className="flex gap-2">
+                  <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-page-link" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
 
       {/* Vendor Filter */}
       {availableVendors.length > 0 && (

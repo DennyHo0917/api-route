@@ -3,8 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { useSite } from '../context/SiteContext';
 import { DIST_SITE_LANGUAGES, getLocalizedPath, normalizeAppLanguage } from '../i18n/languageUtils';
+import { FAQ_COPY } from '../content/faqCopy';
 
 const DEFAULT_SITE_URL = 'https://www.api-route.com';
+const DEFAULT_OG_IMAGE_PATH = 'https://img.api-route.com/3.png';
+const DEFAULT_OG_IMAGE_WIDTH = '157';
+const DEFAULT_OG_IMAGE_HEIGHT = '148';
 const INDEXABLE_PATHS = new Set(['/', '/pricing', '/packages', '/apps', '/sub-site', '/faq']);
 const PRIVATE_PATHS = new Set(['/login', '/register', '/dashboard', '/tokens', '/logs', '/tasks', '/topup', '/account']);
 const LANGUAGE_HREFLANGS = {
@@ -28,7 +32,7 @@ const SEO_COPY = {
     },
     pricing: {
       title: 'AI API 模型价格与费率',
-      description: '查看 API-Route 支持的模型、输入输出费率与计费方式，按实际需求选择适合的 AI API。',
+      description: '比较 API-Route 支持模型的输入价格、输出价格、缓存费用、按次计费和官方参考价，按聊天、代码、长文本、图片或视频场景选择 AI API。',
     },
     packages: {
       title: 'AI API 套餐与兑换码',
@@ -52,19 +56,6 @@ const SEO_COPY = {
         ['适合没有技术背景的人吗？', '适合有明确用户或渠道的人；技术配置会被尽量收敛到站点初始化和后台管理。'],
       ],
     },
-    faq: {
-      title: 'AI API 使用常见问题',
-      description: '了解 API-Route 的 OpenAI 兼容 API、Base URL 配置、模型调用、套餐兑换、加密货币支付、客户端接入和独立平台问题。',
-      questions: [
-        ['API-Route 是否兼容 OpenAI API？', '是。常见的 OpenAI-compatible 客户端通常只需要配置本站提供的 Base URL 和你创建的 API Key。'],
-        ['在哪里查看 API 调用地址？', '首页会展示可用 API 端点，登录后也可以在 API 密钥页面创建密钥并复制到客户端使用。'],
-        ['套餐和兑换码怎么使用？', '购买套餐兑换码后，在账号内输入兑换码即可自动激活对应套餐。'],
-        ['如何在 VSCode 中使用 gpt5.5？', '推荐使用 cc switch：模型选择 gpt5.5，工具选择 cursor，导入目标选择 codex，然后导入到 VSCode/Codex 配置中使用。'],
-        ['如何给 Codex app 配置 API-Route？', '创建 API Key 后，可用 cc switch 选择模型并把导入目标设为 codex，一键写入 Base URL、模型和密钥配置。'],
-        ['Claude Code 如何配置 API-Route？', '在 Claude Code 中配置 API-Route 的 Base URL、API Key 和模型名称，也可以通过 cc switch 生成并导入配置。'],
-        ['支持加密货币支付吗？', '如果站点开启了加密货币支付，相关订单页面会展示网络、代币、地址和支付金额。'],
-      ],
-    },
     private: {
       title: '用户中心',
       description: 'API-Route 用户中心。',
@@ -84,8 +75,8 @@ const SEO_COPY = {
       description: 'Access multiple leading AI models through one OpenAI-compatible API with unified usage, transparent pricing, packages, and reliable routing.',
     },
     pricing: {
-      title: 'AI API Models and Pricing',
-      description: 'Compare supported AI models, input and output rates, and billing methods available through API-Route.',
+      title: 'AI API Pricing, Model Rates and Token Costs',
+      description: 'Compare API-Route model rates for input tokens, output tokens, cache reads, cache creation, per-call pricing, and official reference prices across chat, coding, long-context, image, and video workloads.',
     },
     packages: {
       title: 'AI API Plans and Redeem Codes',
@@ -109,19 +100,6 @@ const SEO_COPY = {
         ['Is it suitable without a technical background?', 'Yes if you have clear users or channels; technical setup is narrowed to initialization and admin settings.'],
       ],
     },
-    faq: {
-      title: 'AI API FAQ',
-      description: 'Learn how API-Route handles OpenAI-compatible API access, Base URL setup, model usage, plans, redeem codes, crypto payments, client integrations, and branded platform setup.',
-      questions: [
-        ['Is API-Route compatible with the OpenAI API?', 'Yes. Most OpenAI-compatible clients only need this site’s Base URL and the API key you create in the dashboard.'],
-        ['Where do I find the API endpoint?', 'The homepage shows available API endpoints, and signed-in users can create API keys from the API Keys page.'],
-        ['How do plans and redeem codes work?', 'Purchase a matching redeem code, sign in, enter the code, and the system activates the plan automatically.'],
-        ['How do I use gpt5.5 in VSCode?', 'Use cc switch: select gpt5.5 as the model, choose cursor as the tool, set the import target to codex, then import the configuration for VSCode/Codex use.'],
-        ['How do I configure API-Route for the Codex app?', 'Create an API key, then use cc switch to choose a model and set the import target to codex so the Base URL, model, and key are written into the configuration.'],
-        ['How do I configure Claude Code with API-Route?', 'Configure the API-Route Base URL, API key, and model name in Claude Code, or use cc switch to generate and import the configuration.'],
-        ['Do you support crypto payments?', 'If crypto payments are enabled, the order page will show the required network, token, address, and amount.'],
-      ],
-    },
     private: {
       title: 'Account',
       description: 'API-Route account area.',
@@ -142,7 +120,7 @@ const SEO_COPY = {
     },
     pricing: {
       title: 'AI API モデルと料金',
-      description: 'API-Route で利用できるモデル、入力・出力料金、課金方式を比較できます。',
+      description: 'API-Route で利用できるモデルの入力料金、出力料金、キャッシュ料金、回数課金、公式参考価格を比較し、チャット、コード、長文、画像、動画に合う AI API を選べます。',
     },
     packages: {
       title: 'AI API プランとコード',
@@ -166,19 +144,6 @@ const SEO_COPY = {
         ['技術に詳しくなくても使えますか？', '明確なユーザーや販売チャネルがあれば使いやすいよう、初期化と管理画面に集約しています。'],
       ],
     },
-    faq: {
-      title: 'AI API よくある質問',
-      description: 'API-Route の OpenAI 互換 API、Base URL 設定、モデル利用、プラン、コード、暗号資産決済、クライアント連携、専用 AI API プラットフォームについて確認できます。',
-      questions: [
-        ['API-Route は OpenAI API と互換性がありますか？', 'はい。多くの OpenAI 互換クライアントでは、このサイトの Base URL と作成した API キーを設定するだけで利用できます。'],
-        ['API エンドポイントはどこで確認できますか？', 'トップページに利用可能な API エンドポイントが表示され、ログイン後は API キー画面でキーを作成できます。'],
-        ['プランとコードはどのように使いますか？', '対応するコードを購入し、ログイン後に入力すると該当プランが自動で有効化されます。'],
-        ['VSCode で gpt5.5 を使うには？', 'cc switch でモデルに gpt5.5、ツールに cursor、取り込み先に codex を選び、VSCode/Codex 用の設定として取り込みます。'],
-        ['Codex app に API-Route を設定するには？', 'API キーを作成した後、cc switch でモデルを選び、取り込み先を codex にすると Base URL、モデル、キーを設定できます。'],
-        ['Claude Code で API-Route を設定するには？', 'Claude Code に API-Route の Base URL、API キー、モデル名を設定します。cc switch で生成した設定を取り込むこともできます。'],
-        ['暗号資産で支払えますか？', '暗号資産決済が有効な場合、注文画面にネットワーク、トークン、アドレス、金額が表示されます。'],
-      ],
-    },
     private: {
       title: 'アカウント',
       description: 'API-Route アカウント管理エリア。',
@@ -199,7 +164,7 @@ const SEO_COPY = {
     },
     pricing: {
       title: 'AI API 모델 및 요금',
-      description: 'API-Route에서 지원하는 모델, 입력·출력 요금, 과금 방식을 비교하세요.',
+      description: 'API-Route에서 지원하는 모델의 입력 요금, 출력 요금, 캐시 요금, 호출당 과금, 공식 참고가를 비교하고 채팅, 코딩, 긴 문서, 이미지, 영상 작업에 맞는 AI API를 선택하세요.',
     },
     packages: {
       title: 'AI API 플랜과 코드',
@@ -221,19 +186,6 @@ const SEO_COPY = {
         ['서버를 직접 유지해야 하나요?', '핵심 플랫폼 인프라를 처음부터 운영할 필요 없이 브랜드, 가격, 사용자 운영에 집중할 수 있습니다.'],
         ['결제 후 권한이 활성화되지 않으면요?', '같은 계정으로 상태를 새로고침하고, 그래도 반영되지 않으면 지원팀에 문의하세요.'],
         ['기술 배경이 없어도 적합한가요?', '명확한 사용자나 채널이 있다면 초기화와 관리 화면 중심으로 운영할 수 있습니다.'],
-      ],
-    },
-    faq: {
-      title: 'AI API 자주 묻는 질문',
-      description: 'API-Route의 OpenAI 호환 API, Base URL 설정, 모델 사용, 플랜, 리딤 코드, 암호화폐 결제, 클라이언트 연동, 전용 AI API 플랫폼을 확인하세요.',
-      questions: [
-        ['API-Route는 OpenAI API와 호환되나요?', '네. 대부분의 OpenAI 호환 클라이언트에서 이 사이트의 Base URL과 생성한 API 키를 설정하면 사용할 수 있습니다.'],
-        ['API 엔드포인트는 어디에서 확인하나요?', '홈페이지에서 사용 가능한 API 엔드포인트를 확인할 수 있고, 로그인 후 API 키 페이지에서 키를 만들 수 있습니다.'],
-        ['플랜과 리딤 코드는 어떻게 사용하나요?', '해당 리딤 코드를 구매한 뒤 로그인 상태에서 입력하면 맞는 플랜이 자동으로 활성화됩니다.'],
-        ['VSCode에서 gpt5.5를 사용하려면 어떻게 하나요?', 'cc switch에서 모델은 gpt5.5, 도구는 cursor, 가져오기 대상은 codex로 선택한 뒤 VSCode/Codex 설정으로 가져오세요.'],
-        ['Codex app에 API-Route를 설정하려면 어떻게 하나요?', 'API 키를 만든 뒤 cc switch에서 모델을 선택하고 가져오기 대상을 codex로 설정하면 Base URL, 모델, 키 구성을 가져올 수 있습니다.'],
-        ['Claude Code에서 API-Route를 어떻게 설정하나요?', 'Claude Code에 API-Route Base URL, API 키, 모델명을 설정하거나 cc switch로 생성한 설정을 가져오면 됩니다.'],
-        ['암호화폐 결제를 지원하나요?', '암호화폐 결제가 활성화된 경우 주문 화면에 네트워크, 토큰, 주소, 금액이 표시됩니다.'],
       ],
     },
     private: {
@@ -335,13 +287,24 @@ function syncOgLocaleAlternates(currentLanguage) {
     });
 }
 
-function getPageCopy(pathname, copy) {
+function getFaqSeoPage(languageKey) {
+  const copy = FAQ_COPY[languageKey] || FAQ_COPY.en;
+  return {
+    title: copy.title,
+    description: copy.subtitle,
+    questions: copy.sections.flatMap((section) => (
+      section.items.map((item) => [item.question, item.answer])
+    )),
+  };
+}
+
+function getPageCopy(pathname, copy, languageKey) {
   if (pathname === '/') return copy.home;
   if (pathname === '/pricing') return copy.pricing;
   if (pathname === '/packages') return copy.packages;
   if (pathname === '/apps') return copy.apps;
   if (pathname === '/sub-site') return copy.subSite;
-  if (pathname === '/faq') return copy.faq;
+  if (pathname === '/faq') return getFaqSeoPage(languageKey);
   return copy.private;
 }
 
@@ -453,7 +416,7 @@ export default function SeoManager() {
     const languageKey = normalizeAppLanguage(i18n.resolvedLanguage);
     const copy = SEO_COPY[languageKey];
     const knownPath = INDEXABLE_PATHS.has(pathname) || PRIVATE_PATHS.has(pathname);
-    const page = knownPath ? getPageCopy(pathname, copy) : copy.notFound;
+    const page = knownPath ? getPageCopy(pathname, copy, languageKey) : copy.notFound;
     const siteName = normalizeSiteName(site?.name);
     const siteUrl = getSiteUrl();
     const canonicalPath = getLocalizedPath(pathname, languageKey);
@@ -461,7 +424,9 @@ export default function SeoManager() {
     const languageHomeUrl = `${siteUrl}${getLocalizedPath('/', languageKey)}`;
     const indexable = INDEXABLE_PATHS.has(pathname);
     const pageTitle = `${page.title} | ${siteName}`;
-    const logoUrl = resolveUrl(site?.logo || site?.favicon, siteUrl);
+    const logoSource = site?.logo || site?.favicon || DEFAULT_OG_IMAGE_PATH;
+    const logoUrl = resolveUrl(logoSource, siteUrl);
+    const usesDefaultOgImage = logoSource === DEFAULT_OG_IMAGE_PATH;
     const robots = indexable
       ? 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
       : 'noindex, nofollow, noarchive';
@@ -495,12 +460,26 @@ export default function SeoManager() {
 
     if (logoUrl) {
       upsertMeta('meta[property="og:image"]', { property: 'og:image', content: logoUrl });
+      upsertMeta('meta[property="og:image:secure_url"]', { property: 'og:image:secure_url', content: logoUrl });
       upsertMeta('meta[property="og:image:alt"]', { property: 'og:image:alt', content: pageTitle });
       upsertMeta('meta[name="twitter:image"]', { name: 'twitter:image', content: logoUrl });
       upsertMeta('meta[name="twitter:image:alt"]', { name: 'twitter:image:alt', content: pageTitle });
+      if (usesDefaultOgImage) {
+        upsertMeta('meta[property="og:image:type"]', { property: 'og:image:type', content: 'image/png' });
+        upsertMeta('meta[property="og:image:width"]', { property: 'og:image:width', content: DEFAULT_OG_IMAGE_WIDTH });
+        upsertMeta('meta[property="og:image:height"]', { property: 'og:image:height', content: DEFAULT_OG_IMAGE_HEIGHT });
+      } else {
+        removeMeta('meta[property="og:image:type"]');
+        removeMeta('meta[property="og:image:width"]');
+        removeMeta('meta[property="og:image:height"]');
+      }
     } else {
       removeMeta('meta[property="og:image"]');
+      removeMeta('meta[property="og:image:secure_url"]');
       removeMeta('meta[property="og:image:alt"]');
+      removeMeta('meta[property="og:image:type"]');
+      removeMeta('meta[property="og:image:width"]');
+      removeMeta('meta[property="og:image:height"]');
       removeMeta('meta[name="twitter:image"]');
       removeMeta('meta[name="twitter:image:alt"]');
     }
