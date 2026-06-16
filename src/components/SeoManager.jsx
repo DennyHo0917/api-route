@@ -39,12 +39,12 @@ const SEO_COPY = {
       description: '查看可接入 API-Route 的 AI 应用与客户端，通过统一 API 地址和密钥快速开始使用。',
     },
     subSite: {
-      title: 'AI API 中转站搭建',
-      description: '开通可独立访问、支持收款、定价和推广的 AI API 中转站，并在支付后自动启用管理权限。',
+      title: '独立 AI API 平台搭建',
+      description: '开通可独立访问、支持收款、定价和推广的独立 AI API 管理平台，并在支付后自动启用管理权限。',
     },
     faq: {
       title: 'AI API 使用常见问题',
-      description: '了解 API-Route 的 OpenAI 兼容 API、Base URL 配置、模型调用、套餐兑换、加密货币支付、客户端接入和中转站搭建问题。',
+      description: '了解 API-Route 的 OpenAI 兼容 API、Base URL 配置、模型调用、套餐兑换、加密货币支付、客户端接入和独立平台问题。',
       questions: [
         ['API-Route 是否兼容 OpenAI API？', '是。常见的 OpenAI-compatible 客户端通常只需要配置本站提供的 Base URL 和你创建的 API Key。'],
         ['在哪里查看 API 调用地址？', '首页会展示可用 API 端点，登录后也可以在 API 密钥页面创建密钥并复制到客户端使用。'],
@@ -63,7 +63,7 @@ const SEO_COPY = {
       title: '页面不存在',
       description: '你访问的页面不存在、已被移动或地址有误。',
     },
-    keywords: 'AI API,API 聚合,OpenAI 兼容接口,大模型 API,多模型 API,模型中转,API-Route',
+    keywords: 'AI API,API 聚合,OpenAI 兼容接口,大模型 API,多模型 API,独立 AI API 平台,API-Route',
     locale: 'zh_CN',
     language: 'zh-CN',
     serviceType: '多模型 AI API 聚合与统一调用服务',
@@ -86,12 +86,12 @@ const SEO_COPY = {
       description: 'Connect supported AI apps and clients to API-Route with one API endpoint and access key.',
     },
     subSite: {
-      title: 'AI API Relay Site Setup',
-      description: 'Launch an independent AI API relay site with payments, pricing, promotion, and automatic management access after payment.',
+      title: 'Branded AI API Platform Setup',
+      description: 'Launch an independent AI API management platform with payments, pricing, promotion, and automatic management access after payment.',
     },
     faq: {
       title: 'AI API FAQ',
-      description: 'Learn how API-Route handles OpenAI-compatible API access, Base URL setup, model usage, plans, redeem codes, crypto payments, client integrations, and relay site setup.',
+      description: 'Learn how API-Route handles OpenAI-compatible API access, Base URL setup, model usage, plans, redeem codes, crypto payments, client integrations, and branded platform setup.',
       questions: [
         ['Is API-Route compatible with the OpenAI API?', 'Yes. Most OpenAI-compatible clients only need this site’s Base URL and the API key you create in the dashboard.'],
         ['Where do I find the API endpoint?', 'The homepage shows available API endpoints, and signed-in users can create API keys from the API Keys page.'],
@@ -133,12 +133,12 @@ const SEO_COPY = {
       description: '統一 API エンドポイントとキーで接続できる AI アプリやクライアントを確認できます。',
     },
     subSite: {
-      title: 'AI API 中継サイト構築',
-      description: '訪問・決済・価格設定・販売に対応した独立 AI API 中継サイトを立ち上げ、支払い後に管理権限を自動で有効化します。',
+      title: '専用 AI API ゲートウェイ構築',
+      description: '訪問・決済・価格設定・販売に対応した独立 AI API 管理プラットフォームを立ち上げ、支払い後に管理権限を自動で有効化します。',
     },
     faq: {
       title: 'AI API よくある質問',
-      description: 'API-Route の OpenAI 互換 API、Base URL 設定、モデル利用、プラン、コード、暗号資産決済、クライアント連携、中継サイト構築について確認できます。',
+      description: 'API-Route の OpenAI 互換 API、Base URL 設定、モデル利用、プラン、コード、暗号資産決済、クライアント連携、専用 AI ゲートウェイについて確認できます。',
       questions: [
         ['API-Route は OpenAI API と互換性がありますか？', 'はい。多くの OpenAI 互換クライアントでは、このサイトの Base URL と作成した API キーを設定するだけで利用できます。'],
         ['API エンドポイントはどこで確認できますか？', 'トップページに利用可能な API エンドポイントが表示され、ログイン後は API キー画面でキーを作成できます。'],
@@ -180,12 +180,12 @@ const SEO_COPY = {
       description: '통합 API 엔드포인트와 키로 연결할 수 있는 AI 앱과 클라이언트를 확인하세요.',
     },
     subSite: {
-      title: 'AI API 릴레이 사이트 구축',
-      description: '방문, 결제, 가격 설정, 판매를 지원하는 독립 AI API 릴레이 사이트를 만들고 결제 후 관리 권한을 자동으로 활성화합니다.',
+      title: '전용 AI API 게이트웨이 구축',
+      description: '방문, 결제, 가격 설정, 판매를 지원하는 독립 AI API 관리 플랫폼을 만들고 결제 후 관리 권한을 자동으로 활성화합니다.',
     },
     faq: {
       title: 'AI API 자주 묻는 질문',
-      description: 'API-Route의 OpenAI 호환 API, Base URL 설정, 모델 사용, 플랜, 리딤 코드, 암호화폐 결제, 클라이언트 연동, 릴레이 사이트 구축을 확인하세요.',
+      description: 'API-Route의 OpenAI 호환 API, Base URL 설정, 모델 사용, 플랜, 리딤 코드, 암호화폐 결제, 클라이언트 연동, 전용 AI 게이트웨이를 확인하세요.',
       questions: [
         ['API-Route는 OpenAI API와 호환되나요?', '네. 대부분의 OpenAI 호환 클라이언트에서 이 사이트의 Base URL과 생성한 API 키를 설정하면 사용할 수 있습니다.'],
         ['API 엔드포인트는 어디에서 확인하나요?', '홈페이지에서 사용 가능한 API 엔드포인트를 확인할 수 있고, 로그인 후 API 키 페이지에서 키를 만들 수 있습니다.'],

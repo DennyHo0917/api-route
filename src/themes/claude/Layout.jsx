@@ -85,7 +85,7 @@ export default function ClaudeLayout() {
                 {siteName}
               </span>
               <span className="mt-1 hidden text-[10px] font-medium uppercase tracking-[0.18em] text-[#9B8876] sm:block">
-                Unified AI Gateway
+                Unified AI API
               </span>
             </div>
           </Link>

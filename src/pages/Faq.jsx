@@ -8,7 +8,7 @@ const FAQ_COPY = {
   zh: {
     badge: '常见问题',
     title: 'API-Route 使用 FAQ',
-    subtitle: '把接入前最常问的问题放在一起：兼容方式、模型调用、套餐兑换、客户端配置、支付和中转站搭建。',
+    subtitle: '把接入前最常问的问题放在一起：兼容方式、模型调用、套餐兑换、客户端配置、支付和独立平台。',
     sections: [
       {
         title: '接入与模型',
@@ -40,7 +40,7 @@ const FAQ_COPY = {
           },
           {
             question: '支持加密货币支付吗？',
-            answer: '如果当前站点开启了加密货币支付，你会在充值、套餐或中转站搭建流程中看到链和代币选项。提交订单后请按页面显示的地址、金额和网络完成转账。',
+            answer: '如果当前站点开启了加密货币支付，你会在充值、套餐或独立平台开通流程中看到链和代币选项。提交订单后请按页面显示的地址、金额和网络完成转账。',
           },
         ],
       },
@@ -74,15 +74,15 @@ const FAQ_COPY = {
         ],
       },
       {
-        title: '中转站搭建',
+        title: '独立平台',
         items: [
           {
-            question: '中转站搭建适合谁？',
-            answer: '它适合想独立运营 AI API 站点的人：可以设置品牌、域名、模型售价、充值方式和推广入口，把本站能力包装成自己的服务。',
+            question: '独立平台适合谁？',
+            answer: '它适合想独立运营 AI API 平台的人：可以设置品牌、域名、模型售价、充值方式和推广入口，把本站能力包装成自己的服务。',
           },
           {
             question: '支付后会自动开通吗？',
-            answer: '中转站订单支付完成后，系统会自动为同一账号开通管理权限，并引导你继续完成站点初始化。若支付已完成但状态未更新，请联系支持处理。',
+            answer: '独立平台订单支付完成后，系统会自动为同一账号开通管理权限，并引导你继续完成站点初始化。若支付已完成但状态未更新，请联系支持处理。',
           },
         ],
       },
@@ -98,7 +98,7 @@ const FAQ_COPY = {
   en: {
     badge: 'FAQ',
     title: 'API-Route FAQ',
-    subtitle: 'Answers to the questions people usually ask before connecting: OpenAI compatibility, model usage, plans, client setup, payments, and relay site setup.',
+    subtitle: 'Answers to the questions people usually ask before connecting: OpenAI compatibility, model usage, plans, client setup, payments, and branded platform setup.',
     sections: [
       {
         title: 'API Access and Models',
@@ -130,7 +130,7 @@ const FAQ_COPY = {
           },
           {
             question: 'Do you support crypto payments?',
-            answer: 'If crypto payments are enabled for this site, you will see chain and token options during top-up, package purchase, or relay site setup. Follow the displayed network, address, and amount carefully.',
+            answer: 'If crypto payments are enabled for this site, you will see chain and token options during top-up, package purchase, or branded platform setup. Follow the displayed network, address, and amount carefully.',
           },
         ],
       },
@@ -164,15 +164,15 @@ const FAQ_COPY = {
         ],
       },
       {
-        title: 'Relay Site Setup',
+        title: 'Branded Platform',
         items: [
           {
-            question: 'Who is relay site setup for?',
-            answer: 'It is for operators who want to run their own AI API site with custom branding, domain, model pricing, payments, and promotion while using the hosted capabilities behind this platform.',
+            question: 'Who is the branded platform for?',
+            answer: 'It is for operators who want to run their own AI API platform with custom branding, domain, model pricing, payments, and promotion while using the hosted capabilities behind this platform.',
           },
           {
-            question: 'Will the relay site be activated automatically after payment?',
-            answer: 'After the relay site order is paid, the system grants management access to the same account and guides you through initialization. If payment is complete but the status does not update, contact support.',
+            question: 'Will the branded platform be activated automatically after payment?',
+            answer: 'After the branded platform order is paid, the system grants management access to the same account and guides you through initialization. If payment is complete but the status does not update, contact support.',
           },
         ],
       },
@@ -188,7 +188,7 @@ const FAQ_COPY = {
   ja: {
     badge: 'FAQ',
     title: 'API-Route よくある質問',
-    subtitle: '接続前に迷いやすいポイントをまとめました。OpenAI 互換 API、モデル利用、プラン、クライアント設定、支払い、中継サイト構築について確認できます。',
+    subtitle: '接続前に迷いやすいポイントをまとめました。OpenAI 互換 API、モデル利用、プラン、クライアント設定、支払い、専用 AI ゲートウェイについて確認できます。',
     sections: [
       {
         title: 'API 接続とモデル',
@@ -220,7 +220,7 @@ const FAQ_COPY = {
           },
           {
             question: '暗号資産で支払えますか？',
-            answer: 'このサイトで暗号資産決済が有効な場合、チャージ、プラン購入、中継サイト構築の画面でネットワークとトークンを選べます。表示されたアドレス、金額、ネットワークをよく確認してください。',
+            answer: 'このサイトで暗号資産決済が有効な場合、チャージ、プラン購入、専用 AI ゲートウェイ開通の画面でネットワークとトークンを選べます。表示されたアドレス、金額、ネットワークをよく確認してください。',
           },
         ],
       },
@@ -254,15 +254,15 @@ const FAQ_COPY = {
         ],
       },
       {
-        title: '中継サイト構築',
+        title: '専用 AI ゲートウェイ',
         items: [
           {
-            question: '中継サイト構築は誰向けですか？',
+            question: '専用 AI ゲートウェイは誰向けですか？',
             answer: '独自ブランド、ドメイン、モデル価格、決済、販売導線を持つ AI API サイトを運営したい方向けです。このプラットフォームのホスト機能を使いながら、自分のサービスとして展開できます。',
           },
           {
             question: '支払い後に自動で有効化されますか？',
-            answer: '中継サイトの注文が支払われると、同じアカウントに管理権限が付与され、初期設定へ進めます。支払い済みなのに状態が変わらない場合はサポートへ連絡してください。',
+            answer: '専用 AI ゲートウェイの注文が支払われると、同じアカウントに管理権限が付与され、初期設定へ進めます。支払い済みなのに状態が変わらない場合はサポートへ連絡してください。',
           },
         ],
       },
@@ -278,7 +278,7 @@ const FAQ_COPY = {
   ko: {
     badge: 'FAQ',
     title: 'API-Route 자주 묻는 질문',
-    subtitle: '연동 전에 많이 묻는 내용을 정리했습니다. OpenAI 호환 API, 모델 사용, 플랜, 클라이언트 설정, 결제, 릴레이 사이트 구축을 확인하세요.',
+    subtitle: '연동 전에 많이 묻는 내용을 정리했습니다. OpenAI 호환 API, 모델 사용, 플랜, 클라이언트 설정, 결제, 전용 AI 게이트웨이를 확인하세요.',
     sections: [
       {
         title: 'API 연동과 모델',
@@ -310,7 +310,7 @@ const FAQ_COPY = {
           },
           {
             question: '암호화폐 결제를 지원하나요?',
-            answer: '현재 사이트에서 암호화폐 결제가 켜져 있다면 충전, 플랜 구매, 릴레이 사이트 구축 과정에서 네트워크와 토큰 옵션이 표시됩니다. 주소, 금액, 네트워크를 반드시 확인하세요.',
+            answer: '현재 사이트에서 암호화폐 결제가 켜져 있다면 충전, 플랜 구매, 전용 AI 게이트웨이 개통 과정에서 네트워크와 토큰 옵션이 표시됩니다. 주소, 금액, 네트워크를 반드시 확인하세요.',
           },
         ],
       },
@@ -344,15 +344,15 @@ const FAQ_COPY = {
         ],
       },
       {
-        title: '릴레이 사이트 구축',
+        title: '전용 AI 게이트웨이',
         items: [
           {
-            question: '릴레이 사이트 구축은 누구에게 적합한가요?',
+            question: '전용 AI 게이트웨이는 누구에게 적합한가요?',
             answer: '자체 브랜드, 도메인, 모델 가격, 결제, 홍보 동선을 갖춘 AI API 사이트를 운영하고 싶은 분에게 적합합니다. 이 플랫폼의 호스팅 기능을 바탕으로 자신의 서비스처럼 운영할 수 있습니다.',
           },
           {
             question: '결제 후 자동으로 활성화되나요?',
-            answer: '릴레이 사이트 주문 결제가 완료되면 같은 계정에 관리 권한이 부여되고 초기 설정으로 이어집니다. 결제했는데 상태가 바뀌지 않으면 지원팀에 문의하세요.',
+            answer: '전용 AI 게이트웨이 주문 결제가 완료되면 같은 계정에 관리 권한이 부여되고 초기 설정으로 이어집니다. 결제했는데 상태가 바뀌지 않으면 지원팀에 문의하세요.',
           },
         ],
       },

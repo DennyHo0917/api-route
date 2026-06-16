@@ -42,6 +42,10 @@ function getTotalQuotaDollars(pkg) {
   return quotaDollars * Math.max(1, resetCount);
 }
 
+const LEGACY_HERO_SUBTITLES = new Set([
+  '通过单一 API 端点访问全球最强大的 AI 模型。简单、实惠、可靠。',
+]);
+
 export default function ClaudeHome() {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
@@ -74,6 +78,9 @@ export default function ClaudeHome() {
     || previewPackages[1]?.id;
   const shopUrl = normalizeExternalUrl(site?.top_up_link);
   const homeContent = getHomeContent(site, t, i18n.resolvedLanguage);
+  const heroSubtitle = LEGACY_HERO_SUBTITLES.has(homeContent.heroSubtitle)
+    ? t('home.heroSubtitle')
+    : homeContent.heroSubtitle;
 
   const workflowSteps = [
     {
@@ -148,7 +155,7 @@ export default function ClaudeHome() {
               <span className="block">{t('home.heroTitleRest')}</span>
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-8 text-[#756454] md:text-lg">
-              {homeContent.heroSubtitle}
+              {heroSubtitle}
             </p>
 
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
@@ -178,6 +185,13 @@ export default function ClaudeHome() {
               >
                 <TicketCheck size={17} />
                 {user ? t('home.redeemVoucher') : t('home.getStarted')}
+              </Link>
+              <Link
+                to="/sub-site"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-[#DCCBBD] bg-[#FFF7F0] px-6 py-3.5 text-sm font-semibold text-[#8F4C35] transition-all hover:border-[#CBAE98] hover:bg-white"
+              >
+                <ShieldCheck size={17} />
+                {t('home.deployGateway')}
               </Link>
             </div>
 
@@ -231,6 +245,28 @@ export default function ClaudeHome() {
                       </div>
                     );
                   })}
+                </div>
+
+                <div className="mt-2 border-t border-[#EADCD0] pt-5">
+                  <div className="flex items-start gap-3">
+                    <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#D97757]/10 text-[#C56547]">
+                      <ShieldCheck size={18} />
+                    </span>
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#B68D75]">
+                        {t('home.platformEyebrow')}
+                      </p>
+                      <h3 className="mt-1 text-sm font-semibold text-[#49382C]">{t('home.platformTitle')}</h3>
+                      <p className="mt-1.5 text-sm leading-6 text-[#806D5D]">{t('home.platformDesc')}</p>
+                      <Link
+                        to="/sub-site"
+                        className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-[#C56547] hover:text-[#A84F34]"
+                      >
+                        {t('home.platformAction')}
+                        <ArrowRight size={14} />
+                      </Link>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="mt-3 grid grid-cols-3 gap-2 rounded-2xl border border-[#EADCD0] bg-[#F6EADF] p-3 text-center">
