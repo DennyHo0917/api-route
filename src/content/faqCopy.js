@@ -2,7 +2,7 @@ export const FAQ_COPY = {
   zh: {
     badge: '常见问题',
     title: 'API-Route 使用 FAQ',
-    subtitle: '把接入前最常问的问题放在一起：兼容方式、模型调用、套餐兑换、客户端配置、支付和独立平台。',
+    subtitle: '集中解答 Base URL、API Key、模型名、Codex、Claude Code、VSCode、套餐兑换、支付和白标 AI API 平台等接入问题。',
     sections: [
       {
         title: '接入与模型',
@@ -46,6 +46,10 @@ export const FAQ_COPY = {
             answer: '应用市场会列出当前推荐的客户端和内置应用。只要客户端支持自定义 OpenAI-compatible Base URL 和 API Key，通常都可以接入本站。',
           },
           {
+            question: 'Base URL、API Key 和模型名分别填什么？',
+            answer: 'Base URL 填本站提供的 API 调用地址，API Key 填你在 API 密钥页面创建的密钥，模型名使用定价页或客户端配置里显示的模型名称。接入失败时优先检查这三项是否一致。',
+          },
+          {
             question: '如何在 VSCode 中配置 API-Route 并使用 gpt5.5？',
             answer: '推荐使用 cc switch 一键导入配置。以 gpt5.5 为例，在 cc switch 中模型选择 gpt5.5，工具选择 cursor，导入目标选择 codex，然后执行导入。导入后在 VSCode 对应的 AI/Codex 配置中使用该模型和 API-Route 的密钥即可。',
           },
@@ -56,6 +60,10 @@ export const FAQ_COPY = {
           {
             question: 'Claude Code 如何配置 API-Route？',
             answer: 'Claude Code 的关键是让客户端使用 API-Route 提供的 Base URL、API Key 和模型名称。你可以手动填入这些信息，也可以用 cc switch 生成并导入配置，减少模型名、密钥和端点填错的概率。',
+          },
+          {
+            question: 'Codex、Claude Code 或 VSCode 连接失败时先检查什么？',
+            answer: '先确认 Base URL 没有多余路径或空格，API Key 没有复制错误，模型名和可用模型一致，账号仍有可用套餐或余额。然后到调用日志查看返回状态。',
           },
           {
             question: 'API Key 是否安全？',
@@ -75,6 +83,10 @@ export const FAQ_COPY = {
             answer: '它适合想独立运营 AI API 平台的人：可以设置品牌、域名、模型售价、充值方式和推广入口，把本站能力包装成自己的服务。',
           },
           {
+            question: '可以做白标 AI API 平台或 API 代理站吗？',
+            answer: '可以。你可以用自己的品牌入口展示平台，设置模型售价和套餐，把 AI API 访问能力销售给用户；上游接入、部署、支付、密钥、余额和日志由平台基础能力处理。',
+          },
+          {
             question: '支付后会自动开通吗？',
             answer: '独立平台订单支付完成后，系统会自动为同一账号开通管理权限，并引导你继续完成站点初始化。若支付已完成但状态未更新，请联系支持处理。',
           },
@@ -92,7 +104,7 @@ export const FAQ_COPY = {
   en: {
     badge: 'FAQ',
     title: 'API-Route FAQ',
-    subtitle: 'Answers to the questions people usually ask before connecting: OpenAI compatibility, model usage, plans, client setup, payments, and branded platform setup.',
+    subtitle: 'Answers about Base URL, API keys, model names, Codex, Claude Code, VS Code, plans, payments, and white-label AI API reseller platform setup.',
     sections: [
       {
         title: 'API Access and Models',
@@ -136,6 +148,10 @@ export const FAQ_COPY = {
             answer: 'The App Market lists recommended clients and built-in apps. In general, any client that supports a custom OpenAI-compatible Base URL and API key can connect to this site.',
           },
           {
+            question: 'What should I enter for Base URL, API key, and model name?',
+            answer: 'Use this site\'s API endpoint as the Base URL, the key you created on the API Keys page as the API key, and a model name shown on the Pricing page or imported client profile. If connection fails, check these three values first.',
+          },
+          {
             question: 'How do I configure API-Route in VSCode and use gpt5.5?',
             answer: 'We recommend using cc switch for one-click import. For example, to use gpt5.5 in VSCode, select gpt5.5 as the model in cc switch, choose cursor as the tool, set the import target to codex, then import the configuration. After that, use the imported API-Route profile in your VSCode AI/Codex setup.',
           },
@@ -146,6 +162,10 @@ export const FAQ_COPY = {
           {
             question: 'How do I configure Claude Code with API-Route?',
             answer: 'Claude Code needs the API-Route Base URL, API key, and model name. You can enter them manually, or use cc switch to generate and import the configuration so the endpoint, key, and model are less likely to be mistyped.',
+          },
+          {
+            question: 'What should I check when Codex, Claude Code, or VS Code fails to connect?',
+            answer: 'Check for extra spaces or paths in the Base URL, a copied API key mistake, a model name that is not currently available, and whether the account still has an active plan or balance. Then review usage logs for the returned status.',
           },
           {
             question: 'How should I protect my API key?',
@@ -165,6 +185,10 @@ export const FAQ_COPY = {
             answer: 'It is for operators who want to run their own AI API platform with custom branding, domain, model pricing, payments, and promotion while using the hosted capabilities behind this platform.',
           },
           {
+            question: 'Can I use it as a white-label AI API platform or AI API reseller site?',
+            answer: 'Yes. You can present the platform under your own brand, set model prices and plans, and sell AI API access to your users while the upstream access, deployment, payments, keys, balance, and logs are handled by the hosted platform.',
+          },
+          {
             question: 'Will the branded platform be activated automatically after payment?',
             answer: 'After the branded platform order is paid, the system grants management access to the same account and guides you through initialization. If payment is complete but the status does not update, contact support.',
           },
@@ -182,7 +206,7 @@ export const FAQ_COPY = {
   ja: {
     badge: 'FAQ',
     title: 'API-Route よくある質問',
-    subtitle: '接続前に迷いやすいポイントをまとめました。OpenAI 互換 API、モデル利用、プラン、クライアント設定、支払い、専用 AI ゲートウェイについて確認できます。',
+    subtitle: 'Base URL、API キー、モデル名、Codex、Claude Code、VSCode、プラン、支払い、ホワイトラベル AI API プラットフォームの設定を確認できます。',
     sections: [
       {
         title: 'API 接続とモデル',
@@ -226,6 +250,10 @@ export const FAQ_COPY = {
             answer: 'アプリページには推奨クライアントと連携アプリを掲載しています。カスタムの OpenAI 互換 Base URL と API キーを設定できるクライアントなら、多くの場合そのまま接続できます。',
           },
           {
+            question: 'Base URL、API キー、モデル名には何を入力しますか？',
+            answer: 'Base URL にはこのサイトの API エンドポイント、API キーには API キー画面で作成したキー、モデル名には料金ページまたは取り込んだクライアント設定に表示される名前を入力します。接続できない場合はまずこの 3 点を確認してください。',
+          },
+          {
             question: 'VSCode で API-Route を設定し、gpt5.5 を使うには？',
             answer: 'cc switch のワンクリック取り込みをおすすめします。gpt5.5 を使う場合は、cc switch でモデルに gpt5.5、ツールに cursor、取り込み先に codex を選び、設定を取り込みます。その後、VSCode 側の AI/Codex 設定で取り込まれた API-Route プロファイルを使います。',
           },
@@ -236,6 +264,10 @@ export const FAQ_COPY = {
           {
             question: 'Claude Code で API-Route を使うには？',
             answer: 'Claude Code では API-Route の Base URL、API キー、モデル名を設定します。手動で入力することもできますが、cc switch で設定を生成して取り込むと、端点・キー・モデル名の入力ミスを減らせます。',
+          },
+          {
+            question: 'Codex、Claude Code、VSCode が接続できない時は何を確認しますか？',
+            answer: 'Base URL に余計なパスや空白がないか、API キーのコピーに誤りがないか、モデル名が現在使えるものか、アカウントに有効なプランまたは残高があるかを確認します。その後、利用ログで返却ステータスを確認してください。',
           },
           {
             question: 'API キーはどのように管理すべきですか？',
@@ -255,6 +287,10 @@ export const FAQ_COPY = {
             answer: '独自ブランド、ドメイン、モデル価格、決済、販売導線を持つ AI API サイトを運営したい方向けです。このプラットフォームのホスト機能を使いながら、自分のサービスとして展開できます。',
           },
           {
+            question: 'ホワイトラベルの AI API プラットフォームや API 代理サイトとして使えますか？',
+            answer: 'はい。自分のブランドで入口を見せ、モデル価格やプランを設定し、ユーザーに AI API アクセスを販売できます。上流接続、デプロイ、決済、キー、残高、ログはホスト基盤で処理されます。',
+          },
+          {
             question: '支払い後に自動で有効化されますか？',
             answer: '専用 AI ゲートウェイの注文が支払われると、同じアカウントに管理権限が付与され、初期設定へ進めます。支払い済みなのに状態が変わらない場合はサポートへ連絡してください。',
           },
@@ -272,7 +308,7 @@ export const FAQ_COPY = {
   ko: {
     badge: 'FAQ',
     title: 'API-Route 자주 묻는 질문',
-    subtitle: '연동 전에 많이 묻는 내용을 정리했습니다. OpenAI 호환 API, 모델 사용, 플랜, 클라이언트 설정, 결제, 전용 AI 게이트웨이를 확인하세요.',
+    subtitle: 'Base URL, API 키, 모델명, Codex, Claude Code, VSCode, 플랜, 결제, 화이트라벨 AI API 플랫폼 설정을 한곳에서 확인하세요.',
     sections: [
       {
         title: 'API 연동과 모델',
@@ -316,6 +352,10 @@ export const FAQ_COPY = {
             answer: '앱 페이지에서 추천 클라이언트와 연동 앱을 확인할 수 있습니다. 사용자 지정 OpenAI 호환 Base URL과 API 키를 지원하는 클라이언트라면 대부분 연결할 수 있습니다.',
           },
           {
+            question: 'Base URL, API 키, 모델명에는 각각 무엇을 입력하나요?',
+            answer: 'Base URL에는 이 사이트의 API 엔드포인트를, API 키에는 API 키 페이지에서 만든 키를, 모델명에는 요금 페이지나 가져온 클라이언트 설정에 표시된 모델 이름을 입력하세요. 연결에 실패하면 먼저 이 세 값을 확인하세요.',
+          },
+          {
             question: 'VSCode에서 API-Route를 설정하고 gpt5.5를 사용하려면 어떻게 하나요?',
             answer: 'cc switch의 원클릭 가져오기를 권장합니다. gpt5.5를 예로 들면 cc switch에서 모델은 gpt5.5, 도구는 cursor, 가져오기 대상은 codex로 선택한 뒤 설정을 가져오세요. 이후 VSCode의 AI/Codex 설정에서 가져온 API-Route 프로필을 사용하면 됩니다.',
           },
@@ -326,6 +366,10 @@ export const FAQ_COPY = {
           {
             question: 'Claude Code에서 API-Route를 사용하려면 어떻게 설정하나요?',
             answer: 'Claude Code에는 API-Route의 Base URL, API 키, 모델명을 설정해야 합니다. 직접 입력할 수도 있지만 cc switch로 설정을 생성하고 가져오면 엔드포인트, 키, 모델명을 잘못 입력할 가능성을 줄일 수 있습니다.',
+          },
+          {
+            question: 'Codex, Claude Code, VSCode 연결이 실패하면 무엇부터 확인하나요?',
+            answer: 'Base URL에 불필요한 경로나 공백이 없는지, API 키를 잘못 복사하지 않았는지, 모델명이 현재 사용 가능한지, 계정에 활성 플랜이나 잔액이 있는지 확인하세요. 이후 사용 로그에서 반환 상태를 확인하면 됩니다.',
           },
           {
             question: 'API 키는 어떻게 보호해야 하나요?',
@@ -343,6 +387,10 @@ export const FAQ_COPY = {
           {
             question: '전용 AI 게이트웨이는 누구에게 적합한가요?',
             answer: '자체 브랜드, 도메인, 모델 가격, 결제, 홍보 동선을 갖춘 AI API 사이트를 운영하고 싶은 분에게 적합합니다. 이 플랫폼의 호스팅 기능을 바탕으로 자신의 서비스처럼 운영할 수 있습니다.',
+          },
+          {
+            question: '화이트라벨 AI API 플랫폼이나 API 리셀러 사이트로 사용할 수 있나요?',
+            answer: '네. 자체 브랜드로 플랫폼을 보여주고 모델 가격과 플랜을 설정해 사용자에게 AI API 접근 권한을 판매할 수 있습니다. 상위 연동, 배포, 결제, 키, 잔액, 로그는 호스팅 플랫폼에서 처리됩니다.',
           },
           {
             question: '결제 후 자동으로 활성화되나요?',

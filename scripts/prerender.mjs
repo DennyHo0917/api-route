@@ -50,31 +50,35 @@ const pages = {
   pricing: {
     path: '/pricing',
     copy: {
-      zh: ['AI API 模型价格与费率', '比较 API-Route 支持模型的输入价格、输出价格、缓存费用、按次计费和官方参考价，按聊天、代码、长文本、图片或视频场景选择 AI API。'],
-      en: ['AI API Pricing, Model Rates and Token Costs', 'Compare API-Route model rates for input tokens, output tokens, cache reads, cache creation, per-call pricing, and official reference prices across chat, coding, long-context, image, and video workloads.'],
-      ja: ['AI API モデルと料金', 'API-Route で利用できるモデルの入力料金、出力料金、キャッシュ料金、回数課金、公式参考価格を比較し、チャット、コード、長文、画像、動画に合う AI API を選べます。'],
-      ko: ['AI API 모델 및 요금', 'API-Route에서 지원하는 모델의 입력 요금, 출력 요금, 캐시 요금, 호출당 과금, 공식 참고가를 비교하고 채팅, 코딩, 긴 문서, 이미지, 영상 작업에 맞는 AI API를 선택하세요.'],
+      zh: ['AI API 价格、模型费率与 Token 成本', '比较 GPT、Claude、Gemini 等模型在 API-Route 的输入价格、输出价格、缓存费用、按次计费和官方参考价，按聊天、代码、长文本、图片或视频场景选择 AI API。'],
+      en: ['AI API Pricing, Model Rates and Token Costs', 'Compare API-Route rates for GPT, Claude, Gemini, and other models across input tokens, output tokens, cache reads, cache creation, per-call pricing, official references, and chat, coding, long-context, image, or video workloads.'],
+      ja: ['AI API 料金・モデル単価・トークンコスト', 'API-Route で利用できる GPT、Claude、Gemini などの入力料金、出力料金、キャッシュ料金、回数課金、公式参考価格を比較し、チャット、コード、長文、画像、動画に合う AI API を選べます。'],
+      ko: ['AI API 요금, 모델 단가 및 토큰 비용', 'API-Route에서 지원하는 GPT, Claude, Gemini 등 모델의 입력 요금, 출력 요금, 캐시 요금, 호출당 과금, 공식 참고가를 비교하고 채팅, 코딩, 긴 문서, 이미지, 영상 작업에 맞는 AI API를 선택하세요.'],
     },
     sections: {
       zh: [
-        ['价格表包含什么', ['输入价格：prompt、上下文和工具输入消耗的价格', '输出价格：模型生成内容消耗的价格', '缓存价格：长上下文和重复前缀调用的费用', '官方参考价：用于对照公开官方价格']],
         ['如何估算成本', ['文本调用成本约等于输入量乘输入单价，加上输出量乘输出单价，再加缓存相关费用', '图片、音频、视频或按次模型按规格、秒数或固定调用价计算']],
         ['如何选择模型', ['轻量聊天优先看单价和稳定性', '代码和复杂推理优先看能力、输出价格和稳定路线', '长文本重点比较上下文长度和缓存价格', '图片、音频、视频查看按次、按秒或分辨率规格计费']],
+        ['这个页面适合比较什么', ['GPT、Claude、Gemini 等主流模型的输入/输出 token 成本', '长上下文、缓存读取和缓存创建对总成本的影响', '图片、音频、视频模型的按次、按秒或规格计费', '套餐、余额和兑换码适合哪种调用预算']],
+        ['价格表关键字段', ['输入价格：prompt、上下文和工具输入消耗的价格', '输出价格：模型生成内容消耗的价格', '缓存价格：长上下文和重复前缀调用的费用', '官方参考价：用于对照公开官方价格']],
       ],
       en: [
-        ['What the pricing table includes', ['Input price for prompts, context, and tool input', 'Output price for generated content', 'Cache pricing for long context and repeated prefixes', 'Official reference rates for public price comparison']],
         ['How to estimate cost', ['Text API cost is roughly input volume times input rate plus output volume times output rate plus cache-related cost', 'Image, audio, video, and per-call models follow displayed specs, seconds, or fixed call prices']],
         ['How to choose a model', ['Light chat starts with low rates and healthy status', 'Coding and reasoning compare capability, output cost, and stable routes', 'Long-context work compares context length and cache rates', 'Image, audio, and video work checks per-call, per-second, or resolution-based pricing']],
+        ['What this page helps you compare', ['Input and output token costs for GPT, Claude, Gemini, and other leading models', 'How long context, cache reads, and cache creation affect total cost', 'Per-call, per-second, or spec-based pricing for image, audio, and video models', 'Whether plans, balance, or redeem codes fit your usage budget']],
+        ['Key pricing fields', ['Input price for prompts, context, and tool input', 'Output price for generated content', 'Cache pricing for long context and repeated prefixes', 'Official reference rates for public price comparison']],
       ],
       ja: [
-        ['料金表に含まれるもの', ['入力料金：プロンプト、コンテキスト、ツール入力の費用', '出力料金：モデルが生成した内容の費用', 'キャッシュ料金：長いコンテキストや繰り返し前置きの費用', '公式参考価格：公開公式価格との比較']],
         ['費用の見積もり方', ['テキスト API の費用は入力量×入力単価、出力量×出力単価、キャッシュ関連費用の合計が目安です', '画像、音声、動画、回数課金モデルは仕様、秒数、固定単価に従います']],
         ['モデルの選び方', ['軽いチャットは単価とオンライン状態を確認', 'コードや推論は能力、出力コスト、安定した経路を比較', '長文ではコンテキスト長とキャッシュ料金を比較', '画像、音声、動画は回数、秒数、解像度ごとの料金を確認']],
+        ['このページで比較できること', ['GPT、Claude、Gemini など主要モデルの入力/出力トークンコスト', '長文コンテキスト、キャッシュ読み取り、キャッシュ作成が総コストに与える影響', '画像、音声、動画モデルの回数、秒数、仕様ごとの料金', 'プラン、残高、引き換えコードのどれが利用予算に合うか']],
+        ['料金表の主な項目', ['入力料金：プロンプト、コンテキスト、ツール入力の費用', '出力料金：モデルが生成した内容の費用', 'キャッシュ料金：長いコンテキストや繰り返し前置きの費用', '公式参考価格：公開公式価格との比較']],
       ],
       ko: [
-        ['요금표에 포함된 항목', ['입력 요금: 프롬프트, 컨텍스트, 도구 입력 비용', '출력 요금: 모델이 생성한 내용의 비용', '캐시 요금: 긴 컨텍스트와 반복 프롬프트 비용', '공식 참고가: 공개 공식 가격과 비교']],
         ['비용 예측 방법', ['텍스트 API 비용은 입력량×입력 단가, 출력량×출력 단가, 캐시 관련 비용을 합산해 대략 계산합니다', '이미지, 오디오, 영상, 호출당 과금 모델은 표시된 사양, 초, 고정 호출가를 따릅니다']],
         ['모델 선택 방법', ['가벼운 채팅은 낮은 요금과 온라인 상태를 우선 확인', '코딩과 추론은 성능, 출력 비용, 안정적인 경로를 비교', '긴 문서는 컨텍스트 길이와 캐시 요금을 비교', '이미지, 오디오, 영상은 호출, 초, 해상도 기준 요금을 확인']],
+        ['이 페이지에서 비교할 수 있는 것', ['GPT, Claude, Gemini 등 주요 모델의 입력/출력 토큰 비용', '긴 문맥, 캐시 읽기, 캐시 생성이 전체 비용에 미치는 영향', '이미지, 오디오, 영상 모델의 호출당, 초당, 사양별 요금', '플랜, 잔액, 교환 코드 중 어떤 방식이 예산에 맞는지']],
+        ['가격표의 핵심 항목', ['입력 요금: 프롬프트, 컨텍스트, 도구 입력 비용', '출력 요금: 모델이 생성한 내용의 비용', '캐시 요금: 긴 컨텍스트와 반복 프롬프트 비용', '공식 참고가: 공개 공식 가격과 비교']],
       ],
     },
   },
@@ -100,7 +104,7 @@ const pages = {
     path: '/sub-site',
     copy: {
       zh: ['独立 AI API 平台搭建', '无需自己找上游、购买 VPS 或部署服务，支付一笔建站费用即可开通可收款、可定价、可推广的独立 AI API 管理平台。'],
-      en: ['Branded AI API Platform Setup', 'Launch a branded AI API platform without finding upstream providers, renting a VPS, or deploying services yourself. Pay one setup fee and launch from a ready-made foundation.'],
+      en: ['White-label AI API Platform for Resellers', 'Launch a white-label AI API platform for AI API resellers without finding upstream providers, renting a VPS, or deploying services yourself. Pay one setup fee and sell AI API access under your own brand.'],
       ja: ['専用 AI API プラットフォーム構築', '上流 API プロバイダー探し、VPS の用意、サービスのデプロイを自分で行わず、構築費用だけで決済・価格設定・販売に対応した専用 AI API プラットフォームを開設できます。'],
       ko: ['전용 AI API 플랫폼 구축', '상위 API 공급처 탐색, VPS 준비, 서비스 배포를 직접 하지 않아도 한 번의 구축 비용으로 결제, 가격 설정, 판매를 지원하는 전용 AI API 플랫폼을 시작할 수 있습니다.'],
     },
@@ -111,9 +115,9 @@ const pages = {
         ['开通后得到什么', ['独立访问入口和品牌展示', '上游模型接入与部署基础', '模型销售、售价和套餐管理', '充值、兑换码与支付流程', 'API Key、余额、调用日志和用户管理']],
       ],
       en: [
-        ['Who it fits', ['AI tool community operators', 'Developers and SaaS teams', 'Model channels and API resellers', 'AI API side-project builders']],
-        ['How it makes money', ['Set model price margins', 'Sell plans and redeem codes', 'Drive repeat top-ups', 'Promote a branded entry point']],
-        ['What you get', ['Independent entry point and branded presentation', 'Upstream model access and deployment foundation', 'Model sales, pricing, and plan management', 'Top-ups, redeem codes, and payment flows', 'API keys, balance, usage logs, and user management']],
+        ['Who it fits', ['AI tool community operators', 'Developers and SaaS teams', 'AI API resellers and model channels', 'AI API side-project builders']],
+        ['How it makes money', ['Set model price margins', 'Sell AI API access', 'Drive repeat top-ups', 'Promote a branded entry point']],
+        ['What you get', ['White-label entry point and branded presentation', 'Upstream model access and deployment foundation', 'Model sales, pricing, and plan management', 'Top-ups, redeem codes, and payment flows', 'API keys, balance, usage logs, and user management']],
       ],
       ja: [
         ['誰に向いているか', ['AI ツールコミュニティ運営者', '開発者・SaaS チーム', 'モデルチャネル・API 代理運営者', 'AI API 副業を検証したい人']],
@@ -137,6 +141,7 @@ const pages = {
       en: [
         ['How soon can I use it?', 'After payment is confirmed, the system grants management access and guides initialization.'],
         ['Can I use my own domain?', 'Yes. The platform is designed for your own brand, domain, and entry point.'],
+        ['Can I use it as an AI API reseller platform?', 'Yes. It is designed for white-label AI API resellers who want to set prices, sell AI API access, and keep users on a branded entry point.'],
         ['Can I set model prices myself?', 'Yes. After launch, you can configure model pricing, plans, and sales strategy.'],
         ['Do I need to find upstream providers or rent a VPS?', 'No. Upstream connections and deployment are already handled. Pay the setup fee and finish initialization.'],
         ['Do I need to maintain servers?', 'You do not need to rebuild the core platform infrastructure; focus on brand, pricing, and users.'],

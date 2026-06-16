@@ -376,8 +376,8 @@
     "downloads.providerDocs": "接入文档",
     "downloads.releases": "官方 Releases",
 
-    "pricing.title": "AI API 模型价格与费率",
-    "pricing.subtitle": "比较输入、输出、缓存和按次计费价格，按聊天、代码、长文本、图片或视频场景选择模型。",
+    "pricing.title": "AI API 价格、模型费率与 Token 成本",
+    "pricing.subtitle": "比较 GPT、Claude、Gemini 等模型的输入、输出、缓存和按次计费价格，按聊天、代码、长文本、图片或视频场景选择模型。",
     "pricing.searchPlaceholder": "搜索模型...",
     "pricing.noMatch": "没有匹配的模型",
     "pricing.noModels": "暂无可用模型",

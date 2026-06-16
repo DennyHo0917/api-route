@@ -162,6 +162,165 @@ const PRICING_GUIDE_COPY = {
   },
 };
 
+const PRICING_GUIDE_COPY_V2 = {
+  zh: {
+    cards: [
+      {
+        title: '先比较模型家族',
+        body: 'GPT、Claude、Gemini 等文本模型先看输入/输出 token 单价；图片、音频、视频再看按次、按秒或分辨率规格。',
+      },
+      {
+        title: '再估算真实消耗',
+        body: '把平均输入 token、输出 token、调用次数和缓存命中拆开看，避免只看单价却低估长上下文或高频调用成本。',
+      },
+      {
+        title: '最后匹配套餐',
+        body: '价格表用于判断模型成本，套餐、余额和兑换码用于控制预算；实际扣费以账户日志和订单记录为准。',
+      },
+    ],
+    compareTitle: '这个页面适合比较什么',
+    compareItems: [
+      'GPT、Claude、Gemini 等主流模型的输入/输出 token 成本',
+      '长上下文、缓存读取和缓存创建对总成本的影响',
+      '图片、音频、视频模型的按次、按秒或规格计费',
+      '套餐、余额和兑换码适合哪种调用预算',
+    ],
+    explainTitle: '价格表关键字段',
+    explain: [
+      ['输入价格', '用户 prompt、上下文、工具输入和系统提示词消耗的价格。'],
+      ['输出价格', '模型生成内容消耗的价格，通常和输入价格不同。'],
+      ['缓存价格', '适合长上下文或重复前缀调用，用来降低重复读取成本。'],
+      ['官方参考价', '用于对照公开官方价格，实际扣费以本站价格和调用日志为准。'],
+    ],
+    estimateTitle: '快速估算 token 成本',
+    estimateBody: '文本 API 成本约等于输入量 x 输入单价 + 输出量 x 输出单价 + 缓存相关费用。图片、音频、视频或按次模型会按表格里的规格、秒数或固定调用价计算。',
+    chooseTitle: '按用途筛选模型',
+    choose: [
+      '聊天、摘要、翻译：优先看低输入/输出价格、在线状态和响应稳定性。',
+      '代码、推理、Agent：重点比较模型能力、输出价格、上下文长度和可用路线。',
+      '长文档、知识库、重复提示词：重点看缓存读取、缓存创建和长上下文成本。',
+      '图片、音频、视频：确认是按次、按秒、分辨率还是规格计费。',
+    ],
+  },
+  en: {
+    cards: [
+      {
+        title: 'Compare model families',
+        body: 'For GPT, Claude, Gemini, and other text models, start with input/output token rates. For image, audio, and video models, check per-call, per-second, or resolution-based billing.',
+      },
+      {
+        title: 'Estimate real usage',
+        body: 'Break usage into average input tokens, output tokens, request volume, and cache hits so long-context or high-frequency calls are not underestimated.',
+      },
+      {
+        title: 'Match cost to budget',
+        body: 'Use the pricing table to judge model cost, then use plans, balance, and redeem codes to control spend. Actual billing follows account logs and order records.',
+      },
+    ],
+    compareTitle: 'What this page helps you compare',
+    compareItems: [
+      'Input and output token costs for GPT, Claude, Gemini, and other leading models',
+      'How long context, cache reads, and cache creation affect total cost',
+      'Per-call, per-second, or spec-based pricing for image, audio, and video models',
+      'Whether plans, balance, or redeem codes fit your usage budget',
+    ],
+    explainTitle: 'Key pricing fields',
+    explain: [
+      ['Input price', 'Cost for prompts, context, system messages, and tool input sent to a model.'],
+      ['Output price', 'Cost for generated content, which often differs from input pricing.'],
+      ['Cache price', 'Useful for long context or repeated prefixes, helping reduce repeated context cost.'],
+      ['Official reference', 'A comparison column for public official rates. Actual billing follows API-Route rates and usage logs.'],
+    ],
+    estimateTitle: 'Quick token cost estimate',
+    estimateBody: 'Text API cost is roughly input volume x input rate + output volume x output rate + cache-related cost. Image, audio, video, and per-call models follow the displayed spec, seconds, or fixed call price.',
+    chooseTitle: 'Filter models by workload',
+    choose: [
+      'Chat, summaries, translation: start with low input/output rates, online status, and response stability.',
+      'Coding, reasoning, agents: compare model capability, output cost, context length, and stable routes.',
+      'Long documents, knowledge bases, repeated prompts: compare cache reads, cache creation, and long-context cost.',
+      'Image, audio, video: check whether billing is per call, per second, resolution-based, or spec-based.',
+    ],
+  },
+  ja: {
+    cards: [
+      {
+        title: 'モデル系統を比較',
+        body: 'GPT、Claude、Gemini などのテキストモデルは入力/出力トークン単価を確認し、画像・音声・動画は回数、秒数、解像度などの課金単位を見ます。',
+      },
+      {
+        title: '実際の利用量を見積もる',
+        body: '平均入力トークン、出力トークン、呼び出し回数、キャッシュ利用を分けて見ることで、長文処理や高頻度利用の費用を見落としにくくなります。',
+      },
+      {
+        title: '予算に合う使い方を選ぶ',
+        body: '料金表でモデルごとのコストを確認し、プラン、残高、引き換えコードで予算を管理します。実際の課金は利用ログと注文記録に基づきます。',
+      },
+    ],
+    compareTitle: 'このページで比較できること',
+    compareItems: [
+      'GPT、Claude、Gemini など主要モデルの入力/出力トークンコスト',
+      '長文コンテキスト、キャッシュ読み取り、キャッシュ作成が総コストに与える影響',
+      '画像、音声、動画モデルの回数、秒数、仕様ごとの料金',
+      'プラン、残高、引き換えコードのどれが利用予算に合うか',
+    ],
+    explainTitle: '料金表の主な項目',
+    explain: [
+      ['入力料金', 'プロンプト、コンテキスト、システムメッセージ、ツール入力にかかる料金です。'],
+      ['出力料金', 'モデルが生成した内容にかかる料金で、入力料金と異なることがあります。'],
+      ['キャッシュ料金', '長いコンテキストや繰り返しの前置きで、再利用コストを抑えるための料金です。'],
+      ['公式参考価格', '公開されている公式価格との比較です。実際の課金は API-Route の料金と利用ログに従います。'],
+    ],
+    estimateTitle: 'トークン費用の簡単な見積もり',
+    estimateBody: 'テキスト API の費用は、おおよそ入力量 x 入力単価 + 出力量 x 出力単価 + キャッシュ関連費用です。画像、音声、動画、回数課金モデルは表に表示された仕様、秒数、固定呼び出し料金に従います。',
+    chooseTitle: '用途別にモデルを選ぶ',
+    choose: [
+      'チャット、要約、翻訳：入力/出力単価、オンライン状態、応答の安定性を確認します。',
+      'コード、推論、Agent：モデル能力、出力コスト、コンテキスト長、安定した経路を比較します。',
+      '長文ドキュメント、ナレッジベース、繰り返しプロンプト：キャッシュ読み取り、キャッシュ作成、長文コストを比較します。',
+      '画像、音声、動画：回数、秒数、解像度、仕様のどれで課金されるかを確認します。',
+    ],
+  },
+  ko: {
+    cards: [
+      {
+        title: '모델 계열 먼저 비교',
+        body: 'GPT, Claude, Gemini 같은 텍스트 모델은 입력/출력 토큰 단가를 먼저 보고, 이미지·오디오·영상 모델은 호출당, 초당, 해상도별 과금을 확인합니다.',
+      },
+      {
+        title: '실제 사용량 계산',
+        body: '평균 입력 토큰, 출력 토큰, 호출 횟수, 캐시 사용을 나누어 보면 긴 문맥 처리나 고빈도 호출 비용을 과소평가하지 않을 수 있습니다.',
+      },
+      {
+        title: '예산에 맞게 선택',
+        body: '가격표로 모델별 비용을 판단하고, 플랜·잔액·교환 코드로 지출을 관리합니다. 실제 과금은 계정 로그와 주문 기록을 기준으로 합니다.',
+      },
+    ],
+    compareTitle: '이 페이지에서 비교할 수 있는 것',
+    compareItems: [
+      'GPT, Claude, Gemini 등 주요 모델의 입력/출력 토큰 비용',
+      '긴 문맥, 캐시 읽기, 캐시 생성이 전체 비용에 미치는 영향',
+      '이미지, 오디오, 영상 모델의 호출당, 초당, 사양별 요금',
+      '플랜, 잔액, 교환 코드 중 어떤 방식이 예산에 맞는지',
+    ],
+    explainTitle: '가격표의 핵심 항목',
+    explain: [
+      ['입력 요금', '프롬프트, 문맥, 시스템 메시지, 도구 입력에 적용되는 요금입니다.'],
+      ['출력 요금', '모델이 생성한 콘텐츠에 적용되는 요금이며 입력 요금과 다를 수 있습니다.'],
+      ['캐시 요금', '긴 문맥이나 반복 프롬프트에서 재사용 비용을 낮추는 데 쓰입니다.'],
+      ['공식 참고가', '공개된 공식 가격과 비교하기 위한 항목입니다. 실제 과금은 API-Route 요금과 사용 로그를 따릅니다.'],
+    ],
+    estimateTitle: '토큰 비용 빠르게 계산하기',
+    estimateBody: '텍스트 API 비용은 대략 입력량 x 입력 단가 + 출력량 x 출력 단가 + 캐시 관련 비용입니다. 이미지, 오디오, 영상, 호출당 과금 모델은 표에 표시된 사양, 초 단위, 고정 호출 가격을 따릅니다.',
+    chooseTitle: '작업에 맞게 모델 고르기',
+    choose: [
+      '채팅, 요약, 번역: 낮은 입력/출력 요금, 온라인 상태, 응답 안정성을 먼저 봅니다.',
+      '코딩, 추론, Agent: 모델 성능, 출력 비용, 문맥 길이, 안정적인 경로를 비교합니다.',
+      '긴 문서, 지식베이스, 반복 프롬프트: 캐시 읽기, 캐시 생성, 긴 문맥 비용을 비교합니다.',
+      '이미지, 오디오, 영상: 호출당, 초당, 해상도별, 사양별 과금인지 확인합니다.',
+    ],
+  },
+};
+
 function splitTopLevelMultiply(expr = '') {
   const parts = [];
   let start = 0;
@@ -312,7 +471,7 @@ export default function Pricing() {
   const [loading, setLoading] = useState(true);
   const [expandedModels, setExpandedModels] = useState(() => new Set());
   const language = normalizeAppLanguage(i18n.resolvedLanguage || i18n.language);
-  const guideCopy = PRICING_GUIDE_COPY[language] || PRICING_GUIDE_COPY.en;
+  const guideCopy = PRICING_GUIDE_COPY_V2[language] || PRICING_GUIDE_COPY_V2.en;
 
   useEffect(() => {
     getSiteModels()
@@ -502,45 +661,28 @@ export default function Pricing() {
         })}
       </section>
 
-      <section className="mb-8 grid gap-4 lg:grid-cols-[1fr_0.9fr]">
+      <section className="mb-8 grid gap-4 lg:grid-cols-2">
         <div className="rounded-xl border border-page-divider bg-page-surface p-5 shadow-sm">
-          <div className="mb-4 flex items-center gap-2">
-            <WalletCards className="h-5 w-5 text-page-link" />
-            <h2 className="text-lg font-semibold text-page">{guideCopy.explainTitle}</h2>
+          <div className="mb-3 flex items-center gap-2">
+            <Calculator className="h-5 w-5 text-page-link" />
+            <h2 className="text-lg font-semibold text-page">{guideCopy.estimateTitle}</h2>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {guideCopy.explain.map(([title, body]) => (
-              <div key={title} className="rounded-lg border border-page-divider bg-page-inset p-4">
-                <h3 className="text-sm font-semibold text-page">{title}</h3>
-                <p className="mt-1.5 text-sm leading-6 text-page-secondary">{body}</p>
-              </div>
-            ))}
-          </div>
+          <p className="text-sm leading-7 text-page-secondary">{guideCopy.estimateBody}</p>
         </div>
 
-        <div className="grid gap-4">
-          <div className="rounded-xl border border-page-divider bg-page-surface p-5 shadow-sm">
-            <div className="mb-3 flex items-center gap-2">
-              <Calculator className="h-5 w-5 text-page-link" />
-              <h2 className="text-lg font-semibold text-page">{guideCopy.estimateTitle}</h2>
-            </div>
-            <p className="text-sm leading-7 text-page-secondary">{guideCopy.estimateBody}</p>
+        <div className="rounded-xl border border-page-divider bg-page-surface p-5 shadow-sm">
+          <div className="mb-3 flex items-center gap-2">
+            <Gauge className="h-5 w-5 text-page-link" />
+            <h2 className="text-lg font-semibold text-page">{guideCopy.chooseTitle}</h2>
           </div>
-
-          <div className="rounded-xl border border-page-divider bg-page-surface p-5 shadow-sm">
-            <div className="mb-3 flex items-center gap-2">
-              <Gauge className="h-5 w-5 text-page-link" />
-              <h2 className="text-lg font-semibold text-page">{guideCopy.chooseTitle}</h2>
-            </div>
-            <ul className="space-y-2 text-sm leading-6 text-page-secondary">
-              {guideCopy.choose.map((item) => (
-                <li key={item} className="flex gap-2">
-                  <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-page-link" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <ul className="space-y-2 text-sm leading-6 text-page-secondary">
+            {guideCopy.choose.map((item) => (
+              <li key={item} className="flex gap-2">
+                <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-page-link" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
@@ -788,6 +930,37 @@ export default function Pricing() {
           </table>
         </div>
       )}
+
+      <section className="mt-10 grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+        <div>
+          <div className="mb-4 flex items-center gap-2">
+            <Layers className="h-5 w-5 text-page-link" />
+            <h2 className="text-lg font-semibold text-page">{guideCopy.compareTitle}</h2>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {guideCopy.compareItems.map((item) => (
+              <div key={item} className="rounded-xl border border-page-divider bg-page-inset p-4 text-sm leading-6 text-page-secondary">
+                {item}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <div className="mb-4 flex items-center gap-2">
+            <WalletCards className="h-5 w-5 text-page-link" />
+            <h2 className="text-lg font-semibold text-page">{guideCopy.explainTitle}</h2>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {guideCopy.explain.map(([title, body]) => (
+              <div key={title} className="rounded-xl border border-page-divider bg-page-inset p-4">
+                <h3 className="text-sm font-semibold text-page">{title}</h3>
+                <p className="mt-1.5 text-sm leading-6 text-page-secondary">{body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

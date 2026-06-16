@@ -33,8 +33,8 @@ const SEO_COPY = {
       description: '通过一个兼容 OpenAI 格式的 API 接入多种主流大模型，提供统一调用、清晰计费、套餐管理与稳定路由。',
     },
     pricing: {
-      title: 'AI API 模型价格与费率',
-      description: '比较 API-Route 支持模型的输入价格、输出价格、缓存费用、按次计费和官方参考价，按聊天、代码、长文本、图片或视频场景选择 AI API。',
+      title: 'AI API 价格、模型费率与 Token 成本',
+      description: '比较 GPT、Claude、Gemini 等模型在 API-Route 的输入价格、输出价格、缓存费用、按次计费和官方参考价，按聊天、代码、长文本、图片或视频场景选择 AI API。',
     },
     packages: {
       title: 'AI API 套餐与兑换码',
@@ -78,7 +78,7 @@ const SEO_COPY = {
     },
     pricing: {
       title: 'AI API Pricing, Model Rates and Token Costs',
-      description: 'Compare API-Route model rates for input tokens, output tokens, cache reads, cache creation, per-call pricing, and official reference prices across chat, coding, long-context, image, and video workloads.',
+      description: 'Compare API-Route rates for GPT, Claude, Gemini, and other models across input tokens, output tokens, cache reads, cache creation, per-call pricing, official references, and chat, coding, long-context, image, or video workloads.',
     },
     packages: {
       title: 'AI API Plans and Redeem Codes',
@@ -89,11 +89,12 @@ const SEO_COPY = {
       description: 'Connect supported AI apps and clients to API-Route with one API endpoint and access key.',
     },
     subSite: {
-      title: 'Branded AI API Platform Setup',
-      description: 'Launch a branded AI API platform without finding upstream providers, renting a VPS, or deploying services yourself. Pay one setup fee and launch from a ready-made foundation.',
+      title: 'White-label AI API Platform for Resellers',
+      description: 'Launch a white-label AI API platform for AI API resellers without finding upstream providers, renting a VPS, or deploying services yourself. Pay one setup fee and sell AI API access under your own brand.',
       questions: [
         ['How soon can I use it?', 'After payment is confirmed, the system grants management access and guides initialization.'],
         ['Can I use my own domain?', 'Yes. The platform is designed for your own brand, domain, and entry point.'],
+        ['Can I use it as an AI API reseller platform?', 'Yes. It is designed for white-label AI API resellers who want to set prices, sell AI API access, and keep users on a branded entry point.'],
         ['Can I set model prices myself?', 'Yes. After launch, you can configure model pricing, plans, and sales strategy.'],
         ['How are customer payments managed?', 'Orders, top-ups, balance, plans, and usage records are handled through the platform flow.'],
         ['Do I need to find upstream providers or rent a VPS?', 'No. Upstream connections and deployment are already handled. Pay the setup fee and finish initialization.'],
@@ -110,7 +111,7 @@ const SEO_COPY = {
       title: 'Page Not Found',
       description: 'The requested page does not exist, has moved, or the address is incorrect.',
     },
-    keywords: 'AI API,API aggregation,OpenAI compatible API,LLM API,multi-model API,API-Route',
+    keywords: 'AI API,API aggregation,OpenAI compatible API,LLM API,multi-model API,white-label AI API platform,AI API reseller,sell AI API access,API-Route',
     locale: 'en_US',
     language: 'en',
     serviceType: 'Multi-model AI API aggregation and routing service',
@@ -121,8 +122,8 @@ const SEO_COPY = {
       description: 'OpenAI 互換 API から主要 AI モデルへまとめてアクセス。統一された利用量管理、わかりやすい料金、安定したルーティングを提供します。',
     },
     pricing: {
-      title: 'AI API モデルと料金',
-      description: 'API-Route で利用できるモデルの入力料金、出力料金、キャッシュ料金、回数課金、公式参考価格を比較し、チャット、コード、長文、画像、動画に合う AI API を選べます。',
+      title: 'AI API 料金・モデル単価・トークンコスト',
+      description: 'API-Route で利用できる GPT、Claude、Gemini などの入力料金、出力料金、キャッシュ料金、回数課金、公式参考価格を比較し、チャット、コード、長文、画像、動画に合う AI API を選べます。',
     },
     packages: {
       title: 'AI API プランとコード',
@@ -165,8 +166,8 @@ const SEO_COPY = {
       description: 'OpenAI 호환 API 하나로 주요 AI 모델을 연결하고, 통합 사용량 관리와 투명한 요금, 안정적인 라우팅을 제공합니다.',
     },
     pricing: {
-      title: 'AI API 모델 및 요금',
-      description: 'API-Route에서 지원하는 모델의 입력 요금, 출력 요금, 캐시 요금, 호출당 과금, 공식 참고가를 비교하고 채팅, 코딩, 긴 문서, 이미지, 영상 작업에 맞는 AI API를 선택하세요.',
+      title: 'AI API 요금, 모델 단가 및 토큰 비용',
+      description: 'API-Route에서 지원하는 GPT, Claude, Gemini 등 모델의 입력 요금, 출력 요금, 캐시 요금, 호출당 과금, 공식 참고가를 비교하고 채팅, 코딩, 긴 문서, 이미지, 영상 작업에 맞는 AI API를 선택하세요.',
     },
     packages: {
       title: 'AI API 플랜과 코드',
