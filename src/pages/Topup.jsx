@@ -119,6 +119,8 @@ export default function Topup() {
   const { user, refreshUser } = useAuth();
   const { site } = useSite();
   const { symbol, rate } = useCurrency();
+  const currentLanguage = (i18n.resolvedLanguage || i18n.language || '').toLowerCase();
+  const showVoucherFlow = currentLanguage.startsWith('zh');
 
   const [usage, setUsage] = useState(null);
   const [topupInfo, setTopupInfo] = useState(null);
@@ -665,29 +667,33 @@ export default function Topup() {
         <h1 className="mt-2 text-3xl font-bold tracking-[-0.035em] text-page md:text-4xl">{t('topup.title')}</h1>
         <p className="mt-3 max-w-2xl text-sm leading-7 text-page-secondary md:text-base">{t('topup.subtitle')}</p>
 
-        <div className="mt-6 flex flex-col gap-4 rounded-2xl border border-brand-500/30 bg-brand-500/10 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
-          <div className="flex items-start gap-3">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-500/15 text-brand-600">
-              <CircleAlert size={20} />
-            </span>
-            <div>
-              <p className="font-semibold text-page">{t('topup.mainlandBalanceNoticeTitle')}</p>
-              <p className="mt-1 text-sm leading-6 text-page-secondary">
-                {t('topup.mainlandBalanceNoticeDesc')}
-              </p>
+        {showVoucherFlow && (
+          <div className="mt-6 flex flex-col gap-4 rounded-2xl border border-red-500/25 bg-red-500/10 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+            <div className="flex items-start gap-3">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-500/15 text-red-600">
+                <CircleAlert size={20} />
+              </span>
+              <div>
+                <p className="font-semibold text-page">{t('topup.mainlandBalanceNoticeTitle')}</p>
+                <p className="mt-1 text-sm leading-6 text-page-secondary">
+                  {t('topup.mainlandBalanceNoticeDesc')}
+                </p>
+              </div>
             </div>
+            {redeemCodeShopUrl && (
+              <a
+                href={redeemCodeShopUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#D97757] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#C4613F]"
+              >
+                <ShoppingBag size={16} />
+                {t('topup.mainlandBalanceNoticeAction')}
+                <ExternalLink size={14} />
+              </a>
+            )}
           </div>
-          <a
-            href="https://faka.api-route.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#D97757] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#C4613F]"
-          >
-            <ShoppingBag size={16} />
-            {t('topup.mainlandBalanceNoticeAction')}
-            <ExternalLink size={14} />
-          </a>
-        </div>
+        )}
       </div>
 
       {/* Balance Stats */}
@@ -723,7 +729,7 @@ export default function Topup() {
 
       {/* Online Topup */}
       {site?.enable_topup && (enableOnline || enableStripe || enableCreem || enableCrypto) && (topupPayMethods.length > 0 || enableCrypto) && (
-        <div className="order-4 mb-6 rounded-2xl border border-[#E6D8CC] bg-white/65 p-6">
+        <div className={`${showVoucherFlow ? 'order-4' : 'order-2'} mb-6 rounded-2xl border border-[#E6D8CC] bg-white/65 p-6`}>
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-semibold text-page">{t('topup.onlineTopup')}</h2>
             <button
@@ -985,7 +991,7 @@ export default function Topup() {
       )}
 
       {/* Redeem Code */}
-      <div className="order-2 mb-8 overflow-hidden rounded-[28px] border border-[#DDCCBE] bg-white/80 shadow-[0_24px_65px_rgba(96,69,48,0.1)]">
+      <div className={`${showVoucherFlow ? 'order-2' : 'hidden'} mb-8 overflow-hidden rounded-[28px] border border-[#DDCCBE] bg-white/80 shadow-[0_24px_65px_rgba(96,69,48,0.1)]`}>
         <div className="grid lg:grid-cols-[1.2fr_0.8fr]">
           <div className="p-6 sm:p-8">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">

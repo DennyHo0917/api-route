@@ -21,12 +21,6 @@ import { localizePackage } from '../../utils/packageLocalization';
 import ApiEndpoints from '../../components/ApiEndpoints';
 import { getHomeContent } from '../../utils/siteContent';
 
-function normalizeExternalUrl(value) {
-  const trimmed = String(value || '').trim();
-  if (!trimmed) return '';
-  return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
-}
-
 function getTotalQuotaDollars(pkg) {
   const quotaDollars = pkg.quota_amount > 0 ? pkg.quota_amount / Q : 0;
   const resetPeriod = pkg.quota_reset_period || 'never';
@@ -76,7 +70,6 @@ export default function ClaudeHome() {
   const previewPackages = enabledPackages.slice(0, 3);
   const recommendedId = previewPackages.find((pkg) => Number(pkg.duration) === 30)?.id
     || previewPackages[1]?.id;
-  const shopUrl = normalizeExternalUrl(site?.top_up_link);
   const homeContent = getHomeContent(site, t, i18n.resolvedLanguage);
   const heroSubtitle = LEGACY_HERO_SUBTITLES.has(homeContent.heroSubtitle)
     ? t('home.heroSubtitle')
@@ -159,32 +152,20 @@ export default function ClaudeHome() {
             </p>
 
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              {shopUrl ? (
-                <a
-                  href={shopUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#D97757] px-6 py-3.5 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(217,119,87,0.24)] transition-all hover:-translate-y-0.5 hover:bg-[#C4613F]"
-                >
-                  <ShoppingBag size={17} />
-                  {t('home.buyVoucher')}
-                  <ArrowRight size={16} />
-                </a>
-              ) : (
-                <Link
-                  to="/packages"
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#D97757] px-6 py-3.5 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(217,119,87,0.24)] transition-all hover:-translate-y-0.5 hover:bg-[#C4613F]"
-                >
-                  {t('home.viewPackages')}
-                  <ArrowRight size={16} />
-                </Link>
-              )}
               <Link
                 to={user ? '/topup' : '/register'}
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#D97757] px-6 py-3.5 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(217,119,87,0.24)] transition-all hover:-translate-y-0.5 hover:bg-[#C4613F]"
+              >
+                <ShoppingBag size={17} />
+                {t('home.buyVoucher')}
+                <ArrowRight size={16} />
+              </Link>
+              <Link
+                to="/packages"
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-[#DCCBBD] bg-white/75 px-6 py-3.5 text-sm font-semibold text-[#59483A] transition-all hover:border-[#CBAE98] hover:bg-white"
               >
                 <TicketCheck size={17} />
-                {user ? t('home.redeemVoucher') : t('home.getStarted')}
+                {t('home.viewPackages')}
               </Link>
               <Link
                 to="/sub-site"
