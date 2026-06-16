@@ -16,7 +16,7 @@ import toast from 'react-hot-toast';
 
 export default function Tokens() {
   const { t } = useTranslation();
-  const { symbol, rate } = useCurrency();
+  const { symbol, rate, cnyRate } = useCurrency();
   const [tokens, setTokens] = useState([]);
   const [loading, setLoading] = useState(true);
   const [copiedId, setCopiedId] = useState(null);
@@ -289,6 +289,8 @@ export default function Tokens() {
                   parseTags={parseTags}
                   onSelect={openCreateFromGroup}
                   onViewPricing={openGroupPricing}
+                  symbol={symbol}
+                  cnyRate={cnyRate}
                   t={t}
                 />
               ))}
@@ -348,6 +350,7 @@ export default function Tokens() {
         onClose={closeGroupPricing}
         symbol={symbol}
         rate={rate}
+        cnyRate={cnyRate}
         t={t}
       />
 
@@ -534,7 +537,13 @@ export default function Tokens() {
 }
 
 /* ========== Key Group Card ========== */
-function KeyGroupCard({ group, parseTags, onSelect, onViewPricing, t }) {
+function formatCnyPerUsdRate(value, symbol, cnyRate) {
+  const amount = Number(value) * Number(cnyRate || 1);
+  if (!Number.isFinite(amount) || amount <= 0) return '';
+  return `${symbol}${amount.toFixed(amount >= 10 ? 2 : 4)}`;
+}
+
+function KeyGroupCard({ group, parseTags, onSelect, onViewPricing, symbol, cnyRate, t }) {
   const tags = parseTags(group.tags);
   const isUnavailable = group.is_unavailable;
 
@@ -568,7 +577,7 @@ function KeyGroupCard({ group, parseTags, onSelect, onViewPricing, t }) {
           <div className="flex items-center gap-2 mt-1.5 flex-wrap">
             {group.rmb_per_usd > 0 && (
               <span className="text-xs font-medium text-page">
-                {group.rmb_per_usd} {t('tokens.rmbPerUsd')}
+                {formatCnyPerUsdRate(group.rmb_per_usd, symbol, cnyRate)} {t('tokens.perUsd')}
               </span>
             )}
             {group.discount_label && (
@@ -626,6 +635,7 @@ function GroupPricingModal({
   onClose,
   symbol,
   rate,
+  cnyRate,
   t,
 }) {
   if (!open || !group) {
@@ -672,7 +682,7 @@ function GroupPricingModal({
             )}
             {displayGroup.rmb_per_usd > 0 && (
               <span className="px-2.5 py-1 rounded-full text-xs bg-page-surface text-page-secondary">
-                {displayGroup.rmb_per_usd} {t('tokens.rmbPerUsd')}
+                {formatCnyPerUsdRate(displayGroup.rmb_per_usd, symbol, cnyRate)} {t('tokens.perUsd')}
               </span>
             )}
             {summary && (

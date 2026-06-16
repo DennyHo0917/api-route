@@ -118,7 +118,7 @@ export default function Topup() {
   const { t, i18n } = useTranslation();
   const { user, refreshUser } = useAuth();
   const { site } = useSite();
-  const { symbol, rate } = useCurrency();
+  const { symbol, rate, fmtCNY, cnyPerUsd, decimals } = useCurrency();
   const currentLanguage = (i18n.resolvedLanguage || i18n.language || '').toLowerCase();
   const showVoucherFlow = currentLanguage.startsWith('zh');
 
@@ -217,8 +217,8 @@ export default function Topup() {
 
   const formatCurrencyAmount = useCallback((value) => {
     if (value === '' || value == null || Number.isNaN(Number(value))) return '';
-    return Number(value).toFixed(2).replace(/\.?0+$/, '');
-  }, []);
+    return Number(value).toFixed(decimals).replace(/\.?0+$/, '');
+  }, [decimals]);
 
   const toDisplayAmount = useCallback((quotaAmount) => {
     if (quotaAmount === '' || quotaAmount == null) return '';
@@ -310,7 +310,7 @@ export default function Topup() {
 
         let packageToActivate = selectedPackage;
         if (Number.isFinite(beforeQuota) && Number.isFinite(afterQuota) && afterQuota > beforeQuota) {
-          const creditedAmount = ((afterQuota - beforeQuota) / Q) * rate;
+          const creditedAmount = ((afterQuota - beforeQuota) / Q) * cnyPerUsd;
           const matchingPackages = packages.filter(
             (pkg) => Math.abs(Number(pkg.price) - creditedAmount) <= 0.02,
           );
@@ -379,7 +379,7 @@ export default function Topup() {
   const showGatewayMinTopupError = (method, minAmount) => {
     toast.error(t('topup.gatewayMinimumAmount', {
       channel: getMethodDisplayName(method),
-      amount: formatCurrencyAmount(minAmount),
+      amount: `${symbol}${formatCurrencyAmount(minAmount * rate)}`,
     }));
   };
 
@@ -396,7 +396,7 @@ export default function Topup() {
       return;
     }
     if (!isGatewayPayment && payAmount < minTopup) {
-      toast.error(t('topup.minimumAmount', { min: formatCurrencyAmount(minTopup * rate) }));
+      toast.error(t('topup.minimumAmount', { min: `${symbol}${formatCurrencyAmount(minTopup * rate)}` }));
       return;
     }
     const creemProduct = isCreemPayment(method)
@@ -701,21 +701,21 @@ export default function Topup() {
         <div className="glass rounded-2xl p-4">
           <p className="mb-1 text-xs text-page-secondary">{t('dashboard.balance')}</p>
           <div className="text-xl font-bold text-page">
-            {symbol}<CountUp from={0} to={balanceDollars} duration={1.5} decimals={2} />
+            {symbol}<CountUp from={0} to={balanceDollars} duration={1.5} decimals={decimals} />
           </div>
         </div>
 
         <div className="glass rounded-2xl p-4">
           <p className="mb-1 text-xs text-page-secondary">{t('dashboard.used')}</p>
           <div className="text-xl font-bold text-page">
-            {symbol}<CountUp from={0} to={usedQuota / Q * rate} duration={1.5} decimals={2} />
+            {symbol}<CountUp from={0} to={usedQuota / Q * rate} duration={1.5} decimals={decimals} />
           </div>
         </div>
 
         <div className="glass rounded-2xl p-4">
           <p className="mb-1 text-xs text-page-secondary">{t('dashboard.packageUsed')}</p>
           <div className="text-xl font-bold text-page">
-            {symbol}<CountUp from={0} to={packageUsedQuota / Q * rate} duration={1.5} decimals={2} />
+            {symbol}<CountUp from={0} to={packageUsedQuota / Q * rate} duration={1.5} decimals={decimals} />
           </div>
         </div>
 
@@ -786,7 +786,7 @@ export default function Topup() {
                 }}
                 min={minTopup * rate}
                 step="0.01"
-                placeholder={t('topup.amountPlaceholder', { min: formatCurrencyAmount(minTopup * rate) })}
+                placeholder={t('topup.amountPlaceholder', { min: `${symbol}${formatCurrencyAmount(minTopup * rate)}` })}
                 className="input flex-1"
               />
             </div>
@@ -827,7 +827,7 @@ export default function Topup() {
                       belowGatewayMin
                         ? t('topup.gatewayMinimumAmount', {
                             channel: method.name,
-                            amount: formatCurrencyAmount(minForMethod),
+                            amount: `${symbol}${formatCurrencyAmount(minForMethod * rate)}`,
                           })
                         : undefined
                     }
@@ -969,7 +969,7 @@ export default function Topup() {
               {history.map((item, i) => (
                 <div key={i} className="flex items-center justify-between glass-sm rounded-xl px-4 py-3">
                   <div>
-                    <p className="text-sm text-page">{symbol}{(Number(item.amount) * rate).toFixed(2)}</p>
+                    <p className="text-sm text-page">{symbol}{(Number(item.amount) * rate).toFixed(decimals)}</p>
                     <p className="text-xs text-page-muted">
                       {new Date(item.create_time * 1000).toLocaleString()} · {item.payment_method || t('topup.redeemCode')}
                     </p>
@@ -1096,7 +1096,7 @@ export default function Topup() {
                   </p>
                 </div>
                 <p className="text-xl font-bold text-[#C56547]">
-                  {symbol}{Number(selectedPackage.price).toFixed(2)}
+                  {fmtCNY(selectedPackage.price)}
                 </p>
               </div>
             )}
@@ -1116,7 +1116,7 @@ export default function Topup() {
                     <option value="">{t('topup.choosePackage')}</option>
                     {packages.map((pkg) => (
                       <option key={pkg.id} value={pkg.id}>
-                        {getLocalizedPackageName(pkg, t, i18n.resolvedLanguage)} - {symbol}{Number(pkg.price).toFixed(2)}
+                        {getLocalizedPackageName(pkg, t, i18n.resolvedLanguage)} - {fmtCNY(pkg.price)}
                       </option>
                     ))}
                   </select>

@@ -19,7 +19,7 @@ import toast from 'react-hot-toast';
 export default function Dashboard() {
   const { t } = useTranslation();
   const { user, refreshUser } = useAuth();
-  const { symbol, rate } = useCurrency();
+  const { symbol, rate, decimals } = useCurrency();
   const { site } = useSite();
   const [usage, setUsage] = useState(null);
 
@@ -299,7 +299,7 @@ export default function Dashboard() {
           <p className="text-sm text-page-secondary mb-2">{t('dashboard.balance')}</p>
           <div className="text-3xl font-bold text-page">
             {symbol}
-            <CountUp from={0} to={balanceDollars} duration={1.5} decimals={2} />
+            <CountUp from={0} to={balanceDollars} duration={1.5} decimals={decimals} />
           </div>
           <p className="text-xs text-page-muted mt-1">{t('dashboard.quotaUnits', { count: quota.toLocaleString() })}</p>
         </div>
@@ -308,7 +308,7 @@ export default function Dashboard() {
           <p className="text-sm text-page-secondary mb-2">{t('dashboard.used')}</p>
           <div className="text-3xl font-bold text-page">
             {symbol}
-            <CountUp from={0} to={(usedQuota / Q) * rate} duration={1.5} decimals={2} />
+            <CountUp from={0} to={(usedQuota / Q) * rate} duration={1.5} decimals={decimals} />
           </div>
           <p className="text-xs text-page-muted mt-1">{t('dashboard.quotaUnits', { count: usedQuota.toLocaleString() })}</p>
         </div>
@@ -317,7 +317,7 @@ export default function Dashboard() {
           <p className="text-sm text-page-secondary mb-2">{t('dashboard.packageUsed')}</p>
           <div className="text-3xl font-bold text-page">
             {symbol}
-            <CountUp from={0} to={(packageUsedQuota / Q) * rate} duration={1.5} decimals={2} />
+            <CountUp from={0} to={(packageUsedQuota / Q) * rate} duration={1.5} decimals={decimals} />
           </div>
           <p className="text-xs text-page-muted mt-1">{t('dashboard.quotaUnits', { count: packageUsedQuota.toLocaleString() })}</p>
         </div>
@@ -403,13 +403,13 @@ export default function Dashboard() {
             <div className="glass-sm rounded-xl p-4 text-center">
               <p className="text-xs text-page-secondary mb-1">{t('topup.affAvailable')}</p>
               <p className="text-xl font-bold text-page">
-                {symbol}{(((user?.aff_quota || 0) / Q) * rate).toFixed(2)}
+                {symbol}{(((user?.aff_quota || 0) / Q) * rate).toFixed(decimals)}
               </p>
             </div>
             <div className="glass-sm rounded-xl p-4 text-center">
               <p className="text-xs text-page-secondary mb-1">{t('topup.affTotal')}</p>
               <p className="text-xl font-bold text-page">
-                {symbol}{(((user?.aff_history_quota || 0) / Q) * rate).toFixed(2)}
+                {symbol}{(((user?.aff_history_quota || 0) / Q) * rate).toFixed(decimals)}
               </p>
             </div>
             <div className="glass-sm rounded-xl p-4 text-center">
@@ -481,7 +481,7 @@ export default function Dashboard() {
                           </p>
                         </div>
                         <span className="shrink-0 text-sm font-medium text-page-success">
-                          +{symbol}{((item.commission_quota / Q) * rate).toFixed(4)}
+                          +{symbol}{((item.commission_quota / Q) * rate).toFixed(Math.max(decimals, 2))}
                         </span>
                       </div>
                     ))}
@@ -510,7 +510,7 @@ export default function Dashboard() {
                 <input
                   type="text"
                   readOnly
-                  value={`${symbol}${availableAffAmount.toFixed(2)}`}
+                  value={`${symbol}${availableAffAmount.toFixed(decimals)}`}
                   className="input bg-page-surface-hover/60 text-page-secondary"
                 />
               </div>
@@ -532,7 +532,7 @@ export default function Dashboard() {
                       className="input pl-8"
                     />
                   </div>
-                  <button type="button" onClick={() => setWithdrawAmount(availableAffAmount.toFixed(2))} className="btn-secondary whitespace-nowrap px-4">
+                  <button type="button" onClick={() => setWithdrawAmount(availableAffAmount.toFixed(decimals))} className="btn-secondary whitespace-nowrap px-4">
                     {t('topup.withdrawAll')}
                   </button>
                 </div>

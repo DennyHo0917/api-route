@@ -63,7 +63,7 @@ export default function Packages() {
   const { user, refreshUser } = useAuth();
   const { site } = useSite();
   const navigate = useNavigate();
-  const { symbol, rate, fmtCNY } = useCurrency();
+  const { symbol, rate, fmtCNY, cnyPerUsd, decimals } = useCurrency();
   const [packages, setPackages] = useState([]);
   const [models, setModels] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -207,7 +207,7 @@ export default function Packages() {
                         <div className="h-full rounded-full bg-[#D97757]" style={{ width: `${pct}%` }} />
                       </div>
                       <span className="whitespace-nowrap text-xs text-[#766657]">
-                        {symbol}{(remain / Q * rate).toFixed(2)} / {symbol}{(total / Q * rate).toFixed(2)}
+                        {symbol}{(remain / Q * rate).toFixed(decimals)} / {symbol}{(total / Q * rate).toFixed(decimals)}
                       </span>
                     </div>
                   </div>
@@ -291,12 +291,12 @@ export default function Packages() {
                         {isSubscription
                           ? t('packages.periodicQuota', {
                             symbol,
-                            amount: (pkg.quota_amount / Q * rate).toFixed(2),
+                            amount: (pkg.quota_amount / Q * rate).toFixed(decimals),
                             period: getResetLabel(resetPeriod),
                           })
                           : t('packages.creditIncluded', {
                             symbol,
-                            amount: (pkg.quota_amount / Q * rate).toFixed(2),
+                            amount: (pkg.quota_amount / Q * rate).toFixed(decimals),
                           })}
                       </li>
                     )}
@@ -361,9 +361,9 @@ export default function Packages() {
       </div>
 
       {confirmPkg && (() => {
-        const userBalance = (user?.quota || 0) / Q * rate;
+        const userBalanceCny = (user?.quota || 0) / Q * cnyPerUsd;
         const pkgPrice = Number(confirmPkg.price);
-        const insufficient = userBalance < pkgPrice;
+        const insufficient = userBalanceCny < pkgPrice;
         const resetPeriod = confirmPkg.quota_reset_period || 'never';
         const isSubscription = resetPeriod !== 'never';
         return (
@@ -383,7 +383,7 @@ export default function Packages() {
                       symbol,
                       period: getResetLabel(resetPeriod),
                       days: confirmPkg.duration || 30,
-                      amount: (confirmPkg.quota_amount / Q * rate).toFixed(2),
+                      amount: (confirmPkg.quota_amount / Q * rate).toFixed(decimals),
                     })}
                   </p>
                 </div>
@@ -391,7 +391,7 @@ export default function Packages() {
               <p className="mt-4 text-sm text-page-secondary">
                 {t('packages.yourBalance')}{' '}
                 <span className={`font-semibold ${insufficient ? 'text-page-danger' : 'text-page-success'}`}>
-                  {symbol}{userBalance.toFixed(2)}
+                  {fmtCNY(userBalanceCny)}
                 </span>
               </p>
               {insufficient && (

@@ -49,7 +49,7 @@ export default function SubDistributor() {
   const { t, i18n } = useTranslation();
   const { user, refreshUser, loading: authLoading } = useAuth();
   const { site } = useSite();
-  const { symbol, fmtCNY } = useCurrency();
+  const { fmtCNY } = useCurrency();
   const location = useLocation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -331,7 +331,7 @@ export default function SubDistributor() {
 
               <button type="submit" disabled={submitting} className="btn-primary w-full justify-center flex items-center gap-2">
                 {submitting && <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />}
-                {t('subDist.payAndOpen', { symbol, price: Number(subInfo?.price || 0).toFixed(2) })}
+                {t('subDist.payAndOpen', { price: fmtCNY(subInfo?.price || 0) })}
               </button>
 
               <p className="text-xs text-page-muted">

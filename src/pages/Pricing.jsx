@@ -170,7 +170,7 @@ function isTieredExprPrice(item) {
 
 export default function Pricing() {
   const { t } = useTranslation();
-  const { symbol, rate, code, usdRate } = useCurrency();
+  const { symbol, rate, cnyRate } = useCurrency();
   const [models, setModels] = useState([]);
   const [vendors, setVendors] = useState([]);
   const [search, setSearch] = useState('');
@@ -271,7 +271,7 @@ export default function Pricing() {
     const sourceCurrency = String(item.price_currency || 'USD').toUpperCase();
     let displayValue = raw * multiplier;
     if (sourceCurrency === 'CNY') {
-      displayValue = code === 'CNY' ? displayValue : (displayValue / (usdRate || 1)) * rate;
+      displayValue *= cnyRate;
     } else {
       displayValue *= rate;
     }
