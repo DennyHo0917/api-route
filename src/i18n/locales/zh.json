@@ -120,7 +120,7 @@
     "register.password": "密码",
     "register.confirmPassword": "确认密码",
     "register.chooseUsername": "请选择用户名",
-    "register.emailPlaceholder": "your@email.com（可选）",
+    "register.emailPlaceholder": "your@email.com",
     "register.passwordPlaceholder": "8-20 个字符",
     "register.repeatPassword": "请再次输入密码",
     "register.creating": "创建中...",

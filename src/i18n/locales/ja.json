@@ -125,7 +125,7 @@
     "register.password": "パスワード",
     "register.confirmPassword": "パスワード確認",
     "register.chooseUsername": "ユーザー名を入力",
-    "register.emailPlaceholder": "your@email.com（任意）",
+    "register.emailPlaceholder": "your@email.com",
     "register.passwordPlaceholder": "8〜20文字",
     "register.repeatPassword": "もう一度入力",
     "register.creating": "作成中...",

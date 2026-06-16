@@ -120,7 +120,7 @@
     "register.password": "Password",
     "register.confirmPassword": "Confirm Password",
     "register.chooseUsername": "Choose a username",
-    "register.emailPlaceholder": "your@email.com (optional)",
+    "register.emailPlaceholder": "your@email.com",
     "register.passwordPlaceholder": "8-20 characters",
     "register.repeatPassword": "Repeat your password",
     "register.creating": "Creating...",

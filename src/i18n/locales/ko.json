@@ -125,7 +125,7 @@
     "register.password": "비밀번호",
     "register.confirmPassword": "비밀번호 확인",
     "register.chooseUsername": "사용자 이름 선택",
-    "register.emailPlaceholder": "your@email.com (선택)",
+    "register.emailPlaceholder": "your@email.com",
     "register.passwordPlaceholder": "8~20자",
     "register.repeatPassword": "비밀번호 다시 입력",
     "register.creating": "생성 중...",

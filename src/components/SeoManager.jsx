@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { useSite } from '../context/SiteContext';
@@ -10,6 +10,7 @@ const DEFAULT_LOGO_URL = 'https://img.api-route.com/3.png';
 const DEFAULT_OG_IMAGE_PATH = '/og-image.png';
 const DEFAULT_OG_IMAGE_WIDTH = '1200';
 const DEFAULT_OG_IMAGE_HEIGHT = '630';
+const GA_MEASUREMENT_ID = 'G-GZT5KLBKJ8';
 const INDEXABLE_PATHS = new Set(['/', '/pricing', '/packages', '/apps', '/sub-site', '/faq']);
 const PRIVATE_PATHS = new Set(['/login', '/register', '/dashboard', '/tokens', '/logs', '/tasks', '/topup', '/account']);
 const LANGUAGE_HREFLANGS = {
@@ -309,6 +310,15 @@ function getPageCopy(pathname, copy, languageKey) {
   return copy.private;
 }
 
+function trackPageView(pageTitle) {
+  if (typeof window === 'undefined' || typeof window.gtag !== 'function') return;
+  window.gtag('config', GA_MEASUREMENT_ID, {
+    page_title: pageTitle,
+    page_path: `${window.location.pathname}${window.location.search}`,
+    page_location: window.location.href,
+  });
+}
+
 function setStructuredData({
   canonicalUrl,
   description,
@@ -411,6 +421,7 @@ export default function SeoManager() {
   const location = useLocation();
   const { i18n } = useTranslation();
   const { site } = useSite();
+  const lastTrackedUrlRef = useRef('');
 
   useEffect(() => {
     const pathname = normalizePath(location.pathname);
@@ -506,7 +517,13 @@ export default function SeoManager() {
       siteName,
       siteUrl,
     });
-  }, [i18n.resolvedLanguage, location.pathname, site?.favicon, site?.logo, site?.name]);
+
+    const trackedUrl = `${location.pathname}${location.search}`;
+    if (lastTrackedUrlRef.current !== trackedUrl) {
+      lastTrackedUrlRef.current = trackedUrl;
+      trackPageView(pageTitle);
+    }
+  }, [i18n.resolvedLanguage, location.pathname, location.search, site?.favicon, site?.logo, site?.name]);
 
   return null;
 }

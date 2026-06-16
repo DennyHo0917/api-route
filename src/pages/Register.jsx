@@ -28,7 +28,8 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.username || !form.password) {
+    const email = form.email.trim();
+    if (!form.username || !email || !form.password) {
       toast.error(t('register.fillRequired'));
       return;
     }
@@ -50,7 +51,7 @@ export default function Register() {
       const result = await register({
         username: form.username,
         password: form.password,
-        email: form.email || undefined,
+        email,
         aff_code: affCode || undefined,
       });
       if (result.success) {
@@ -91,7 +92,7 @@ export default function Register() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-page-label mb-1.5">{t('register.email')}</label>
+              <label className="block text-sm font-medium text-page-label mb-1.5">{t('register.email')} *</label>
               <input
                 type="email"
                 value={form.email}
@@ -99,6 +100,7 @@ export default function Register() {
                 className="input"
                 placeholder={t('register.emailPlaceholder')}
                 autoComplete="email"
+                required
               />
             </div>
 
