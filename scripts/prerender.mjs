@@ -4,9 +4,10 @@ import { fileURLToPath } from 'node:url';
 import { FAQ_COPY } from '../src/content/faqCopy.js';
 
 const SITE_URL = 'https://www.api-route.com';
-const DEFAULT_OG_IMAGE_URL = 'https://img.api-route.com/3.png';
-const DEFAULT_OG_IMAGE_WIDTH = '157';
-const DEFAULT_OG_IMAGE_HEIGHT = '148';
+const DEFAULT_LOGO_URL = 'https://img.api-route.com/3.png';
+const DEFAULT_OG_IMAGE_URL = `${SITE_URL}/og-image.png`;
+const DEFAULT_OG_IMAGE_WIDTH = '1200';
+const DEFAULT_OG_IMAGE_HEIGHT = '630';
 const DIST_DIR = new URL('../dist/', import.meta.url);
 const TEMPLATE_PATH = new URL('index.html', DIST_DIR);
 
@@ -206,7 +207,7 @@ const replaceMeta = (html, language, page) => {
         '@id': `${SITE_URL}/#organization`,
         name: 'API-Route',
         url: `${SITE_URL}/`,
-        logo: DEFAULT_OG_IMAGE_URL,
+        logo: DEFAULT_LOGO_URL,
       },
       {
         '@type': 'WebPage',

@@ -6,9 +6,10 @@ import { DIST_SITE_LANGUAGES, getLocalizedPath, normalizeAppLanguage } from '../
 import { FAQ_COPY } from '../content/faqCopy';
 
 const DEFAULT_SITE_URL = 'https://www.api-route.com';
-const DEFAULT_OG_IMAGE_PATH = 'https://img.api-route.com/3.png';
-const DEFAULT_OG_IMAGE_WIDTH = '157';
-const DEFAULT_OG_IMAGE_HEIGHT = '148';
+const DEFAULT_LOGO_URL = 'https://img.api-route.com/3.png';
+const DEFAULT_OG_IMAGE_PATH = '/og-image.png';
+const DEFAULT_OG_IMAGE_WIDTH = '1200';
+const DEFAULT_OG_IMAGE_HEIGHT = '630';
 const INDEXABLE_PATHS = new Set(['/', '/pricing', '/packages', '/apps', '/sub-site', '/faq']);
 const PRIVATE_PATHS = new Set(['/login', '/register', '/dashboard', '/tokens', '/logs', '/tasks', '/topup', '/account']);
 const LANGUAGE_HREFLANGS = {
@@ -424,9 +425,9 @@ export default function SeoManager() {
     const languageHomeUrl = `${siteUrl}${getLocalizedPath('/', languageKey)}`;
     const indexable = INDEXABLE_PATHS.has(pathname);
     const pageTitle = `${page.title} | ${siteName}`;
-    const logoSource = site?.logo || site?.favicon || DEFAULT_OG_IMAGE_PATH;
+    const logoSource = site?.logo || site?.favicon || DEFAULT_LOGO_URL;
     const logoUrl = resolveUrl(logoSource, siteUrl);
-    const usesDefaultOgImage = logoSource === DEFAULT_OG_IMAGE_PATH;
+    const ogImageUrl = resolveUrl(DEFAULT_OG_IMAGE_PATH, siteUrl);
     const robots = indexable
       ? 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
       : 'noindex, nofollow, noarchive';
@@ -454,25 +455,19 @@ export default function SeoManager() {
     upsertMeta('meta[property="og:locale"]', { property: 'og:locale', content: copy.locale });
     syncOgLocaleAlternates(languageKey);
 
-    upsertMeta('meta[name="twitter:card"]', { name: 'twitter:card', content: logoUrl ? 'summary_large_image' : 'summary' });
+    upsertMeta('meta[name="twitter:card"]', { name: 'twitter:card', content: ogImageUrl ? 'summary_large_image' : 'summary' });
     upsertMeta('meta[name="twitter:title"]', { name: 'twitter:title', content: pageTitle });
     upsertMeta('meta[name="twitter:description"]', { name: 'twitter:description', content: page.description });
 
-    if (logoUrl) {
-      upsertMeta('meta[property="og:image"]', { property: 'og:image', content: logoUrl });
-      upsertMeta('meta[property="og:image:secure_url"]', { property: 'og:image:secure_url', content: logoUrl });
+    if (ogImageUrl) {
+      upsertMeta('meta[property="og:image"]', { property: 'og:image', content: ogImageUrl });
+      upsertMeta('meta[property="og:image:secure_url"]', { property: 'og:image:secure_url', content: ogImageUrl });
       upsertMeta('meta[property="og:image:alt"]', { property: 'og:image:alt', content: pageTitle });
-      upsertMeta('meta[name="twitter:image"]', { name: 'twitter:image', content: logoUrl });
+      upsertMeta('meta[name="twitter:image"]', { name: 'twitter:image', content: ogImageUrl });
       upsertMeta('meta[name="twitter:image:alt"]', { name: 'twitter:image:alt', content: pageTitle });
-      if (usesDefaultOgImage) {
-        upsertMeta('meta[property="og:image:type"]', { property: 'og:image:type', content: 'image/png' });
-        upsertMeta('meta[property="og:image:width"]', { property: 'og:image:width', content: DEFAULT_OG_IMAGE_WIDTH });
-        upsertMeta('meta[property="og:image:height"]', { property: 'og:image:height', content: DEFAULT_OG_IMAGE_HEIGHT });
-      } else {
-        removeMeta('meta[property="og:image:type"]');
-        removeMeta('meta[property="og:image:width"]');
-        removeMeta('meta[property="og:image:height"]');
-      }
+      upsertMeta('meta[property="og:image:type"]', { property: 'og:image:type', content: 'image/png' });
+      upsertMeta('meta[property="og:image:width"]', { property: 'og:image:width', content: DEFAULT_OG_IMAGE_WIDTH });
+      upsertMeta('meta[property="og:image:height"]', { property: 'og:image:height', content: DEFAULT_OG_IMAGE_HEIGHT });
     } else {
       removeMeta('meta[property="og:image"]');
       removeMeta('meta[property="og:image:secure_url"]');
