@@ -53,19 +53,71 @@ const pages = {
   subSite: {
     path: '/sub-site',
     copy: {
-      zh: ['AI API 中转站搭建', '开通可独立访问、支持收款、定价和推广的 AI API 中转站，并在支付后自动启用管理权限。'],
-      en: ['AI API Relay Site Setup', 'Launch an independent AI API relay site with payments, pricing, promotion, and automatic management access after payment.'],
-      ja: ['AI API 中継サイト構築', '訪問・決済・価格設定・販売に対応した独立 AI API 中継サイトを立ち上げ、支払い後に管理権限を自動で有効化します。'],
-      ko: ['AI API 릴레이 사이트 구축', '방문, 결제, 가격 설정, 판매를 지원하는 독립 AI API 릴레이 사이트를 만들고 결제 후 관리 권한을 자동으로 활성화합니다.'],
+      zh: ['独立 AI API 平台搭建', '无需自己找上游、购买 VPS 或部署服务，支付一笔建站费用即可开通可收款、可定价、可推广的独立 AI API 管理平台。'],
+      en: ['Branded AI API Platform Setup', 'Launch a branded AI API platform without finding upstream providers, renting a VPS, or deploying services yourself. Pay one setup fee and launch from a ready-made foundation.'],
+      ja: ['専用 AI API プラットフォーム構築', '上流 API プロバイダー探し、VPS の用意、サービスのデプロイを自分で行わず、構築費用だけで決済・価格設定・販売に対応した専用 AI API プラットフォームを開設できます。'],
+      ko: ['전용 AI API 플랫폼 구축', '상위 API 공급처 탐색, VPS 준비, 서비스 배포를 직접 하지 않아도 한 번의 구축 비용으로 결제, 가격 설정, 판매를 지원하는 전용 AI API 플랫폼을 시작할 수 있습니다.'],
+    },
+    sections: {
+      zh: [
+        ['谁适合开通', ['AI 工具社群运营者', '开发者和 SaaS 团队', '模型渠道和 API 代理', '想做 AI API 副业的人']],
+        ['怎么赚钱', ['设置模型售价差价', '售卖套餐和兑换码', '充值余额持续复购', '推广入口承接新用户']],
+        ['开通后得到什么', ['独立访问入口和品牌展示', '上游模型接入与部署基础', '模型销售、售价和套餐管理', '充值、兑换码与支付流程', 'API Key、余额、调用日志和用户管理']],
+      ],
+      en: [
+        ['Who it fits', ['AI tool community operators', 'Developers and SaaS teams', 'Model channels and API resellers', 'AI API side-project builders']],
+        ['How it makes money', ['Set model price margins', 'Sell plans and redeem codes', 'Drive repeat top-ups', 'Promote a branded entry point']],
+        ['What you get', ['Independent entry point and branded presentation', 'Upstream model access and deployment foundation', 'Model sales, pricing, and plan management', 'Top-ups, redeem codes, and payment flows', 'API keys, balance, usage logs, and user management']],
+      ],
+      ja: [
+        ['誰に向いているか', ['AI ツールコミュニティ運営者', '開発者・SaaS チーム', 'モデルチャネル・API 代理運営者', 'AI API 副業を検証したい人']],
+        ['収益化の方法', ['モデル価格の差益', 'プランとコード販売', '残高チャージで継続利用', 'ブランド入口で集客']],
+        ['開設後に得られるもの', ['独立した入口とブランド表示', '上流モデル接続とデプロイ基盤', 'モデル販売、価格、プラン管理', '残高チャージ、コード、決済フロー', 'API キー、残高、利用ログ、ユーザー管理']],
+      ],
+      ko: [
+        ['누구에게 적합한가', ['AI 도구 커뮤니티 운영자', '개발자와 SaaS 팀', '모델 채널과 API 리셀러', 'AI API 부업 준비자']],
+        ['수익을 만드는 방식', ['모델 가격 마진 설정', '플랜과 리딤 코드 판매', '지속적인 충전 유도', '브랜드 진입점 홍보']],
+        ['구축 후 제공되는 것', ['독립 진입점과 브랜드 표시', '상위 모델 연동과 배포 기반', '모델 판매, 가격, 플랜 관리', '충전, 리딤 코드, 결제 흐름', 'API 키, 잔액, 사용 로그, 사용자 관리']],
+      ],
+    },
+    questions: {
+      zh: [
+        ['开通后多久能使用？', '支付确认后系统会自动授予管理权限，并引导你继续完成站点初始化。'],
+        ['可以绑定自己的域名吗？', '可以。独立平台适合配置自己的品牌、域名和展示入口。'],
+        ['可以自己设置模型价格吗？', '可以。开通后可以按模型、套餐和销售策略配置价格。'],
+        ['还需要自己找上游或买 VPS 吗？', '不需要。上游接入和部署基础已经做好，你只需要支付建站费用并完成初始化配置。'],
+        ['我需要自己维护服务器吗？', '不需要从零维护完整平台基础设施，重点放在品牌、价格和用户运营。'],
+      ],
+      en: [
+        ['How soon can I use it?', 'After payment is confirmed, the system grants management access and guides initialization.'],
+        ['Can I use my own domain?', 'Yes. The platform is designed for your own brand, domain, and entry point.'],
+        ['Can I set model prices myself?', 'Yes. After launch, you can configure model pricing, plans, and sales strategy.'],
+        ['Do I need to find upstream providers or rent a VPS?', 'No. Upstream connections and deployment are already handled. Pay the setup fee and finish initialization.'],
+        ['Do I need to maintain servers?', 'You do not need to rebuild the core platform infrastructure; focus on brand, pricing, and users.'],
+      ],
+      ja: [
+        ['いつ使い始められますか？', '支払い確認後、管理権限が付与され初期化へ進めます。'],
+        ['自分のドメインを使えますか？', 'はい。独自ブランド、ドメイン、入口のための機能です。'],
+        ['モデル価格を自分で設定できますか？', 'はい。モデル価格、プラン、販売方針を設定できます。'],
+        ['上流 API プロバイダーを探したり VPS を用意したりする必要はありますか？', 'いいえ。上流接続とデプロイ基盤は用意済みです。構築費用を支払い、初期設定を進めるだけです。'],
+        ['サーバー保守は必要ですか？', 'コア基盤をゼロから保守する必要はなく、ブランド、価格、ユーザー運営に集中できます。'],
+      ],
+      ko: [
+        ['언제부터 사용할 수 있나요?', '결제 확인 후 관리 권한이 부여되고 초기화로 안내됩니다.'],
+        ['내 도메인을 사용할 수 있나요?', '네. 자체 브랜드, 도메인, 진입점을 위한 플랫폼입니다.'],
+        ['모델 가격을 직접 설정할 수 있나요?', '네. 모델 가격, 플랜, 판매 전략을 설정할 수 있습니다.'],
+        ['상위 API 공급처를 찾거나 VPS를 준비해야 하나요?', '아니요. 상위 API 연동과 배포 기반은 이미 준비되어 있으며, 구축 비용을 지불하고 초기 설정만 진행하면 됩니다.'],
+        ['서버를 직접 유지해야 하나요?', '핵심 플랫폼 인프라를 처음부터 운영할 필요 없이 브랜드, 가격, 사용자 운영에 집중할 수 있습니다.'],
+      ],
     },
   },
   faq: {
     path: '/faq',
     copy: {
-      zh: ['AI API 使用常见问题', '了解 API-Route 的 OpenAI 兼容 API、Base URL 配置、模型调用、套餐兑换、客户端接入和中转站搭建问题。'],
-      en: ['AI API FAQ', 'Learn how API-Route handles OpenAI-compatible API access, Base URL setup, model usage, plans, redeem codes, client integrations, and relay site setup.'],
-      ja: ['AI API よくある質問', 'API-Route の OpenAI 互換 API、Base URL 設定、モデル利用、プラン、コード、クライアント連携、中継サイト構築について確認できます。'],
-      ko: ['AI API 자주 묻는 질문', 'API-Route의 OpenAI 호환 API, Base URL 설정, 모델 사용, 플랜, 리딤 코드, 클라이언트 연동, 릴레이 사이트 구축을 확인하세요.'],
+      zh: ['AI API 使用常见问题', '了解 API-Route 的 OpenAI 兼容 API、Base URL 配置、模型调用、套餐兑换、加密货币支付、客户端接入和独立平台问题。'],
+      en: ['AI API FAQ', 'Learn how API-Route handles OpenAI-compatible API access, Base URL setup, model usage, plans, redeem codes, crypto payments, client integrations, and branded platform setup.'],
+      ja: ['AI API よくある質問', 'API-Route の OpenAI 互換 API、Base URL 設定、モデル利用、プラン、コード、暗号資産決済、クライアント連携、専用 AI API プラットフォームについて確認できます。'],
+      ko: ['AI API 자주 묻는 질문', 'API-Route의 OpenAI 호환 API, Base URL 설정, 모델 사용, 플랜, 리딤 코드, 암호화폐 결제, 클라이언트 연동, 전용 AI API 플랫폼을 확인하세요.'],
     },
   },
 };
@@ -82,16 +134,29 @@ const localizedPath = (path, language) => {
   return path === '/' ? `${prefix}/` : `${prefix}${path}`;
 };
 
+const renderSnapshotDetails = (page, language) => {
+  const sections = page.sections?.[language] || [];
+  const questions = page.questions?.[language] || [];
+  const sectionHtml = sections
+    .map(([heading, items]) => `<section><h2>${escapeHtml(heading)}</h2><ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul></section>`)
+    .join('');
+  const faqHtml = questions.length
+    ? `<section><h2>FAQ</h2>${questions.map(([question, answer]) => `<article><h3>${escapeHtml(question)}</h3><p>${escapeHtml(answer)}</p></article>`).join('')}</section>`
+    : '';
+  return `${sectionHtml}${faqHtml}`;
+};
+
 const replaceMeta = (html, language, page) => {
   const [title, description] = page.copy[language];
   const pageTitle = `${title} | API-Route`;
   const canonicalPath = localizedPath(page.path, language);
   const canonicalUrl = `${SITE_URL}${canonicalPath}`;
+  const questions = page.questions?.[language] || [];
   const alternates = Object.entries(languages)
     .map(([code, config]) => `    <link rel="alternate" hreflang="${config.hrefLang}" href="${SITE_URL}${localizedPath(page.path, code)}" />`)
     .concat(`    <link rel="alternate" hreflang="x-default" href="${SITE_URL}${page.path}" />`)
     .join('\n');
-  const snapshot = `<main data-seo-prerendered="true"><h1>${escapeHtml(title)}</h1><p>${escapeHtml(description)}</p><nav><a href="${SITE_URL}/pricing">Pricing</a> <a href="${SITE_URL}/packages">Packages</a> <a href="${SITE_URL}/apps">Apps</a> <a href="${SITE_URL}/faq">FAQ</a></nav></main>`;
+  const snapshot = `<main data-seo-prerendered="true"><h1>${escapeHtml(title)}</h1><p>${escapeHtml(description)}</p>${renderSnapshotDetails(page, language)}<nav><a href="${SITE_URL}/pricing">Pricing</a> <a href="${SITE_URL}/packages">Packages</a> <a href="${SITE_URL}/apps">Apps</a> <a href="${SITE_URL}/faq">FAQ</a></nav></main>`;
   const structuredData = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -111,6 +176,25 @@ const replaceMeta = (html, language, page) => {
       },
     ],
   };
+
+  if (questions.length > 0) {
+    structuredData['@graph'].push({
+      '@type': 'FAQPage',
+      '@id': `${canonicalUrl}#faq`,
+      url: canonicalUrl,
+      name: pageTitle,
+      inLanguage: languages[language].htmlLang,
+      isPartOf: { '@id': `${canonicalUrl}#webpage` },
+      mainEntity: questions.map(([question, answer]) => ({
+        '@type': 'Question',
+        name: question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: answer,
+        },
+      })),
+    });
+  }
 
   return html
     .replace(/<html lang="[^"]*">/, `<html lang="${languages[language].htmlLang}">`)

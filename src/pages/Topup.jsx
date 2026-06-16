@@ -1042,7 +1042,7 @@ export default function Topup() {
             )}
 
             <div className="mt-6">
-              <p className="mb-2 text-xs font-medium text-[#766657]">
+              <p className="mb-2 text-xs font-medium text-page-secondary">
                 {t('topup.redeemModeLabel')}
               </p>
               <div className="grid gap-3 sm:grid-cols-2">
@@ -1050,17 +1050,17 @@ export default function Topup() {
                   type="button"
                   onClick={() => setRedeemMode('package')}
                   disabled={redeeming}
-                  className={`rounded-2xl border p-4 text-left transition-colors ${
+                  className={`rounded-2xl border p-4 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-70 ${
                     redeemMode === 'package'
-                      ? 'border-[#D97757] bg-[#FFF3EB]'
-                      : 'border-[#E5D4C6] bg-white/70 hover:border-[#D8BBA7]'
+                      ? 'border-page-link bg-page-link/10'
+                      : 'border-page-divider bg-page-surface hover:bg-page-surface-hover'
                   }`}
                 >
-                  <span className="flex items-center gap-2 text-sm font-semibold text-[#3D3024]">
-                    <TicketCheck size={17} className="text-[#C56547]" />
+                  <span className="flex items-center gap-2 text-sm font-semibold text-page">
+                    <TicketCheck size={17} className="text-page-link" />
                     {t('topup.packageMode')}
                   </span>
-                  <span className="mt-2 block text-xs leading-5 text-[#806D5D]">
+                  <span className="mt-2 block text-xs leading-5 text-page-secondary">
                     {t('topup.packageModeDesc')}
                   </span>
                 </button>
@@ -1068,17 +1068,17 @@ export default function Topup() {
                   type="button"
                   onClick={() => setRedeemMode('balance')}
                   disabled={redeeming}
-                  className={`rounded-2xl border p-4 text-left transition-colors ${
+                  className={`rounded-2xl border p-4 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-70 ${
                     redeemMode === 'balance'
-                      ? 'border-[#D97757] bg-[#FFF3EB]'
-                      : 'border-[#E5D4C6] bg-white/70 hover:border-[#D8BBA7]'
+                      ? 'border-page-link bg-page-link/10'
+                      : 'border-page-divider bg-page-surface hover:bg-page-surface-hover'
                   }`}
                 >
-                  <span className="flex items-center gap-2 text-sm font-semibold text-[#3D3024]">
-                    <WalletCards size={17} className="text-[#C56547]" />
+                  <span className="flex items-center gap-2 text-sm font-semibold text-page">
+                    <WalletCards size={17} className="text-page-link" />
                     {t('topup.balanceMode')}
                   </span>
-                  <span className="mt-2 block text-xs leading-5 text-[#806D5D]">
+                  <span className="mt-2 block text-xs leading-5 text-page-secondary">
                     {t('topup.balanceModeDesc')}
                   </span>
                 </button>
