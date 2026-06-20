@@ -13,7 +13,7 @@ import {
 } from './languageUtils';
 
 const pathLanguage = typeof window === 'undefined'
-  ? 'zh'
+  ? 'en'
   : getPathLanguage(window.location.pathname);
 
 i18n

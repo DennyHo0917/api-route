@@ -12,10 +12,17 @@ const DIST_DIR = new URL('../dist/', import.meta.url);
 const TEMPLATE_PATH = new URL('index.html', DIST_DIR);
 
 const languages = {
-  zh: { prefix: '', hrefLang: 'zh-CN', htmlLang: 'zh-CN', locale: 'zh_CN' },
-  en: { prefix: '/en', hrefLang: 'en', htmlLang: 'en', locale: 'en_US' },
+  en: { prefix: '', hrefLang: 'en', htmlLang: 'en', locale: 'en_US' },
+  zh: { prefix: '/zh', hrefLang: 'zh-CN', htmlLang: 'zh-CN', locale: 'zh_CN' },
   ja: { prefix: '/ja', hrefLang: 'ja', htmlLang: 'ja', locale: 'ja_JP' },
   ko: { prefix: '/ko', hrefLang: 'ko', htmlLang: 'ko', locale: 'ko_KR' },
+};
+
+const seoKeywords = {
+  zh: 'AI API,AI API 中转站,API 中转站,OpenAI 中转站,ChatGPT API 中转站,Claude API 中转站,AI API Gateway,AI API GATEWAY,LLM API Gateway,OpenAI API Gateway,API 聚合,OpenAI 兼容接口,大模型 API,多模型 API,独立 AI API 平台,API-Route',
+  en: 'AI API,AI API Gateway,AI API GATEWAY,LLM API Gateway,OpenAI API Gateway,API gateway,API proxy,AI API proxy,API aggregation,OpenAI compatible API,LLM API,multi-model API,white-label AI API platform,AI API reseller,sell AI API access,API-Route',
+  ja: 'AI API,AI API Gateway,AI API GATEWAY,LLM API Gateway,OpenAI API Gateway,API 集約,OpenAI 互換 API,LLM API,マルチモデル API,API-Route',
+  ko: 'AI API,AI API Gateway,AI API GATEWAY,LLM API Gateway,OpenAI API Gateway,API 집약,OpenAI 호환 API,LLM API,멀티 모델 API,API-Route',
 };
 
 const getFaqCopy = (language) => FAQ_COPY[language] || FAQ_COPY.en;
@@ -195,6 +202,7 @@ const renderSnapshotDetails = (page, language) => {
 
 const replaceMeta = (html, language, page) => {
   const [title, description] = page.copy[language];
+  const keywords = seoKeywords[language] || seoKeywords.en;
   const pageTitle = `${title} | API-Route`;
   const canonicalPath = localizedPath(page.path, language);
   const canonicalUrl = `${SITE_URL}${canonicalPath}`;
@@ -220,6 +228,7 @@ const replaceMeta = (html, language, page) => {
         url: canonicalUrl,
         name: pageTitle,
         description,
+        keywords,
         inLanguage: languages[language].htmlLang,
       },
     ],
@@ -248,6 +257,7 @@ const replaceMeta = (html, language, page) => {
     .replace(/<html lang="[^"]*">/, `<html lang="${languages[language].htmlLang}">`)
     .replace(/<title>.*?<\/title>/s, `<title>${escapeHtml(pageTitle)}</title>`)
     .replace(/<meta name="description" content="[^"]*" \/>/, `<meta name="description" content="${escapeHtml(description)}" />`)
+    .replace(/<meta name="keywords" content="[^"]*" \/>/, `<meta name="keywords" content="${escapeHtml(keywords)}" />`)
     .replace(/<link rel="canonical" href="[^"]*" \/>/, `<link rel="canonical" href="${canonicalUrl}" />`)
     .replace(/(?:\s*<link rel="alternate" hreflang="[^"]*" href="[^"]*" \/>){5}/, `\n${alternates}`)
     .replace(/<meta property="og:title" content="[^"]*" \/>/, `<meta property="og:title" content="${escapeHtml(pageTitle)}" />`)

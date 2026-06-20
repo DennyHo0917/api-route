@@ -1,14 +1,14 @@
 export const DIST_SITE_LANGUAGE_STORAGE_KEY = 'dist_site_i18nextLng';
 
 export const LANGUAGE_PATH_PREFIXES = {
-  en: '/en',
+  zh: '/zh',
   ja: '/ja',
   ko: '/ko',
 };
 
 export const DIST_SITE_LANGUAGES = [
-  { code: 'zh', label: '中文' },
   { code: 'en', label: 'EN' },
+  { code: 'zh', label: '中文' },
   { code: 'ja', label: '日本語' },
   { code: 'ko', label: '한국어' },
 ];
@@ -35,7 +35,13 @@ export const getPathLanguage = (pathname = '/') => {
   const normalizedPath = String(pathname || '/').toLowerCase();
   const match = Object.entries(LANGUAGE_PATH_PREFIXES)
     .find(([, prefix]) => normalizedPath === prefix || normalizedPath.startsWith(`${prefix}/`));
-  return match ? match[0] : 'zh';
+  return match ? match[0] : 'en';
+};
+
+export const hasLanguagePrefix = (pathname = '/') => {
+  const normalizedPath = String(pathname || '/').toLowerCase();
+  return Object.values(LANGUAGE_PATH_PREFIXES)
+    .some((prefix) => normalizedPath === prefix || normalizedPath.startsWith(`${prefix}/`));
 };
 
 export const stripLanguagePrefix = (pathname = '/') => {
@@ -65,6 +71,23 @@ export const normalizeLanguagePath = (pathname = '/', search = '', hash = '') =>
   const prefix = LANGUAGE_PATH_PREFIXES[language];
   if (!prefix || pathname.toLowerCase() !== prefix) return '';
   return `${prefix}/${search}${hash}`;
+};
+
+export const getAutoLanguageRedirectPath = (pathname = '/', search = '', hash = '') => {
+  if (typeof window === 'undefined' || hasLanguagePrefix(pathname)) return '';
+  if (/bot|crawler|spider|slurp|duckduckbot|baiduspider|yandex/i.test(window.navigator.userAgent || '')) return '';
+
+  let storedLanguage = '';
+  try {
+    storedLanguage = window.localStorage.getItem(DIST_SITE_LANGUAGE_STORAGE_KEY) || '';
+  } catch {
+    storedLanguage = '';
+  }
+
+  const browserLanguage = window.navigator.languages?.find(Boolean) || window.navigator.language;
+  const language = normalizeAppLanguage(storedLanguage || browserLanguage);
+  const targetPath = getLocalizedPath(pathname, language);
+  return targetPath === pathname ? '' : `${targetPath}${search}${hash}`;
 };
 
 export const getStoredAppLanguage = () => {

@@ -1,10 +1,10 @@
 {
   "name": "API-Route",
   "short_name": "API-Route",
-  "description": "多模型 AI API 聚合与统一调用平台",
+  "description": "Unified Multi-Model AI API Platform",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#FAF6F1",
   "theme_color": "#D97757",
-  "lang": "zh-CN"
+  "lang": "en"
 }

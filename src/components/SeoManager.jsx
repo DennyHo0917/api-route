@@ -66,7 +66,7 @@ const SEO_COPY = {
       title: '页面不存在',
       description: '你访问的页面不存在、已被移动或地址有误。',
     },
-    keywords: 'AI API,API 聚合,OpenAI 兼容接口,大模型 API,多模型 API,独立 AI API 平台,API-Route',
+    keywords: 'AI API,AI API 中转站,API 中转站,OpenAI 中转站,ChatGPT API 中转站,Claude API 中转站,AI API Gateway,AI API GATEWAY,LLM API Gateway,OpenAI API Gateway,API 聚合,OpenAI 兼容接口,大模型 API,多模型 API,独立 AI API 平台,API-Route',
     locale: 'zh_CN',
     language: 'zh-CN',
     serviceType: '多模型 AI API 聚合与统一调用服务',
@@ -111,7 +111,7 @@ const SEO_COPY = {
       title: 'Page Not Found',
       description: 'The requested page does not exist, has moved, or the address is incorrect.',
     },
-    keywords: 'AI API,API aggregation,OpenAI compatible API,LLM API,multi-model API,white-label AI API platform,AI API reseller,sell AI API access,API-Route',
+    keywords: 'AI API,AI API Gateway,AI API GATEWAY,LLM API Gateway,OpenAI API Gateway,API gateway,API proxy,AI API proxy,API aggregation,OpenAI compatible API,LLM API,multi-model API,white-label AI API platform,AI API reseller,sell AI API access,API-Route',
     locale: 'en_US',
     language: 'en',
     serviceType: 'Multi-model AI API aggregation and routing service',
@@ -155,7 +155,7 @@ const SEO_COPY = {
       title: 'ページが見つかりません',
       description: '指定されたページは存在しないか、移動された可能性があります。',
     },
-    keywords: 'AI API,API 集約,OpenAI 互換 API,LLM API,マルチモデル API,API-Route',
+    keywords: 'AI API,AI API Gateway,AI API GATEWAY,LLM API Gateway,OpenAI API Gateway,API 集約,OpenAI 互換 API,LLM API,マルチモデル API,API-Route',
     locale: 'ja_JP',
     language: 'ja',
     serviceType: '複数モデル対応 AI API 集約・ルーティングサービス',
@@ -199,7 +199,7 @@ const SEO_COPY = {
       title: '페이지를 찾을 수 없습니다',
       description: '요청한 페이지가 없거나 이동되었거나 주소가 잘못되었습니다.',
     },
-    keywords: 'AI API,API 집약,OpenAI 호환 API,LLM API,멀티 모델 API,API-Route',
+    keywords: 'AI API,AI API Gateway,AI API GATEWAY,LLM API Gateway,OpenAI API Gateway,API 집약,OpenAI 호환 API,LLM API,멀티 모델 API,API-Route',
     locale: 'ko_KR',
     language: 'ko',
     serviceType: '멀티 모델 AI API 집약 및 라우팅 서비스',
@@ -324,6 +324,7 @@ function setStructuredData({
   canonicalUrl,
   description,
   indexable,
+  keywords,
   language,
   languageHomeUrl,
   logoUrl,
@@ -358,6 +359,7 @@ function setStructuredData({
       url: languageHomeUrl,
       name: siteName,
       description,
+      keywords,
       inLanguage: language,
       availableLanguage,
       publisher: { '@id': organizationId },
@@ -368,6 +370,7 @@ function setStructuredData({
       url: canonicalUrl,
       name: pageTitle,
       description,
+      keywords,
       inLanguage: language,
       isPartOf: { '@id': websiteId },
       about: { '@id': organizationId },
@@ -501,7 +504,7 @@ export default function SeoManager() {
         const hrefLang = LANGUAGE_HREFLANGS[code] || code;
         upsertAlternateLink(hrefLang, `${siteUrl}${getLocalizedPath(pathname, code)}`);
       });
-      upsertAlternateLink('x-default', `${siteUrl}${getLocalizedPath(pathname, 'zh')}`);
+      upsertAlternateLink('x-default', `${siteUrl}${getLocalizedPath(pathname, 'en')}`);
     } else {
       removeAlternateLinks();
     }
@@ -509,6 +512,7 @@ export default function SeoManager() {
       canonicalUrl,
       description: page.description,
       indexable,
+      keywords: copy.keywords,
       language: copy.language,
       languageHomeUrl,
       logoUrl,

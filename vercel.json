@@ -13,7 +13,12 @@
     },
     {
       "source": "/en/price",
-      "destination": "/en/pricing",
+      "destination": "/pricing",
+      "permanent": true
+    },
+    {
+      "source": "/zh/price",
+      "destination": "/zh/pricing",
       "permanent": true
     },
     {
@@ -24,6 +29,16 @@
     {
       "source": "/ko/price",
       "destination": "/ko/pricing",
+      "permanent": true
+    },
+    {
+      "source": "/en",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/en/:path*",
+      "destination": "/:path*",
       "permanent": true
     }
   ],
