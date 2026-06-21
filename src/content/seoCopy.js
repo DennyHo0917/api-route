@@ -34,6 +34,8 @@ export const SEO_COPY = {
     subSite: {
       title: 'AI API 分站与白标转售平台',
       description: '开通可收款、可定价、可推广的白标 AI API 分站，无需自己找上游、购买 VPS 或部署服务，即可销售自己的 AI API 套餐并运营 API 代理平台。',
+      metaTitle: '如何搭建 AI API 网关？开通独立 AI API 平台',
+      metaDescription: '想搭建自己的 AI API 网关或 API 分发平台？API-Route 已打包上游接入、计费、充值、套餐、用户和日志能力；无需从零部署传统 API 中转站，直接开通独立平台。',
       questions: [
         ['如何通过 AI API 分站赚钱？', '你可以设置模型售价、销售 AI API 套餐、让用户充值余额，并通过调用差价、套餐收入和持续复购获得收益。'],
         ['可以作为 AI API 代理平台使用吗？', '可以。它适合想用自己品牌销售 AI API 套餐、统一管理用户、余额、API Key 和调用记录的人。'],

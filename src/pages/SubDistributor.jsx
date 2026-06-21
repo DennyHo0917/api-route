@@ -76,6 +76,10 @@ function getLaunchBatchKey() {
   return Math.floor(Date.now() / FOUR_HOURS_MS);
 }
 
+function getMsUntilNextLaunchBatch() {
+  return FOUR_HOURS_MS - (Date.now() % FOUR_HOURS_MS);
+}
+
 function createSeededRandom(seed) {
   let value = seed || 1;
   return () => {
@@ -110,14 +114,13 @@ function buildNickUsername(random, index) {
   return maybeAddDigits(base, random, index);
 }
 
-function buildLaunchEvents(batchKey) {
+function buildLaunchEvents(batchKey, generatedAt = Date.now()) {
   const random = createSeededRandom(batchKey + 20260621);
-  const now = batchKey * FOUR_HOURS_MS;
   const weekMinutes = 7 * 24 * 60;
   return Array.from({ length: 18 }, (_, index) => {
     const name = random() < 0.55 ? buildHumanUsername(random, index) : buildNickUsername(random, index);
     const minutesAgo = 8 + Math.floor(random() * weekMinutes);
-    return { name, time: formatMinuteTime(new Date(now - minutesAgo * 60 * 1000)) };
+    return { name, time: formatMinuteTime(new Date(generatedAt - minutesAgo * 60 * 1000)) };
   }).sort((a, b) => (a.time < b.time ? 1 : -1));
 }
 
@@ -411,7 +414,7 @@ export default function SubDistributor() {
   const [subInfo, setSubInfo] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [cryptoOrder, setCryptoOrder] = useState(null);
-  const [launchBatchKey, setLaunchBatchKey] = useState(() => getLaunchBatchKey());
+  const [launchBatch, setLaunchBatch] = useState(() => ({ key: getLaunchBatchKey(), generatedAt: Date.now() }));
   const [form, setForm] = useState({
     name: '',
     slug: '',
@@ -447,11 +450,19 @@ export default function SubDistributor() {
   );
   const language = normalizeAppLanguage(i18n.resolvedLanguage || i18n.language);
   const copy = MARKETING_COPY[language] || MARKETING_COPY.en;
-  const launchEvents = useMemo(() => buildLaunchEvents(launchBatchKey), [launchBatchKey]);
+  const launchEvents = useMemo(
+    () => buildLaunchEvents(launchBatch.key, launchBatch.generatedAt),
+    [launchBatch.key, launchBatch.generatedAt]
+  );
 
   useEffect(() => {
-    const timer = window.setInterval(() => setLaunchBatchKey(getLaunchBatchKey()), 60 * 1000);
-    return () => window.clearInterval(timer);
+    let timer;
+    const refresh = () => {
+      setLaunchBatch({ key: getLaunchBatchKey(), generatedAt: Date.now() });
+      timer = window.setTimeout(refresh, getMsUntilNextLaunchBatch() + 500);
+    };
+    timer = window.setTimeout(refresh, getMsUntilNextLaunchBatch() + 500);
+    return () => window.clearTimeout(timer);
   }, []);
 
   useEffect(() => {

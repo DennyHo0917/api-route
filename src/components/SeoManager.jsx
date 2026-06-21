@@ -286,7 +286,9 @@ export default function SeoManager() {
     const canonicalUrl = `${siteUrl}${canonicalPath}`;
     const languageHomeUrl = `${siteUrl}${getLocalizedPath('/', languageKey)}`;
     const indexable = INDEXABLE_PATHS.has(pathname);
-    const pageTitle = `${page.title} | ${siteName}`;
+    const metaTitle = page.metaTitle || page.title;
+    const metaDescription = page.metaDescription || page.description;
+    const pageTitle = `${metaTitle} | ${siteName}`;
     const logoSource = site?.logo || site?.favicon || DEFAULT_LOGO_URL;
     const logoUrl = resolveUrl(logoSource, siteUrl);
     const ogImageUrl = resolveUrl(DEFAULT_OG_IMAGE_PATH, siteUrl);
@@ -297,7 +299,7 @@ export default function SeoManager() {
     document.documentElement.lang = copy.language;
     document.title = pageTitle;
 
-    upsertMeta('meta[name="description"]', { name: 'description', content: page.description });
+    upsertMeta('meta[name="description"]', { name: 'description', content: metaDescription });
     upsertMeta('meta[name="keywords"]', { name: 'keywords', content: copy.keywords });
     upsertMeta('meta[name="language"]', { name: 'language', content: copy.language });
     upsertMeta('meta[name="robots"]', { name: 'robots', content: robots });
@@ -312,14 +314,14 @@ export default function SeoManager() {
     upsertMeta('meta[property="og:type"]', { property: 'og:type', content: 'website' });
     upsertMeta('meta[property="og:site_name"]', { property: 'og:site_name', content: siteName });
     upsertMeta('meta[property="og:title"]', { property: 'og:title', content: pageTitle });
-    upsertMeta('meta[property="og:description"]', { property: 'og:description', content: page.description });
+    upsertMeta('meta[property="og:description"]', { property: 'og:description', content: metaDescription });
     upsertMeta('meta[property="og:url"]', { property: 'og:url', content: canonicalUrl });
     upsertMeta('meta[property="og:locale"]', { property: 'og:locale', content: copy.locale });
     syncOgLocaleAlternates(languageKey);
 
     upsertMeta('meta[name="twitter:card"]', { name: 'twitter:card', content: ogImageUrl ? 'summary_large_image' : 'summary' });
     upsertMeta('meta[name="twitter:title"]', { name: 'twitter:title', content: pageTitle });
-    upsertMeta('meta[name="twitter:description"]', { name: 'twitter:description', content: page.description });
+    upsertMeta('meta[name="twitter:description"]', { name: 'twitter:description', content: metaDescription });
 
     if (ogImageUrl) {
       upsertMeta('meta[property="og:image"]', { property: 'og:image', content: ogImageUrl });
@@ -357,7 +359,7 @@ export default function SeoManager() {
     }
     setStructuredData({
       canonicalUrl,
-      description: page.description,
+      description: metaDescription,
       indexable,
       keywords: copy.keywords,
       language: copy.language,

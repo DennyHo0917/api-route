@@ -114,9 +114,11 @@ function replaceMeta(html, language, page) {
   const seoPage = getSeoPage(page, language);
   const title = seoPage.title;
   const description = seoPage.description;
+  const metaTitle = seoPage.metaTitle || title;
+  const metaDescription = seoPage.metaDescription || description;
   const questions = seoPage.questions || [];
   const keywords = SEO_COPY[language]?.keywords || SEO_COPY.en.keywords;
-  const pageTitle = `${title} | API-Route`;
+  const pageTitle = `${metaTitle} | API-Route`;
   const canonicalPath = localizedPath(page.path, language);
   const canonicalUrl = `${SITE_URL}${canonicalPath}`;
   const homeUrl = languageHomeUrl(language);
@@ -154,7 +156,7 @@ function replaceMeta(html, language, page) {
         '@id': `${canonicalUrl}#webpage`,
         url: canonicalUrl,
         name: pageTitle,
-        description,
+        description: metaDescription,
         keywords,
         inLanguage: languages[language].htmlLang,
         isPartOf: { '@id': websiteId },
@@ -170,7 +172,7 @@ function replaceMeta(html, language, page) {
       name: 'API-Route',
       serviceType: SEO_COPY[language]?.serviceType || SEO_COPY.en.serviceType,
       url: SITE_URL,
-      description,
+      description: metaDescription,
       areaServed: 'Worldwide',
       availableLanguage,
       provider: { '@id': organizationId },
@@ -219,12 +221,12 @@ function replaceMeta(html, language, page) {
   return html
     .replace(/<html lang="[^"]*">/, `<html lang="${languages[language].htmlLang}">`)
     .replace(/<title>.*?<\/title>/s, `<title>${escapeHtml(pageTitle)}</title>`)
-    .replace(/<meta name="description" content="[^"]*" \/>/, `<meta name="description" content="${escapeHtml(description)}" />`)
+    .replace(/<meta name="description" content="[^"]*" \/>/, `<meta name="description" content="${escapeHtml(metaDescription)}" />`)
     .replace(/<meta name="keywords" content="[^"]*" \/>/, `<meta name="keywords" content="${escapeHtml(keywords)}" />`)
     .replace(/<link rel="canonical" href="[^"]*" \/>/, `<link rel="canonical" href="${canonicalUrl}" />`)
     .replace(/(?:\s*<link rel="alternate" hreflang="[^"]*" href="[^"]*" \/>){5}/, `\n${alternates}`)
     .replace(/<meta property="og:title" content="[^"]*" \/>/, `<meta property="og:title" content="${escapeHtml(pageTitle)}" />`)
-    .replace(/<meta property="og:description" content="[^"]*" \/>/, `<meta property="og:description" content="${escapeHtml(description)}" />`)
+    .replace(/<meta property="og:description" content="[^"]*" \/>/, `<meta property="og:description" content="${escapeHtml(metaDescription)}" />`)
     .replace(/<meta property="og:url" content="[^"]*" \/>/, `<meta property="og:url" content="${canonicalUrl}" />`)
     .replace(/<meta property="og:locale" content="[^"]*" \/>/, `<meta property="og:locale" content="${languages[language].locale}" />`)
     .replace(/<meta property="og:image" content="[^"]*" \/>/, `<meta property="og:image" content="${DEFAULT_OG_IMAGE_URL}" />`)
@@ -235,7 +237,7 @@ function replaceMeta(html, language, page) {
     .replace(/<meta property="og:image:alt" content="[^"]*" \/>/, `<meta property="og:image:alt" content="${escapeHtml(pageTitle)}" />`)
     .replace(/<meta name="twitter:card" content="[^"]*" \/>/, '<meta name="twitter:card" content="summary_large_image" />')
     .replace(/<meta name="twitter:title" content="[^"]*" \/>/, `<meta name="twitter:title" content="${escapeHtml(pageTitle)}" />`)
-    .replace(/<meta name="twitter:description" content="[^"]*" \/>/, `<meta name="twitter:description" content="${escapeHtml(description)}" />`)
+    .replace(/<meta name="twitter:description" content="[^"]*" \/>/, `<meta name="twitter:description" content="${escapeHtml(metaDescription)}" />`)
     .replace(/<meta name="twitter:image" content="[^"]*" \/>/, `<meta name="twitter:image" content="${DEFAULT_OG_IMAGE_URL}" />`)
     .replace(/<meta name="twitter:image:alt" content="[^"]*" \/>/, `<meta name="twitter:image:alt" content="${escapeHtml(pageTitle)}" />`)
     .replace(/<script id="seo-structured-data" type="application\/ld\+json">.*?<\/script>/s, `<script id="seo-structured-data" type="application/ld+json">${JSON.stringify(structuredData).replaceAll('<', '\\u003c')}</script>`)
