@@ -32,6 +32,31 @@
       "permanent": true
     },
     {
+      "source": "/sub-site",
+      "destination": "/ai-api-reseller-platform",
+      "permanent": true
+    },
+    {
+      "source": "/en/sub-site",
+      "destination": "/ai-api-reseller-platform",
+      "permanent": true
+    },
+    {
+      "source": "/zh/sub-site",
+      "destination": "/zh/ai-api-reseller-platform",
+      "permanent": true
+    },
+    {
+      "source": "/ja/sub-site",
+      "destination": "/ja/ai-api-reseller-platform",
+      "permanent": true
+    },
+    {
+      "source": "/ko/sub-site",
+      "destination": "/ko/ai-api-reseller-platform",
+      "permanent": true
+    },
+    {
       "source": "/en",
       "destination": "/",
       "permanent": true

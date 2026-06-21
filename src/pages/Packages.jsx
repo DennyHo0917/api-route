@@ -124,14 +124,6 @@ export default function Packages() {
     setSubscribing(null);
   };
 
-  if (loading) {
-    return (
-      <div className="flex min-h-[55vh] items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand-500/30 border-t-brand-500" />
-      </div>
-    );
-  }
-
   return (
     <div className="pb-20">
       <section className="route-hero border-b border-[#E8DDD0]">
@@ -207,7 +199,11 @@ export default function Packages() {
           </section>
         )}
 
-        {enabled.length === 0 ? (
+        {loading ? (
+          <div className="flex min-h-[28vh] items-center justify-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand-500/30 border-t-brand-500" />
+          </div>
+        ) : enabled.length === 0 ? (
           <div className="py-16 text-center text-page-secondary">
             <p>{t('packages.noPackages')}</p>
             <Link to="/pricing" className="mt-3 inline-flex items-center gap-2 text-page-link">

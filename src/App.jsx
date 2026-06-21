@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Navigate, Routes, Route, useLocation } from 'react-router-dom';
 import AuthGuard from './components/AuthGuard';
 import NotificationBell from './components/NotificationBell';
 import SeoManager from './components/SeoManager';
@@ -27,6 +27,20 @@ const Loading = () => (
   </div>
 );
 
+function LegacySubSiteRedirect() {
+  const location = useLocation();
+  return (
+    <Navigate
+      to={{
+        pathname: '/ai-api-reseller-platform',
+        search: location.search,
+        hash: location.hash,
+      }}
+      replace
+    />
+  );
+}
+
 function ThemedRoutes() {
   const { Home, Layout } = useTheme();
 
@@ -39,7 +53,8 @@ function ThemedRoutes() {
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/packages" element={<Packages />} />
           <Route path="/apps" element={<AppMarket />} />
-          <Route path="/sub-site" element={<SubDistributor />} />
+          <Route path="/ai-api-reseller-platform" element={<SubDistributor />} />
+          <Route path="/sub-site" element={<LegacySubSiteRedirect />} />
           <Route path="/faq" element={<Faq />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

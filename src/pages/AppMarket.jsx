@@ -38,6 +38,12 @@ function CoverFallback({ app, t }) {
   );
 }
 
+const CLIENT_SETUP_ITEMS = [
+  ['appMarket.clientBaseUrlTitle', 'appMarket.clientBaseUrlDesc'],
+  ['appMarket.clientLibreChatTitle', 'appMarket.clientLibreChatDesc'],
+  ['appMarket.clientClaudeCodeTitle', 'appMarket.clientClaudeCodeDesc'],
+];
+
 export default function AppMarket() {
   const { t } = useTranslation();
   const { user } = useAuth();
@@ -85,6 +91,30 @@ export default function AppMarket() {
               {t('appMarket.statBilling')}
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="mt-8 rounded-2xl border border-page-divider bg-page-surface p-5 shadow-sm sm:p-6">
+        <div className="max-w-3xl">
+          <h2 className="text-xl font-semibold tracking-tight text-page">
+            {t('appMarket.clientTitle')}
+          </h2>
+          <p className="mt-2 text-sm leading-6 text-page-secondary">
+            {t('appMarket.clientDesc')}
+          </p>
+        </div>
+        <div className="mt-5 grid gap-3 md:grid-cols-3">
+          {CLIENT_SETUP_ITEMS.map(([titleKey, descKey]) => (
+            <article key={titleKey} className="rounded-xl border border-page-divider bg-page-inset p-4">
+              <ShieldCheck className="h-5 w-5 text-page-success" />
+              <h3 className="mt-3 text-sm font-semibold text-page">
+                {t(titleKey)}
+              </h3>
+              <p className="mt-2 text-sm leading-6 text-page-secondary">
+                {t(descKey)}
+              </p>
+            </article>
+          ))}
         </div>
       </section>
 

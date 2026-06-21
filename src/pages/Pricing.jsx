@@ -178,7 +178,7 @@ const PRICING_GUIDE_COPY_V2 = {
         body: '价格表用于判断模型成本，套餐和账户余额用于控制预算；实际扣费以账户日志和订单记录为准。',
       },
     ],
-    compareTitle: '这个页面适合比较什么',
+    compareTitle: 'AI API 价格对比适合比较什么',
     compareItems: [
       'GPT、Claude、Gemini 等主流模型的输入/输出 token 成本',
       '长上下文、缓存读取和缓存创建对总成本的影响',
@@ -201,6 +201,12 @@ const PRICING_GUIDE_COPY_V2 = {
       '长文档、知识库、重复提示词：重点看缓存读取、缓存创建和长上下文成本。',
       '图片、音频、视频：确认是按次、按秒、分辨率还是规格计费。',
     ],
+    faqTitle: 'AI API 价格对比 FAQ',
+    faq: [
+      ['如何比较 OpenAI、Claude、Gemini 的 API 价格？', '先比较输入和输出 token 单价，再看缓存费用、按次计费、上下文长度和预计调用量。'],
+      ['AI API token 成本怎么估算？', '文本调用成本约等于输入 token 成本加输出 token 成本，再加缓存相关费用。图片、音频、视频按规格或按次价格计算。'],
+      ['只看单价够吗？', '不够。高频调用、长上下文、缓存命中率和模型稳定性都会影响真实成本。'],
+    ],
   },
   en: {
     cards: [
@@ -217,7 +223,7 @@ const PRICING_GUIDE_COPY_V2 = {
         body: 'Use the pricing table to judge model cost, then use plans and account balance to control spend. Actual billing follows account logs and order records.',
       },
     ],
-    compareTitle: 'What this page helps you compare',
+    compareTitle: 'What this AI API pricing comparison helps you compare',
     compareItems: [
       'Input and output token costs for GPT, Claude, Gemini, and other leading models',
       'How long context, cache reads, and cache creation affect total cost',
@@ -240,6 +246,12 @@ const PRICING_GUIDE_COPY_V2 = {
       'Long documents, knowledge bases, repeated prompts: compare cache reads, cache creation, and long-context cost.',
       'Image, audio, video: check whether billing is per call, per second, resolution-based, or spec-based.',
     ],
+    faqTitle: 'AI API Pricing Comparison FAQ',
+    faq: [
+      ['How do I compare OpenAI, Claude, and Gemini API pricing?', 'Compare input and output token rates first, then include cache pricing, per-call billing, context length, and expected request volume.'],
+      ['How do I estimate AI API token cost?', 'For text models, estimate input token cost plus output token cost plus cache-related cost. Image, audio, and video models follow the displayed spec or per-call price.'],
+      ['Is the lowest token price always the cheapest option?', 'Not always. High request volume, long context, cache hit rate, output length, and route stability can change the real cost.'],
+    ],
   },
   ja: {
     cards: [
@@ -256,7 +268,7 @@ const PRICING_GUIDE_COPY_V2 = {
         body: '料金表でモデルごとのコストを確認し、プラン、残高、引き換えコードで予算を管理します。実際の課金は利用ログと注文記録に基づきます。',
       },
     ],
-    compareTitle: 'このページで比較できること',
+    compareTitle: 'AI API 料金比較で確認できること',
     compareItems: [
       'GPT、Claude、Gemini など主要モデルの入力/出力トークンコスト',
       '長文コンテキスト、キャッシュ読み取り、キャッシュ作成が総コストに与える影響',
@@ -279,6 +291,12 @@ const PRICING_GUIDE_COPY_V2 = {
       '長文ドキュメント、ナレッジベース、繰り返しプロンプト：キャッシュ読み取り、キャッシュ作成、長文コストを比較します。',
       '画像、音声、動画：回数、秒数、解像度、仕様のどれで課金されるかを確認します。',
     ],
+    faqTitle: 'AI API 料金比較 FAQ',
+    faq: [
+      ['OpenAI、Claude、Gemini の API 料金はどう比較しますか？', '入力と出力のトークン単価、キャッシュ料金、回数課金、コンテキスト長、想定呼び出し回数を合わせて確認します。'],
+      ['AI API のトークンコストはどう見積もりますか？', 'テキストモデルでは入力費用、出力費用、キャッシュ関連費用を合計します。画像、音声、動画は表の仕様や回数単価に従います。'],
+      ['単価が低いモデルが常に最安ですか？', '常にそうとは限りません。呼び出し回数、長文処理、キャッシュ利用、出力量、経路の安定性で実際の費用は変わります。'],
+    ],
   },
   ko: {
     cards: [
@@ -295,7 +313,7 @@ const PRICING_GUIDE_COPY_V2 = {
         body: '가격표로 모델별 비용을 판단하고, 플랜·잔액·교환 코드로 지출을 관리합니다. 실제 과금은 계정 로그와 주문 기록을 기준으로 합니다.',
       },
     ],
-    compareTitle: '이 페이지에서 비교할 수 있는 것',
+    compareTitle: 'AI API 요금 비교에서 확인할 수 있는 것',
     compareItems: [
       'GPT, Claude, Gemini 등 주요 모델의 입력/출력 토큰 비용',
       '긴 문맥, 캐시 읽기, 캐시 생성이 전체 비용에 미치는 영향',
@@ -317,6 +335,12 @@ const PRICING_GUIDE_COPY_V2 = {
       '코딩, 추론, Agent: 모델 성능, 출력 비용, 문맥 길이, 안정적인 경로를 비교합니다.',
       '긴 문서, 지식베이스, 반복 프롬프트: 캐시 읽기, 캐시 생성, 긴 문맥 비용을 비교합니다.',
       '이미지, 오디오, 영상: 호출당, 초당, 해상도별, 사양별 과금인지 확인합니다.',
+    ],
+    faqTitle: 'AI API 요금 비교 FAQ',
+    faq: [
+      ['OpenAI, Claude, Gemini API 요금은 어떻게 비교하나요?', '입력/출력 토큰 단가를 먼저 비교하고 캐시 요금, 호출당 과금, 문맥 길이, 예상 호출량을 함께 봅니다.'],
+      ['AI API 토큰 비용은 어떻게 추정하나요?', '텍스트 모델은 입력 비용, 출력 비용, 캐시 관련 비용을 더해 계산합니다. 이미지, 오디오, 영상은 표시된 사양이나 호출당 가격을 따릅니다.'],
+      ['토큰 단가가 가장 낮은 모델이 항상 가장 저렴한가요?', '항상 그렇지는 않습니다. 호출량, 긴 문맥, 캐시 적중률, 출력 길이, 경로 안정성이 실제 비용을 바꿀 수 있습니다.'],
     ],
   },
 };
@@ -959,6 +983,21 @@ export default function Pricing() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="mt-10">
+        <div className="mb-4 flex items-center gap-2">
+          <Calculator className="h-5 w-5 text-page-link" />
+          <h2 className="text-lg font-semibold text-page">{guideCopy.faqTitle}</h2>
+        </div>
+        <div className="grid gap-3 lg:grid-cols-3">
+          {guideCopy.faq.map(([question, answer]) => (
+            <article key={question} className="rounded-xl border border-page-divider bg-page-surface p-5 shadow-sm">
+              <h3 className="text-sm font-semibold leading-6 text-page">{question}</h3>
+              <p className="mt-2 text-sm leading-6 text-page-secondary">{answer}</p>
+            </article>
+          ))}
         </div>
       </section>
     </div>

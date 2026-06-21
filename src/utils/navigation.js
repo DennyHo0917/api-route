@@ -4,7 +4,7 @@ export function getSiteNavItems({ t, site }) {
     { to: '/pricing', label: t('nav.pricing'), auth: false },
     { to: '/packages', label: t('nav.packages'), auth: false },
     ...(site?.allow_sub_dist
-      ? [{ to: '/sub-site', label: t('subDist.nav'), auth: false }]
+      ? [{ to: '/ai-api-reseller-platform', label: t('subDist.nav'), auth: false }]
       : []),
     { to: '/dashboard', label: t('nav.dashboard'), auth: true },
     { to: '/tokens', label: t('nav.apiKeys'), auth: true },

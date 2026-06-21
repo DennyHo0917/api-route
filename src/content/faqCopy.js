@@ -2,7 +2,7 @@ export const FAQ_COPY = {
   zh: {
     badge: '常见问题',
     title: 'API-Route 使用 FAQ',
-    subtitle: '集中解答 Base URL、API Key、模型名、Codex、Claude Code、VSCode、套餐购买、支付和白标 AI API 平台等接入问题。',
+    subtitle: '集中解答 OpenAI compatible Base URL、API Key、模型名、LibreChat、Codex、Claude Code、VSCode、套餐购买、支付和白标 AI API 平台等接入问题。',
     sections: [
       {
         title: '接入与模型',
@@ -33,6 +33,14 @@ export const FAQ_COPY = {
             answer: '不同模型的计费方式可能不同，包括输入、输出、缓存读取、缓存创建或按次计费。最终消耗以调用日志和账户记录为准，建议先在定价页面确认模型费率。',
           },
           {
+            question: '如何比较 GPT、Claude、Gemini 的 API 价格？',
+            answer: '先比较输入和输出 token 单价，再看缓存费用、按次计费、上下文长度和预计调用量。定价页会把模型费率、官方参考价和可用状态集中展示。',
+          },
+          {
+            question: 'AI API token 成本怎么估算？',
+            answer: '文本调用通常按输入 token 成本、输出 token 成本和缓存相关费用相加估算。图片、音频、视频或按次模型则按定价页展示的规格、秒数或固定调用价计算。',
+          },
+          {
             question: '支持加密货币支付吗？',
             answer: '如果当前站点开启了加密货币支付，你会在充值、套餐或独立平台开通流程中看到链和代币选项。提交订单后请按页面显示的地址、金额和网络完成转账。',
           },
@@ -43,7 +51,11 @@ export const FAQ_COPY = {
         items: [
           {
             question: '可以接入哪些客户端或应用？',
-            answer: '应用市场会列出当前推荐的客户端和内置应用。只要客户端支持自定义 OpenAI-compatible Base URL 和 API Key，通常都可以接入本站。',
+            answer: '应用市场会列出当前推荐的客户端和内置应用。只要客户端支持自定义 OpenAI-compatible Base URL、API Key 和模型名，通常都可以接入本站。',
+          },
+          {
+            question: 'LibreChat 如何配置 OpenAI compatible Base URL？',
+            answer: '在 LibreChat 的自定义 OpenAI endpoint 中填写本站 Base URL，API Key 填本站密钥，模型名使用定价页显示的名称。接入失败时先检查 Base URL 是否被重复拼接路径。',
           },
           {
             question: 'Base URL、API Key 和模型名分别填什么？',
@@ -103,7 +115,7 @@ export const FAQ_COPY = {
   en: {
     badge: 'FAQ',
     title: 'API-Route FAQ',
-    subtitle: 'Answers about Base URL, API keys, model names, Codex, Claude Code, VS Code, plans, payments, and white-label AI API reseller platform setup.',
+    subtitle: 'Answers about OpenAI-compatible Base URL, API keys, model names, LibreChat, Codex, Claude Code, VS Code, plans, payments, and white-label AI API reseller platform setup.',
     sections: [
       {
         title: 'API Access and Models',
@@ -134,6 +146,14 @@ export const FAQ_COPY = {
             answer: 'Billing varies by model. Some models charge by input and output tokens, cache reads, cache creation, or per call. The final usage is reflected in your usage logs and account records.',
           },
           {
+            question: 'How do I compare GPT, Claude, and Gemini API pricing?',
+            answer: 'Compare input and output token rates first, then include cache pricing, per-call billing, context length, and expected request volume. The Pricing page groups model rates, official references, and status in one place.',
+          },
+          {
+            question: 'How do I estimate AI API token cost?',
+            answer: 'For text calls, estimate input token cost plus output token cost plus cache-related cost. Image, audio, video, and per-call models follow the spec, seconds, or fixed call price shown on the Pricing page.',
+          },
+          {
             question: 'Do you support crypto payments?',
             answer: 'If crypto payments are enabled for this site, you will see chain and token options during top-up, package purchase, or branded platform setup. Follow the displayed network, address, and amount carefully.',
           },
@@ -144,7 +164,11 @@ export const FAQ_COPY = {
         items: [
           {
             question: 'Which clients or apps can I use?',
-            answer: 'The App Market lists recommended clients and built-in apps. In general, any client that supports a custom OpenAI-compatible Base URL and API key can connect to this site.',
+            answer: 'The App Market lists recommended clients and built-in apps. In general, any client that supports a custom OpenAI-compatible Base URL, API key, and model name can connect to this site.',
+          },
+          {
+            question: 'How do I configure LibreChat with an OpenAI-compatible Base URL?',
+            answer: 'Add this site as a custom OpenAI endpoint in LibreChat, then enter the API-Route Base URL, API key, and model name from the Pricing page. If connection fails, check whether the client duplicated the request path.',
           },
           {
             question: 'What should I enter for Base URL, API key, and model name?',
@@ -204,7 +228,7 @@ export const FAQ_COPY = {
   ja: {
     badge: 'FAQ',
     title: 'API-Route よくある質問',
-    subtitle: 'Base URL、API キー、モデル名、Codex、Claude Code、VSCode、プラン、支払い、ホワイトラベル AI API プラットフォームの設定を確認できます。',
+    subtitle: 'OpenAI 互換 Base URL、API キー、モデル名、LibreChat、Codex、Claude Code、VSCode、プラン、支払い、ホワイトラベル AI API プラットフォームの設定を確認できます。',
     sections: [
       {
         title: 'API 接続とモデル',
@@ -235,6 +259,14 @@ export const FAQ_COPY = {
             answer: 'モデルごとに課金方式が異なります。入力・出力トークン、キャッシュ読み取り、キャッシュ作成、またはリクエスト単位で計算される場合があります。最終的な消費は利用ログで確認できます。',
           },
           {
+            question: 'GPT、Claude、Gemini の API 料金はどう比較しますか？',
+            answer: '入力と出力のトークン単価を比較し、キャッシュ料金、回数課金、コンテキスト長、想定呼び出し回数も合わせて確認します。料金ページでモデル単価、公式参考価格、状態を確認できます。',
+          },
+          {
+            question: 'AI API のトークンコストはどう見積もりますか？',
+            answer: 'テキスト呼び出しでは、入力トークン費用、出力トークン費用、キャッシュ関連費用を合計します。画像、音声、動画、回数課金モデルは料金ページの仕様、秒数、固定料金に従います。',
+          },
+          {
             question: '暗号資産で支払えますか？',
             answer: 'このサイトで暗号資産決済が有効な場合、チャージ、プラン購入、専用 AI ゲートウェイ開通の画面でネットワークとトークンを選べます。表示されたアドレス、金額、ネットワークをよく確認してください。',
           },
@@ -245,7 +277,11 @@ export const FAQ_COPY = {
         items: [
           {
             question: 'どのクライアントやアプリで使えますか？',
-            answer: 'アプリページには推奨クライアントと連携アプリを掲載しています。カスタムの OpenAI 互換 Base URL と API キーを設定できるクライアントなら、多くの場合そのまま接続できます。',
+            answer: 'アプリページには推奨クライアントと連携アプリを掲載しています。カスタムの OpenAI 互換 Base URL、API キー、モデル名を設定できるクライアントなら、多くの場合そのまま接続できます。',
+          },
+          {
+            question: 'LibreChat で OpenAI 互換 Base URL を設定するには？',
+            answer: 'LibreChat のカスタム OpenAI endpoint に API-Route の Base URL、API キー、料金ページのモデル名を入力します。接続できない場合は、パスが重複していないか確認してください。',
           },
           {
             question: 'Base URL、API キー、モデル名には何を入力しますか？',
@@ -305,7 +341,7 @@ export const FAQ_COPY = {
   ko: {
     badge: 'FAQ',
     title: 'API-Route 자주 묻는 질문',
-    subtitle: 'Base URL, API 키, 모델명, Codex, Claude Code, VSCode, 플랜, 결제, 화이트라벨 AI API 플랫폼 설정을 한곳에서 확인하세요.',
+    subtitle: 'OpenAI 호환 Base URL, API 키, 모델명, LibreChat, Codex, Claude Code, VSCode, 플랜, 결제, 화이트라벨 AI API 플랫폼 설정을 한곳에서 확인하세요.',
     sections: [
       {
         title: 'API 연동과 모델',
@@ -336,6 +372,14 @@ export const FAQ_COPY = {
             answer: '모델마다 과금 방식이 다릅니다. 입력·출력 토큰, 캐시 읽기, 캐시 생성, 호출 횟수 기준으로 계산될 수 있습니다. 최종 사용량은 사용 로그와 계정 기록에서 확인하세요.',
           },
           {
+            question: 'GPT, Claude, Gemini API 요금은 어떻게 비교하나요?',
+            answer: '입력/출력 토큰 단가를 먼저 비교하고 캐시 요금, 호출당 과금, 문맥 길이, 예상 호출량을 함께 봅니다. 요금 페이지에서 모델 단가, 공식 참고가, 상태를 확인할 수 있습니다.',
+          },
+          {
+            question: 'AI API 토큰 비용은 어떻게 추정하나요?',
+            answer: '텍스트 호출은 입력 토큰 비용, 출력 토큰 비용, 캐시 관련 비용을 더해 추정합니다. 이미지, 오디오, 영상, 호출당 모델은 요금 페이지의 사양, 초 단위, 고정 호출 가격을 따릅니다.',
+          },
+          {
             question: '암호화폐 결제를 지원하나요?',
             answer: '현재 사이트에서 암호화폐 결제가 켜져 있다면 충전, 플랜 구매, 전용 AI 게이트웨이 개통 과정에서 네트워크와 토큰 옵션이 표시됩니다. 주소, 금액, 네트워크를 반드시 확인하세요.',
           },
@@ -346,7 +390,11 @@ export const FAQ_COPY = {
         items: [
           {
             question: '어떤 클라이언트나 앱을 사용할 수 있나요?',
-            answer: '앱 페이지에서 추천 클라이언트와 연동 앱을 확인할 수 있습니다. 사용자 지정 OpenAI 호환 Base URL과 API 키를 지원하는 클라이언트라면 대부분 연결할 수 있습니다.',
+            answer: '앱 페이지에서 추천 클라이언트와 연동 앱을 확인할 수 있습니다. 사용자 지정 OpenAI 호환 Base URL, API 키, 모델명을 지원하는 클라이언트라면 대부분 연결할 수 있습니다.',
+          },
+          {
+            question: 'LibreChat에서 OpenAI 호환 Base URL을 어떻게 설정하나요?',
+            answer: 'LibreChat의 사용자 지정 OpenAI endpoint에 API-Route Base URL, API 키, 요금 페이지의 모델명을 입력합니다. 연결이 실패하면 요청 경로가 중복되지 않았는지 확인하세요.',
           },
           {
             question: 'Base URL, API 키, 모델명에는 각각 무엇을 입력하나요?',

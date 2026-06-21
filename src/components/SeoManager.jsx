@@ -12,7 +12,7 @@ const DEFAULT_OG_IMAGE_PATH = '/og-image.png';
 const DEFAULT_OG_IMAGE_WIDTH = '1200';
 const DEFAULT_OG_IMAGE_HEIGHT = '630';
 const GA_MEASUREMENT_ID = 'G-GZT5KLBKJ8';
-const INDEXABLE_PATHS = new Set(['/', '/pricing', '/packages', '/apps', '/sub-site', '/faq']);
+const INDEXABLE_PATHS = new Set(['/', '/pricing', '/packages', '/apps', '/ai-api-reseller-platform', '/faq']);
 const PRIVATE_PATHS = new Set(['/login', '/register', '/dashboard', '/tokens', '/logs', '/tasks', '/topup', '/account']);
 const LANGUAGE_HREFLANGS = {
   zh: 'zh-CN',
@@ -134,7 +134,7 @@ function getPageCopy(pathname, copy, languageKey) {
   if (pathname === '/pricing') return copy.pricing;
   if (pathname === '/packages') return copy.packages;
   if (pathname === '/apps') return copy.apps;
-  if (pathname === '/sub-site') return copy.subSite;
+  if (pathname === '/ai-api-reseller-platform') return copy.subSite;
   if (pathname === '/faq') return getFaqSeoPage(languageKey);
   return copy.private;
 }

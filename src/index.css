@@ -1604,3 +1604,20 @@ html[data-color-scheme='dark'] .theme-claude [class*='shadow-[0_'] {
 .hover\:bg-page-surface-hover:hover {
   background: var(--page-surface-hover);
 }
+
+.sub-dist-launch-feed {
+  animation: sub-dist-launch-scroll 28s linear infinite;
+}
+
+.sub-dist-launch-feed:hover {
+  animation-play-state: paused;
+}
+
+@keyframes sub-dist-launch-scroll {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}

@@ -189,7 +189,7 @@ export default function ClaudeHome() {
       icon: ShieldCheck,
       title: t('home.audienceRelayTitle'),
       description: t('home.audienceRelayDesc'),
-      to: '/sub-site',
+      to: '/ai-api-reseller-platform',
       linkLabel: t('home.audienceRelayLink'),
     },
   ];
@@ -229,7 +229,7 @@ export default function ClaudeHome() {
                 {t('home.viewPackages')}
               </Link>
               <Link
-                to="/sub-site"
+                to="/ai-api-reseller-platform"
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-[#DCCBBD] bg-[#FFF7F0] px-6 py-3.5 text-sm font-semibold text-[#8F4C35] transition-all hover:border-[#CBAE98] hover:bg-white"
               >
                 <ShieldCheck size={17} />
@@ -301,7 +301,7 @@ export default function ClaudeHome() {
                       <h3 className="mt-1 text-sm font-semibold text-[#49382C]">{t('home.platformTitle')}</h3>
                       <p className="mt-1.5 text-sm leading-6 text-[#806D5D]">{t('home.platformDesc')}</p>
                       <Link
-                        to="/sub-site"
+                        to="/ai-api-reseller-platform"
                         className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-[#C56547] hover:text-[#A84F34]"
                       >
                         {t('home.platformAction')}

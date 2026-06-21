@@ -180,45 +180,45 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.api-route.com/sub-site</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/sub-site" />
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/zh/sub-site" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/sub-site" />
-    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/sub-site" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/sub-site" />
+    <loc>https://www.api-route.com/ai-api-reseller-platform</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/ai-api-reseller-platform" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/zh/ai-api-reseller-platform" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/ai-api-reseller-platform" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/ai-api-reseller-platform" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/ai-api-reseller-platform" />
     <lastmod>2026-06-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.api-route.com/zh/sub-site</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/sub-site" />
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/zh/sub-site" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/sub-site" />
-    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/sub-site" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/sub-site" />
+    <loc>https://www.api-route.com/zh/ai-api-reseller-platform</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/ai-api-reseller-platform" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/zh/ai-api-reseller-platform" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/ai-api-reseller-platform" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/ai-api-reseller-platform" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/ai-api-reseller-platform" />
     <lastmod>2026-06-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.api-route.com/ja/sub-site</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/sub-site" />
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/zh/sub-site" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/sub-site" />
-    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/sub-site" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/sub-site" />
+    <loc>https://www.api-route.com/ja/ai-api-reseller-platform</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/ai-api-reseller-platform" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/zh/ai-api-reseller-platform" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/ai-api-reseller-platform" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/ai-api-reseller-platform" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/ai-api-reseller-platform" />
     <lastmod>2026-06-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.api-route.com/ko/sub-site</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/sub-site" />
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/zh/sub-site" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/sub-site" />
-    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/sub-site" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/sub-site" />
+    <loc>https://www.api-route.com/ko/ai-api-reseller-platform</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/ai-api-reseller-platform" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/zh/ai-api-reseller-platform" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/ai-api-reseller-platform" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/ai-api-reseller-platform" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/ai-api-reseller-platform" />
     <lastmod>2026-06-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

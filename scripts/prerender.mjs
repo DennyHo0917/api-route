@@ -25,7 +25,7 @@ const pages = [
   { key: 'pricing', path: '/pricing' },
   { key: 'packages', path: '/packages' },
   { key: 'apps', path: '/apps' },
-  { key: 'subSite', path: '/sub-site' },
+  { key: 'subSite', path: '/ai-api-reseller-platform' },
   { key: 'faq', path: '/faq' },
 ];
 
@@ -103,6 +103,7 @@ function renderSnapshot(page, language, title, description, questions) {
     ['/pricing', 'Pricing'],
     ['/packages', 'Packages'],
     ['/apps', 'Apps'],
+    ['/ai-api-reseller-platform', 'Reseller'],
     ['/faq', 'FAQ'],
   ].map(([path, label]) => `<a href="${SITE_URL}${localizedPath(path, language)}">${label}</a>`).join(' ');
 
