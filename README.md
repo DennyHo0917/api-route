@@ -1,5 +1,9 @@
 # SubRouter Dist-Site Template
 
+Live website: [API Route](https://www.api-route.com/)
+
+Key pages: [Pricing](https://www.api-route.com/pricing) | [Packages](https://www.api-route.com/packages) | [Apps](https://www.api-route.com/apps) | [Sub-site](https://www.api-route.com/sub-site) | [FAQ](https://www.api-route.com/faq) | [Sitemap](https://www.api-route.com/sitemap.xml)
+
 A beautiful, open-source frontend template for SubRouter distributors. Built with React, Vite, Tailwind CSS, and [react-bits](https://github.com/DavidHDev/react-bits) animation components.
 
 ## Features
