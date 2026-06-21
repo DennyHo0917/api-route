@@ -58,10 +58,11 @@ const getPreviewTheme = () => {
 };
 
 const previewResponse = (data) => Promise.resolve({ data: { success: true, data } });
+const REQUEST_TIMEOUT = import.meta.env.DEV ? 10000 : 30000;
 
 const api = axios.create({
   baseURL: '',
-  timeout: 30000,
+  timeout: REQUEST_TIMEOUT,
   withCredentials: true, // CRITICAL: send session cookies on every request
   headers: { 'Content-Type': 'application/json' },
 });
@@ -118,7 +119,6 @@ export const getSiteInfo = () => {
       name: 'SubRouter Preview',
       theme_template: theme,
       enable_topup: true,
-      top_up_link: 'https://example.com/redeem-codes',
       allow_sub_dist: true,
       currency: {
         code: 'CNY',
@@ -145,7 +145,7 @@ export const logout = () => api.post('/api/dist/user/logout');
 // ===== User =====
 export const getUserSelf = (config) => api.get('/api/dist/user/self', config);
 export const updateUserPassword = (data) => api.put('/api/dist/user/password', data);
-export const getUserUsage = () => api.get('/api/dist/user/usage');
+export const getUserUsage = (config) => api.get('/api/dist/user/usage', config);
 export const getUserLogs = (params) => api.get('/api/dist/user/logs', { params });
 export const getUserLogsStat = (params) => api.get('/api/dist/user/logs/stat', { params });
 export const getUserTasks = (params) => api.get('/api/dist/user/tasks', { params });
@@ -166,7 +166,7 @@ export const getActiveSubscriptions = (config) =>
   api.get('/api/dist/package/subscriptions', config);
 
 // ===== Online Topup =====
-export const getTopupInfo = () => api.get('/api/dist/topup/info');
+export const getTopupInfo = (config) => api.get('/api/dist/topup/info', config);
 export const calculateAmount = (data) => api.post('/api/dist/topup/amount', data);
 export const createEpayOrder = (data) => api.post('/api/dist/topup/pay', data);
 export const createStripeOrder = (data) => api.post('/api/dist/topup/stripe/pay', data);

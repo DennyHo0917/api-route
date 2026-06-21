@@ -448,11 +448,6 @@
   line-height: 1.15;
 }
 
-.theme-claude .package-redeem-select option {
-  background: #FFFDFB;
-  color: #3D3024;
-}
-
 .language-select option {
   background: #ffffff;
   color: #1f2937;
@@ -549,11 +544,6 @@ html[data-color-scheme='dark'] .theme-claude .route-kicker {
 }
 
 html[data-color-scheme='dark'] .theme-claude .route-section-title {
-  color: #f5ede7;
-}
-
-html[data-color-scheme='dark'] .theme-claude .package-redeem-select option {
-  background: #1f1916;
   color: #f5ede7;
 }
 

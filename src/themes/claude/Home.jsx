@@ -1,25 +1,34 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowRight,
   Braces,
   Check,
+  Headset,
   KeyRound,
   Layers3,
   ShieldCheck,
   ShoppingBag,
   Sparkles,
   TicketCheck,
+  WalletCards,
   Zap,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useSite, useCurrency } from '../../context/SiteContext';
-import { getSiteModels, getSitePackages, Q } from '../../api';
+import { getSiteModels, getSitePackages, subscribePackage, Q } from '../../api';
 import { calcOfficialEquivList } from '../../utils/officialEquiv';
 import { localizePackage } from '../../utils/packageLocalization';
-import ApiEndpoints from '../../components/ApiEndpoints';
 import { getHomeContent } from '../../utils/siteContent';
+import toast from 'react-hot-toast';
+
+const resetLabelKeys = {
+  never: 'packages.resetNever',
+  daily: 'packages.resetDaily',
+  weekly: 'packages.resetWeekly',
+  monthly: 'packages.resetMonthly',
+};
 
 function getTotalQuotaDollars(pkg) {
   const quotaDollars = pkg.quota_amount > 0 ? pkg.quota_amount / Q : 0;
@@ -40,13 +49,37 @@ const LEGACY_HERO_SUBTITLES = new Set([
   '通过单一 API 端点访问全球最强大的 AI 模型。简单、实惠、可靠。',
 ]);
 
+function getSupportLink(site) {
+  const announcement = String(site?.announcement || '');
+  const telegramMatch = announcement.match(/https?:\/\/(?:www\.)?(?:t\.me|telegram\.me)\/[^\s<>"']+/i);
+  if (telegramMatch) {
+    return {
+      href: telegramMatch[0].replace(/[，。！？；：,.!?;:)）\]}]+$/u, ''),
+      isTelegram: true,
+    };
+  }
+
+  if (site?.contact_email) {
+    return {
+      href: `mailto:${site.contact_email}`,
+      isTelegram: false,
+    };
+  }
+
+  return null;
+}
+
 export default function ClaudeHome() {
   const { t, i18n } = useTranslation();
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
+  const navigate = useNavigate();
   const { site } = useSite();
-  const { fmtCNY } = useCurrency();
+  const { symbol, rate, fmtCNY, cnyPerUsd, decimals } = useCurrency();
   const [models, setModels] = useState([]);
   const [packages, setPackages] = useState([]);
+  const [subscribing, setSubscribing] = useState(null);
+  const [confirmPkg, setConfirmPkg] = useState(null);
+  const getResetLabel = (period) => t(resetLabelKeys[period] || resetLabelKeys.never);
 
   useEffect(() => {
     getSiteModels()
@@ -74,6 +107,34 @@ export default function ClaudeHome() {
   const heroSubtitle = LEGACY_HERO_SUBTITLES.has(homeContent.heroSubtitle)
     ? t('home.heroSubtitle')
     : homeContent.heroSubtitle;
+  const supportLink = getSupportLink(site);
+
+  const handleSubscribe = (pkg) => {
+    if (!user) {
+      navigate('/register');
+      return;
+    }
+    setConfirmPkg(pkg);
+  };
+
+  const confirmSubscribe = async () => {
+    if (!confirmPkg) return;
+    const pkgId = confirmPkg.id;
+    setSubscribing(pkgId);
+    try {
+      const res = await subscribePackage(pkgId);
+      if (res.data.success) {
+        toast.success(t('packages.subscribedSuccess'));
+        setConfirmPkg(null);
+        await refreshUser({ skipErrorHandler: true }).catch(() => null);
+      } else {
+        toast.error(res.data.message || t('common.requestFailed'));
+      }
+    } catch {
+      // Global interceptor displays request errors.
+    }
+    setSubscribing(null);
+  };
 
   const workflowSteps = [
     {
@@ -376,17 +437,19 @@ export default function ClaudeHome() {
                       </li>
                     )}
                   </ul>
-                  <Link
-                    to={`/topup?package_id=${pkg.id}`}
+                  <button
+                    type="button"
+                    onClick={() => handleSubscribe(pkg)}
+                    disabled={subscribing === pkg.id}
                     className={`mt-auto inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition-colors ${
                       recommended
                         ? 'bg-[#D97757] text-white hover:bg-[#E38969]'
                         : 'bg-[#F0E5DB] text-[#4B3B30] hover:bg-[#E6D6C8]'
-                    }`}
+                    } disabled:cursor-not-allowed disabled:opacity-60`}
                   >
-                    <TicketCheck size={16} />
-                    {t('packages.haveVoucher')}
-                  </Link>
+                    <WalletCards size={16} />
+                    {subscribing === pkg.id ? t('packages.processing') : t('packages.subscribeNow')}
+                  </button>
                 </article>
               );
             })}
@@ -449,9 +512,87 @@ export default function ClaudeHome() {
         </div>
       </section>
 
-      <div className="pb-10">
-        <ApiEndpoints />
+      <div className="mx-auto max-w-7xl px-5 pb-10 md:px-8">
+        <div className="rounded-[22px] border border-[#E5D7CB] bg-white/65 p-6 md:flex md:items-center md:justify-between md:gap-8">
+          <div className="max-w-2xl">
+            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#D97757]/10 text-[#C56547]">
+              <Headset size={20} />
+            </span>
+            <p className="mt-5 text-xs font-bold uppercase tracking-[0.18em] text-[#C56547]">{t('home.supportEyebrow')}</p>
+            <h2 className="mt-2 text-lg font-semibold text-[#3D3024]">{t('home.supportTitle')}</h2>
+            <p className="mt-2 text-sm leading-7 text-[#7D6B5B]">{t('home.supportDesc')}</p>
+          </div>
+          {supportLink && (
+            <a
+              href={supportLink.href}
+              target={supportLink.isTelegram ? '_blank' : undefined}
+              rel={supportLink.isTelegram ? 'noopener noreferrer' : undefined}
+              className="mt-5 inline-flex shrink-0 items-center justify-center gap-2 rounded-full border border-[#E0CFC2] bg-white/70 px-5 py-3 text-sm font-semibold text-[#C56547] transition-colors hover:bg-white md:mt-0"
+            >
+              {supportLink.isTelegram ? t('home.supportTelegramAction') : t('nav.contactSupport')}
+              <ArrowRight size={15} />
+            </a>
+          )}
+        </div>
       </div>
+
+      {confirmPkg && (() => {
+        const userBalanceCny = (user?.quota || 0) / Q * cnyPerUsd;
+        const pkgPrice = Number(confirmPkg.price);
+        const insufficient = userBalanceCny < pkgPrice;
+        const resetPeriod = confirmPkg.quota_reset_period || 'never';
+        const isSubscription = resetPeriod !== 'never';
+        return (
+          <div
+            className="modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 backdrop-blur-sm"
+            onClick={() => !subscribing && setConfirmPkg(null)}
+          >
+            <div className="glass w-full max-w-sm rounded-2xl p-6" onClick={(event) => event.stopPropagation()}>
+              <h2 className="text-lg font-semibold text-page">{t('packages.confirmTitle')}</h2>
+              <p className="mt-3 text-sm text-page-secondary">
+                {t('packages.confirmDesc', { name: confirmPkg.name, price: fmtCNY(pkgPrice) })}
+              </p>
+              {isSubscription && (
+                <div className="mt-3 rounded-xl border border-[#E6D1C1] bg-[#FFF3E9] p-3">
+                  <p className="text-xs text-[#9C583F]">
+                    {t('packages.subscriptionInfo', {
+                      symbol,
+                      period: getResetLabel(resetPeriod),
+                      days: confirmPkg.duration || 30,
+                      amount: (confirmPkg.quota_amount / Q * rate).toFixed(decimals),
+                    })}
+                  </p>
+                </div>
+              )}
+              <p className="mt-4 text-sm text-page-secondary">
+                {t('packages.yourBalance')}{' '}
+                <span className={`font-semibold ${insufficient ? 'text-page-danger' : 'text-page-success'}`}>
+                  {fmtCNY(userBalanceCny)}
+                </span>
+              </p>
+              {insufficient && (
+                <p className="mt-3 rounded-xl bg-red-500/10 p-3 text-sm text-page-danger">
+                  {t('packages.insufficientBalance')}
+                </p>
+              )}
+              <div className="mt-6 flex justify-end gap-3">
+                <button type="button" onClick={() => setConfirmPkg(null)} disabled={subscribing} className="btn-secondary">
+                  {t('tokens.cancel')}
+                </button>
+                {insufficient ? (
+                  <button type="button" onClick={() => navigate('/topup')} disabled={subscribing} className="btn-primary">
+                    {t('nav.topup')}
+                  </button>
+                ) : (
+                  <button type="button" onClick={confirmSubscribe} disabled={subscribing} className="btn-primary">
+                    {subscribing ? t('packages.processing') : t('packages.confirm')}
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }

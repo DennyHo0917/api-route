@@ -4,14 +4,12 @@ import { useTranslation } from 'react-i18next';
 import {
   ArrowRight,
   Check,
-  ExternalLink,
-  ShoppingBag,
   Sparkles,
   TicketCheck,
   WalletCards,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { useCurrency, useSite } from '../context/SiteContext';
+import { useCurrency } from '../context/SiteContext';
 import {
   getSitePackages,
   getSiteModels,
@@ -35,12 +33,6 @@ function formatDate(unix) {
   return new Date(unix * 1000).toLocaleDateString();
 }
 
-function normalizeExternalUrl(value) {
-  const trimmed = String(value || '').trim();
-  if (!trimmed) return '';
-  return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
-}
-
 function getPackageQuota(pkg) {
   const resetPeriod = pkg.quota_reset_period || 'never';
   const singleQuotaDollars = pkg.quota_amount > 0 ? pkg.quota_amount / Q : 0;
@@ -61,7 +53,6 @@ function getPackageQuota(pkg) {
 export default function Packages() {
   const { t, i18n } = useTranslation();
   const { user, refreshUser } = useAuth();
-  const { site } = useSite();
   const navigate = useNavigate();
   const { symbol, rate, fmtCNY, cnyPerUsd, decimals } = useCurrency();
   const [packages, setPackages] = useState([]);
@@ -71,7 +62,6 @@ export default function Packages() {
   const [activeSubs, setActiveSubs] = useState([]);
   const [confirmPkg, setConfirmPkg] = useState(null);
 
-  const shopUrl = normalizeExternalUrl(site?.top_up_link);
   const getResetLabel = (period) => t(resetLabelKeys[period] || resetLabelKeys.never);
 
   useEffect(() => {
@@ -311,47 +301,14 @@ export default function Packages() {
                   </ul>
 
                   <div className="mt-auto space-y-2.5">
-                    {shopUrl ? (
-                      <a
-                        href={shopUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex w-full items-center justify-center gap-2 rounded-full bg-[#D97757] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#C4613F]"
-                      >
-                        <ShoppingBag size={16} />
-                        {t('packages.buyVoucher')}
-                        <ExternalLink size={14} />
-                      </a>
-                    ) : (
-                      <Link
-                        to={user ? `/topup?package_id=${pkg.id}` : '/register'}
-                        className="flex w-full items-center justify-center gap-2 rounded-full bg-[#D97757] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#C4613F]"
-                      >
-                        {t('packages.haveVoucher')}
-                        <ArrowRight size={15} />
-                      </Link>
-                    )}
-                    <Link
-                      to={user ? `/topup?package_id=${pkg.id}` : '/register'}
-                      className={`flex w-full items-center justify-center gap-2 rounded-full border px-5 py-3 text-sm font-semibold transition-colors ${
-                        recommended
-                          ? 'border-[#D9BBA6] bg-white/60 text-[#57463A] hover:bg-white'
-                          : 'border-[#DDCCBE] bg-[#FAF5F0] text-[#57463A] hover:bg-[#F0E5DB]'
-                      }`}
+                    <button
+                      onClick={() => handleSubscribe(pkg)}
+                      disabled={subscribing === pkg.id}
+                      className="flex w-full items-center justify-center gap-2 rounded-full bg-[#D97757] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#C4613F] disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                      <TicketCheck size={16} />
-                      {t('packages.haveVoucher')}
-                    </Link>
-                    {user && (
-                      <button
-                        onClick={() => handleSubscribe(pkg)}
-                        disabled={subscribing === pkg.id}
-                        className="flex w-full items-center justify-center gap-2 py-2 text-xs text-[#947F6D] transition-colors hover:text-[#D97757]"
-                      >
-                        <WalletCards size={14} />
-                        {subscribing === pkg.id ? t('packages.processing') : t('packages.balanceSubscribe')}
-                      </button>
-                    )}
+                      <WalletCards size={16} />
+                      {subscribing === pkg.id ? t('packages.processing') : t('packages.subscribeNow')}
+                    </button>
                   </div>
                 </article>
               );
@@ -403,9 +360,15 @@ export default function Packages() {
                 <button onClick={() => setConfirmPkg(null)} disabled={subscribing} className="btn-secondary">
                   {t('tokens.cancel')}
                 </button>
-                <button onClick={confirmSubscribe} disabled={insufficient || subscribing} className="btn-primary">
-                  {subscribing ? t('packages.processing') : t('packages.confirm')}
-                </button>
+                {insufficient ? (
+                  <button onClick={() => navigate('/topup')} disabled={subscribing} className="btn-primary">
+                    {t('nav.topup')}
+                  </button>
+                ) : (
+                  <button onClick={confirmSubscribe} disabled={subscribing} className="btn-primary">
+                    {subscribing ? t('packages.processing') : t('packages.confirm')}
+                  </button>
+                )}
               </div>
             </div>
           </div>

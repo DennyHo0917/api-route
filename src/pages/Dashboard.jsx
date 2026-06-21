@@ -332,10 +332,10 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="glass rounded-2xl p-6">
-          <h2 className="text-lg font-semibold text-page mb-4">{t('dashboard.redeemCode')}</h2>
-          <p className="text-sm text-page-secondary mb-4">{t('topup.redeemHint')}</p>
+          <h2 className="text-lg font-semibold text-page mb-4">{t('nav.topup')}</h2>
+          <p className="text-sm text-page-secondary mb-4">{t('dashboard.topupDesc')}</p>
           <Link to="/topup" className="btn-primary inline-flex">
-            {t('topup.redeemPackage')}
+            {t('topup.onlineTopup')}
           </Link>
         </div>
 

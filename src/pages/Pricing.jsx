@@ -175,7 +175,7 @@ const PRICING_GUIDE_COPY_V2 = {
       },
       {
         title: '最后匹配套餐',
-        body: '价格表用于判断模型成本，套餐、余额和兑换码用于控制预算；实际扣费以账户日志和订单记录为准。',
+        body: '价格表用于判断模型成本，套餐和账户余额用于控制预算；实际扣费以账户日志和订单记录为准。',
       },
     ],
     compareTitle: '这个页面适合比较什么',
@@ -183,7 +183,7 @@ const PRICING_GUIDE_COPY_V2 = {
       'GPT、Claude、Gemini 等主流模型的输入/输出 token 成本',
       '长上下文、缓存读取和缓存创建对总成本的影响',
       '图片、音频、视频模型的按次、按秒或规格计费',
-      '套餐、余额和兑换码适合哪种调用预算',
+      '套餐和账户余额适合哪种调用预算',
     ],
     explainTitle: '价格表关键字段',
     explain: [
@@ -214,7 +214,7 @@ const PRICING_GUIDE_COPY_V2 = {
       },
       {
         title: 'Match cost to budget',
-        body: 'Use the pricing table to judge model cost, then use plans, balance, and redeem codes to control spend. Actual billing follows account logs and order records.',
+        body: 'Use the pricing table to judge model cost, then use plans and account balance to control spend. Actual billing follows account logs and order records.',
       },
     ],
     compareTitle: 'What this page helps you compare',
@@ -222,7 +222,7 @@ const PRICING_GUIDE_COPY_V2 = {
       'Input and output token costs for GPT, Claude, Gemini, and other leading models',
       'How long context, cache reads, and cache creation affect total cost',
       'Per-call, per-second, or spec-based pricing for image, audio, and video models',
-      'Whether plans, balance, or redeem codes fit your usage budget',
+      'Whether plans or account balance fit your usage budget',
     ],
     explainTitle: 'Key pricing fields',
     explain: [

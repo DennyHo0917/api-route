@@ -4,6 +4,7 @@ import i18n from '../i18n';
 import { normalizeAppLanguage } from '../i18n/languageUtils';
 
 const SiteContext = createContext(null);
+const SITE_STORAGE_KEY = 'dist_site_info_v1';
 const FX_STORAGE_KEY = 'dist_cny_fx_rates_v1';
 
 const currencyByLanguage = {
@@ -60,6 +61,24 @@ function loadStoredRates() {
     window.localStorage.removeItem(FX_STORAGE_KEY);
   }
   return null;
+}
+
+function loadStoredSite() {
+  if (typeof window === 'undefined') return null;
+  try {
+    return JSON.parse(window.localStorage.getItem(SITE_STORAGE_KEY) || 'null')?.site || null;
+  } catch {
+    window.localStorage.removeItem(SITE_STORAGE_KEY);
+    return null;
+  }
+}
+
+function storeSite(site) {
+  try {
+    window.localStorage.setItem(SITE_STORAGE_KEY, JSON.stringify({ site }));
+  } catch {
+    // Cached site config only avoids local loading flashes.
+  }
 }
 
 function formatCurrencyNumber(value, decimals) {
@@ -149,8 +168,8 @@ function applySiteDocumentMeta(site) {
 }
 
 export function SiteProvider({ children }) {
-  const [site, setSite] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [site, setSite] = useState(() => loadStoredSite());
+  const [loading, setLoading] = useState(() => !loadStoredSite());
   const [cnyRates, setCnyRates] = useState(() => loadStoredRates());
 
   useEffect(() => {
@@ -209,7 +228,6 @@ export function SiteProvider({ children }) {
         name: 'SubRouter Preview',
         theme_template: previewTheme,
         enable_topup: true,
-        top_up_link: 'https://example.com/redeem-codes',
         allow_sub_dist: true,
         currency: {
           code: 'CNY',
@@ -229,6 +247,7 @@ export function SiteProvider({ children }) {
       .then((res) => {
         if (res.data.success) {
           setSite(res.data.data);
+          storeSite(res.data.data);
           // Apply theme class to body immediately
           applyThemeClass(res.data.data?.theme_template);
           applySiteDocumentMeta(res.data.data);

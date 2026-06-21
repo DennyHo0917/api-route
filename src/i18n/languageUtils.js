@@ -59,7 +59,7 @@ export const getLocalizedPath = (pathname, language) => {
   const routePath = stripLanguagePrefix(pathname);
   const prefix = LANGUAGE_PATH_PREFIXES[normalizeAppLanguage(language)];
   if (!prefix) return routePath;
-  return routePath === '/' ? `${prefix}/` : `${prefix}${routePath}`;
+  return routePath === '/' ? prefix : `${prefix}${routePath}`;
 };
 
 export const getRouterBasename = (pathname = '/') => (
@@ -69,8 +69,8 @@ export const getRouterBasename = (pathname = '/') => (
 export const normalizeLanguagePath = (pathname = '/', search = '', hash = '') => {
   const language = getPathLanguage(pathname);
   const prefix = LANGUAGE_PATH_PREFIXES[language];
-  if (!prefix || pathname.toLowerCase() !== prefix) return '';
-  return `${prefix}/${search}${hash}`;
+  if (!prefix || pathname.toLowerCase() !== `${prefix}/`) return '';
+  return `${prefix}${search}${hash}`;
 };
 
 export const getAutoLanguageRedirectPath = (pathname = '/', search = '', hash = '') => {

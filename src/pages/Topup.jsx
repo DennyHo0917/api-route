@@ -4,43 +4,23 @@ import { useAuth } from '../context/AuthContext';
 import { useSite } from '../context/SiteContext';
 import {
   ArrowRight,
-  CircleAlert,
   CheckCircle2,
-  ExternalLink,
-  KeyRound,
-  ShoppingBag,
   TicketCheck,
   TicketPercent,
   WalletCards,
 } from 'lucide-react';
 import {
-  getUserUsage, redeemCode, getTopupInfo, getSitePackages, subscribePackage,
+  getUserUsage, redeemCode, getTopupInfo,
   createEpayOrder, createStripeOrder, createCreemOrder,
   createCryptoOrder, getCryptoOrderStatus, getTopupHistory,
   Q,
 } from '../api';
 import { useCurrency } from '../context/SiteContext';
 import CountUp from '../components/bits/CountUp';
-import { getLocalizedPackageName } from '../utils/packageLocalization';
 import toast from 'react-hot-toast';
 
-const PENDING_PACKAGE_KEY = 'dist_pending_package_activation';
-
-function normalizeExternalUrl(value) {
-  const trimmed = String(value || '').trim();
-  if (!trimmed) return '';
-  if (/^[a-z][a-z0-9+.-]*:\/\//i.test(trimmed) && !/^https?:\/\//i.test(trimmed)) {
-    return '';
-  }
-  const withProtocol = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
-  try {
-    const parsed = new URL(withProtocol);
-    if (!['http:', 'https:'].includes(parsed.protocol) || !parsed.hostname) return '';
-    if (parsed.host.includes(':') && !parsed.port && !parsed.host.startsWith('[')) return '';
-    return parsed.href;
-  } catch {
-    return '';
-  }
+function formatPaymentMethodName(value) {
+  return String(value || '').trim().replace(/支付宝|alipay/gi, 'alipay');
 }
 
 function normalizeCreemProducts(value) {
@@ -73,6 +53,10 @@ function findCompatibleCreemProduct(products, amount) {
 
 const paymentWindowPlaceholderHtml =
   '<!doctype html><title>Opening payment...</title><body style="font-family: system-ui, sans-serif; padding: 24px;">Opening payment...</body>';
+const QUIET_REQUEST_CONFIG = {
+  skipErrorHandler: true,
+  ...(import.meta.env.DEV ? { timeout: 8000 } : {}),
+};
 
 function shouldUseSameTabPaymentRedirect() {
   if (typeof window === 'undefined') return false;
@@ -115,24 +99,18 @@ function closePendingPaymentWindow(paymentWindow) {
 }
 
 export default function Topup() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { user, refreshUser } = useAuth();
   const { site } = useSite();
-  const { symbol, rate, fmtCNY, cnyPerUsd, decimals } = useCurrency();
-  const currentLanguage = (i18n.resolvedLanguage || i18n.language || '').toLowerCase();
-  const showVoucherFlow = currentLanguage.startsWith('zh');
+  const { symbol, rate, decimals } = useCurrency();
 
   const [usage, setUsage] = useState(null);
   const [topupInfo, setTopupInfo] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   // Redeem code
   const [redeemInput, setRedeemInput] = useState('');
   const [redeeming, setRedeeming] = useState(false);
-  const [redeemMode, setRedeemMode] = useState('package');
-  const [packages, setPackages] = useState([]);
-  const [selectedPackageId, setSelectedPackageId] = useState('');
-  const [pendingPackage, setPendingPackage] = useState(null);
 
   // Online topup
   const [amount, setAmount] = useState('');
@@ -152,8 +130,6 @@ export default function Topup() {
   const [history, setHistory] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(false);
 
-  const enableTopup = site?.enable_topup && topupInfo;
-  const topupConfig = site?.topup_config;
   const presetAmounts = topupInfo?.amount_options || [1, 5, 10, 20, 50, 100];
   const minTopup = topupInfo?.min_topup || 1;
   const payMethods = topupInfo?.pay_methods || [];
@@ -162,52 +138,20 @@ export default function Topup() {
   const enableCreem = topupInfo?.enable_creem_topup;
   const enableCrypto = topupInfo?.enable_crypto_topup;
   const hasAnyPayment = enableOnline || enableStripe || enableCreem || enableCrypto;
-  const redeemCodeShopUrl = useMemo(
-    () => normalizeExternalUrl(site?.top_up_link || topupConfig?.top_up_link || topupInfo?.top_up_link),
-    [site?.top_up_link, topupConfig?.top_up_link, topupInfo?.top_up_link],
-  );
 
   const loadData = useCallback(async () => {
-    setLoading(true);
     try {
       const [usageRes, topupRes] = await Promise.all([
-        getUserUsage(),
-        site?.enable_topup ? getTopupInfo().catch(() => null) : Promise.resolve(null),
+        getUserUsage(QUIET_REQUEST_CONFIG).catch(() => null),
+        site?.enable_topup ? getTopupInfo(QUIET_REQUEST_CONFIG).catch(() => null) : Promise.resolve(null),
       ]);
-      if (usageRes.data.success) setUsage(usageRes.data.data);
+      if (usageRes?.data?.success) setUsage(usageRes.data.data);
       if (topupRes?.data?.data) setTopupInfo(topupRes.data.data);
     } catch (e) { /* interceptor */ }
     setLoading(false);
   }, [site?.enable_topup]);
 
   useEffect(() => { loadData(); }, [loadData]);
-
-  useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const queryPackageId = searchParams.get('package_id');
-    if (searchParams.get('mode') === 'balance') {
-      setRedeemMode('balance');
-    }
-    if (queryPackageId && /^\d+$/.test(queryPackageId)) {
-      setRedeemMode('package');
-      setSelectedPackageId(queryPackageId);
-    }
-
-    try {
-      const pending = JSON.parse(localStorage.getItem(PENDING_PACKAGE_KEY) || 'null');
-      if (pending?.id) setPendingPackage(pending);
-    } catch {
-      localStorage.removeItem(PENDING_PACKAGE_KEY);
-    }
-
-    getSitePackages()
-      .then((res) => {
-        if (res.data.success) {
-          setPackages((res.data.data || []).filter((pkg) => pkg.enabled !== false));
-        }
-      })
-      .catch(() => {});
-  }, []);
 
   const quota = usage?.quota ?? user?.quota ?? 0;
   const usedQuota = usage?.used_quota ?? user?.used_quota ?? 0;
@@ -231,113 +175,22 @@ export default function Topup() {
     return Math.max(minTopup, Math.round(numeric / rate));
   }, [minTopup, rate]);
 
-  const savePendingPackage = useCallback((pkg) => {
-    const pending = {
-      id: Number(pkg.id),
-      name: pkg.name,
-      price: Number(pkg.price),
-    };
-    localStorage.setItem(PENDING_PACKAGE_KEY, JSON.stringify(pending));
-    setPendingPackage(pending);
-    return pending;
-  }, []);
-
-  const clearPendingPackage = useCallback(() => {
-    localStorage.removeItem(PENDING_PACKAGE_KEY);
-    setPendingPackage(null);
-  }, []);
-
-  const activatePackage = useCallback(async (pkg) => {
-    savePendingPackage(pkg);
-    try {
-      const res = await subscribePackage(pkg.id, { skipErrorHandler: true });
-      if (!res.data.success) {
-        throw new Error(res.data.message || t('topup.packageActivationFailed'));
-      }
-
-      clearPendingPackage();
-      toast.success(t('topup.packageActivated', {
-        name: getLocalizedPackageName(pkg, t, i18n.resolvedLanguage),
-      }));
-      await Promise.all([
-        loadData(),
-        refreshUser({ skipErrorHandler: true }),
-      ]);
-      return true;
-    } catch (error) {
-      toast.error(error?.response?.data?.message || error.message || t('topup.packageActivationFailed'));
-      await Promise.all([
-        loadData().catch(() => null),
-        refreshUser({ skipErrorHandler: true }).catch(() => null),
-      ]);
-      return false;
-    }
-  }, [clearPendingPackage, i18n.resolvedLanguage, loadData, refreshUser, savePendingPackage, t]);
-
-  const selectedPackage = useMemo(
-    () => packages.find((pkg) => String(pkg.id) === String(selectedPackageId)) || null,
-    [packages, selectedPackageId],
-  );
-
-  // Balance mode stops after crediting; package mode immediately subscribes.
   const handleRedeem = async (e) => {
     e.preventDefault();
     if (!redeemInput.trim()) return;
-    if (redeemMode === 'package' && !selectedPackage) {
-      toast.error(t('topup.choosePackage'));
-      return;
-    }
 
     setRedeeming(true);
     try {
-      const beforeUser = await refreshUser({ skipErrorHandler: true }).catch(() => null);
       const res = await redeemCode(redeemInput.trim());
       if (res.data.success) {
         setRedeemInput('');
-        if (redeemMode === 'balance') {
-          await Promise.all([
-            loadData(),
-            refreshUser({ skipErrorHandler: true }),
-          ]);
-          toast.success(t('topup.balanceRedeemed'));
-          setRedeeming(false);
-          return;
-        }
-
-        const afterUser = await refreshUser({ skipErrorHandler: true }).catch(() => null);
-        const beforeQuota = Number(beforeUser?.quota);
-        const afterQuota = Number(afterUser?.quota);
-
-        let packageToActivate = selectedPackage;
-        if (Number.isFinite(beforeQuota) && Number.isFinite(afterQuota) && afterQuota > beforeQuota) {
-          const creditedAmount = ((afterQuota - beforeQuota) / Q) * cnyPerUsd;
-          const matchingPackages = packages.filter(
-            (pkg) => Math.abs(Number(pkg.price) - creditedAmount) <= 0.02,
-          );
-
-          if (matchingPackages.length === 1) {
-            packageToActivate = matchingPackages[0];
-            setSelectedPackageId(String(packageToActivate.id));
-          } else if (
-            Math.abs(Number(selectedPackage.price) - creditedAmount) > 0.02
-          ) {
-            toast.error(t('topup.codeAmountMismatch'));
-            await loadData();
-            setRedeeming(false);
-            return;
-          }
-        }
-
-        await activatePackage(packageToActivate);
+        await Promise.all([
+          loadData(),
+          refreshUser({ skipErrorHandler: true }),
+        ]);
+        toast.success(t('topup.balanceRedeemed'));
       }
     } catch (err) { /* interceptor */ }
-    setRedeeming(false);
-  };
-
-  const retryPendingActivation = async () => {
-    if (!pendingPackage) return;
-    setRedeeming(true);
-    await activatePackage(pendingPackage);
     setRedeeming(false);
   };
 
@@ -373,7 +226,7 @@ export default function Topup() {
 
   const getMethodDisplayName = (method) => {
     const payMethod = (payMethods || []).find((item) => item.type === method);
-    return payMethod?.name || (method === 'creem' ? 'Creem' : 'Stripe');
+    return formatPaymentMethodName(payMethod?.name || (method === 'creem' ? 'Creem' : 'Stripe'));
   };
 
   const showGatewayMinTopupError = (method, minAmount) => {
@@ -597,13 +450,13 @@ export default function Topup() {
         if (isStripePayment(method.type) && (!method.min_topup || Number(method.min_topup) <= 0)) {
           const stripeMin = Number(topupInfo?.stripe_min_topup);
           if (Number.isFinite(stripeMin) && stripeMin > 0) {
-            return { ...method, min_topup: stripeMin };
+            return { ...method, name: formatPaymentMethodName(method.name || method.type), min_topup: stripeMin };
           }
         }
         if (method.type === 'creem' && (!method.min_topup || Number(method.min_topup) <= 0)) {
-          return { ...method, min_topup: creemMinTopup };
+          return { ...method, name: formatPaymentMethodName(method.name || method.type), min_topup: creemMinTopup };
         }
-        return method;
+        return { ...method, name: formatPaymentMethodName(method.name || method.type) };
       });
 
     if (enableCreem && creemProducts.length > 0 && !methods.some((method) => method.type === 'creem')) {
@@ -616,41 +469,23 @@ export default function Topup() {
     return methods;
   }, [payMethods, enableCreem, creemProducts, creemMinTopup]);
 
-  const redeemSteps = redeemMode === 'balance'
-    ? [
-      {
-        icon: ShoppingBag,
-        title: t('topup.balanceStepBuyTitle'),
-        description: t('topup.balanceStepBuyDesc'),
-      },
-      {
-        icon: TicketCheck,
-        title: t('topup.balanceStepRedeemTitle'),
-        description: t('topup.balanceStepRedeemDesc'),
-      },
-      {
-        icon: WalletCards,
-        title: t('topup.balanceStepCreditTitle'),
-        description: t('topup.balanceStepCreditDesc'),
-      },
-    ]
-    : [
-      {
-        icon: ShoppingBag,
-        title: t('topup.stepBuyTitle'),
-        description: t('topup.stepBuyDesc'),
-      },
-      {
-        icon: TicketCheck,
-        title: t('topup.stepRedeemTitle'),
-        description: t('topup.stepRedeemDesc'),
-      },
-      {
-        icon: KeyRound,
-        title: t('topup.stepActivateTitle'),
-        description: t('topup.stepActivateDesc'),
-      },
-    ];
+  const redeemSteps = [
+    {
+      icon: TicketCheck,
+      title: t('topup.stepRedeemTitle'),
+      description: t('topup.stepRedeemDesc'),
+    },
+    {
+      icon: WalletCards,
+      title: t('topup.balanceStepCreditTitle'),
+      description: t('topup.balanceStepCreditDesc'),
+    },
+    {
+      icon: CheckCircle2,
+      title: t('topup.stepChoosePackageTitle'),
+      description: t('topup.stepChoosePackageDesc'),
+    },
+  ];
 
   if (loading) {
     return (
@@ -666,34 +501,6 @@ export default function Topup() {
         <p className="route-kicker">{t('topup.eyebrow')}</p>
         <h1 className="mt-2 text-3xl font-bold tracking-[-0.035em] text-page md:text-4xl">{t('topup.title')}</h1>
         <p className="mt-3 max-w-2xl text-sm leading-7 text-page-secondary md:text-base">{t('topup.subtitle')}</p>
-
-        {showVoucherFlow && (
-          <div className="mt-6 flex flex-col gap-4 rounded-2xl border border-red-500/25 bg-red-500/10 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
-            <div className="flex items-start gap-3">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-500/15 text-red-600">
-                <CircleAlert size={20} />
-              </span>
-              <div>
-                <p className="font-semibold text-page">{t('topup.mainlandBalanceNoticeTitle')}</p>
-                <p className="mt-1 text-sm leading-6 text-page-secondary">
-                  {t('topup.mainlandBalanceNoticeDesc')}
-                </p>
-              </div>
-            </div>
-            {redeemCodeShopUrl && (
-              <a
-                href={redeemCodeShopUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#D97757] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#C4613F]"
-              >
-                <ShoppingBag size={16} />
-                {t('topup.mainlandBalanceNoticeAction')}
-                <ExternalLink size={14} />
-              </a>
-            )}
-          </div>
-        )}
       </div>
 
       {/* Balance Stats */}
@@ -729,7 +536,7 @@ export default function Topup() {
 
       {/* Online Topup */}
       {site?.enable_topup && (enableOnline || enableStripe || enableCreem || enableCrypto) && (topupPayMethods.length > 0 || enableCrypto) && (
-        <div className={`${showVoucherFlow ? 'order-4' : 'order-2'} mb-6 rounded-2xl border border-[#E6D8CC] bg-white/65 p-6`}>
+        <div className="order-2 mb-6 rounded-2xl border border-[#E6D8CC] bg-white/65 p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-semibold text-page">{t('topup.onlineTopup')}</h2>
             <button
@@ -971,7 +778,7 @@ export default function Topup() {
                   <div>
                     <p className="text-sm text-page">{symbol}{(Number(item.amount) * rate).toFixed(decimals)}</p>
                     <p className="text-xs text-page-muted">
-                      {new Date(item.create_time * 1000).toLocaleString()} · {item.payment_method || t('topup.redeemCode')}
+                      {new Date(item.create_time * 1000).toLocaleString()} · {formatPaymentMethodName(item.payment_method) || t('topup.redeemCode')}
                     </p>
                   </div>
                   <span className={`text-xs px-2 py-1 rounded-full ${
@@ -991,7 +798,7 @@ export default function Topup() {
       )}
 
       {/* Redeem Code */}
-      <div className={`${showVoucherFlow ? 'order-2' : 'hidden'} mb-8 overflow-hidden rounded-[28px] border border-[#DDCCBE] bg-white/80 shadow-[0_24px_65px_rgba(96,69,48,0.1)]`}>
+      <div className="order-4 mb-8 overflow-hidden rounded-[28px] border border-[#DDCCBE] bg-white/80 shadow-[0_24px_65px_rgba(96,69,48,0.1)]">
         <div className="grid lg:grid-cols-[1.2fr_0.8fr]">
           <div className="p-6 sm:p-8">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -1001,127 +808,12 @@ export default function Topup() {
                   {t('topup.redeemTitle')}
                 </span>
                 <h2 className="mt-4 text-2xl font-semibold tracking-tight text-[#3D3024]">
-                  {redeemMode === 'balance'
-                    ? t('topup.redeemBalanceHeading')
-                    : t('topup.redeemHeading')}
+                  {t('topup.redeemBalanceHeading')}
                 </h2>
-                <p className="mt-2 max-w-xl text-sm leading-6 text-[#806D5D]">
-                  {redeemCodeShopUrl ? t('topup.redeemShopHint') : t('topup.redeemHint')}
-                </p>
-              </div>
-              {redeemCodeShopUrl && (
-                <a
-                  href={redeemCodeShopUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#D97757] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#E38969]"
-                >
-                  <ShoppingBag size={16} />
-                  {t('topup.buyRedeemCode')}
-                  <ExternalLink size={14} />
-                </a>
-              )}
-            </div>
-
-            {redeemMode === 'package' && pendingPackage && (
-              <div className="mt-5 rounded-2xl border border-amber-500/25 bg-amber-500/10 p-4">
-                <p className="text-sm text-page-warning">
-                  {t('topup.pendingPackageActivation', {
-                    name: getLocalizedPackageName(pendingPackage, t, i18n.resolvedLanguage),
-                  })}
-                </p>
-                <button
-                  type="button"
-                  onClick={retryPendingActivation}
-                  disabled={redeeming}
-                  className="mt-3 rounded-full border border-[#D9C5B2] px-4 py-2 text-xs font-semibold text-[#6B5D4F] hover:bg-white"
-                >
-                  {redeeming ? t('topup.activatingPackage') : t('topup.retryPackageActivation')}
-                </button>
-              </div>
-            )}
-
-            <div className="mt-6">
-              <p className="mb-2 text-xs font-medium text-page-secondary">
-                {t('topup.redeemModeLabel')}
-              </p>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <button
-                  type="button"
-                  onClick={() => setRedeemMode('package')}
-                  disabled={redeeming}
-                  className={`rounded-2xl border p-4 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-70 ${
-                    redeemMode === 'package'
-                      ? 'border-page-link bg-page-link/10'
-                      : 'border-page-divider bg-page-surface hover:bg-page-surface-hover'
-                  }`}
-                >
-                  <span className="flex items-center gap-2 text-sm font-semibold text-page">
-                    <TicketCheck size={17} className="text-page-link" />
-                    {t('topup.packageMode')}
-                  </span>
-                  <span className="mt-2 block text-xs leading-5 text-page-secondary">
-                    {t('topup.packageModeDesc')}
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setRedeemMode('balance')}
-                  disabled={redeeming}
-                  className={`rounded-2xl border p-4 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-70 ${
-                    redeemMode === 'balance'
-                      ? 'border-page-link bg-page-link/10'
-                      : 'border-page-divider bg-page-surface hover:bg-page-surface-hover'
-                  }`}
-                >
-                  <span className="flex items-center gap-2 text-sm font-semibold text-page">
-                    <WalletCards size={17} className="text-page-link" />
-                    {t('topup.balanceMode')}
-                  </span>
-                  <span className="mt-2 block text-xs leading-5 text-page-secondary">
-                    {t('topup.balanceModeDesc')}
-                  </span>
-                </button>
               </div>
             </div>
-
-            {redeemMode === 'package' && selectedPackage && (
-              <div className="mt-6 flex items-center justify-between rounded-2xl border border-[#E5D4C6] bg-[#FFF7F1] px-4 py-3">
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#A9826B]">
-                    {t('topup.currentPackage')}
-                  </p>
-                  <p className="mt-1 text-sm font-semibold text-[#3D3024]">
-                    {getLocalizedPackageName(selectedPackage, t, i18n.resolvedLanguage)}
-                  </p>
-                </div>
-                <p className="text-xl font-bold text-[#C56547]">
-                  {fmtCNY(selectedPackage.price)}
-                </p>
-              </div>
-            )}
 
             <form onSubmit={handleRedeem} className="mt-6 space-y-3">
-              {redeemMode === 'package' && (
-                <label className="block">
-                  <span className="mb-2 block text-xs font-medium text-[#766657]">
-                    {t('topup.choosePackage')}
-                  </span>
-                  <select
-                    value={selectedPackageId}
-                    onChange={(e) => setSelectedPackageId(e.target.value)}
-                    className="package-redeem-select input h-12"
-                    disabled={redeeming}
-                  >
-                    <option value="">{t('topup.choosePackage')}</option>
-                    {packages.map((pkg) => (
-                      <option key={pkg.id} value={pkg.id}>
-                        {getLocalizedPackageName(pkg, t, i18n.resolvedLanguage)} - {fmtCNY(pkg.price)}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              )}
               <label className="block">
                 <span className="mb-2 block text-xs font-medium text-[#766657]">
                   {t('topup.enterRedeemCode')}
@@ -1140,11 +832,7 @@ export default function Topup() {
                 className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[#D97757] px-5 text-sm font-semibold text-white transition-colors hover:bg-[#E38969] disabled:opacity-50"
               >
                 <TicketPercent size={17} />
-                {redeeming
-                  ? t('topup.redeeming')
-                  : redeemMode === 'balance'
-                    ? t('topup.redeemBalance')
-                    : t('topup.redeemPackage')}
+                {redeeming ? t('topup.redeeming') : t('topup.redeemBalance')}
                 {!redeeming && <ArrowRight size={16} />}
               </button>
             </form>
@@ -1174,14 +862,10 @@ export default function Topup() {
             <div className="mt-8 rounded-2xl border border-[#E2CDBE] bg-white/65 p-4">
               <div className="flex items-center gap-2 text-sm font-semibold text-[#3D3024]">
                 <CheckCircle2 size={17} className="text-[#C56547]" />
-                {redeemMode === 'balance'
-                  ? t('topup.balanceDirectCredit')
-                  : t('topup.automaticActivation')}
+                {t('topup.balanceDirectCredit')}
               </div>
               <p className="mt-2 text-xs leading-5 text-[#806D5D]">
-                {redeemMode === 'balance'
-                  ? t('topup.balanceDirectCreditDesc')
-                  : t('topup.automaticActivationDesc')}
+                {t('topup.balanceDirectCreditDesc')}
               </p>
             </div>
 

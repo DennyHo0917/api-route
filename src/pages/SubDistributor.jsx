@@ -25,13 +25,17 @@ function normalizeHost(value) {
   return String(value).replace(/^https?:\/\//, '').replace(/\/+$/, '');
 }
 
+function formatPaymentMethodName(value) {
+  return String(value || '').trim().replace(/支付宝|alipay/gi, 'alipay');
+}
+
 function getPaymentMethodLabel(method, t) {
   if (!method) return '';
   const type = String(method.type || '').toLowerCase();
   if (type === 'crypto') return t('subDist.paymentCrypto');
   if (type === 'stripe') return 'Stripe';
   if (type === 'creem') return 'Creem';
-  return method.name || method.type;
+  return formatPaymentMethodName(method.name || method.type);
 }
 
 function submitEpayForm(resData) {
@@ -82,7 +86,7 @@ const MARKETING_COPY = {
     revenueDesc: '页面不只卖一个后台账号，而是把“可销售的 AI API 服务”直接交给你运营。',
     revenue: [
       ['设置模型售价差价', '按模型、渠道或套餐设置售价，用清晰费率覆盖成本并保留利润空间。'],
-      ['售卖套餐和兑换码', '按天、周、月或额度售卖，适合社群、团队和短期高频用户。'],
+      ['售卖套餐和余额充值', '按天、周、月或额度售卖套餐，并支持用户持续充值余额。'],
       ['充值余额持续复购', '用户通过余额调用 API，适合长期使用和多模型混合消耗。'],
       ['推广入口承接新用户', '把入口放到社群、教程、工具文档或客户项目里，形成持续转化。'],
       ['面向团队提供统一入口', '给团队或客户一个统一 Base URL 和密钥体系，减少迁移和管理成本。'],
@@ -105,7 +109,7 @@ const MARKETING_COPY = {
       '站点名称、Logo、主题和域名配置',
       '用户注册登录与账号管理',
       '模型销售、售价和套餐管理',
-      '充值、兑换码与支付流程',
+      '充值、套餐与支付流程',
       'API Key、余额、调用日志和用户管理',
       '支付完成后自动启用管理权限',
     ],
@@ -148,7 +152,7 @@ const MARKETING_COPY = {
     revenueDesc: 'This is not just an admin account. It gives you a sellable AI API service that can run under your own brand.',
     revenue: [
       ['Set model price margins', 'Configure prices by model, channel, or plan so usage can cover cost and leave margin.'],
-      ['Sell AI API access', 'Package model access into day, week, month, or quota-based plans, redeem codes, and balance top-ups.'],
+      ['Sell AI API access', 'Package model access into day, week, month, or quota-based plans, plus balance top-ups.'],
       ['Drive repeat top-ups', 'Users consume balance through API calls, which fits ongoing multi-model usage.'],
       ['Promote a branded entry point', 'Place the link in communities, tutorials, docs, and customer projects to keep converting users.'],
       ['Serve teams with one endpoint', 'Give teams or clients one Base URL and key system instead of scattered provider accounts.'],
@@ -171,7 +175,7 @@ const MARKETING_COPY = {
       'Site name, logo, theme, and domain configuration',
       'User registration, login, and account management',
       'Model sales, pricing, and plan management',
-      'Top-ups, redeem codes, and payment flows',
+      'Top-ups, plans, and payment flows',
       'API keys, balance, usage logs, and user management',
       'Automatic management access after payment',
     ],

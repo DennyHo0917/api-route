@@ -11,10 +11,6 @@ import {
   isSiteNavActive,
 } from '../../utils/navigation';
 
-const PUBLIC_CORE_PATHS = ['/', '/pricing', '/packages', '/apps', '/sub-site'];
-const AUTH_DESKTOP_PATHS = ['/', '/pricing', '/packages', '/sub-site', '/dashboard', '/tokens', '/logs', '/topup'];
-const USER_CORE_PATHS = ['/dashboard', '/tokens', '/logs', '/topup'];
-
 function getSupportLink(site) {
   const announcement = String(site?.announcement || '');
   const telegramMatch = announcement.match(/https?:\/\/(?:www\.)?(?:t\.me|telegram\.me)\/[^\s<>"']+/i);
@@ -46,8 +42,7 @@ export default function ClaudeLayout() {
   const rawSiteName = site?.name || 'API-Route';
   const siteName = rawSiteName.toLowerCase() === 'api-route' ? 'API-Route' : rawSiteName;
   const visibleNavItems = getVisibleNavItems(getSiteNavItems({ t, site }), user);
-  const corePaths = user ? AUTH_DESKTOP_PATHS : PUBLIC_CORE_PATHS;
-  const desktopNavItems = visibleNavItems.filter((item) => corePaths.includes(item.to));
+  const desktopNavItems = visibleNavItems;
   const isNavActive = (to) => isSiteNavActive(location.pathname, to);
   const getNavLabel = (item) => {
     if (item.to === '/sub-site') return t('subDist.navShort');

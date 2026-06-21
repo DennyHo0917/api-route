@@ -3,6 +3,10 @@ import { getUserSelf, login as loginApi, register as registerApi, logout as logo
 import toast from 'react-hot-toast';
 
 const AuthContext = createContext(null);
+const BOOTSTRAP_REQUEST_CONFIG = {
+  skipErrorHandler: true,
+  ...(import.meta.env.DEV ? { timeout: 8000 } : {}),
+};
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -24,7 +28,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const userId = localStorage.getItem('dist_user_id');
     if (userId) {
-      getUserSelf()
+      getUserSelf(BOOTSTRAP_REQUEST_CONFIG)
         .then((res) => {
           if (res.data.success) {
             setUser(res.data.data);

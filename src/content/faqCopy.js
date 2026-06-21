@@ -2,7 +2,7 @@ export const FAQ_COPY = {
   zh: {
     badge: '常见问题',
     title: 'API-Route 使用 FAQ',
-    subtitle: '集中解答 Base URL、API Key、模型名、Codex、Claude Code、VSCode、套餐兑换、支付和白标 AI API 平台等接入问题。',
+    subtitle: '集中解答 Base URL、API Key、模型名、Codex、Claude Code、VSCode、套餐购买、支付和白标 AI API 平台等接入问题。',
     sections: [
       {
         title: '接入与模型',
@@ -25,8 +25,8 @@ export const FAQ_COPY = {
         title: '套餐、计费与支付',
         items: [
           {
-            question: '套餐和兑换码怎么使用？',
-            answer: '先在套餐页面选择适合的额度或有效期，购买后拿到兑换码。登录账号后进入兑换页面输入兑换码，系统会自动匹配并激活对应套餐。',
+            question: '充值余额和套餐怎么使用？',
+            answer: '先在充值页面通过在线支付或兑换码把余额充到账户。余额到账后，再到套餐页面按需购买套餐；兑换码不会自动开通套餐。',
           },
           {
             question: '调用 API 时如何计费？',
@@ -127,8 +127,8 @@ export const FAQ_COPY = {
         title: 'Plans, Billing, and Payments',
         items: [
           {
-            question: 'How do plans and redeem codes work?',
-            answer: 'Choose a plan on the Packages page, purchase the matching redeem code, sign in, and enter the code on the redeem page. The system activates the matching plan automatically.',
+            question: 'How do balance top-ups and plans work?',
+            answer: 'Top up your account balance online or with a voucher first. After the balance is credited, subscribe to a plan from the Packages page if you need one; vouchers do not activate plans automatically.',
           },
           {
             question: 'How is API usage billed?',
@@ -229,8 +229,8 @@ export const FAQ_COPY = {
         title: 'プラン・課金・支払い',
         items: [
           {
-            question: 'プランとコードはどのように使いますか？',
-            answer: 'プランページで必要な容量や期間を選び、対応するコードを購入します。ログイン後に利用開始ページでコードを入力すると、該当プランが自動で有効化されます。',
+            question: '残高チャージとプランはどのように使いますか？',
+            answer: 'チャージページでオンライン決済またはコードを使ってアカウント残高を追加します。残高が反映された後、プランページで必要なプランを申し込めます。',
           },
           {
             question: 'API の利用料金はどう計算されますか？',
@@ -331,8 +331,8 @@ export const FAQ_COPY = {
         title: '플랜, 과금, 결제',
         items: [
           {
-            question: '플랜과 리딤 코드는 어떻게 사용하나요?',
-            answer: '패키지 페이지에서 필요한 용량이나 기간을 고르고 해당 리딤 코드를 구매합니다. 로그인 후 사용 시작 페이지에서 코드를 입력하면 맞는 플랜이 자동으로 활성화됩니다.',
+            question: '잔액 충전과 플랜은 어떻게 사용하나요?',
+            answer: '충전 페이지에서 온라인 결제나 코드를 사용해 계정 잔액을 충전합니다. 잔액이 반영된 뒤 패키지 페이지에서 필요한 플랜을 구독할 수 있습니다.',
           },
           {
             question: 'API 사용량은 어떻게 과금되나요?',
