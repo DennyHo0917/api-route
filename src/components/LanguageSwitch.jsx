@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import {
   DIST_SITE_LANGUAGES,
+  DIST_SITE_MANUAL_LANGUAGE_STORAGE_KEY,
   DIST_SITE_LANGUAGE_STORAGE_KEY,
   getLocalizedPath,
   normalizeAppLanguage,
@@ -14,6 +15,7 @@ export default function LanguageSwitch({ className = '' }) {
     if (nextLanguage === currentLanguage) return;
 
     try {
+      window.localStorage.setItem(DIST_SITE_MANUAL_LANGUAGE_STORAGE_KEY, nextLanguage);
       window.localStorage.setItem(DIST_SITE_LANGUAGE_STORAGE_KEY, nextLanguage);
     } catch {
       // The language path remains authoritative when storage is unavailable.

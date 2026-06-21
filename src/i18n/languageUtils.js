@@ -1,4 +1,5 @@
 export const DIST_SITE_LANGUAGE_STORAGE_KEY = 'dist_site_i18nextLng';
+export const DIST_SITE_MANUAL_LANGUAGE_STORAGE_KEY = 'dist_site_manual_language';
 
 export const LANGUAGE_PATH_PREFIXES = {
   zh: '/zh',
@@ -74,29 +75,32 @@ export const normalizeLanguagePath = (pathname = '/', search = '', hash = '') =>
 };
 
 export const getAutoLanguageRedirectPath = (pathname = '/', search = '', hash = '') => {
-  if (typeof window === 'undefined' || hasLanguagePrefix(pathname)) return '';
+  if (typeof window === 'undefined') return '';
   if (/bot|crawler|spider|slurp|duckduckbot|baiduspider|yandex/i.test(window.navigator.userAgent || '')) return '';
 
-  let storedLanguage = '';
+  let manualLanguage = '';
   try {
-    storedLanguage = window.localStorage.getItem(DIST_SITE_LANGUAGE_STORAGE_KEY) || '';
+    manualLanguage = window.localStorage.getItem(DIST_SITE_MANUAL_LANGUAGE_STORAGE_KEY) || '';
   } catch {
-    storedLanguage = '';
+    manualLanguage = '';
   }
 
-  const browserLanguage = window.navigator.languages?.find(Boolean) || window.navigator.language;
-  const language = normalizeAppLanguage(storedLanguage || browserLanguage);
+  const browserLanguages = [
+    ...(Array.isArray(window.navigator.languages) ? window.navigator.languages : []),
+    window.navigator.language,
+  ].filter(Boolean);
+  const browserLanguage = browserLanguages.find((language) => {
+    const normalized = String(language || '').trim().replace(/_/g, '-').toLowerCase();
+    const baseLanguage = normalized.split('-')[0];
+    return APP_LANGUAGE_CODES.includes(baseLanguage);
+  }) || 'en';
+
+  const language = normalizeAppLanguage(manualLanguage || browserLanguage);
   const targetPath = getLocalizedPath(pathname, language);
   return targetPath === pathname ? '' : `${targetPath}${search}${hash}`;
 };
 
 export const getStoredAppLanguage = () => {
   if (typeof window === 'undefined') return '';
-  const pathLanguage = getPathLanguage(window.location.pathname);
-  try {
-    window.localStorage.setItem(DIST_SITE_LANGUAGE_STORAGE_KEY, pathLanguage);
-  } catch {
-    // The URL remains the source of truth when storage is unavailable.
-  }
-  return pathLanguage;
+  return getPathLanguage(window.location.pathname);
 };
