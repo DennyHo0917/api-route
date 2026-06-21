@@ -96,7 +96,6 @@ export const FAQ_COPY = {
     cards: [
       { title: '先看价格', body: '比较模型费率和支持状态。', to: '/pricing' },
       { title: '选择套餐', body: '按天、周、月或额度购买。', to: '/packages' },
-      { title: '看应用接入', body: '找到可直接使用的客户端。', to: '/apps' },
     ],
     contactTitle: '还有问题？',
     contactDesc: '如果 FAQ 没有覆盖你的场景，可以通过页面底部的 Telegram 或联系入口找站点支持。',
@@ -198,7 +197,6 @@ export const FAQ_COPY = {
     cards: [
       { title: 'Compare Pricing', body: 'Review model rates and status.', to: '/pricing' },
       { title: 'Choose a Plan', body: 'Buy by day, week, month, or quota.', to: '/packages' },
-      { title: 'Connect Apps', body: 'Find clients that work out of the box.', to: '/apps' },
     ],
     contactTitle: 'Still have questions?',
     contactDesc: 'If your case is not covered here, use the Telegram or contact link in the footer to reach site support.',
@@ -300,7 +298,6 @@ export const FAQ_COPY = {
     cards: [
       { title: '料金を見る', body: 'モデル料金と状態を確認。', to: '/pricing' },
       { title: 'プランを選ぶ', body: '日・週・月・容量から選択。', to: '/packages' },
-      { title: 'アプリ連携', body: 'すぐ使えるクライアントを確認。', to: '/apps' },
     ],
     contactTitle: 'まだ疑問がありますか？',
     contactDesc: 'ここにない内容は、ページ下部の Telegram またはお問い合わせリンクからサポートへご連絡ください。',
@@ -402,7 +399,6 @@ export const FAQ_COPY = {
     cards: [
       { title: '요금 비교', body: '모델 요금과 상태를 확인하세요.', to: '/pricing' },
       { title: '플랜 선택', body: '일, 주, 월, 용량 기준으로 구매.', to: '/packages' },
-      { title: '앱 연동', body: '바로 쓸 수 있는 클라이언트 확인.', to: '/apps' },
     ],
     contactTitle: '더 궁금한 점이 있나요?',
     contactDesc: '여기에 없는 내용은 페이지 하단의 Telegram 또는 문의 링크로 사이트 지원팀에 연락하세요.',

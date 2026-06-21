@@ -13,8 +13,8 @@ export const SEO_COPY = {
       description: '查看 API-Route 套餐额度、有效期与适用场景，充值余额后可按需订阅套餐。',
     },
     apps: {
-      title: 'AI 应用与客户端接入',
-      description: '查看可接入 API-Route 的 AI 应用与客户端，通过统一 API 地址和密钥快速开始使用。',
+      title: 'AI 应用市场与客户端接入',
+      description: '查看可接入 API-Route 的 AI 应用市场、OpenAI 兼容客户端和工作流工具，通过统一 API 地址和密钥快速开始使用。',
     },
     subSite: {
       title: '独立 AI API 平台搭建',
@@ -57,8 +57,8 @@ export const SEO_COPY = {
       description: 'Explore API-Route plans, quotas, validity periods, and subscribe when needed after topping up balance.',
     },
     apps: {
-      title: 'AI Apps and Client Integrations',
-      description: 'Connect supported AI apps and clients to API-Route with one API endpoint and access key.',
+      title: 'AI App Market and Client Integrations',
+      description: 'Find AI app market entries, OpenAI-compatible clients, and workflow tools that connect to API-Route with one API endpoint and access key.',
     },
     subSite: {
       title: 'White-label AI API Platform for Resellers',
@@ -102,8 +102,8 @@ export const SEO_COPY = {
       description: 'API-Route のプランのクォータ、有効期間、利用シーンを確認し、残高をチャージした後に必要に応じて申し込めます。',
     },
     apps: {
-      title: 'AI アプリとクライアント連携',
-      description: '統一 API エンドポイントとキーで接続できる AI アプリやクライアントを確認できます。',
+      title: 'AI アプリマーケットとクライアント連携',
+      description: 'API-Route に接続できる AI アプリマーケット、OpenAI 互換クライアント、ワークフローツールを確認できます。',
     },
     subSite: {
       title: '専用 AI API プラットフォーム構築',
@@ -146,8 +146,8 @@ export const SEO_COPY = {
       description: 'API-Route 플랜의 쿼터, 유효 기간, 사용 시나리오를 확인하고 잔액을 충전한 뒤 필요할 때 구독할 수 있습니다.',
     },
     apps: {
-      title: 'AI 앱 및 클라이언트 연동',
-      description: '통합 API 엔드포인트와 키로 연결할 수 있는 AI 앱과 클라이언트를 확인하세요.',
+      title: 'AI 앱 마켓 및 클라이언트 연동',
+      description: 'API-Route에 연결할 수 있는 AI 앱 마켓, OpenAI 호환 클라이언트, 워크플로 도구를 확인하세요.',
     },
     subSite: {
       title: '전용 AI API 플랫폼 구축',

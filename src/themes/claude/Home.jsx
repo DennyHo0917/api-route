@@ -182,8 +182,8 @@ export default function ClaudeHome() {
       icon: Sparkles,
       title: t('home.audienceCreatorsTitle'),
       description: t('home.audienceCreatorsDesc'),
-      to: '/apps',
-      linkLabel: t('home.audienceAppsLink'),
+      to: '/faq',
+      linkLabel: t('home.audienceSetupLink'),
     },
     {
       icon: ShieldCheck,
