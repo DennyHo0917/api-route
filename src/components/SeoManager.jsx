@@ -12,6 +12,11 @@ const DEFAULT_OG_IMAGE_PATH = '/og-image.png';
 const DEFAULT_OG_IMAGE_WIDTH = '1200';
 const DEFAULT_OG_IMAGE_HEIGHT = '630';
 const GA_MEASUREMENT_ID = 'G-GZT5KLBKJ8';
+const STRUCTURED_DATA_TOPICS = [
+  'AI API Gateway',
+  'OpenAI-compatible API',
+  'AI API reseller platform',
+];
 const INDEXABLE_PATHS = new Set(['/', '/pricing', '/packages', '/apps', '/ai-api-reseller-platform', '/faq']);
 const PRIVATE_PATHS = new Set(['/login', '/register', '/dashboard', '/tokens', '/logs', '/tasks', '/topup', '/account']);
 const LANGUAGE_HREFLANGS = {
@@ -179,6 +184,7 @@ function setStructuredData({
       '@id': organizationId,
       name: siteName,
       url: siteUrl,
+      knowsAbout: STRUCTURED_DATA_TOPICS,
       ...(logoUrl ? { logo: logoUrl } : {}),
     },
     {
@@ -215,6 +221,7 @@ function setStructuredData({
       description,
       areaServed: 'Worldwide',
       availableLanguage,
+      knowsAbout: STRUCTURED_DATA_TOPICS,
       provider: { '@id': organizationId },
     });
   } else {

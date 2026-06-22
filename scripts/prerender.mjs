@@ -10,6 +10,11 @@ const DEFAULT_LOGO_URL = 'https://img.api-route.com/3.png';
 const DEFAULT_OG_IMAGE_URL = `${SITE_URL}/og-image.png`;
 const DEFAULT_OG_IMAGE_WIDTH = '1200';
 const DEFAULT_OG_IMAGE_HEIGHT = '630';
+const STRUCTURED_DATA_TOPICS = [
+  'AI API Gateway',
+  'OpenAI-compatible API',
+  'AI API reseller platform',
+];
 const DIST_DIR = new URL('../dist/', import.meta.url);
 const TEMPLATE_PATH = new URL('index.html', DIST_DIR);
 
@@ -139,6 +144,7 @@ function replaceMeta(html, language, page) {
         name: 'API-Route',
         url: `${SITE_URL}/`,
         logo: DEFAULT_LOGO_URL,
+        knowsAbout: STRUCTURED_DATA_TOPICS,
       },
       {
         '@type': 'WebSite',
@@ -175,6 +181,7 @@ function replaceMeta(html, language, page) {
       description: metaDescription,
       areaServed: 'Worldwide',
       availableLanguage,
+      knowsAbout: STRUCTURED_DATA_TOPICS,
       provider: { '@id': organizationId },
     });
   } else {
