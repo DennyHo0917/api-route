@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Headset, LogOut, Menu, UserRound, X } from 'lucide-react';
+import { Headset, LogOut, Menu, Moon, Sun, UserRound, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { useSite } from '../../context/SiteContext';
+import { COLOR_SCHEME_STORAGE_KEY, useSite } from '../../context/SiteContext';
 import LanguageSwitch from '../../components/LanguageSwitch';
 import {
   getSiteNavItems,
@@ -38,6 +38,9 @@ export default function ClaudeLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [colorScheme, setColorScheme] = useState(() => (
+    document.documentElement.dataset.colorScheme === 'dark' ? 'dark' : 'light'
+  ));
 
   const rawSiteName = site?.name || 'API-Route';
   const siteName = rawSiteName.toLowerCase() === 'api-route' ? 'API-Route' : rawSiteName;
@@ -57,6 +60,22 @@ export default function ClaudeLayout() {
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [location.pathname]);
+
+  const setDocumentColorScheme = (nextScheme) => {
+    setColorScheme(nextScheme);
+    document.documentElement.dataset.colorScheme = nextScheme;
+    try {
+      window.localStorage.setItem(COLOR_SCHEME_STORAGE_KEY, nextScheme);
+    } catch {
+      // Theme still changes for this page view.
+    }
+    const themeColor = document.querySelector('meta[name="theme-color"]');
+    if (themeColor) themeColor.content = nextScheme === 'dark' ? '#15110F' : '#FAF6F1';
+  };
+
+  const toggleColorScheme = () => {
+    setDocumentColorScheme(colorScheme === 'dark' ? 'light' : 'dark');
+  };
 
   const handleLogout = async () => {
     await logout();
@@ -114,7 +133,19 @@ export default function ClaudeLayout() {
                 <Headset size={17} />
               </a>
             )}
-            <LanguageSwitch className="text-[#8B7D6E] hover:bg-white/70 hover:text-[#3D3024]" />
+            <LanguageSwitch
+              iconOnly
+              className="border border-[#E5D4C6] bg-white/65 text-[#8F5D48] hover:border-[#D8BBA7] hover:bg-[#FFF9F4] hover:text-[#C4613F]"
+            />
+            <button
+              type="button"
+              onClick={toggleColorScheme}
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#E5D4C6] bg-white/65 text-[#8F5D48] transition-colors hover:border-[#D8BBA7] hover:bg-[#FFF9F4] hover:text-[#C4613F]"
+              title={colorScheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              aria-label={colorScheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              {colorScheme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+            </button>
 
             {user ? (
               <>

@@ -6,6 +6,7 @@ import { normalizeAppLanguage } from '../i18n/languageUtils';
 const SiteContext = createContext(null);
 const SITE_STORAGE_KEY = 'dist_site_info_v1';
 const FX_STORAGE_KEY = 'dist_cny_fx_rates_v1';
+export const COLOR_SCHEME_STORAGE_KEY = 'dist_color_scheme';
 
 const currencyByLanguage = {
   zh: { code: 'CNY', symbol: '\u00a5', decimals: 2 },
@@ -122,6 +123,15 @@ function getDevPreviewColorScheme() {
   return value === 'dark' || value === 'light' ? value : '';
 }
 
+function getStoredColorScheme() {
+  try {
+    const value = window.localStorage.getItem(COLOR_SCHEME_STORAGE_KEY);
+    return value === 'dark' || value === 'light' ? value : '';
+  } catch {
+    return '';
+  }
+}
+
 function upsertMeta(name, content) {
   if (!content) return;
   let meta = document.querySelector(`meta[name="${name}"]`);
@@ -201,7 +211,7 @@ export function SiteProvider({ children }) {
     const media = window.matchMedia('(prefers-color-scheme: dark)');
     const previewColorScheme = getDevPreviewColorScheme();
     const applyColorScheme = () => {
-      const colorScheme = previewColorScheme || (media.matches ? 'dark' : 'light');
+      const colorScheme = previewColorScheme || getStoredColorScheme() || (media.matches ? 'dark' : 'light');
       document.documentElement.dataset.colorScheme = colorScheme;
       const themeColor = document.querySelector('meta[name="theme-color"]');
       if (themeColor) {

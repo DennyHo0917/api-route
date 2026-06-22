@@ -107,8 +107,11 @@
         var previewScheme = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
           ? new URLSearchParams(location.search).get('preview_color_scheme')
           : '';
+        var savedScheme = localStorage.getItem('dist_color_scheme');
         var systemScheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        var colorScheme = /^(dark|light)$/.test(previewScheme) ? previewScheme : systemScheme;
+        var colorScheme = /^(dark|light)$/.test(previewScheme)
+          ? previewScheme
+          : (/^(dark|light)$/.test(savedScheme) ? savedScheme : systemScheme);
         document.documentElement.dataset.colorScheme = colorScheme;
         var themeColor = document.querySelector('meta[name="theme-color"]');
         if (themeColor) themeColor.content = colorScheme === 'dark' ? '#15110F' : '#FAF6F1';

@@ -743,7 +743,7 @@ export default function SubDistributor() {
                 </div>
                 <span className="rounded-full bg-green-500/10 px-2.5 py-1 text-[11px] font-medium text-page-success">{t('subDist.activityLive')}</span>
               </div>
-              <div className="relative h-[176px] overflow-hidden bg-black/10 px-3">
+              <div className="relative h-[176px] overflow-hidden bg-page-surface px-3">
                 <div className="sub-dist-launch-feed">
                   {[...launchEvents, ...launchEvents].map((event, index) => (
                     <div

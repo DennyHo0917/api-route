@@ -513,13 +513,13 @@ export default function ClaudeHome() {
       </section>
 
       <div className="mx-auto max-w-7xl px-5 pb-10 md:px-8">
-        <div className="rounded-[22px] border border-[#E5D7CB] bg-white/65 p-6 md:flex md:items-center md:justify-between md:gap-8">
+        <div className="rounded-[28px] border border-[#E6C7B3] bg-[#FFF3EB] p-7 shadow-[0_18px_50px_rgba(190,101,71,0.14)] md:flex md:items-center md:justify-between md:gap-8 md:p-8">
           <div className="max-w-2xl">
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#D97757]/10 text-[#C56547]">
-              <Headset size={20} />
+            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#D97757] text-white shadow-lg shadow-[#D97757]/20">
+              <Headset size={22} />
             </span>
             <p className="mt-5 text-xs font-bold uppercase tracking-[0.18em] text-[#C56547]">{t('home.supportEyebrow')}</p>
-            <h2 className="mt-2 text-lg font-semibold text-[#3D3024]">{t('home.supportTitle')}</h2>
+            <h2 className="mt-2 text-2xl font-semibold text-[#3D3024] md:text-3xl">{t('home.supportTitle')}</h2>
             <p className="mt-2 text-sm leading-7 text-[#7D6B5B]">{t('home.supportDesc')}</p>
           </div>
           {supportLink && (
@@ -527,7 +527,7 @@ export default function ClaudeHome() {
               href={supportLink.href}
               target={supportLink.isTelegram ? '_blank' : undefined}
               rel={supportLink.isTelegram ? 'noopener noreferrer' : undefined}
-              className="mt-5 inline-flex shrink-0 items-center justify-center gap-2 rounded-full border border-[#E0CFC2] bg-white/70 px-5 py-3 text-sm font-semibold text-[#C56547] transition-colors hover:bg-white md:mt-0"
+              className="mt-6 inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#D97757] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[#D97757]/20 transition-colors hover:bg-[#C56547] md:mt-0"
             >
               {supportLink.isTelegram ? t('home.supportTelegramAction') : t('nav.contactSupport')}
               <ArrowRight size={15} />
