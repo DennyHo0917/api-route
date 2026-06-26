@@ -19,6 +19,10 @@ export const FAQ_COPY = {
             question: '支持哪些 AI 模型？',
             answer: '模型列表会以站点实际开放为准。你可以在定价页面查看可用模型、输入输出价格、缓存价格以及模型状态，再选择适合聊天、写作、代码、图像或视频任务的模型。',
           },
+          {
+            question: '如何通过一个 API 路由多个 AI 模型？',
+            answer: 'API-Route 让你用同一个 OpenAI 兼容 Base URL 和 API Key 路由 GPT、Claude、Gemini 等多个模型请求，不需要在不同供应商接口之间切换。',
+          },
         ],
       },
       {
@@ -131,6 +135,10 @@ export const FAQ_COPY = {
           {
             question: 'Which AI models are supported?',
             answer: 'The available models depend on the current site configuration. Check the Pricing page for model names, input and output rates, cache pricing, and model status before choosing one for chat, writing, coding, image, or video tasks.',
+          },
+          {
+            question: 'How can I route multiple AI models through one API?',
+            answer: 'API-Route lets you route requests to GPT, Claude, Gemini, and other supported models through one OpenAI-compatible Base URL and API key, so clients can switch models without changing providers or endpoints.',
           },
         ],
       },
@@ -245,6 +253,10 @@ export const FAQ_COPY = {
             question: 'どの AI モデルを使えますか？',
             answer: '利用可能なモデルはサイトの設定によって変わります。料金ページでモデル名、入力・出力料金、キャッシュ料金、稼働状態を確認してから選ぶのがおすすめです。',
           },
+          {
+            question: '1つの API で複数の AI モデルをルーティングできますか？',
+            answer: 'はい。API-Route では、1つの OpenAI 互換 Base URL と API キーで GPT、Claude、Gemini など複数の対応モデルへリクエストをルーティングできます。',
+          },
         ],
       },
       {
@@ -357,6 +369,10 @@ export const FAQ_COPY = {
           {
             question: '어떤 AI 모델을 지원하나요?',
             answer: '지원 모델은 사이트 설정에 따라 달라집니다. 요금 페이지에서 모델명, 입력·출력 요금, 캐시 요금, 모델 상태를 확인한 뒤 채팅, 글쓰기, 코딩, 이미지, 영상 작업에 맞게 선택하세요.',
+          },
+          {
+            question: '하나의 API로 여러 AI 모델을 라우팅할 수 있나요?',
+            answer: '네. API-Route는 하나의 OpenAI 호환 Base URL과 API 키로 GPT, Claude, Gemini 등 여러 지원 모델에 요청을 라우팅할 수 있게 해 줍니다.',
           },
         ],
       },
