@@ -83,8 +83,8 @@ export const SEO_COPY = {
       ],
     },
     packages: {
-      title: 'AI API Plans and Balance Top-ups',
-      description: 'Top up your account balance, then subscribe to the daily, weekly, monthly, or quota-based AI API plan you need. Compare quotas, validity periods, and use cases.',
+      title: 'AI API Plans and Packages',
+      description: 'Compare daily, weekly, monthly, and quota-based AI API plans for one OpenAI-compatible API. Choose a package by quota, validity period, model access, and use case.',
     },
     apps: {
       title: 'OpenAI-Compatible Clients and AI App Integrations',
