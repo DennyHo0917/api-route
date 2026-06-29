@@ -47,6 +47,20 @@
     @apply bg-brand-500/30;
   }
 
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+
+  ::view-transition-old(root) {
+    z-index: 0;
+  }
+
+  ::view-transition-new(root) {
+    z-index: 1;
+  }
+
   ::-webkit-scrollbar {
     @apply w-1.5;
   }
@@ -550,6 +564,15 @@ html[data-color-scheme='dark'] .theme-claude .route-section-title {
 html[data-color-scheme='dark'] .theme-claude .language-select option {
   background: #1f1916;
   color: #f5ede7;
+}
+
+html[data-color-scheme='dark'] .theme-claude .provider-logo {
+  filter: brightness(0) invert(1) !important;
+  opacity: 0.88;
+}
+
+html[data-color-scheme='dark'] .theme-claude .provider-logo-fallback {
+  color: #f5ede7 !important;
 }
 
 html[data-color-scheme='dark'] .theme-claude [class~='bg-[#FAF6F1]'] {

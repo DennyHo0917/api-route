@@ -19,6 +19,8 @@ import { createSubDistributorOrder, getSubDistributorInfo } from '../api';
 import { useAuth } from '../context/AuthContext';
 import { useCurrency } from '../context/SiteContext';
 import { getLocalizedPath, normalizeAppLanguage } from '../i18n/languageUtils';
+import FadeContent from '../components/bits/FadeContent';
+import SnapSection, { SnapDeck } from '../components/bits/SnapSection';
 
 function formatPaymentMethodName(value) {
   return String(value || '').trim().replace(/支付宝|alipay/gi, 'alipay');
@@ -668,9 +670,12 @@ export default function SubDistributor() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 sm:py-12">
-      <section className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_390px] lg:items-stretch">
-        <div className="space-y-8">
+    <SnapDeck>
+      <SnapSection
+        contentClassName="mx-auto grid w-full max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_390px] lg:items-stretch"
+        direction="up"
+      >
+        <FadeContent direction="left" distance={38} duration={780} className="space-y-8">
           <div className="space-y-6">
             <div className="inline-flex w-fit items-center gap-2 rounded-full border border-page-divider bg-page-surface px-3 py-1 text-sm font-semibold text-page">
               <Sparkles className="h-3.5 w-3.5 text-page-link" />
@@ -702,31 +707,11 @@ export default function SubDistributor() {
               ))}
             </div>
           </div>
+        </FadeContent>
 
-          <section id="audience" className="space-y-4 scroll-mt-24">
-            <div>
-              <h2 className="text-2xl font-semibold tracking-tight text-page">{copy.audienceTitle}</h2>
-              <p className="mt-2 max-w-3xl text-sm leading-7 text-page-secondary">{copy.audienceDesc}</p>
-            </div>
-            <div className="grid gap-4 md:grid-cols-2">
-              {copy.audience.map(([title, description], index) => {
-                const Icon = AUDIENCE_ICONS[index] || Sparkles;
-                return (
-                  <article key={title} className="rounded-2xl border border-page-divider bg-page-surface p-5 shadow-sm">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-500/10 text-page-link">
-                      <Icon className="h-5 w-5" />
-                    </span>
-                    <h3 className="mt-4 text-base font-semibold text-page">{title}</h3>
-                    <p className="mt-2 text-sm leading-6 text-page-secondary">{description}</p>
-                  </article>
-                );
-              })}
-            </div>
-          </section>
-        </div>
-
-        <aside id="open-platform" className="scroll-mt-24 lg:self-stretch">
-          <div className="glass h-full rounded-3xl p-5 shadow-sm">
+        <FadeContent direction="right" distance={38} duration={780} delay={120} className="lg:self-stretch">
+          <aside id="open-platform" className="h-full scroll-mt-24">
+            <div className="glass h-full rounded-3xl p-5 shadow-sm">
             <div className="mb-4">
               <p className="text-sm font-semibold text-page-link">{copy.panelTitle}</p>
               <h2 className="mt-2 text-2xl font-bold text-page">{fmtCNY(subInfo?.price || 0)}</h2>
@@ -776,118 +761,201 @@ export default function SubDistributor() {
                 </div>
               </div>
             )}
-          </div>
-        </aside>
-      </section>
+            </div>
+          </aside>
+        </FadeContent>
+      </SnapSection>
 
-      <section className="mt-12 space-y-5">
-        <div className="max-w-3xl">
+      <SnapSection
+        className="bg-[var(--page-bg)]"
+        contentClassName="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6"
+        direction="left"
+      >
+        <section id="audience" className="space-y-5 scroll-mt-24">
+          <FadeContent direction="left" distance={36} duration={760} className="max-w-3xl">
+            <h2 className="text-2xl font-semibold tracking-tight text-page">{copy.audienceTitle}</h2>
+            <p className="mt-2 text-sm leading-7 text-page-secondary">{copy.audienceDesc}</p>
+          </FadeContent>
+          <div className="grid gap-4 md:grid-cols-2">
+            {copy.audience.map(([title, description], index) => {
+              const Icon = AUDIENCE_ICONS[index] || Sparkles;
+              return (
+                <FadeContent
+                  key={title}
+                  direction={index % 2 === 0 ? 'left' : 'right'}
+                  distance={34}
+                  duration={760}
+                  delay={index * 70}
+                >
+                  <article className="rounded-2xl border border-page-divider bg-page-surface p-5 shadow-sm">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-500/10 text-page-link">
+                      <Icon className="h-5 w-5" />
+                    </span>
+                    <h3 className="mt-4 text-base font-semibold text-page">{title}</h3>
+                    <p className="mt-2 text-sm leading-6 text-page-secondary">{description}</p>
+                  </article>
+                </FadeContent>
+              );
+            })}
+          </div>
+        </section>
+      </SnapSection>
+
+      <SnapSection
+        className="bg-[var(--page-bg)]"
+        contentClassName="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6"
+        direction="right"
+      >
+      <section className="space-y-5">
+        <FadeContent direction="left" distance={36} duration={760} className="max-w-3xl">
           <h2 className="text-2xl font-semibold tracking-tight text-page">{copy.revenueTitle}</h2>
           <p className="mt-2 text-sm leading-7 text-page-secondary">{copy.revenueDesc}</p>
-        </div>
+        </FadeContent>
         <div className="grid gap-4 md:grid-cols-2">
           {copy.revenue.map(([title, description], index) => {
             const Icon = REVENUE_ICONS[index] || Sparkles;
             return (
-              <article key={title} className="rounded-2xl border border-page-divider bg-page-surface p-5 shadow-sm">
-                <div className="flex items-start gap-3">
-                  <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-brand-500/10 text-page-link">
-                    <Icon className="h-4 w-4" />
-                  </span>
-                  <div>
-                    <h3 className="text-sm font-semibold text-page">{title}</h3>
-                    <p className="mt-1.5 text-sm leading-6 text-page-secondary">{description}</p>
+              <FadeContent
+                key={title}
+                direction={index % 2 === 0 ? 'left' : 'right'}
+                distance={34}
+                duration={760}
+                delay={(index % 4) * 70}
+              >
+                <article className="rounded-2xl border border-page-divider bg-page-surface p-5 shadow-sm">
+                  <div className="flex items-start gap-3">
+                    <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-brand-500/10 text-page-link">
+                      <Icon className="h-4 w-4" />
+                    </span>
+                    <div>
+                      <h3 className="text-sm font-semibold text-page">{title}</h3>
+                      <p className="mt-1.5 text-sm leading-6 text-page-secondary">{description}</p>
+                    </div>
                   </div>
-                </div>
-              </article>
+                </article>
+              </FadeContent>
             );
           })}
         </div>
       </section>
+      </SnapSection>
 
-      <section className="mt-12 rounded-3xl border border-page-divider bg-page-surface p-5 shadow-sm sm:p-6">
-        <div className="mb-5">
-          <h2 className="text-2xl font-semibold tracking-tight text-page">{copy.savingsTitle}</h2>
-          <p className="mt-2 max-w-3xl text-sm leading-7 text-page-secondary">{copy.savingsDesc}</p>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[680px] text-sm">
-            <thead>
-              <tr className="border-b border-page-divider text-left text-page-secondary">
-                {copy.comparisonHeaders.map((header) => (
-                  <th key={header} className="px-4 py-3 font-semibold">{header}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {copy.comparison.map(([capability, selfBuild, apiRoute]) => (
-                <tr key={capability} className="border-b border-page-divider last:border-0">
-                  <td className="px-4 py-4 font-semibold text-page">{capability}</td>
-                  <td className="px-4 py-4 text-page-secondary">{selfBuild}</td>
-                  <td className="px-4 py-4 text-page">{apiRoute}</td>
+      <SnapSection
+        className="bg-[var(--page-bg)]"
+        contentClassName="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6"
+        direction="left"
+      >
+        <section className="rounded-3xl border border-page-divider bg-page-surface p-5 shadow-sm sm:p-6">
+          <div className="mb-5">
+            <h2 className="text-2xl font-semibold tracking-tight text-page">{copy.savingsTitle}</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-7 text-page-secondary">{copy.savingsDesc}</p>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[680px] text-sm">
+              <thead>
+                <tr className="border-b border-page-divider text-left text-page-secondary">
+                  {copy.comparisonHeaders.map((header) => (
+                    <th key={header} className="px-4 py-3 font-semibold">{header}</th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
+              </thead>
+              <tbody>
+                {copy.comparison.map(([capability, selfBuild, apiRoute]) => (
+                  <tr key={capability} className="border-b border-page-divider last:border-0">
+                    <td className="px-4 py-4 font-semibold text-page">{capability}</td>
+                    <td className="px-4 py-4 text-page-secondary">{selfBuild}</td>
+                    <td className="px-4 py-4 text-page">{apiRoute}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </SnapSection>
 
-      <section className="mt-12 grid gap-8 lg:grid-cols-[1fr_0.9fr]">
-        <div>
+      <SnapSection
+        className="bg-[var(--page-bg)]"
+        contentClassName="mx-auto grid w-full max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[1fr_0.9fr]"
+        direction="right"
+      >
+        <FadeContent direction="left" distance={36} duration={760}>
           <h2 className="text-2xl font-semibold tracking-tight text-page">{copy.includedTitle}</h2>
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
             {copy.included.map((item, index) => {
               const Icon = INCLUDED_ICONS[index] || CheckCircle2;
               return (
-                <div key={item} className="flex min-h-16 items-start gap-3 rounded-2xl border border-page-divider bg-page-surface p-4">
-                  <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-page-link/10 text-page-link">
-                    <Icon className="h-4 w-4" />
-                  </span>
-                  <span className="text-sm leading-6 text-page">{item}</span>
-                </div>
+                <FadeContent
+                  key={item}
+                  direction={index % 2 === 0 ? 'left' : 'right'}
+                  distance={26}
+                  duration={680}
+                  delay={(index % 4) * 45}
+                >
+                  <div className="flex min-h-16 items-start gap-3 rounded-2xl border border-page-divider bg-page-surface p-4">
+                    <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-page-link/10 text-page-link">
+                      <Icon className="h-4 w-4" />
+                    </span>
+                    <span className="text-sm leading-6 text-page">{item}</span>
+                  </div>
+                </FadeContent>
               );
             })}
           </div>
-        </div>
-        <div>
+        </FadeContent>
+        <FadeContent direction="right" distance={36} duration={760} delay={100}>
           <h2 className="text-2xl font-semibold tracking-tight text-page">{copy.flowTitle}</h2>
           <div className="mt-5 space-y-4">
             {copy.flow.map(([title, description], index) => (
-              <div key={title} className="flex gap-4 rounded-2xl border border-page-divider bg-page-surface p-4">
-                <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-brand-500 text-sm font-bold text-white">
-                  {index + 1}
-                </span>
-                <div>
-                  <h3 className="text-sm font-semibold text-page">{title}</h3>
-                  <p className="mt-1 text-sm leading-6 text-page-secondary">{description}</p>
+              <FadeContent key={title} direction="right" distance={28} duration={680} delay={index * 70}>
+                <div className="flex gap-4 rounded-2xl border border-page-divider bg-page-surface p-4">
+                  <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-brand-500 text-sm font-bold text-white">
+                    {index + 1}
+                  </span>
+                  <div>
+                    <h3 className="text-sm font-semibold text-page">{title}</h3>
+                    <p className="mt-1 text-sm leading-6 text-page-secondary">{description}</p>
+                  </div>
                 </div>
-              </div>
+              </FadeContent>
             ))}
           </div>
-        </div>
-      </section>
+        </FadeContent>
+      </SnapSection>
 
-      <section className="mt-12">
-        <div className="mb-5 flex items-center gap-2">
+      <SnapSection
+        className="bg-[var(--page-bg)]"
+        contentClassName="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6"
+        direction="left"
+      >
+      <section>
+        <FadeContent direction="left" distance={32} duration={720} className="mb-5 flex items-center gap-2">
           <Zap className="h-5 w-5 text-page-link" />
           <h2 className="text-2xl font-semibold tracking-tight text-page">{copy.faqTitle}</h2>
-        </div>
+        </FadeContent>
         <div className="grid gap-3 lg:grid-cols-2">
           {copy.faq.map(([question, answer], index) => (
-            <details
+            <FadeContent
               key={question}
-              className="group rounded-2xl border border-page-divider bg-page-surface px-5 py-4 shadow-sm open:bg-page-inset"
-              open={index === 0}
+              direction={index % 2 === 0 ? 'left' : 'right'}
+              distance={28}
+              duration={680}
+              delay={(index % 4) * 45}
             >
-              <summary className="flex cursor-pointer list-none items-start justify-between gap-4 text-left">
-                <span className="text-sm font-semibold leading-6 text-page">{question}</span>
-                <ArrowRight className="mt-0.5 h-4 w-4 flex-shrink-0 text-page-muted transition-transform group-open:rotate-90" />
-              </summary>
-              <p className="mt-3 text-sm leading-7 text-page-secondary">{answer}</p>
-            </details>
+              <details
+                className="group rounded-2xl border border-page-divider bg-page-surface px-5 py-4 shadow-sm open:bg-page-inset"
+                open={index === 0}
+              >
+                <summary className="flex cursor-pointer list-none items-start justify-between gap-4 text-left">
+                  <span className="text-sm font-semibold leading-6 text-page">{question}</span>
+                  <ArrowRight className="mt-0.5 h-4 w-4 flex-shrink-0 text-page-muted transition-transform group-open:rotate-90" />
+                </summary>
+                <p className="mt-3 text-sm leading-7 text-page-secondary">{answer}</p>
+              </details>
+            </FadeContent>
           ))}
         </div>
       </section>
-    </div>
+      </SnapSection>
+    </SnapDeck>
   );
 }

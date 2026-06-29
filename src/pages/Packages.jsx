@@ -92,8 +92,9 @@ export default function Packages() {
       .map((pkg) => localizePackage(pkg, t, i18n.resolvedLanguage)),
     [i18n.resolvedLanguage, packages, t],
   );
-  const recommendedId = enabled.find((pkg) => Number(pkg.duration) === 30)?.id
-    || enabled[1]?.id;
+  const visiblePackages = enabled.slice(0, 6);
+  const recommendedId = visiblePackages.find((pkg) => Number(pkg.duration) === 30)?.id
+    || visiblePackages[1]?.id;
 
   const handleSubscribe = (pkg) => {
     if (!user) {
@@ -213,7 +214,7 @@ export default function Packages() {
           </div>
         ) : (
           <div className="grid gap-5 lg:grid-cols-3">
-            {enabled.map((pkg) => {
+            {visiblePackages.map((pkg) => {
               const resetPeriod = pkg.quota_reset_period || 'never';
               const isSubscription = resetPeriod !== 'never';
               const equiv = calcOfficialEquivList(enabledModels, getPackageQuota(pkg))[0];

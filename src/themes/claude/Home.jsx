@@ -21,6 +21,8 @@ import { getSiteModels, getSitePackages, subscribePackage, Q } from '../../api';
 import { calcOfficialEquivList } from '../../utils/officialEquiv';
 import { localizePackage } from '../../utils/packageLocalization';
 import { getHomeContent } from '../../utils/siteContent';
+import FadeContent from '../../components/bits/FadeContent';
+import SnapSection, { SnapDeck } from '../../components/bits/SnapSection';
 import toast from 'react-hot-toast';
 
 const resetLabelKeys = {
@@ -69,6 +71,47 @@ function getSupportLink(site) {
   return null;
 }
 
+const providerLogo = (slug) => `https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/${slug}.svg`;
+const grokLogo = 'https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@latest/icons/grok.svg';
+
+const PROVIDER_CATALOG = {
+  openai: { name: 'OpenAI', mark: 'OpenAI', logo: providerLogo('openai') },
+  anthropic: { name: 'Claude', mark: 'Claude', logo: providerLogo('claude') },
+  google: { name: 'Google Gemini', mark: 'Gemini', logo: providerLogo('googlegemini') },
+  xai: { name: 'xAI Grok', mark: 'Grok', logo: grokLogo },
+  deepseek: { name: 'DeepSeek', mark: 'DeepSeek', logo: providerLogo('deepseek') },
+  zhipu: { name: 'Zhipu GLM', mark: 'GLM', logo: 'https://stable-learn.com/appicon/zhipu-color.png', logoClass: 'brightness-0 opacity-80' },
+};
+
+const DISPLAY_PROVIDER_KEYS = ['openai', 'anthropic', 'google', 'xai', 'zhipu', 'deepseek'];
+
+function VendorMark({ vendor }) {
+  if (vendor.more) {
+    return <span className="text-xl font-black text-[#3D3024]">{vendor.mark}</span>;
+  }
+
+  return (
+    <>
+      {vendor.logo && (
+        <img
+          src={vendor.logo}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className={`provider-logo mx-auto block h-10 w-10 object-contain opacity-90 transition-opacity duration-300 group-hover:opacity-100 ${vendor.logoClass || ''}`}
+          onError={(event) => {
+            event.currentTarget.classList.add('hidden');
+            event.currentTarget.nextElementSibling?.classList.remove('hidden');
+          }}
+        />
+      )}
+      <span className={`provider-logo-fallback ${vendor.logo ? 'hidden' : ''} max-w-full truncate px-2 text-center text-lg font-black tracking-normal text-[#5E4D40]`}>
+        {vendor.mark}
+      </span>
+    </>
+  );
+}
+
 export default function ClaudeHome() {
   const { t, i18n } = useTranslation();
   const { user, refreshUser } = useAuth();
@@ -94,13 +137,16 @@ export default function ClaudeHome() {
     () => models.filter((model) => model.enabled !== false),
     [models],
   );
+  const modelProviders = useMemo(() => {
+    return DISPLAY_PROVIDER_KEYS.map((key) => PROVIDER_CATALOG[key]);
+  }, []);
   const enabledPackages = useMemo(
     () => packages
       .filter((pkg) => pkg.enabled !== false)
       .map((pkg) => localizePackage(pkg, t, i18n.resolvedLanguage)),
     [i18n.resolvedLanguage, packages, t],
   );
-  const previewPackages = enabledPackages.slice(0, 3);
+  const previewPackages = enabledPackages.slice(0, 6);
   const recommendedId = previewPackages.find((pkg) => Number(pkg.duration) === 30)?.id
     || previewPackages[1]?.id;
   const homeContent = getHomeContent(site, t, i18n.resolvedLanguage);
@@ -195,11 +241,14 @@ export default function ClaudeHome() {
   ];
 
   return (
-    <div className="overflow-hidden">
-      <section className="route-hero relative border-b border-[#E8DDD0]">
+    <SnapDeck>
+      <SnapSection
+        className="route-hero relative border-b border-[#E8DDD0]"
+        contentClassName="relative mx-auto grid w-full max-w-7xl items-center gap-12 px-5 py-12 md:px-8 lg:grid-cols-[1.05fr_0.95fr]"
+        direction="up"
+      >
         <div className="route-grid-bg absolute inset-0 opacity-60" />
-        <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 py-16 md:px-8 md:py-24 lg:grid-cols-[1.05fr_0.95fr] lg:py-28">
-          <div>
+          <FadeContent direction="left" distance={36} duration={780} delay={80}>
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#E6D6C8] bg-white/75 px-3.5 py-2 text-xs font-semibold text-[#B75F43] shadow-sm">
               <Sparkles size={14} />
               {t('home.heroBadge')}
@@ -247,9 +296,9 @@ export default function ClaudeHome() {
                 </span>
               ))}
             </div>
-          </div>
+          </FadeContent>
 
-          <div className="relative">
+          <FadeContent direction="right" distance={36} duration={820} delay={180} className="relative">
             <div className="absolute -left-10 top-8 h-32 w-32 rounded-full bg-[#E9B8A4]/35 blur-3xl" />
             <div className="absolute -right-10 bottom-4 h-40 w-40 rounded-full bg-[#E8D7B7]/50 blur-3xl" />
             <div className="relative rounded-[28px] border border-[#DCC8B8] bg-white/80 p-3 shadow-[0_28px_80px_rgba(96,69,48,0.13)]">
@@ -327,214 +376,262 @@ export default function ClaudeHome() {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
+          </FadeContent>
+      </SnapSection>
 
-      <section className="mx-auto max-w-7xl px-5 py-14 md:px-8 md:py-20">
+      <SnapSection
+        className="bg-[#FAF6F1]"
+        contentClassName="mx-auto w-full max-w-7xl px-5 py-12 md:px-8"
+        direction="left"
+      >
         <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div>
+          <FadeContent direction="left" distance={36} duration={750}>
             <p className="route-kicker">{t('home.audienceEyebrow')}</p>
             <h2 className="route-section-title">{t('home.audienceTitle')}</h2>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-[#7D6B5B] md:text-base">
               {t('home.audienceSubtitle')}
             </p>
-          </div>
-          <Link to="/faq" className="inline-flex items-center gap-2 text-sm font-semibold text-[#C56547] hover:text-[#A84F34]">
-            {t('nav.faq')}
-            <ArrowRight size={15} />
-          </Link>
+          </FadeContent>
+          <FadeContent direction="right" distance={36} duration={750} delay={80}>
+            <Link to="/faq" className="inline-flex items-center gap-2 text-sm font-semibold text-[#C56547] hover:text-[#A84F34]">
+              {t('nav.faq')}
+              <ArrowRight size={15} />
+            </Link>
+          </FadeContent>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-          {audienceCards.map(({ icon: Icon, title, description, to, linkLabel }) => (
-            <Link
+          {audienceCards.map(({ icon: Icon, title, description, to, linkLabel }, index) => (
+            <FadeContent
               key={title}
-              to={to}
-              className="group flex min-h-[210px] flex-col rounded-[22px] border border-[#E5D7CB] bg-white/65 p-5 shadow-[0_14px_40px_rgba(82,61,43,0.04)] transition-all hover:-translate-y-0.5 hover:border-[#D8BBA7] hover:bg-white"
+              direction={index % 2 === 0 ? 'left' : 'right'}
+              distance={34}
+              duration={760}
+              delay={index * 70}
+              className="h-full"
             >
-              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#D97757]/10 text-[#C56547]">
-                <Icon size={20} />
-              </span>
-              <h3 className="mt-5 text-base font-semibold leading-6 text-[#3D3024]">{title}</h3>
-              <p className="mt-2 flex-1 text-sm leading-6 text-[#7D6B5B]">{description}</p>
-              <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-[#C56547] group-hover:text-[#A84F34]">
-                {linkLabel}
-                <ArrowRight size={14} />
-              </span>
-            </Link>
+              <Link
+                to={to}
+                className="group flex h-full min-h-[210px] flex-col rounded-[22px] border border-[#E5D7CB] bg-white/65 p-5 shadow-[0_14px_40px_rgba(82,61,43,0.04)] transition-all hover:-translate-y-0.5 hover:border-[#D8BBA7] hover:bg-white"
+              >
+                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#D97757]/10 text-[#C56547]">
+                  <Icon size={20} />
+                </span>
+                <h3 className="mt-5 text-base font-semibold leading-6 text-[#3D3024]">{title}</h3>
+                <p className="mt-2 flex-1 text-sm leading-6 text-[#7D6B5B]">{description}</p>
+                <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-[#C56547] group-hover:text-[#A84F34]">
+                  {linkLabel}
+                  <ArrowRight size={14} />
+                </span>
+              </Link>
+            </FadeContent>
           ))}
         </div>
-      </section>
+      </SnapSection>
+
+      <SnapSection
+        className="border-y border-[#E8DDD0] bg-[#F1E8DE]"
+        contentClassName="mx-auto flex w-full max-w-7xl flex-col justify-center px-5 py-10 md:px-8"
+        direction="left"
+      >
+        <FadeContent direction="up" distance={30} duration={760} className="mx-auto max-w-3xl text-center">
+          <p className="route-kicker">生态伙伴</p>
+          <h2 className="route-section-title mt-3">
+            与主流模型供应商深度对接
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-[#7D6B5B] md:text-lg">
+            保持统一协议，快速切换与扩展模型能力，随时接入最新生态。
+          </p>
+          <Link to="/pricing" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#C56547] transition-colors hover:text-[#A84F34]">
+            {t('home.viewAllModels', { count: enabledModels.length })}
+            <ArrowRight size={15} />
+          </Link>
+        </FadeContent>
+        <div className="mx-auto mt-10 grid w-full max-w-[640px] grid-cols-3 gap-3 md:gap-4">
+          {modelProviders.map((vendor, index) => (
+            <FadeContent
+              key={`${vendor.name}-${index}`}
+              direction={index % 2 === 0 ? 'left' : 'right'}
+              distance={24}
+              duration={640}
+              delay={index * 28}
+            >
+              <div
+                title={vendor.name}
+                className="group flex h-20 w-full items-center justify-center rounded-2xl border border-[#E3D4C7] bg-white/70 px-3 shadow-[0_12px_30px_rgba(82,61,43,0.05)] transition-all duration-300 hover:-translate-y-1 hover:border-[#D7BBA5] hover:bg-white"
+              >
+                <VendorMark vendor={vendor} />
+                <span className="sr-only">{vendor.name}</span>
+              </div>
+            </FadeContent>
+          ))}
+        </div>
+      </SnapSection>
 
       {previewPackages.length > 0 && (
-        <section className="mx-auto max-w-7xl px-5 py-16 md:px-8 md:py-24">
-          <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-            <div>
+        <SnapSection
+          className="bg-[#FAF6F1]"
+          contentClassName="mx-auto w-full max-w-7xl px-5 py-8 md:px-8"
+          direction="right"
+        >
+          <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <FadeContent direction="left" distance={36} duration={750}>
               <p className="route-kicker">{t('home.packageSectionEyebrow')}</p>
               <h2 className="route-section-title">{t('home.plansPackages')}</h2>
-              <p className="mt-3 max-w-xl text-[#7D6B5B]">{t('home.choosePlan')}</p>
-            </div>
-            <Link to="/packages" className="inline-flex items-center gap-2 text-sm font-semibold text-[#C56547] hover:text-[#A84F34]">
-              {t('home.viewAllPackages')}
-              <ArrowRight size={15} />
-            </Link>
+              <p className="mt-2 max-w-xl text-sm leading-6 text-[#7D6B5B]">{t('home.choosePlan')}</p>
+            </FadeContent>
+            <FadeContent direction="right" distance={36} duration={750} delay={80}>
+              <Link to="/packages" className="inline-flex items-center gap-2 text-sm font-semibold text-[#C56547] hover:text-[#A84F34]">
+                {t('home.viewAllPackages')}
+                <ArrowRight size={15} />
+              </Link>
+            </FadeContent>
           </div>
 
-          <div className="grid gap-5 lg:grid-cols-3">
-            {previewPackages.map((pkg) => {
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {previewPackages.map((pkg, index) => {
               const recommended = pkg.id === recommendedId;
               const equiv = calcOfficialEquivList(enabledModels, getTotalQuotaDollars(pkg))[0];
               return (
-                <article
+                <FadeContent
                   key={pkg.id}
-                  className={`relative flex min-h-[360px] flex-col rounded-[24px] border p-6 transition-all hover:-translate-y-1 ${
-                    recommended
-                      ? 'border-[#D97757] bg-[#FFF1E7] text-[#3D3024] shadow-[0_20px_50px_rgba(217,119,87,0.14)]'
-                      : 'border-[#E5D7CB] bg-white/75 text-[#3D3024] shadow-[0_14px_40px_rgba(82,61,43,0.06)]'
-                  }`}
+                  direction={index % 2 === 0 ? 'left' : 'right'}
+                  distance={36}
+                  duration={780}
+                  delay={index * 90}
+                  className="h-full"
                 >
-                  {recommended && (
-                    <span className="absolute right-5 top-5 rounded-full bg-[#D97757] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-white">
-                      {t('packages.recommended')}
-                    </span>
-                  )}
-                  <div className="pr-16">
-                    <h3 className="text-xl font-semibold">{pkg.name}</h3>
-                    {pkg.description && (
-                      <p className="mt-2 text-sm leading-6 text-[#806F60]">
-                        {pkg.description}
-                      </p>
-                    )}
-                  </div>
-                  <div className="mt-8">
-                    <span className="text-4xl font-bold tracking-tight">{fmtCNY(pkg.price)}</span>
-                    {pkg.original_price > pkg.price && (
-                      <span className="ml-2 text-sm text-[#A89685] line-through">
-                        {fmtCNY(pkg.original_price)}
+                  <article
+                    className={`relative flex h-full min-h-[255px] flex-col rounded-[22px] border p-5 transition-all hover:-translate-y-1 ${
+                      recommended
+                        ? 'border-[#D97757] bg-[#FFF1E7] text-[#3D3024] shadow-[0_20px_50px_rgba(217,119,87,0.14)]'
+                        : 'border-[#E5D7CB] bg-white/75 text-[#3D3024] shadow-[0_14px_40px_rgba(82,61,43,0.06)]'
+                    }`}
+                  >
+                    {recommended && (
+                      <span className="absolute right-5 top-5 rounded-full bg-[#D97757] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-white">
+                        {t('packages.recommended')}
                       </span>
                     )}
-                    {pkg.duration > 0 && (
-                      <p className="mt-2 text-xs text-[#927E6C]">
-                        {t('home.days', { count: pkg.duration })}
-                      </p>
-                    )}
-                  </div>
-                  <div className="my-6 h-px bg-[#E8D6C8]" />
-                  <ul className="space-y-3 text-sm">
-                    <li className="flex items-center gap-2">
-                      <Check size={15} className="text-[#D97757]" />
-                      {t('packages.allModels')}
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <Check size={15} className="text-[#D97757]" />
-                      {t('packages.openaiApi')}
-                    </li>
-                    {equiv && (
-                      <li className="flex items-center gap-2 text-[#786657]">
-                        <Sparkles size={15} className="text-[#D97757]" />
-                        {t('packages.officialEquiv', { model: equiv.label, amount: equiv.equivDollars })}
+                    <div className="pr-14">
+                      <h3 className="text-lg font-semibold leading-6">{pkg.name}</h3>
+                      {pkg.description && (
+                        <p className="mt-1.5 max-h-10 overflow-hidden text-xs leading-5 text-[#806F60]">
+                          {pkg.description}
+                        </p>
+                      )}
+                    </div>
+                    <div className="mt-4">
+                      <span className="text-3xl font-bold tracking-tight">{fmtCNY(pkg.price)}</span>
+                      {pkg.original_price > pkg.price && (
+                        <span className="ml-2 text-sm text-[#A89685] line-through">
+                          {fmtCNY(pkg.original_price)}
+                        </span>
+                      )}
+                      {pkg.duration > 0 && (
+                        <p className="mt-2 text-xs text-[#927E6C]">
+                          {t('home.days', { count: pkg.duration })}
+                        </p>
+                      )}
+                    </div>
+                    <div className="my-4 h-px bg-[#E8D6C8]" />
+                    <ul className="space-y-2 text-xs">
+                      <li className="flex items-center gap-2">
+                        <Check size={15} className="text-[#D97757]" />
+                        {t('packages.allModels')}
                       </li>
-                    )}
-                  </ul>
-                  <button
-                    type="button"
-                    onClick={() => handleSubscribe(pkg)}
-                    disabled={subscribing === pkg.id}
-                    className={`mt-auto inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition-colors ${
-                      recommended
-                        ? 'bg-[#D97757] text-white hover:bg-[#E38969]'
-                        : 'bg-[#F0E5DB] text-[#4B3B30] hover:bg-[#E6D6C8]'
-                    } disabled:cursor-not-allowed disabled:opacity-60`}
-                  >
-                    <WalletCards size={16} />
-                    {subscribing === pkg.id ? t('packages.processing') : t('packages.subscribeNow')}
-                  </button>
-                </article>
+                      <li className="flex items-center gap-2">
+                        <Check size={15} className="text-[#D97757]" />
+                        {t('packages.openaiApi')}
+                      </li>
+                      {equiv && (
+                        <li className="flex min-w-0 items-center gap-2 text-[#786657]">
+                          <Sparkles size={15} className="text-[#D97757]" />
+                          <span className="truncate">
+                            {t('packages.officialEquiv', { model: equiv.label, amount: equiv.equivDollars })}
+                          </span>
+                        </li>
+                      )}
+                    </ul>
+                    <button
+                      type="button"
+                      onClick={() => handleSubscribe(pkg)}
+                      disabled={subscribing === pkg.id}
+                      className={`mt-auto inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold transition-colors ${
+                        recommended
+                          ? 'bg-[#D97757] text-white hover:bg-[#E38969]'
+                          : 'bg-[#F0E5DB] text-[#4B3B30] hover:bg-[#E6D6C8]'
+                      } disabled:cursor-not-allowed disabled:opacity-60`}
+                    >
+                      <WalletCards size={16} />
+                      {subscribing === pkg.id ? t('packages.processing') : t('packages.subscribeNow')}
+                    </button>
+                  </article>
+                </FadeContent>
               );
             })}
           </div>
-        </section>
+        </SnapSection>
       )}
 
-      <section className="border-y border-[#E8DDD0] bg-[#F1E8DE]">
-        <div className="mx-auto max-w-7xl px-5 py-16 md:px-8 md:py-20">
-          <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
-            <div>
-              <p className="route-kicker">{t('home.modelSectionEyebrow')}</p>
-              <h2 className="route-section-title">{t('home.availableModels')}</h2>
-              <p className="mt-3 max-w-md leading-7 text-[#7D6B5B]">
-                {t('home.availableModelsDesc', { count: enabledModels.length })}
-              </p>
-              <Link to="/pricing" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#C56547]">
-                {t('home.viewAllModels', { count: enabledModels.length })}
-                <ArrowRight size={15} />
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {(enabledModels.length ? enabledModels.slice(0, 9) : Array.from({ length: 9 })).map((model, index) => (
-                <div
-                  key={model?.id || index}
-                  className="flex min-h-20 items-center gap-3 rounded-2xl border border-[#E3D4C7] bg-white/70 px-4 py-3 shadow-sm"
-                >
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#D97757]/10 text-[#C56547]">
-                    <Braces size={17} />
-                  </span>
-                  <span className="min-w-0 truncate font-mono text-xs text-[#5E4D40]">
-                    {model?.display_name || model?.model_name || 'AI model'}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-5 py-16 md:px-8 md:py-24">
-        <div className="mb-10 text-center">
+      <SnapSection
+        className="bg-[#FAF6F1]"
+        contentClassName="mx-auto w-full max-w-7xl px-5 py-8 md:px-8"
+        direction="right"
+      >
+        <FadeContent direction="left" distance={32} duration={740} className="mb-7 text-center">
           <p className="route-kicker">{t('home.whyChooseUs')}</p>
           <h2 className="route-section-title">{t('home.whyChooseUsDesc')}</h2>
-        </div>
-        <div className="grid gap-5 md:grid-cols-3">
+        </FadeContent>
+        <div className="grid gap-4 md:grid-cols-3">
           {[
             { icon: Zap, title: t('home.lightningFast'), desc: t('home.lightningFastDesc') },
             { icon: ShieldCheck, title: t('home.securePrivate'), desc: t('home.securePrivateDesc') },
             { icon: Layers3, title: t('home.payAsYouGo'), desc: t('home.payAsYouGoDesc') },
-          ].map(({ icon: Icon, title, desc }) => (
-            <div key={title} className="rounded-[22px] border border-[#E5D7CB] bg-white/65 p-6">
-              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#D97757]/10 text-[#C56547]">
-                <Icon size={20} />
-              </span>
-              <h3 className="mt-5 text-lg font-semibold text-[#3D3024]">{title}</h3>
-              <p className="mt-2 text-sm leading-7 text-[#7D6B5B]">{desc}</p>
-            </div>
+          ].map(({ icon: Icon, title, desc }, index) => (
+            <FadeContent
+              key={title}
+              direction={index === 1 ? 'up' : index === 0 ? 'left' : 'right'}
+              distance={34}
+              duration={760}
+              delay={index * 80}
+            >
+              <div className="rounded-[22px] border border-[#E5D7CB] bg-white/65 p-5">
+                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#D97757]/10 text-[#C56547]">
+                  <Icon size={20} />
+                </span>
+                <h3 className="mt-4 text-lg font-semibold text-[#3D3024]">{title}</h3>
+                <p className="mt-2 text-sm leading-7 text-[#7D6B5B]">{desc}</p>
+              </div>
+            </FadeContent>
           ))}
         </div>
-      </section>
-
-      <div className="mx-auto max-w-7xl px-5 pb-10 md:px-8">
-        <div className="rounded-[28px] border border-[#E6C7B3] bg-[#FFF3EB] p-7 shadow-[0_18px_50px_rgba(190,101,71,0.14)] md:flex md:items-center md:justify-between md:gap-8 md:p-8">
-          <div className="max-w-2xl">
-            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#D97757] text-white shadow-lg shadow-[#D97757]/20">
-              <Headset size={22} />
-            </span>
-            <p className="mt-5 text-xs font-bold uppercase tracking-[0.18em] text-[#C56547]">{t('home.supportEyebrow')}</p>
-            <h2 className="mt-2 text-2xl font-semibold text-[#3D3024] md:text-3xl">{t('home.supportTitle')}</h2>
-            <p className="mt-2 text-sm leading-7 text-[#7D6B5B]">{t('home.supportDesc')}</p>
+        <FadeContent direction="up" distance={28} duration={760} delay={180} className="mt-6">
+          <div className="rounded-[24px] border border-[#E6C7B3] bg-[#FFF3EB] p-5 shadow-[0_18px_50px_rgba(190,101,71,0.12)] md:flex md:items-center md:justify-between md:gap-8 md:p-6">
+            <div className="flex gap-4">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#D97757] text-white shadow-lg shadow-[#D97757]/20">
+                <Headset size={20} />
+              </span>
+              <div className="max-w-2xl">
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#C56547]">{t('home.supportEyebrow')}</p>
+                <h2 className="mt-1 text-xl font-semibold text-[#3D3024] md:text-2xl">{t('home.supportTitle')}</h2>
+                <p className="mt-1.5 text-sm leading-7 text-[#7D6B5B]">{t('home.supportDesc')}</p>
+              </div>
+            </div>
+            {supportLink && (
+              <a
+                href={supportLink.href}
+                target={supportLink.isTelegram ? '_blank' : undefined}
+                rel={supportLink.isTelegram ? 'noopener noreferrer' : undefined}
+                className="mt-5 inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#D97757] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[#D97757]/20 transition-colors hover:bg-[#C56547] md:mt-0"
+              >
+                {supportLink.isTelegram ? t('home.supportTelegramAction') : t('nav.contactSupport')}
+                <ArrowRight size={15} />
+              </a>
+            )}
           </div>
-          {supportLink && (
-            <a
-              href={supportLink.href}
-              target={supportLink.isTelegram ? '_blank' : undefined}
-              rel={supportLink.isTelegram ? 'noopener noreferrer' : undefined}
-              className="mt-6 inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#D97757] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[#D97757]/20 transition-colors hover:bg-[#C56547] md:mt-0"
-            >
-              {supportLink.isTelegram ? t('home.supportTelegramAction') : t('nav.contactSupport')}
-              <ArrowRight size={15} />
-            </a>
-          )}
-        </div>
-      </div>
+        </FadeContent>
+      </SnapSection>
 
       {confirmPkg && (() => {
         const userBalanceCny = (user?.quota || 0) / Q * cnyPerUsd;
@@ -593,6 +690,6 @@ export default function ClaudeHome() {
           </div>
         );
       })()}
-    </div>
+    </SnapDeck>
   );
 }

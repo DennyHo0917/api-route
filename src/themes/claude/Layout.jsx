@@ -38,6 +38,7 @@ export default function ClaudeLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [snapDeckAtEnd, setSnapDeckAtEnd] = useState(false);
   const [colorScheme, setColorScheme] = useState(() => (
     document.documentElement.dataset.colorScheme === 'dark' ? 'dark' : 'light'
   ));
@@ -56,10 +57,23 @@ export default function ClaudeLayout() {
   const supportLabel = supportLink?.isTelegram
     ? t('nav.telegramSupport')
     : t('nav.contactSupport');
+  const isSnapDeckPage = location.pathname === '/' || location.pathname === '/ai-api-reseller-platform';
 
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [location.pathname]);
+
+  useEffect(() => {
+    setSnapDeckAtEnd(false);
+    if (!isSnapDeckPage) return undefined;
+
+    const onSnapDeckState = (event) => {
+      setSnapDeckAtEnd(Boolean(event.detail?.atEnd));
+    };
+
+    window.addEventListener('api-route:snap-deck-state', onSnapDeckState);
+    return () => window.removeEventListener('api-route:snap-deck-state', onSnapDeckState);
+  }, [isSnapDeckPage, location.pathname]);
 
   const setDocumentColorScheme = (nextScheme) => {
     setColorScheme(nextScheme);
@@ -73,14 +87,53 @@ export default function ClaudeLayout() {
     if (themeColor) themeColor.content = nextScheme === 'dark' ? '#15110F' : '#FAF6F1';
   };
 
-  const toggleColorScheme = () => {
-    setDocumentColorScheme(colorScheme === 'dark' ? 'light' : 'dark');
+  const toggleColorScheme = (event) => {
+    const nextScheme = colorScheme === 'dark' ? 'light' : 'dark';
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!document.startViewTransition || reduceMotion) {
+      setDocumentColorScheme(nextScheme);
+      return;
+    }
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+    const radius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y),
+    );
+
+    const transition = document.startViewTransition(() => {
+      setDocumentColorScheme(nextScheme);
+    });
+
+    transition.ready.then(() => {
+      document.documentElement.animate(
+        {
+          clipPath: [
+            `circle(0px at ${x}px ${y}px)`,
+            `circle(${radius}px at ${x}px ${y}px)`,
+          ],
+        },
+        {
+          duration: 760,
+          easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+          pseudoElement: '::view-transition-new(root)',
+        },
+      );
+    }).catch(() => {});
   };
 
   const handleLogout = async () => {
     await logout();
     navigate('/');
   };
+
+  const footerClassName = isSnapDeckPage
+    ? `fixed inset-x-0 bottom-0 z-40 border-t border-[#E8DDD0] bg-[#F1E8DE] shadow-[0_-18px_48px_rgba(84,57,36,0.08)] transition-all duration-500 ease-out ${
+      snapDeckAtEnd ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-full opacity-0'
+    }`
+    : 'mt-auto border-t border-[#E8DDD0] bg-[#F1E8DE]';
 
   return (
     <div className="theme-light theme-claude min-h-screen flex flex-col bg-[#FAF6F1] text-[#3D3024]">
@@ -244,7 +297,7 @@ export default function ClaudeLayout() {
 
       <main className="flex-1"><Outlet /></main>
 
-      <footer className="mt-auto border-t border-[#E8DDD0] bg-[#F1E8DE]">
+      <footer className={footerClassName}>
         <div className="mx-auto flex max-w-7xl flex-col gap-6 px-5 py-10 md:flex-row md:items-center md:justify-between md:px-8">
           <div>
             <p className="font-semibold text-[#3D3024]">{siteName}</p>
