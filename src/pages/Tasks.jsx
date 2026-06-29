@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ExternalLink, Image, Loader2, RotateCcw, Search, Video, X } from 'lucide-react';
 import { getUserMjTasks, getUserTasks } from '../api';
+import DateTimePicker from '../components/DateTimePicker';
 import LogSubnav from '../components/LogSubnav';
 
 const PAGE_SIZE = 20;
@@ -305,8 +306,8 @@ export default function Tasks() {
 
       <form className="glass mb-6 rounded-2xl p-4" onSubmit={applyFilters}>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <input type="datetime-local" value={startTime} onChange={(e) => setStartTime(e.target.value)} className="input w-full" title={t('tasks.startTime')} />
-          <input type="datetime-local" value={endTime} onChange={(e) => setEndTime(e.target.value)} className="input w-full" title={t('tasks.endTime')} />
+          <DateTimePicker value={startTime} onChange={setStartTime} placeholder={t('tasks.startTime')} ariaLabel={t('tasks.startTime')} />
+          <DateTimePicker value={endTime} onChange={setEndTime} placeholder={t('tasks.endTime')} ariaLabel={t('tasks.endTime')} />
           <div className="relative">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-page-muted" />
             <input value={taskId} onChange={(e) => setTaskId(e.target.value)} className="input w-full pl-10" placeholder={mode === 'image' ? t('tasks.filterImageTask') : t('tasks.filterVideoTask')} />

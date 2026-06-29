@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ChevronDown, ChevronRight, RotateCcw, Search } from 'lucide-react';
 import { getTokens, getUserLogs, getUserLogsStat, Q } from '../api';
 import { useCurrency } from '../context/SiteContext';
+import DateTimePicker from '../components/DateTimePicker';
 import LogSubnav from '../components/LogSubnav';
 
 function formatTime(unix) {
@@ -340,21 +341,17 @@ export default function Logs() {
         }}
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          <input
-            type="datetime-local"
+          <DateTimePicker
             value={startTime}
-            onChange={(e) => setStartTime(e.target.value)}
-            className="input w-full"
-            aria-label={t('logs.startTime')}
-            title={t('logs.startTime')}
+            onChange={setStartTime}
+            placeholder={t('logs.startTime')}
+            ariaLabel={t('logs.startTime')}
           />
-          <input
-            type="datetime-local"
+          <DateTimePicker
             value={endTime}
-            onChange={(e) => setEndTime(e.target.value)}
-            className="input w-full"
-            aria-label={t('logs.endTime')}
-            title={t('logs.endTime')}
+            onChange={setEndTime}
+            placeholder={t('logs.endTime')}
+            ariaLabel={t('logs.endTime')}
           />
           <div className="relative">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-page-muted" />
