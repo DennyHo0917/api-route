@@ -152,7 +152,7 @@ export const getUserTasks = (params) => api.get('/api/dist/user/tasks', { params
 export const getUserMjTasks = (params) => api.get('/api/dist/user/mj', { params });
 
 // ===== Tokens =====
-export const getTokens = () => api.get('/api/dist/token/list');
+export const getTokens = (config) => api.get('/api/dist/token/list', config);
 export const getTokenSupportedModels = (id) => api.get(`/api/dist/token/${id}/models`);
 export const createToken = (data) => api.post('/api/dist/token/create', data);
 export const updateToken = (id, data) => api.put(`/api/dist/token/${id}`, data);

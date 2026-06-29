@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, ChevronRight, RotateCcw, Search } from 'lucide-react';
-import { getUserLogs, getUserLogsStat, Q } from '../api';
+import { getTokens, getUserLogs, getUserLogsStat, Q } from '../api';
 import { useCurrency } from '../context/SiteContext';
 import LogSubnav from '../components/LogSubnav';
 
@@ -154,6 +154,7 @@ export default function Logs() {
   const [stat, setStat] = useState({ quota: 0, rpm: 0, tpm: 0, token: 0 });
   const [modelFilter, setModelFilter] = useState('');
   const [tokenFilter, setTokenFilter] = useState('');
+  const [tokenOptions, setTokenOptions] = useState([]);
   const [requestIdFilter, setRequestIdFilter] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
@@ -198,6 +199,17 @@ export default function Logs() {
 
   useEffect(() => { load(); }, [load]);
   useEffect(() => { loadStat(); }, [loadStat]);
+  useEffect(() => {
+    let active = true;
+    getTokens({ skipErrorHandler: true })
+      .then((res) => {
+        if (!active || !res.data.success) return;
+        const names = [...new Set((res.data.data || []).map((token) => token.name).filter(Boolean))];
+        setTokenOptions(names);
+      })
+      .catch(() => {});
+    return () => { active = false; };
+  }, []);
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
@@ -354,11 +366,17 @@ export default function Logs() {
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-page-muted" />
             <input
               type="text"
+              list="log-token-name-options"
               value={tokenFilter}
               onChange={(e) => setTokenFilter(e.target.value)}
               className="input w-full pl-10"
               placeholder={t('logs.filterToken')}
             />
+            <datalist id="log-token-name-options">
+              {tokenOptions.map((name) => (
+                <option key={name} value={name} />
+              ))}
+            </datalist>
           </div>
         </div>
         <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
