@@ -204,7 +204,11 @@ export default function Logs() {
     getTokens({ skipErrorHandler: true })
       .then((res) => {
         if (!active || !res.data.success) return;
-        const names = [...new Set((res.data.data || []).map((token) => token.name).filter(Boolean))];
+        const names = [...new Set(
+          (res.data.data || [])
+            .map((token) => token.name)
+            .filter((name) => name && !/-auto-\d+$/.test(name)),
+        )];
         setTokenOptions(names);
       })
       .catch(() => {});
@@ -363,20 +367,17 @@ export default function Logs() {
             />
           </div>
           <div className="relative">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-page-muted" />
-            <input
-              type="text"
-              list="log-token-name-options"
+            <select
               value={tokenFilter}
               onChange={(e) => setTokenFilter(e.target.value)}
-              className="input w-full pl-10"
-              placeholder={t('logs.filterToken')}
-            />
-            <datalist id="log-token-name-options">
+              className="input input-solid w-full"
+              aria-label={t('logs.filterToken')}
+            >
+              <option value="">{t('logs.filterToken')}</option>
               {tokenOptions.map((name) => (
-                <option key={name} value={name} />
+                <option key={name} value={name}>{name}</option>
               ))}
-            </datalist>
+            </select>
           </div>
         </div>
         <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
