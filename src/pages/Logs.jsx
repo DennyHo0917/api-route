@@ -55,6 +55,14 @@ function formatTokens(value) {
   return Number(value || 0).toLocaleString();
 }
 
+function getLogModelOptions(items) {
+  return [...new Set(
+    (items || [])
+      .map((log) => log.model_name)
+      .filter(Boolean),
+  )].sort((a, b) => a.localeCompare(b));
+}
+
 function getProviderSummary(other) {
   if (!other?.provider_name) return '';
   if (other.provider_description) {
@@ -154,6 +162,7 @@ export default function Logs() {
   const [loadingStat, setLoadingStat] = useState(true);
   const [stat, setStat] = useState({ quota: 0, rpm: 0, tpm: 0, token: 0 });
   const [modelFilter, setModelFilter] = useState('');
+  const [modelOptions, setModelOptions] = useState([]);
   const [tokenFilter, setTokenFilter] = useState('');
   const [tokenOptions, setTokenOptions] = useState([]);
   const [requestIdFilter, setRequestIdFilter] = useState('');
@@ -180,8 +189,10 @@ export default function Logs() {
       const params = { p: page, page_size: pageSize, ...getAppliedParams() };
       const res = await getUserLogs(params);
       if (res.data.success) {
-        setLogs(res.data.data?.items || []);
+        const items = res.data.data?.items || [];
+        setLogs(items);
         setTotal(res.data.data?.total || 0);
+        setModelOptions((prev) => getLogModelOptions([...prev.map((modelName) => ({ model_name: modelName })), ...items]));
       }
     } catch (e) { /* interceptor */ }
     setLoading(false);
@@ -200,6 +211,17 @@ export default function Logs() {
 
   useEffect(() => { load(); }, [load]);
   useEffect(() => { loadStat(); }, [loadStat]);
+  useEffect(() => {
+    let active = true;
+    getUserLogs({ type: '0', p: 1, page_size: 1000 })
+      .then((res) => {
+        if (!active || !res.data.success) return;
+        const items = res.data.data?.items || [];
+        setModelOptions((prev) => getLogModelOptions([...prev.map((modelName) => ({ model_name: modelName })), ...items]));
+      })
+      .catch(() => {});
+    return () => { active = false; };
+  }, []);
   useEffect(() => {
     let active = true;
     getTokens({ skipErrorHandler: true })
@@ -354,14 +376,17 @@ export default function Logs() {
             ariaLabel={t('logs.endTime')}
           />
           <div className="relative">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-page-muted" />
-            <input
-              type="text"
+            <select
               value={modelFilter}
               onChange={(e) => setModelFilter(e.target.value)}
-              className="input w-full pl-10"
-              placeholder={t('logs.filterModel')}
-            />
+              className="input input-solid w-full"
+              aria-label={t('logs.filterModel')}
+            >
+              <option value="">{t('logs.filterModel')}</option>
+              {modelOptions.map((name) => (
+                <option key={name} value={name}>{name}</option>
+              ))}
+            </select>
           </div>
           <div className="relative">
             <select
