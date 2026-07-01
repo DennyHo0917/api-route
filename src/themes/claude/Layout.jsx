@@ -11,6 +11,8 @@ import {
   isSiteNavActive,
 } from '../../utils/navigation';
 
+const SUPPORT_EMAIL = 'support@api-route.com';
+
 function getSupportLink(site) {
   const announcement = String(site?.announcement || '');
   const telegramMatch = announcement.match(/https?:\/\/(?:www\.)?(?:t\.me|telegram\.me)\/[^\s<>"']+/i);
@@ -306,11 +308,14 @@ export default function ClaudeLayout() {
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-[#766657]">
             <Link to="/apps" className="hover:text-[#D97757]">{t('nav.apps')}</Link>
             <Link to="/faq" className="hover:text-[#D97757]">{t('nav.faq')}</Link>
-            {supportLink && (
+            <a href={`mailto:${SUPPORT_EMAIL}`} className="hover:text-[#D97757]">
+              {SUPPORT_EMAIL}
+            </a>
+            {supportLink?.isTelegram && (
               <a
                 href={supportLink.href}
-                target={supportLink.isTelegram ? '_blank' : undefined}
-                rel={supportLink.isTelegram ? 'noopener noreferrer' : undefined}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="hover:text-[#D97757]"
               >
                 {supportLabel}

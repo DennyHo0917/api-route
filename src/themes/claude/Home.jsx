@@ -8,6 +8,7 @@ import {
   Headset,
   KeyRound,
   Layers3,
+  Mail,
   ShieldCheck,
   ShoppingBag,
   Sparkles,
@@ -31,6 +32,7 @@ const resetLabelKeys = {
   weekly: 'packages.resetWeekly',
   monthly: 'packages.resetMonthly',
 };
+const SUPPORT_EMAIL = 'support@api-route.com';
 
 function getTotalQuotaDollars(pkg) {
   const quotaDollars = pkg.quota_amount > 0 ? pkg.quota_amount / Q : 0;
@@ -607,28 +609,49 @@ export default function ClaudeHome() {
           ))}
         </div>
         <FadeContent direction="up" distance={28} duration={760} delay={180} className="mt-6">
-          <div className="rounded-[24px] border border-[#E6C7B3] bg-[#FFF3EB] p-5 shadow-[0_18px_50px_rgba(190,101,71,0.12)] md:flex md:items-center md:justify-between md:gap-8 md:p-6">
-            <div className="flex gap-4">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#D97757] text-white shadow-lg shadow-[#D97757]/20">
-                <Headset size={20} />
-              </span>
-              <div className="max-w-2xl">
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#C56547]">{t('home.supportEyebrow')}</p>
-                <h2 className="mt-1 text-xl font-semibold text-[#3D3024] md:text-2xl">{t('home.supportTitle')}</h2>
-                <p className="mt-1.5 text-sm leading-7 text-[#7D6B5B]">{t('home.supportDesc')}</p>
+          <div className="rounded-[28px] border border-[#E6C7B3] bg-[#FFF3EB] p-5 shadow-[0_24px_70px_rgba(217,119,87,0.18)] md:p-6">
+            <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
+              <div className="flex gap-4">
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#D97757] text-white shadow-lg shadow-[#D97757]/25">
+                  <Headset size={20} />
+                </span>
+                <div className="max-w-2xl">
+                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#C56547]">{t('home.supportEyebrow')}</p>
+                  <h2 className="mt-1 text-xl font-semibold text-[#3D3024] md:text-2xl">{t('home.supportTitle')}</h2>
+                  <p className="mt-2 text-sm leading-7 text-[#7D6B5B]">{t('home.supportDesc')}</p>
+                </div>
+              </div>
+              <div className={`grid gap-3 ${supportLink?.isTelegram ? 'sm:grid-cols-2 lg:w-[560px]' : 'lg:w-[340px]'} lg:justify-self-end`}>
+                <a
+                  href={`mailto:${SUPPORT_EMAIL}`}
+                  className="flex min-h-[64px] min-w-0 items-center gap-3 rounded-2xl bg-[#D97757] px-4 py-3 text-white shadow-[0_14px_30px_rgba(217,119,87,0.22)] transition-colors hover:bg-[#C4613F] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D97757]"
+                >
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/20">
+                    <Mail size={18} />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-[11px] font-bold uppercase tracking-[0.14em] text-white/75">Email</span>
+                    <span className="mt-0.5 block truncate text-sm font-semibold">{SUPPORT_EMAIL}</span>
+                  </span>
+                </a>
+                {supportLink?.isTelegram && (
+                  <a
+                    href={supportLink.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex min-h-[64px] min-w-0 items-center gap-3 rounded-2xl border border-[#E6C7B3] bg-white/70 px-4 py-3 text-[#3D3024] transition-colors hover:bg-white/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D97757]"
+                  >
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#D97757]/10 text-[#C56547]">
+                      <Headset size={18} />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block text-[11px] font-bold uppercase tracking-[0.14em] text-[#C56547]">Telegram</span>
+                      <span className="mt-0.5 block truncate text-sm font-semibold">{t('home.supportTelegramAction')}</span>
+                    </span>
+                  </a>
+                )}
               </div>
             </div>
-            {supportLink && (
-              <a
-                href={supportLink.href}
-                target={supportLink.isTelegram ? '_blank' : undefined}
-                rel={supportLink.isTelegram ? 'noopener noreferrer' : undefined}
-                className="mt-5 inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#D97757] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[#D97757]/20 transition-colors hover:bg-[#C56547] md:mt-0"
-              >
-                {supportLink.isTelegram ? t('home.supportTelegramAction') : t('nav.contactSupport')}
-                <ArrowRight size={15} />
-              </a>
-            )}
           </div>
         </FadeContent>
       </SnapSection>
