@@ -39,7 +39,7 @@ const CCSWITCH_APPS = [
 const API_ENDPOINTS = [
   {
     id: 'overseas-direct',
-    url: 'https://aiapi.up.railway.app',
+    url: 'https://test1122.up.railway.app/',
     nameKey: 'config.apiEndpointOverseasDirectName',
     descKey: 'config.apiEndpointOverseasDirectDesc',
   },
@@ -215,7 +215,7 @@ const ConfigExporter = ({ tokens = [] }) => {
       API_ENDPOINTS[0],
     [selectedEndpointId],
   );
-  const apiServerAddress = selectedEndpoint.url;
+  const apiServerAddress = selectedEndpoint.url.replace(/\/+$/, '');
 
   const selectedToken = useMemo(
     () => tokens.find((token) => token.id === selectedTokenId) || null,
