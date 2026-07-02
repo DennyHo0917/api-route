@@ -19,6 +19,7 @@ const Tasks = lazy(() => import('./pages/Tasks'));
 const SubDistributor = lazy(() => import('./pages/SubDistributor'));
 const Account = lazy(() => import('./pages/Account'));
 const NotFound = lazy(() => import('./pages/NotFound'));
+const Legal = lazy(() => import('./pages/Legal'));
 
 const Loading = () => (
   <div className="flex items-center justify-center min-h-screen" style={{ background: 'var(--page-bg)' }}>
@@ -56,6 +57,8 @@ function ThemedRoutes() {
           <Route path="/ai-api-reseller-platform" element={<SubDistributor />} />
           <Route path="/sub-site" element={<LegacySubSiteRedirect />} />
           <Route path="/faq" element={<Faq />} />
+          <Route path="/privacy-policy" element={<Legal type="privacy" />} />
+          <Route path="/terms-of-service" element={<Legal type="terms" />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 

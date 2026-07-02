@@ -77,6 +77,7 @@ export const normalizeLanguagePath = (pathname = '/', search = '', hash = '') =>
 export const getAutoLanguageRedirectPath = (pathname = '/', search = '', hash = '') => {
   if (typeof window === 'undefined') return '';
   if (/bot|crawler|spider|slurp|duckduckbot|baiduspider|yandex/i.test(window.navigator.userAgent || '')) return '';
+  if (hasLanguagePrefix(pathname)) return '';
 
   let manualLanguage = '';
   try {

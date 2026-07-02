@@ -10,6 +10,8 @@ import {
   getVisibleNavItems,
   isSiteNavActive,
 } from '../../utils/navigation';
+import { getLegalCopy } from '../../content/legalCopy';
+import { normalizeAppLanguage } from '../../i18n/languageUtils';
 
 const SUPPORT_EMAIL = 'support@api-route.com';
 
@@ -34,7 +36,7 @@ function getSupportLink(site) {
 }
 
 export default function ClaudeLayout() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user, logout } = useAuth();
   const { site } = useSite();
   const navigate = useNavigate();
@@ -59,6 +61,10 @@ export default function ClaudeLayout() {
   const supportLabel = supportLink?.isTelegram
     ? t('nav.telegramSupport')
     : t('nav.contactSupport');
+  const legalLabels = getLegalCopy(
+    normalizeAppLanguage(i18n.resolvedLanguage || i18n.language),
+    'privacy',
+  ).labels;
   const isSnapDeckPage = location.pathname === '/' || location.pathname === '/ai-api-reseller-platform';
 
   useEffect(() => {
@@ -308,6 +314,8 @@ export default function ClaudeLayout() {
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-[#766657]">
             <Link to="/apps" className="hover:text-[#D97757]">{t('nav.apps')}</Link>
             <Link to="/faq" className="hover:text-[#D97757]">{t('nav.faq')}</Link>
+            <Link to="/privacy-policy" className="hover:text-[#D97757]">{legalLabels.privacy}</Link>
+            <Link to="/terms-of-service" className="hover:text-[#D97757]">{legalLabels.terms}</Link>
             <a href={`mailto:${SUPPORT_EMAIL}`} className="hover:text-[#D97757]">
               {SUPPORT_EMAIL}
             </a>

@@ -5,6 +5,7 @@ import { useSite } from '../context/SiteContext';
 import { DIST_SITE_LANGUAGES, getLocalizedPath, normalizeAppLanguage } from '../i18n/languageUtils';
 import { FAQ_COPY } from '../content/faqCopy';
 import { SEO_COPY } from '../content/seoCopy';
+import { getLegalCopy } from '../content/legalCopy';
 
 const DEFAULT_SITE_URL = 'https://www.api-route.com';
 const DEFAULT_LOGO_URL = 'https://img.api-route.com/3.png';
@@ -17,7 +18,7 @@ const STRUCTURED_DATA_TOPICS = [
   'OpenAI-compatible API',
   'AI API reseller platform',
 ];
-const INDEXABLE_PATHS = new Set(['/', '/pricing', '/packages', '/apps', '/ai-api-reseller-platform', '/faq']);
+const INDEXABLE_PATHS = new Set(['/', '/pricing', '/packages', '/apps', '/ai-api-reseller-platform', '/faq', '/privacy-policy', '/terms-of-service']);
 const PRIVATE_PATHS = new Set(['/login', '/register', '/dashboard', '/tokens', '/logs', '/tasks', '/topup', '/account']);
 const LANGUAGE_HREFLANGS = {
   zh: 'zh-CN',
@@ -135,6 +136,14 @@ function getFaqSeoPage(languageKey) {
 }
 
 function getPageCopy(pathname, copy, languageKey) {
+  if (pathname === '/privacy-policy') {
+    const { page } = getLegalCopy(languageKey, 'privacy');
+    return { title: page.title, description: page.description };
+  }
+  if (pathname === '/terms-of-service') {
+    const { page } = getLegalCopy(languageKey, 'terms');
+    return { title: page.title, description: page.description };
+  }
   if (pathname === '/') return copy.home;
   if (pathname === '/pricing') return copy.pricing;
   if (pathname === '/packages') return copy.packages;

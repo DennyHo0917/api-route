@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { FAQ_COPY } from '../src/content/faqCopy.js';
+import { getLegalCopy } from '../src/content/legalCopy.js';
 import { SEO_COPY } from '../src/content/seoCopy.js';
 import { getLocalizedPath } from '../src/i18n/languageUtils.js';
 
@@ -32,6 +33,8 @@ const pages = [
   { key: 'apps', path: '/apps' },
   { key: 'subSite', path: '/ai-api-reseller-platform' },
   { key: 'faq', path: '/faq' },
+  { key: 'privacy', path: '/privacy-policy' },
+  { key: 'terms', path: '/terms-of-service' },
 ];
 
 const snapshotLabels = {
@@ -48,6 +51,8 @@ const relatedPageKeys = {
   apps: ['pricing', 'faq', 'packages'],
   subSite: ['pricing', 'faq', 'packages'],
   faq: ['pricing', 'packages', 'subSite'],
+  privacy: ['terms', 'faq'],
+  terms: ['privacy', 'faq'],
 };
 
 const escapeHtml = (value) => String(value)
@@ -70,8 +75,21 @@ function getFaqPage(language) {
   };
 }
 
+function getLegalPage(key, language) {
+  const { page } = getLegalCopy(language, key === 'terms' ? 'terms' : 'privacy');
+  return {
+    title: page.title,
+    description: page.description,
+    questions: page.sections.map((section) => [
+      section.title,
+      section.body.join(' '),
+    ]),
+  };
+}
+
 function getSeoPage(page, language) {
   if (page.key === 'faq') return getFaqPage(language);
+  if (page.key === 'privacy' || page.key === 'terms') return getLegalPage(page.key, language);
   return SEO_COPY[language]?.[page.key] || SEO_COPY.en[page.key];
 }
 
@@ -110,6 +128,8 @@ function renderSnapshot(page, language, title, description, questions) {
     ['/apps', 'Apps'],
     ['/ai-api-reseller-platform', 'Reseller'],
     ['/faq', 'FAQ'],
+    ['/privacy-policy', 'Privacy Policy'],
+    ['/terms-of-service', 'Terms of Service'],
   ].map(([path, label]) => `<a href="${SITE_URL}${localizedPath(path, language)}">${label}</a>`).join(' ');
 
   return `<main data-seo-prerendered="true">${renderBreadcrumb(page, language, title)}<h1>${escapeHtml(title)}</h1><p>${escapeHtml(description)}</p>${renderRelatedPages(page, language)}${renderQuestions(questions)}<nav>${links}</nav></main>`;

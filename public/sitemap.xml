@@ -268,6 +268,94 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.api-route.com/privacy-policy</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/privacy-policy" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/zh/privacy-policy" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/privacy-policy" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/privacy-policy" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/privacy-policy" />
+    <lastmod>2026-07-02</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.api-route.com/zh/privacy-policy</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/privacy-policy" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/zh/privacy-policy" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/privacy-policy" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/privacy-policy" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/privacy-policy" />
+    <lastmod>2026-07-02</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.api-route.com/ja/privacy-policy</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/privacy-policy" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/zh/privacy-policy" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/privacy-policy" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/privacy-policy" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/privacy-policy" />
+    <lastmod>2026-07-02</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.api-route.com/ko/privacy-policy</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/privacy-policy" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/zh/privacy-policy" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/privacy-policy" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/privacy-policy" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/privacy-policy" />
+    <lastmod>2026-07-02</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.api-route.com/terms-of-service</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/terms-of-service" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/zh/terms-of-service" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/terms-of-service" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/terms-of-service" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/terms-of-service" />
+    <lastmod>2026-07-02</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.api-route.com/zh/terms-of-service</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/terms-of-service" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/zh/terms-of-service" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/terms-of-service" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/terms-of-service" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/terms-of-service" />
+    <lastmod>2026-07-02</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.api-route.com/ja/terms-of-service</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/terms-of-service" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/zh/terms-of-service" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/terms-of-service" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/terms-of-service" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/terms-of-service" />
+    <lastmod>2026-07-02</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.api-route.com/ko/terms-of-service</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/terms-of-service" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/zh/terms-of-service" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/terms-of-service" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/terms-of-service" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/terms-of-service" />
+    <lastmod>2026-07-02</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://www.api-route.com/llms.txt</loc>
     <lastmod>2026-06-22</lastmod>
     <changefreq>monthly</changefreq>
