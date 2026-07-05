@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import {
+  AppWindow,
   ArrowRight,
   Braces,
   CheckCircle2,
@@ -10,6 +11,7 @@ import {
   Layers3,
   ShieldCheck,
   Sparkles,
+  Store,
   Tags,
   TicketCheck,
   WalletCards,
@@ -62,6 +64,36 @@ function submitEpayForm(resData) {
 const AUDIENCE_ICONS = [Sparkles, Braces, Layers3, ShieldCheck];
 const REVENUE_ICONS = [Tags, TicketCheck, WalletCards, Sparkles, Layers3];
 const INCLUDED_ICONS = [ShieldCheck, Sparkles, KeyRound, Tags, TicketCheck, WalletCards, Layers3];
+const INBOUND_ROUTE = {
+  id: 'app',
+  d: 'M70 160 C140 160 220 160 302 160',
+  color: '#2F855A',
+  duration: '4.2s',
+  begin: '-1.8s',
+  secondBegin: '-3.7s',
+};
+const MODEL_ROUTES = [
+  { id: 'openai', d: 'M302 160 C418 150 468 52 646 48', color: '#2F855A', duration: '5.8s', begin: '-1.1s', secondBegin: '-4.0s' },
+  { id: 'claude', d: 'M302 160 C420 150 485 104 646 98', color: '#D97757', duration: '5.2s', begin: '-2.4s', secondBegin: '-4.8s' },
+  { id: 'gemini', d: 'M302 160 C430 158 500 160 646 160', color: '#D6A23F', duration: '4.8s', begin: '-0.4s', secondBegin: '-2.9s' },
+  { id: 'deepseek', d: 'M302 160 C424 174 488 220 646 226', color: '#2F855A', duration: '5.5s', begin: '-3.1s', secondBegin: '-5.4s' },
+  { id: 'grok', d: 'M302 160 C412 184 458 274 646 282', color: '#D97757', duration: '6.1s', begin: '-1.7s', secondBegin: '-4.6s' },
+];
+const providerLogo = (slug) => `https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/${slug}.svg`;
+const grokLogo = 'https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@latest/icons/grok.svg';
+const MODEL_NODES = [
+  { id: 'openai', mark: 'O', label: 'OpenAI', logo: providerLogo('openai'), top: '15%' },
+  { id: 'claude', mark: 'C', label: 'Claude', logo: providerLogo('claude'), top: '31%' },
+  { id: 'gemini', mark: 'G', label: 'Gemini', logo: providerLogo('googlegemini'), top: '50%' },
+  { id: 'deepseek', mark: 'D', label: 'DeepSeek', logo: providerLogo('deepseek'), top: '69%' },
+  { id: 'grok', mark: 'X', label: 'Grok', logo: grokLogo, top: '85%' },
+];
+const ROUTER_MAP_COPY = {
+  en: { customer: 'Your customers', site: 'Your site', relay: 'AI API site', label: 'Customers connect to your AI API site, then your site routes to model providers' },
+  zh: { customer: '你的客户', site: '你的站点', relay: 'AI API 分站', label: '客户连接你的 AI API 分站，再由分站连接各个大模型' },
+  ja: { customer: 'あなたの顧客', site: 'あなたのサイト', relay: 'AI API サイト', label: '顧客があなたの AI API サイトに接続し、サイトが各モデルへ中継します' },
+  ko: { customer: '고객', site: '내 사이트', relay: 'AI API 사이트', label: '고객이 내 AI API 사이트에 연결되고, 사이트가 각 모델로 중계합니다' },
+};
 const FOUR_HOURS_MS = 4 * 60 * 60 * 1000;
 const ACTIVITY_NAME_POOLS = [
   { given: ['Wei', 'Ming', 'Rui', 'Yue', 'Jun'], family: ['Chen', 'Lin', 'Zhao', 'Wang', 'Liu'], familyFirst: true },
@@ -124,6 +156,67 @@ function buildLaunchEvents(batchKey, generatedAt = Date.now()) {
     const minutesAgo = 8 + Math.floor(random() * weekMinutes);
     return { name, time: formatMinuteTime(new Date(generatedAt - minutesAgo * 60 * 1000)) };
   }).sort((a, b) => (a.time < b.time ? 1 : -1));
+}
+
+function ModelRouteAnimation({ language }) {
+  const copy = ROUTER_MAP_COPY[language] || ROUTER_MAP_COPY.en;
+  const routes = [INBOUND_ROUTE, ...MODEL_ROUTES];
+
+  return (
+    <div className="sub-dist-router-map hidden lg:block" aria-label={copy.label}>
+      <svg className="sub-dist-router-map__lines" viewBox="0 0 760 320" preserveAspectRatio="none" aria-hidden="true">
+        <path className="sub-dist-router-map__route sub-dist-router-map__route--in" d={INBOUND_ROUTE.d} stroke={INBOUND_ROUTE.color} />
+        {MODEL_ROUTES.map((route) => (
+          <path key={route.id} className="sub-dist-router-map__route" d={route.d} stroke={route.color} />
+        ))}
+        {routes.map((route) => (
+          [route.begin, route.secondBegin].map((begin) => (
+            <circle key={`${route.id}-${begin}`} className="sub-dist-router-map__dot" r="5" fill={route.color}>
+              <animateMotion dur={route.duration} begin={begin} repeatCount="indefinite" path={route.d} />
+            </circle>
+          ))
+        ))}
+      </svg>
+
+      <span className="sub-dist-router-map__ring" />
+      <span className="sub-dist-router-map__ring sub-dist-router-map__ring--slow" />
+
+      <div className="sub-dist-router-map__node sub-dist-router-map__node--app">
+        <span className="sub-dist-router-map__node-icon">
+          <AppWindow className="h-4 w-4" />
+        </span>
+        <span>{copy.customer}</span>
+      </div>
+
+      <div className="sub-dist-router-map__node sub-dist-router-map__node--center">
+        <span className="sub-dist-router-map__center-icon">
+          <Store className="h-6 w-6" />
+        </span>
+        <strong>{copy.site}</strong>
+        <span>{copy.relay}</span>
+      </div>
+
+      {MODEL_NODES.map((node) => (
+        <div key={node.id} className="sub-dist-router-map__node sub-dist-router-map__node--model" style={{ top: node.top }}>
+          <span className="sub-dist-router-map__model-mark">
+            <img
+              src={node.logo}
+              alt=""
+              loading="lazy"
+              decoding="async"
+              className="sub-dist-router-map__model-logo"
+              onError={(event) => {
+                event.currentTarget.classList.add('hidden');
+                event.currentTarget.nextElementSibling?.classList.remove('hidden');
+              }}
+            />
+            <span className="hidden">{node.mark}</span>
+          </span>
+          <span>{node.label}</span>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 const MARKETING_COPY = {
@@ -707,6 +800,7 @@ export default function SubDistributor() {
               ))}
             </div>
           </div>
+          <ModelRouteAnimation language={language} />
         </FadeContent>
 
         <FadeContent direction="right" distance={38} duration={780} delay={120} className="lg:self-stretch">
