@@ -3,3 +3,6 @@ dist
 .env
 .env.local
 *.log
+keys.txt
+keys.txt.enc
+keys.txt.secret.txt
