@@ -321,16 +321,16 @@ export default function ClaudeHome() {
                   {workflowSteps.map((step, index) => {
                     const Icon = step.icon;
                     return (
-                      <div key={step.number} className="relative flex gap-4 py-5">
+                      <div key={step.number} className={`route-workflow-step route-workflow-step--${index + 1} relative flex gap-4 py-5`}>
                         {index < workflowSteps.length - 1 && (
-                          <span className="absolute left-[21px] top-[64px] bottom-[-20px] w-px bg-[#E2CFC0]" />
+                          <span className={`route-workflow-line route-workflow-line--${index + 1} absolute left-[21px] top-[64px] bottom-[-20px] w-px bg-[#E2CFC0]`} />
                         )}
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[#E6D4C6] bg-[#F8EAE0] text-[#C56547]">
+                        <div className="route-workflow-icon flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[#E6D4C6] bg-[#F8EAE0] text-[#C56547]">
                           <Icon size={19} />
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-bold tracking-[0.18em] text-[#B68D75]">{step.number}</span>
+                            <span className="route-workflow-number text-[10px] font-bold tracking-[0.18em] text-[#B68D75]">{step.number}</span>
                             <h3 className="text-sm font-semibold text-[#49382C]">{step.title}</h3>
                           </div>
                           <p className="mt-1.5 text-sm leading-6 text-[#806D5D]">{step.description}</p>
@@ -460,7 +460,7 @@ export default function ClaudeHome() {
             >
               <div
                 title={vendor.name}
-                className="route-motion-card group flex h-20 w-full items-center justify-center rounded-2xl border border-[#E3D4C7] bg-white/70 px-3 shadow-[0_12px_30px_rgba(82,61,43,0.05)] transition-all duration-300 hover:-translate-y-1 hover:border-[#D7BBA5] hover:bg-white"
+                className={`route-provider-card route-provider-card--${index + 1} route-motion-card group flex h-20 w-full items-center justify-center rounded-2xl border border-[#E3D4C7] bg-white/70 px-3 shadow-[0_12px_30px_rgba(82,61,43,0.05)] transition-all duration-300 hover:-translate-y-1 hover:border-[#D7BBA5] hover:bg-white`}
               >
                 <VendorMark vendor={vendor} />
                 <span className="sr-only">{vendor.name}</span>

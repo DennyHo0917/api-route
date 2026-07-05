@@ -530,11 +530,215 @@
 @keyframes route-motion-primary-pulse {
   0%, 100% {
     box-shadow: 0 12px 28px rgba(217,119,87,0.24);
+    filter: var(--route-primary-pulse-filter);
   }
   50% {
     box-shadow:
       0 16px 34px rgba(217,119,87,0.32),
       0 0 0 4px rgba(217,119,87,0.08);
+    filter: var(--route-primary-pulse-filter-active);
+  }
+}
+
+.theme-claude {
+  --route-primary-pulse-filter: none;
+  --route-primary-pulse-filter-active: drop-shadow(0 0 12px rgba(217,119,87,0.2));
+  --route-workflow-line-bg: rgba(226,207,192,0.72);
+  --route-workflow-line-glow: #F0A07F;
+  --route-workflow-step-shadow: 0 0 0 5px rgba(217,119,87,0.1), 0 10px 22px rgba(217,119,87,0.18);
+  --route-workflow-step-outline: rgba(217,119,87,0.32);
+  --route-workflow-step-filter: drop-shadow(0 0 10px rgba(217,119,87,0.22));
+  --route-workflow-number-active: #D97757;
+  --route-provider-idle-border: #E3D4C7;
+  --route-provider-active-border: #D97757;
+  --route-provider-idle-shadow: 0 12px 30px rgba(82,61,43,0.05);
+  --route-provider-active-shadow: 0 18px 44px rgba(217,119,87,0.14);
+  --route-provider-active-outline: rgba(217,119,87,0.28);
+  --route-provider-active-filter: drop-shadow(0 0 14px rgba(217,119,87,0.18));
+  --route-provider-aura: radial-gradient(circle at center, rgba(217,119,87,0.14), rgba(217,119,87,0.06) 46%, transparent 72%);
+  --route-provider-aura-shadow: 0 0 24px rgba(217,119,87,0.16);
+}
+
+.route-workflow-icon {
+  outline: 1px solid transparent;
+  outline-offset: -1px;
+  animation: route-workflow-step-focus 5.4s ease-in-out infinite;
+}
+
+.route-workflow-number {
+  display: inline-block;
+  animation: route-workflow-number-focus 5.4s ease-in-out infinite;
+}
+
+.route-workflow-step--2 .route-workflow-icon,
+.route-workflow-step--2 .route-workflow-number {
+  animation-delay: 1.8s;
+}
+
+.route-workflow-step--3 .route-workflow-icon,
+.route-workflow-step--3 .route-workflow-number {
+  animation-delay: 3.6s;
+}
+
+.route-workflow-line {
+  overflow: hidden;
+  background: var(--route-workflow-line-bg);
+}
+
+.route-workflow-line::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -45%;
+  width: 100%;
+  height: 42%;
+  background: linear-gradient(to bottom, transparent, var(--route-workflow-line-glow), transparent);
+  box-shadow: 0 0 10px var(--route-workflow-line-glow);
+  animation: route-workflow-line-flow 5.4s ease-in-out infinite;
+}
+
+.route-workflow-line--1::after {
+  animation-delay: 0.8s;
+}
+
+.route-workflow-line--2::after {
+  animation-delay: 2.6s;
+}
+
+.route-provider-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  outline: 1px solid transparent;
+  outline-offset: -1px;
+  animation: route-provider-card-scan 9s ease-in-out infinite;
+}
+
+.route-provider-card::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: var(--route-provider-aura);
+  box-shadow: inset var(--route-provider-aura-shadow);
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.96);
+  animation: route-provider-card-aura 9s ease-in-out infinite;
+  animation-delay: inherit;
+  z-index: 0;
+}
+
+.route-provider-card .provider-logo,
+.route-provider-card .provider-logo-fallback {
+  position: relative;
+  z-index: 1;
+  animation: route-provider-logo-scan 9s ease-in-out infinite;
+}
+
+.route-provider-card--2,
+.route-provider-card--2 .provider-logo,
+.route-provider-card--2 .provider-logo-fallback {
+  animation-delay: 1.5s;
+}
+
+.route-provider-card--3,
+.route-provider-card--3 .provider-logo,
+.route-provider-card--3 .provider-logo-fallback {
+  animation-delay: 3s;
+}
+
+.route-provider-card--4,
+.route-provider-card--4 .provider-logo,
+.route-provider-card--4 .provider-logo-fallback {
+  animation-delay: 4.5s;
+}
+
+.route-provider-card--5,
+.route-provider-card--5 .provider-logo,
+.route-provider-card--5 .provider-logo-fallback {
+  animation-delay: 6s;
+}
+
+.route-provider-card--6,
+.route-provider-card--6 .provider-logo,
+.route-provider-card--6 .provider-logo-fallback {
+  animation-delay: 7.5s;
+}
+
+@keyframes route-workflow-step-focus {
+  0%, 31%, 100% {
+    transform: none;
+    box-shadow: none;
+    filter: none;
+    outline-color: transparent;
+  }
+  10%, 22% {
+    transform: scale(1.06);
+    box-shadow: var(--route-workflow-step-shadow);
+    filter: var(--route-workflow-step-filter);
+    outline-color: var(--route-workflow-step-outline);
+  }
+}
+
+@keyframes route-workflow-number-focus {
+  0%, 31%, 100% {
+    transform: none;
+  }
+  10%, 22% {
+    color: var(--route-workflow-number-active);
+    transform: translateY(-1px);
+  }
+}
+
+@keyframes route-workflow-line-flow {
+  0%, 18%, 100% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  28% {
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(350%);
+    opacity: 0;
+  }
+}
+
+@keyframes route-provider-card-scan {
+  0%, 18%, 100% {
+    border-color: var(--route-provider-idle-border);
+    box-shadow: var(--route-provider-idle-shadow);
+    filter: none;
+    outline-color: transparent;
+  }
+  8%, 14% {
+    border-color: var(--route-provider-active-border);
+    box-shadow: var(--route-provider-active-shadow);
+    filter: var(--route-provider-active-filter);
+    outline-color: var(--route-provider-active-outline);
+  }
+}
+
+@keyframes route-provider-card-aura {
+  0%, 18%, 100% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  8%, 14% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes route-provider-logo-scan {
+  0%, 18%, 100% {
+    transform: none;
+    opacity: 0.9;
+  }
+  8%, 14% {
+    transform: scale(1.06);
+    opacity: 1;
   }
 }
 
@@ -572,6 +776,22 @@ html[data-color-scheme='dark'] .theme-claude {
   --page-danger-text: 235 126 126;
   --page-info: 232 154 124;
   --page-info-text: 232 154 124;
+  --route-primary-pulse-filter: none;
+  --route-primary-pulse-filter-active: drop-shadow(0 0 10px rgba(232,154,124,0.18));
+  --route-workflow-line-bg: rgba(73,58,49,0.9);
+  --route-workflow-line-glow: #E89A7C;
+  --route-workflow-step-shadow: 0 0 0 5px rgba(232,154,124,0.08), 0 10px 22px rgba(0,0,0,0.24);
+  --route-workflow-step-outline: rgba(232,154,124,0.26);
+  --route-workflow-step-filter: drop-shadow(0 0 10px rgba(232,154,124,0.2));
+  --route-workflow-number-active: #E89A7C;
+  --route-provider-idle-border: #493a31;
+  --route-provider-active-border: rgba(232,154,124,0.76);
+  --route-provider-idle-shadow: 0 12px 30px rgba(0,0,0,0.22);
+  --route-provider-active-shadow: 0 18px 44px rgba(0,0,0,0.32), 0 0 0 1px rgba(232,154,124,0.12);
+  --route-provider-active-outline: rgba(232,154,124,0.24);
+  --route-provider-active-filter: drop-shadow(0 0 14px rgba(232,154,124,0.16));
+  --route-provider-aura: radial-gradient(circle at center, rgba(232,154,124,0.16), rgba(232,154,124,0.07) 46%, transparent 72%);
+  --route-provider-aura-shadow: 0 0 28px rgba(232,154,124,0.14);
   color: rgb(var(--page-text));
 }
 
@@ -1922,6 +2142,16 @@ html[data-color-scheme='dark'] .theme-claude .sub-dist-router-map__model-logo {
 
 @media (prefers-reduced-motion: reduce) {
   .route-motion-primary {
+    animation: none;
+  }
+
+  .route-workflow-icon,
+  .route-workflow-number,
+  .route-workflow-line::after,
+  .route-provider-card::after,
+  .route-provider-card,
+  .route-provider-card .provider-logo,
+  .route-provider-card .provider-logo-fallback {
     animation: none;
   }
 
