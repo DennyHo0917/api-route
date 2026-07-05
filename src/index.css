@@ -462,6 +462,82 @@
   line-height: 1.15;
 }
 
+.route-motion-button,
+.route-motion-card,
+.route-motion-link,
+.route-motion-icon,
+.route-motion-arrow {
+  transition-duration: 180ms;
+  transition-timing-function: ease;
+}
+
+.route-motion-button {
+  transition-property: transform, box-shadow, background-color, border-color, color;
+}
+
+.route-motion-button:not(:disabled):hover {
+  transform: translateY(-2px);
+}
+
+.route-motion-button:not(:disabled):active {
+  transform: translateY(0) scale(0.98);
+}
+
+.route-motion-primary {
+  animation: route-motion-primary-pulse 4.2s ease-in-out infinite;
+}
+
+.route-motion-card {
+  transition-property: transform, box-shadow, border-color, background-color;
+}
+
+.route-motion-link {
+  transition-property: color;
+}
+
+.route-motion-card:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 18px 46px rgba(82,61,43,0.1) !important;
+}
+
+.route-motion-icon {
+  transition-property: transform, background-color, color;
+}
+
+.route-motion-card:hover .route-motion-icon {
+  transform: scale(1.06) rotate(-2deg);
+  background-color: rgba(217,119,87,0.16);
+}
+
+.route-motion-arrow {
+  transition-property: transform;
+}
+
+.route-motion-button:hover .route-motion-arrow,
+.route-motion-card:hover .route-motion-arrow,
+.route-motion-link:hover .route-motion-arrow {
+  transform: translateX(2px);
+}
+
+.route-motion-card .provider-logo {
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.route-motion-card:hover .provider-logo {
+  transform: scale(1.05);
+}
+
+@keyframes route-motion-primary-pulse {
+  0%, 100% {
+    box-shadow: 0 12px 28px rgba(217,119,87,0.24);
+  }
+  50% {
+    box-shadow:
+      0 16px 34px rgba(217,119,87,0.32),
+      0 0 0 4px rgba(217,119,87,0.08);
+  }
+}
+
 .language-select option {
   background: #ffffff;
   color: #1f2937;
@@ -729,6 +805,10 @@ html[data-color-scheme='dark'] .theme-claude [class~='hover:text-[#D97757]']:hov
 
 html[data-color-scheme='dark'] .theme-claude [class*='shadow-[0_'] {
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.25) !important;
+}
+
+html[data-color-scheme='dark'] .theme-claude .route-motion-card:hover {
+  box-shadow: 0 20px 52px rgba(0, 0, 0, 0.34) !important;
 }
 
 /* New distributor theme shared-page skins */
@@ -1841,6 +1921,28 @@ html[data-color-scheme='dark'] .theme-claude .sub-dist-router-map__model-logo {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .route-motion-primary {
+    animation: none;
+  }
+
+  .route-motion-button,
+  .route-motion-card,
+  .route-motion-icon,
+  .route-motion-arrow {
+    transition: none;
+  }
+
+  .route-motion-button:not(:disabled):hover,
+  .route-motion-button:not(:disabled):active,
+  .route-motion-card:hover,
+  .route-motion-card:hover .route-motion-icon,
+  .route-motion-card:hover .provider-logo,
+  .route-motion-button:hover .route-motion-arrow,
+  .route-motion-card:hover .route-motion-arrow,
+  .route-motion-link:hover .route-motion-arrow {
+    transform: none !important;
+  }
+
   .sub-dist-router-map__dot {
     display: none;
   }

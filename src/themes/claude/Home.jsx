@@ -266,22 +266,22 @@ export default function ClaudeHome() {
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Link
                 to={user ? '/topup' : '/register'}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#D97757] px-6 py-3.5 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(217,119,87,0.24)] transition-all hover:-translate-y-0.5 hover:bg-[#C4613F]"
+                className="route-motion-button route-motion-primary inline-flex items-center justify-center gap-2 rounded-full bg-[#D97757] px-6 py-3.5 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(217,119,87,0.24)] transition-all hover:-translate-y-0.5 hover:bg-[#C4613F]"
               >
                 <ShoppingBag size={17} />
                 {t('home.buyVoucher')}
-                <ArrowRight size={16} />
+                <ArrowRight size={16} className="route-motion-arrow" />
               </Link>
               <Link
                 to="/packages"
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-[#DCCBBD] bg-white/75 px-6 py-3.5 text-sm font-semibold text-[#59483A] transition-all hover:border-[#CBAE98] hover:bg-white"
+                className="route-motion-button inline-flex items-center justify-center gap-2 rounded-full border border-[#DCCBBD] bg-white/75 px-6 py-3.5 text-sm font-semibold text-[#59483A] transition-all hover:border-[#CBAE98] hover:bg-white"
               >
                 <TicketCheck size={17} />
                 {t('home.viewPackages')}
               </Link>
               <Link
                 to="/ai-api-reseller-platform"
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-[#DCCBBD] bg-[#FFF7F0] px-6 py-3.5 text-sm font-semibold text-[#8F4C35] transition-all hover:border-[#CBAE98] hover:bg-white"
+                className="route-motion-button inline-flex items-center justify-center gap-2 rounded-full border border-[#DCCBBD] bg-[#FFF7F0] px-6 py-3.5 text-sm font-semibold text-[#8F4C35] transition-all hover:border-[#CBAE98] hover:bg-white"
               >
                 <ShieldCheck size={17} />
                 {t('home.deployGateway')}
@@ -323,7 +323,7 @@ export default function ClaudeHome() {
                     return (
                       <div key={step.number} className="relative flex gap-4 py-5">
                         {index < workflowSteps.length - 1 && (
-                          <span className="absolute left-[21px] top-[54px] h-8 w-px bg-[#E2CFC0]" />
+                          <span className="absolute left-[21px] top-[64px] bottom-[-20px] w-px bg-[#E2CFC0]" />
                         )}
                         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[#E6D4C6] bg-[#F8EAE0] text-[#C56547]">
                           <Icon size={19} />
@@ -353,10 +353,10 @@ export default function ClaudeHome() {
                       <p className="mt-1.5 text-sm leading-6 text-[#806D5D]">{t('home.platformDesc')}</p>
                       <Link
                         to="/ai-api-reseller-platform"
-                        className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-[#C56547] hover:text-[#A84F34]"
+                        className="route-motion-link mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-[#C56547] hover:text-[#A84F34]"
                       >
                         {t('home.platformAction')}
-                        <ArrowRight size={14} />
+                        <ArrowRight size={14} className="route-motion-arrow" />
                       </Link>
                     </div>
                   </div>
@@ -395,9 +395,9 @@ export default function ClaudeHome() {
             </p>
           </FadeContent>
           <FadeContent direction="right" distance={36} duration={750} delay={80}>
-            <Link to="/faq" className="inline-flex items-center gap-2 text-sm font-semibold text-[#C56547] hover:text-[#A84F34]">
+            <Link to="/faq" className="route-motion-link inline-flex items-center gap-2 text-sm font-semibold text-[#C56547] hover:text-[#A84F34]">
               {t('nav.faq')}
-              <ArrowRight size={15} />
+              <ArrowRight size={15} className="route-motion-arrow" />
             </Link>
           </FadeContent>
         </div>
@@ -414,16 +414,16 @@ export default function ClaudeHome() {
             >
               <Link
                 to={to}
-                className="group flex h-full min-h-[210px] flex-col rounded-[22px] border border-[#E5D7CB] bg-white/65 p-5 shadow-[0_14px_40px_rgba(82,61,43,0.04)] transition-all hover:-translate-y-0.5 hover:border-[#D8BBA7] hover:bg-white"
+                className="route-motion-card group flex h-full min-h-[210px] flex-col rounded-[22px] border border-[#E5D7CB] bg-white/65 p-5 shadow-[0_14px_40px_rgba(82,61,43,0.04)] transition-all hover:-translate-y-0.5 hover:border-[#D8BBA7] hover:bg-white"
               >
-                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#D97757]/10 text-[#C56547]">
+                <span className="route-motion-icon flex h-11 w-11 items-center justify-center rounded-2xl bg-[#D97757]/10 text-[#C56547]">
                   <Icon size={20} />
                 </span>
                 <h3 className="mt-5 text-base font-semibold leading-6 text-[#3D3024]">{title}</h3>
                 <p className="mt-2 flex-1 text-sm leading-6 text-[#7D6B5B]">{description}</p>
                 <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-[#C56547] group-hover:text-[#A84F34]">
                   {linkLabel}
-                  <ArrowRight size={14} />
+                  <ArrowRight size={14} className="route-motion-arrow" />
                 </span>
               </Link>
             </FadeContent>
@@ -444,9 +444,9 @@ export default function ClaudeHome() {
           <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-[#7D6B5B] md:text-lg">
             保持统一协议，快速切换与扩展模型能力，随时接入最新生态。
           </p>
-          <Link to="/pricing" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#C56547] transition-colors hover:text-[#A84F34]">
+          <Link to="/pricing" className="route-motion-link mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#C56547] transition-colors hover:text-[#A84F34]">
             {t('home.viewAllModels', { count: enabledModels.length })}
-            <ArrowRight size={15} />
+            <ArrowRight size={15} className="route-motion-arrow" />
           </Link>
         </FadeContent>
         <div className="mx-auto mt-10 grid w-full max-w-[640px] grid-cols-3 gap-3 md:gap-4">
@@ -460,7 +460,7 @@ export default function ClaudeHome() {
             >
               <div
                 title={vendor.name}
-                className="group flex h-20 w-full items-center justify-center rounded-2xl border border-[#E3D4C7] bg-white/70 px-3 shadow-[0_12px_30px_rgba(82,61,43,0.05)] transition-all duration-300 hover:-translate-y-1 hover:border-[#D7BBA5] hover:bg-white"
+                className="route-motion-card group flex h-20 w-full items-center justify-center rounded-2xl border border-[#E3D4C7] bg-white/70 px-3 shadow-[0_12px_30px_rgba(82,61,43,0.05)] transition-all duration-300 hover:-translate-y-1 hover:border-[#D7BBA5] hover:bg-white"
               >
                 <VendorMark vendor={vendor} />
                 <span className="sr-only">{vendor.name}</span>
@@ -483,9 +483,9 @@ export default function ClaudeHome() {
               <p className="mt-2 max-w-xl text-sm leading-6 text-[#7D6B5B]">{t('home.choosePlan')}</p>
             </FadeContent>
             <FadeContent direction="right" distance={36} duration={750} delay={80}>
-              <Link to="/packages" className="inline-flex items-center gap-2 text-sm font-semibold text-[#C56547] hover:text-[#A84F34]">
+              <Link to="/packages" className="route-motion-link inline-flex items-center gap-2 text-sm font-semibold text-[#C56547] hover:text-[#A84F34]">
                 {t('home.viewAllPackages')}
-                <ArrowRight size={15} />
+                <ArrowRight size={15} className="route-motion-arrow" />
               </Link>
             </FadeContent>
           </div>
@@ -504,7 +504,7 @@ export default function ClaudeHome() {
                   className="h-full"
                 >
                   <article
-                    className={`relative flex h-full min-h-[255px] flex-col rounded-[22px] border p-5 transition-all hover:-translate-y-1 ${
+                    className={`route-motion-card relative flex h-full min-h-[255px] flex-col rounded-[22px] border p-5 transition-all hover:-translate-y-1 ${
                       recommended
                         ? 'border-[#D97757] bg-[#FFF1E7] text-[#3D3024] shadow-[0_20px_50px_rgba(217,119,87,0.14)]'
                         : 'border-[#E5D7CB] bg-white/75 text-[#3D3024] shadow-[0_14px_40px_rgba(82,61,43,0.06)]'
@@ -559,7 +559,7 @@ export default function ClaudeHome() {
                       type="button"
                       onClick={() => handleSubscribe(pkg)}
                       disabled={subscribing === pkg.id}
-                      className={`mt-auto inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold transition-colors ${
+                      className={`route-motion-button mt-auto inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold transition-colors ${
                         recommended
                           ? 'bg-[#D97757] text-white hover:bg-[#E38969]'
                           : 'bg-[#F0E5DB] text-[#4B3B30] hover:bg-[#E6D6C8]'
@@ -598,8 +598,8 @@ export default function ClaudeHome() {
               duration={760}
               delay={index * 80}
             >
-              <div className="rounded-[22px] border border-[#E5D7CB] bg-white/65 p-5">
-                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#D97757]/10 text-[#C56547]">
+              <div className="route-motion-card rounded-[22px] border border-[#E5D7CB] bg-white/65 p-5">
+                <span className="route-motion-icon flex h-11 w-11 items-center justify-center rounded-2xl bg-[#D97757]/10 text-[#C56547]">
                   <Icon size={20} />
                 </span>
                 <h3 className="mt-4 text-lg font-semibold text-[#3D3024]">{title}</h3>
