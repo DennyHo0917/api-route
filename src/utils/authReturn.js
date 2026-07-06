@@ -41,11 +41,13 @@ export const getAuthReturnTo = (location) => {
   const params = new URLSearchParams(location.search || '');
   const direct = params.get('redirect') || params.get('next') || toPath(location.state?.from);
   if (direct) return cleanReturnTo(direct);
+  try {
+    const stored = sessionStorage.getItem(AUTH_RETURN_TO_KEY);
+    if (stored) return cleanReturnTo(stored);
+  } catch {
+    // sessionStorage can be unavailable in restricted browser contexts.
+  }
   const referrer = sameOriginReferrerPath();
   if (referrer) return cleanReturnTo(referrer);
-  try {
-    return cleanReturnTo(sessionStorage.getItem(AUTH_RETURN_TO_KEY));
-  } catch {
-    return '/dashboard';
-  }
+  return '/dashboard';
 };
