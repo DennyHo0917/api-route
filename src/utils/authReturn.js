@@ -13,6 +13,18 @@ const cleanReturnTo = (path) => {
   return AUTH_PATHS.has(pathname) ? '/dashboard' : path;
 };
 
+const sameOriginReferrerPath = () => {
+  if (typeof window === 'undefined' || !document.referrer) return '';
+  try {
+    const url = new URL(document.referrer);
+    if (url.origin !== window.location.origin) return '';
+    const path = `${url.pathname}${url.search}${url.hash}`;
+    return AUTH_PATHS.has(url.pathname) ? '' : path;
+  } catch {
+    return '';
+  }
+};
+
 export const rememberAuthReturnTo = (location) => {
   const rawPath = toPath(location);
   const pathname = rawPath.split(/[?#]/)[0];
@@ -29,6 +41,8 @@ export const getAuthReturnTo = (location) => {
   const params = new URLSearchParams(location.search || '');
   const direct = params.get('redirect') || params.get('next') || toPath(location.state?.from);
   if (direct) return cleanReturnTo(direct);
+  const referrer = sameOriginReferrerPath();
+  if (referrer) return cleanReturnTo(referrer);
   try {
     return cleanReturnTo(sessionStorage.getItem(AUTH_RETURN_TO_KEY));
   } catch {

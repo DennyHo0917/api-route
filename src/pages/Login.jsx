@@ -23,13 +23,14 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.username || !form.password) {
+    const username = form.username.trim();
+    if (!username || !form.password) {
       toast.error(t('login.fillAllFields'));
       return;
     }
     setLoading(true);
     try {
-      const result = await login(form.username, form.password);
+      const result = await login(username, form.password);
       if (result.success) {
         toast.success(t('login.welcomeBackToast'));
         navigate(returnTo, { replace: true });

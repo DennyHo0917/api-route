@@ -31,8 +31,9 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const username = form.username.trim();
     const email = form.email.trim();
-    if (!form.username || !email || !form.password) {
+    if (!username || !email || !form.password) {
       toast.error(t('register.fillRequired'));
       return;
     }
@@ -52,16 +53,27 @@ export default function Register() {
     try {
       const affCode = new URLSearchParams(window.location.search).get('aff') || localStorage.getItem('dist_aff') || '';
       const result = await register({
-        username: form.username,
+        username,
         password: form.password,
         email,
         aff_code: affCode || undefined,
       });
       if (result.success) {
-        const loginResult = await login(form.username, form.password);
-        if (loginResult.success) {
-          navigate(returnTo, { replace: true });
-          return;
+        const loginNames = [username, email].filter((value, index, values) => values.indexOf(value) === index);
+        for (const delay of [0, 500]) {
+          if (delay) await new Promise((resolve) => setTimeout(resolve, delay));
+          for (const loginName of loginNames) {
+            let loginResult = null;
+            try {
+              loginResult = await login(loginName, form.password, { skipErrorHandler: true });
+            } catch {
+              loginResult = null;
+            }
+            if (loginResult?.success) {
+              navigate(returnTo, { replace: true });
+              return;
+            }
+          }
         }
         toast.success(t('register.accountCreated'));
         navigate('/login', { replace: true, state: { from: returnTo } });

@@ -54,8 +54,8 @@ export function AuthProvider({ children }) {
     return () => window.removeEventListener('auth:logout', handleForceLogout);
   }, []);
 
-  const login = useCallback(async (username, password) => {
-    const res = await loginApi({ username, password });
+  const login = useCallback(async (username, password, config) => {
+    const res = await loginApi({ username, password }, config);
     if (res.data.success) {
       // Server sets session cookie automatically
       // Store user ID for New-Api-User header
@@ -64,7 +64,7 @@ export function AuthProvider({ children }) {
         localStorage.setItem('dist_user_id', String(userData.id));
       }
       // Fetch full user info (login response may not have quota/usage)
-      const userRes = await getUserSelf();
+      const userRes = await getUserSelf(config);
       if (userRes.data.success) {
         setUser(userRes.data.data);
       } else {

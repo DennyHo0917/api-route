@@ -139,7 +139,7 @@ export const getSubDistributorInfo = () => api.get('/api/dist/site/sub-distribut
 
 // ===== Auth =====
 export const register = (data) => api.post('/api/dist/user/register', data);
-export const login = (data) => api.post('/api/dist/user/login', data);
+export const login = (data, config) => api.post('/api/dist/user/login', data, config);
 export const logout = () => api.post('/api/dist/user/logout');
 
 // ===== User =====
