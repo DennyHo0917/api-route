@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { useSite } from '../context/SiteContext';
+import { getAuthReturnTo } from '../utils/authReturn';
 import toast from 'react-hot-toast';
 
 export default function Register() {
   const { t } = useTranslation();
-  const { register, user } = useAuth();
+  const { login, register, user } = useAuth();
   const { site } = useSite();
   const navigate = useNavigate();
+  const location = useLocation();
+  const returnTo = getAuthReturnTo(location);
   const [form, setForm] = useState({ username: '', password: '', password2: '', email: '' });
   const [loading, setLoading] = useState(false);
 
@@ -23,7 +26,7 @@ export default function Register() {
 
   // If already logged in, redirect via component
   if (user) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to={returnTo} replace />;
   }
 
   const handleSubmit = async (e) => {
@@ -55,8 +58,13 @@ export default function Register() {
         aff_code: affCode || undefined,
       });
       if (result.success) {
+        const loginResult = await login(form.username, form.password);
+        if (loginResult.success) {
+          navigate(returnTo, { replace: true });
+          return;
+        }
         toast.success(t('register.accountCreated'));
-        navigate('/login', { replace: true });
+        navigate('/login', { replace: true, state: { from: returnTo } });
         return; // component may unmount — skip setLoading
       }
       // error toast is handled by api interceptor for success:false
@@ -145,7 +153,7 @@ export default function Register() {
           <div className="mt-6 text-center">
             <p className="text-sm text-page-secondary">
               {t('register.hasAccount')}{' '}
-              <Link to="/login" className="text-page-link hover:text-page-link transition-colors font-medium">
+              <Link to="/login" state={{ from: returnTo }} className="text-page-link hover:text-page-link transition-colors font-medium">
                 {t('register.signIn')}
               </Link>
             </p>

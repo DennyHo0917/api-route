@@ -1,9 +1,10 @@
-import React, { lazy, Suspense } from 'react';
+import React, { lazy, Suspense, useEffect } from 'react';
 import { Navigate, Routes, Route, useLocation } from 'react-router-dom';
 import AuthGuard from './components/AuthGuard';
 import NotificationBell from './components/NotificationBell';
 import SeoManager from './components/SeoManager';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { rememberAuthReturnTo } from './utils/authReturn';
 
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
@@ -42,11 +43,22 @@ function LegacySubSiteRedirect() {
   );
 }
 
+function AuthReturnTracker() {
+  const location = useLocation();
+
+  useEffect(() => {
+    rememberAuthReturnTo(location);
+  }, [location]);
+
+  return null;
+}
+
 function ThemedRoutes() {
   const { Home, Layout } = useTheme();
 
   return (
     <Suspense fallback={<Loading />}>
+      <AuthReturnTracker />
       <Routes>
         {/* Public pages with themed layout */}
         <Route element={<Layout />}>

@@ -3,6 +3,7 @@ import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { useSite } from '../context/SiteContext';
+import { getAuthReturnTo } from '../utils/authReturn';
 import toast from 'react-hot-toast';
 
 export default function Login() {
@@ -11,13 +12,13 @@ export default function Login() {
   const { site } = useSite();
   const navigate = useNavigate();
   const location = useLocation();
+  const returnTo = getAuthReturnTo(location);
   const [form, setForm] = useState({ username: '', password: '' });
   const [loading, setLoading] = useState(false);
 
   // If already logged in, redirect via component (not navigate in render)
   if (user) {
-    const from = location.state?.from?.pathname || '/dashboard';
-    return <Navigate to={from} replace />;
+    return <Navigate to={returnTo} replace />;
   }
 
   const handleSubmit = async (e) => {
@@ -31,8 +32,7 @@ export default function Login() {
       const result = await login(form.username, form.password);
       if (result.success) {
         toast.success(t('login.welcomeBackToast'));
-        const from = location.state?.from?.pathname || '/dashboard';
-        navigate(from, { replace: true });
+        navigate(returnTo, { replace: true });
         return; // component may unmount — skip setLoading
       }
       // error toast is handled by api interceptor for success:false
@@ -95,7 +95,7 @@ export default function Login() {
           <div className="mt-6 text-center">
             <p className="text-sm text-page-secondary">
               {t('login.noAccount')}{' '}
-              <Link to="/register" className="text-page-link hover:text-page-link transition-colors font-medium">
+              <Link to="/register" state={{ from: returnTo }} className="text-page-link hover:text-page-link transition-colors font-medium">
                 {t('login.createOne')}
               </Link>
             </p>
