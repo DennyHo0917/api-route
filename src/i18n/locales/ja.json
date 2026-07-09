@@ -664,7 +664,7 @@
     "topup.hideEarnings": "収益を閉じる",
     "topup.noEarnings": "収益はまだありません",
     "topup.transferToBalance": "残高へ移す",
-    "topup.transferPlaceholder": "移行金額を入力（クォータ）",
+    "topup.transferPlaceholder": "移行金額を入力",
     "topup.transfer": "移行",
     "topup.transferSuccess": "移行しました",
     "topup.withdraw": "出金",

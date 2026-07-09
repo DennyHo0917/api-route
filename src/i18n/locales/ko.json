@@ -664,7 +664,7 @@
     "topup.hideEarnings": "수익 접기",
     "topup.noEarnings": "아직 수익이 없습니다",
     "topup.transferToBalance": "잔액으로 이동",
-    "topup.transferPlaceholder": "이동할 금액 입력(쿼터)",
+    "topup.transferPlaceholder": "이동할 금액 입력",
     "topup.transfer": "이동",
     "topup.transferSuccess": "이동되었습니다",
     "topup.withdraw": "출금",

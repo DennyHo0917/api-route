@@ -617,7 +617,7 @@
     "topup.hideEarnings": "Hide Earnings",
     "topup.noEarnings": "No earnings yet",
     "topup.transferToBalance": "Transfer to Balance",
-    "topup.transferPlaceholder": "Enter transfer amount (quota)",
+    "topup.transferPlaceholder": "Enter transfer amount",
     "topup.transfer": "Transfer",
     "topup.transferSuccess": "Transfer successful",
     "topup.withdraw": "Withdraw",

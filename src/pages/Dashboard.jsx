@@ -252,14 +252,15 @@ export default function Dashboard() {
   const getAffEarningUsername = (item) => item.username || item.display_name || (item.user_id ? `ID ${item.user_id}` : '-');
 
   const handleTransfer = async () => {
-    const val = parseInt(transferAmount);
-    if (!val || val <= 0) {
+    const amount = Number.parseFloat(transferAmount);
+    if (!Number.isFinite(amount) || amount <= 0) {
       toast.error(t('topup.enterAmount'));
       return;
     }
+    const quotaValue = Math.round((amount / rate) * Q);
     setTransferring(true);
     try {
-      const res = await transferAffQuota({ quota: val });
+      const res = await transferAffQuota({ quota: quotaValue });
       if (res.data.success) {
         toast.success(res.data.message || t('topup.transferSuccess'));
         setTransferAmount('');
@@ -691,7 +692,8 @@ export default function Dashboard() {
                   onChange={(e) => setTransferAmount(e.target.value)}
                   placeholder={t('topup.transferPlaceholder')}
                   className="input flex-1 text-sm"
-                  min={1}
+                  min="0"
+                  step="0.01"
                 />
                 <button onClick={handleTransfer} disabled={transferring} className="btn-primary whitespace-nowrap text-sm px-4">
                   {transferring ? t('topup.processing') : t('topup.transfer')}
