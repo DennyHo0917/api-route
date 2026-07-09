@@ -383,9 +383,9 @@
     "config.downloadCCSwitch": "Download CC Switch",
     "config.openCCSwitchRepo": "Open project page",
 
-    "downloads.badge": "Relayed downloads",
+    "downloads.badge": "Official downloads",
     "downloads.title": "Quick Installers",
-    "downloads.subtitle": "Common client installers are served through this site via /downloads, avoiding direct browser jumps to GitHub releases and improving reliability for restricted networks.",
+    "downloads.subtitle": "This site does not host installers. Choose your platform to open the official download page and get the latest version.",
     "downloads.officialRepo": "Project",
     "downloads.installGuide": "Install guide",
     "downloads.providerDocs": "Provider docs",

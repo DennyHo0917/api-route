@@ -84,8 +84,10 @@ export default function DownloadCatalog() {
                     <div className="mt-2 flex flex-wrap gap-2">
                       {group.links.map((link) => (
                         <a
-                          key={link.href}
+                          key={`${group.title}-${link.label}`}
                           href={link.href}
+                          target="_blank"
+                          rel="noreferrer"
                           className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
                             link.recommended
                               ? 'border-brand-500/30 bg-brand-500/10 text-brand-300 hover:bg-brand-500/15'

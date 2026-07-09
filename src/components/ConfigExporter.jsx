@@ -1173,6 +1173,8 @@ print(message.content[0].text)`;
             <div className="space-y-3">
               <a
                 href={CCSWITCH_PRIMARY_DOWNLOAD}
+                target="_blank"
+                rel="noreferrer"
                 className="btn-primary w-full text-center block"
               >
                 {t('config.downloadCCSwitch')}

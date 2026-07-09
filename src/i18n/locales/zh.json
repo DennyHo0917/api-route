@@ -383,9 +383,9 @@
     "config.downloadCCSwitch": "下载 CC Switch",
     "config.openCCSwitchRepo": "打开项目主页",
 
-    "downloads.badge": "站内中转下载",
+    "downloads.badge": "官方下载入口",
     "downloads.title": "快捷安装与下载",
-    "downloads.subtitle": "常用客户端安装包走本站 /downloads 中转下载，避免浏览器直接跳转 GitHub release，国内网络也更容易下载。",
+    "downloads.subtitle": "本站不托管安装包。请选择对应平台按钮前往官方下载页，获取最新版本。",
     "downloads.officialRepo": "项目主页",
     "downloads.installGuide": "安装说明",
     "downloads.providerDocs": "接入文档",

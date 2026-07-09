@@ -1,4 +1,18 @@
-export const localDownload = (id) => `/downloads/${id}`;
+const OFFICIAL_DOWNLOADS = {
+  ccSwitch: 'https://github.com/farion1231/cc-switch/releases/latest',
+  codex: 'https://github.com/openai/codex/releases/latest',
+  cherryStudio: 'https://github.com/CherryHQ/cherry-studio/releases/latest',
+  nodejs: 'https://nodejs.org/en/download',
+};
+
+export const localDownload = (id) => {
+  // ponytail: no local installers are hosted; send platform buttons to official download pages.
+  if (id.startsWith('cc-switch-')) return OFFICIAL_DOWNLOADS.ccSwitch;
+  if (id.startsWith('codex-')) return OFFICIAL_DOWNLOADS.codex;
+  if (id.startsWith('cherry-studio-')) return OFFICIAL_DOWNLOADS.cherryStudio;
+  if (id.startsWith('nodejs-')) return OFFICIAL_DOWNLOADS.nodejs;
+  return '/';
+};
 
 export const DOWNLOAD_TOOLS = [
   {
@@ -42,8 +56,8 @@ export const DOWNLOAD_TOOLS = [
     id: 'codex',
     title: 'Codex',
     version: '0.128.0',
-    descZh: 'OpenAI 官方 Codex 桌面版，提供 Windows / macOS 站内中转下载；Linux 可继续使用 npm 安装。',
-    descEn: 'OpenAI official Codex desktop app with local relayed Windows and macOS downloads. Linux users can continue using npm installation.',
+    descZh: 'OpenAI 官方 Codex 客户端，请从官方 Releases 或安装说明获取最新安装方式。',
+    descEn: 'OpenAI official Codex client. Use the official releases or installation guide for the latest installer.',
     installGuide: 'https://github.com/openai/codex#installation',
     releases: 'https://github.com/openai/codex/releases/latest',
     groups: [
@@ -131,5 +145,5 @@ export const DOWNLOAD_TOOLS = [
   },
 ];
 
-export const CCSWITCH_PRIMARY_DOWNLOAD = localDownload('cc-switch-windows-x64-msi');
+export const CCSWITCH_PRIMARY_DOWNLOAD = OFFICIAL_DOWNLOADS.ccSwitch;
 export const CCSWITCH_REPO_URL = 'https://github.com/farion1231/cc-switch';
