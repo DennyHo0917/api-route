@@ -1,6 +1,6 @@
 const OFFICIAL_DOWNLOADS = {
   ccSwitch: 'https://github.com/farion1231/cc-switch/releases/latest',
-  codex: 'https://github.com/openai/codex/releases/latest',
+  codex: 'https://openai.com/zh-Hans-CN/codex/',
   cherryStudio: 'https://github.com/CherryHQ/cherry-studio/releases/latest',
   nodejs: 'https://nodejs.org/en/download',
 };
@@ -59,7 +59,7 @@ export const DOWNLOAD_TOOLS = [
     descZh: 'OpenAI 官方 Codex 客户端，请从官方 Releases 或安装说明获取最新安装方式。',
     descEn: 'OpenAI official Codex client. Use the official releases or installation guide for the latest installer.',
     installGuide: 'https://github.com/openai/codex#installation',
-    releases: 'https://github.com/openai/codex/releases/latest',
+    releases: OFFICIAL_DOWNLOADS.codex,
     groups: [
       {
         title: 'Windows',
