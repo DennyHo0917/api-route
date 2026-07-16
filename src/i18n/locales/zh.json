@@ -726,6 +726,9 @@
     "logs.showing": "第 {{from}}-{{to}} 条，共 {{total}} 条",
     "logs.prev": "上一页",
     "logs.next": "下一页",
+    "logs.export": "导出 CSV",
+    "logs.exporting": "正在导出...",
+    "logs.exported": "日志已下载",
 
     "tasks.title": "任务记录",
     "tasks.subtitle": "查看视频与图片生成任务的提交、进度和结果",

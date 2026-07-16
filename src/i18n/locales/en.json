@@ -726,6 +726,9 @@
     "logs.showing": "{{from}}-{{to}} of {{total}}",
     "logs.prev": "Prev",
     "logs.next": "Next",
+    "logs.export": "Export CSV",
+    "logs.exporting": "Exporting...",
+    "logs.exported": "Logs downloaded",
 
     "tasks.title": "Task Records",
     "tasks.subtitle": "View submitted video and image generation tasks, progress, and results",

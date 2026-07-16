@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronDown, ChevronRight, RotateCcw, Search } from 'lucide-react';
+import { ChevronDown, ChevronRight, Download, RotateCcw, Search } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { getTokens, getUserLogs, getUserLogsStat, Q } from '../api';
 import { useCurrency } from '../context/SiteContext';
 import DateTimePicker from '../components/DateTimePicker';
@@ -53,6 +54,12 @@ function formatQuotaAmount(symbol, rate, quota, emptyZero = true) {
 
 function formatTokens(value) {
   return Number(value || 0).toLocaleString();
+}
+
+function csvValue(value) {
+  const text = String(value ?? '');
+  const safeText = /^[=+\-@]/.test(text) ? `'${text}` : text;
+  return `"${safeText.replace(/"/g, '""')}"`;
 }
 
 function getLogModelOptions(items) {
@@ -160,6 +167,7 @@ export default function Logs() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [loadingStat, setLoadingStat] = useState(true);
+  const [exporting, setExporting] = useState(false);
   const [stat, setStat] = useState({ quota: 0, rpm: 0, tpm: 0, token: 0 });
   const [modelFilter, setModelFilter] = useState('');
   const [modelOptions, setModelOptions] = useState([]);
@@ -264,6 +272,51 @@ export default function Logs() {
     setPage(1);
     setAppliedFilters({ type: '0' });
   }, []);
+
+  const exportLogs = useCallback(async () => {
+    setExporting(true);
+    try {
+      const pageSize = 1000;
+      const params = getAppliedParams();
+      const first = await getUserLogs({ ...params, p: 1, page_size: pageSize });
+      if (!first.data.success) return;
+
+      const data = first.data.data || {};
+      const exportedLogs = [...(data.items || [])];
+      const totalPages = Math.ceil((data.total || 0) / pageSize);
+      for (let p = 2; p <= totalPages; p += 1) {
+        const res = await getUserLogs({ ...params, p, page_size: pageSize });
+        if (!res.data.success) return;
+        exportedLogs.push(...(res.data.data?.items || []));
+      }
+
+      const rows = [
+        [t('logs.time'), t('logs.model'), t('logs.token'), t('logs.type'), t('logs.promptTokens'), t('logs.completionTokens'), t('logs.cost'), t('logs.duration'), 'Request ID', t('logs.content')],
+        ...exportedLogs.map((log) => [
+          formatTime(log.created_at),
+          log.model_name,
+          log.token_name,
+          getLogTypeLabel(log.type, t),
+          log.prompt_tokens,
+          log.completion_tokens,
+          formatQuotaAmount(symbol, rate, log.quota),
+          log.use_time > 0 ? `${log.use_time}s` : '-',
+          log.request_id,
+          log.content,
+        ]),
+      ];
+      const blob = new Blob([`\uFEFF${rows.map((row) => row.map(csvValue).join(',')).join('\r\n')}`], { type: 'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `api-logs-${new Date().toISOString().slice(0, 10)}.csv`;
+      link.click();
+      URL.revokeObjectURL(url);
+      toast.success(t('logs.exported'));
+    } catch (e) { /* interceptor */ } finally {
+      setExporting(false);
+    }
+  }, [getAppliedParams, rate, symbol, t]);
 
   const setQuickRange = useCallback((days) => {
     const now = new Date();
@@ -440,6 +493,10 @@ export default function Logs() {
           </div>
         </div>
         <div className="mt-3 flex flex-wrap justify-end gap-2">
+          <button type="button" onClick={exportLogs} className="inline-flex items-center gap-2 rounded-full border border-[#D9C5B2] bg-white/70 px-5 py-2.5 text-sm font-semibold text-[#6B5D4F] transition-colors hover:bg-[#F8EAE0] disabled:cursor-not-allowed disabled:opacity-50" disabled={loading || exporting || total === 0}>
+            <Download className="h-4 w-4" />
+            {exporting ? t('logs.exporting') : t('logs.export')}
+          </button>
           <button type="submit" className="inline-flex items-center gap-2 rounded-full bg-[#D97757] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#C4613F] disabled:cursor-not-allowed disabled:opacity-50" disabled={loading}>
             <Search className="h-4 w-4" />
             {t('logs.search')}
