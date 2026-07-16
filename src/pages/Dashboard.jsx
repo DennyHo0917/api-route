@@ -24,10 +24,29 @@ const DASHBOARD_RANGES = [
   { key: '30d', labelKey: 'dashboard.range30d' },
 ];
 const DASHBOARD_FETCH_RANGE = '30d';
+const DASHBOARD_LOG_PAGE_SIZE = 1000;
 
 // ponytail: page-session cache; refresh the browser page to pull fresh dashboard logs.
 let dashboardLogsCache = null;
 let dashboardErrorsCache = null;
+
+const fetchDashboardLogs = async (baseParams) => {
+  const logs = [];
+  for (let page = 1; ; page += 1) {
+    const res = await getUserLogs({
+      ...baseParams,
+      type: '2',
+      p: page,
+      page_size: DASHBOARD_LOG_PAGE_SIZE,
+    });
+    if (!res.data.success) throw new Error(res.data.message || 'Failed to load dashboard logs');
+
+    const data = res.data.data || {};
+    const items = data.items || [];
+    logs.push(...items);
+    if (items.length === 0 || logs.length >= Number(data.total || 0)) return logs;
+  }
+};
 
 const getRangeBounds = (range) => {
   const now = new Date();
@@ -188,9 +207,9 @@ export default function Dashboard() {
     }));
 
     if (!dashboardLogsCache) {
-      getUserLogs({ ...baseParams, type: '2', p: 1, page_size: 80 })
-        .then((res) => {
-          dashboardLogsCache = res.data.success ? res.data.data?.items || [] : [];
+      fetchDashboardLogs(baseParams)
+        .then((logs) => {
+          dashboardLogsCache = logs;
           setAnalytics((current) => ({
             ...current,
             logsLoading: false,
