@@ -20,7 +20,7 @@ function getSupportLink(site) {
   const telegramMatch = announcement.match(/https?:\/\/(?:www\.)?(?:t\.me|telegram\.me)\/[^\s<>"']+/i);
   if (telegramMatch) {
     return {
-      href: telegramMatch[0].replace(/[，。！？；：,.!?;:)）\]}]+$/u, ''),
+      href: 'https://t.me/cryptocrc_revolution',
       isTelegram: true,
     };
   }
