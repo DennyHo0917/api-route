@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { ChevronDown, CircleCheck, Download, KeyRound, Rocket, Send, Settings2, Sparkles } from 'lucide-react';
 import {
   getTokens,
   createToken,
@@ -238,16 +240,43 @@ export default function Tokens() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="w-8 h-8 border-2 border-brand-500/30 border-t-brand-500 rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-page-link/30 border-t-page-link rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
+      <section className="relative overflow-hidden rounded-[28px] border border-page-link/20 bg-page-surface shadow-xl shadow-black/5">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-0 h-52 bg-gradient-to-br from-page-link/15 via-page-link/5 to-transparent"
+        />
+        <header className="relative border-b border-page-divider px-6 py-7 md:px-8 md:py-9">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-page-link/20 bg-page-link/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-page-link">
+            <Sparkles className="h-3.5 w-3.5" />
+            {t('quickstart.badge')}
+          </div>
+          <h1 className="max-w-2xl text-2xl font-black tracking-tight text-page md:text-4xl">
+            {t('quickstart.title')}
+          </h1>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-page-secondary md:text-base">
+            {t('quickstart.subtitle')}
+          </p>
+        </header>
 
+        <div className="relative space-y-3 p-3 md:p-5">
+          <QuickStartStep
+            number={1}
+            icon={KeyRound}
+            title={t('quickstart.step1Title')}
+            description={t('quickstart.step1Desc')}
+            complete={visibleTokens.length > 0}
+            completeLabel={t('quickstart.completed')}
+            open={visibleTokens.length === 0}
+          >
       {/* ========== Section 1: Create Key with Groups ========== */}
-      <div className="mb-10">
+      <div className="mb-8">
         <h1 className="text-2xl font-heading font-bold text-page">
           {hasGroups ? t('tokens.selectGroup') : t('tokens.title')}
         </h1>
@@ -259,10 +288,10 @@ export default function Tokens() {
         <div className="mt-6">
           <button
             onClick={openCreateDefault}
-            className="w-full glass rounded-xl p-4 flex items-center gap-4 hover:border-brand-500/50 border border-page-divider transition-all group text-left"
+            className="w-full glass rounded-xl p-4 flex items-center gap-4 hover:border-page-link/50 border border-page-divider transition-all group text-left"
           >
-            <div className="w-10 h-10 rounded-lg bg-brand-500/10 flex items-center justify-center flex-shrink-0">
-              <svg className="w-5 h-5 text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="w-10 h-10 rounded-lg bg-page-link/10 flex items-center justify-center flex-shrink-0">
+              <svg className="w-5 h-5 text-page-link" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" />
               </svg>
             </div>
@@ -272,7 +301,7 @@ export default function Tokens() {
                 <p className="text-xs text-page-secondary mt-0.5">{t('tokens.defaultGroupDesc')}</p>
               )}
             </div>
-            <span className="text-xs font-medium text-brand-500 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+            <span className="text-xs font-medium text-page-link opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
               {t('tokens.create')} →
             </span>
           </button>
@@ -478,7 +507,7 @@ export default function Tokens() {
                   <div className="mt-3 rounded-xl border border-page-divider bg-page-surface/50 px-4 py-3">
                     {tokenModels[token.id]?.loading ? (
                       <div className="flex items-center gap-2 text-sm text-page-secondary">
-                        <div className="w-4 h-4 border-2 border-brand-500/30 border-t-brand-500 rounded-full animate-spin" />
+                        <div className="w-4 h-4 border-2 border-page-link/30 border-t-page-link rounded-full animate-spin" />
                         <span>{t('tokens.loadingSupportedModels')}</span>
                       </div>
                     ) : tokenModels[token.id]?.error ? (
@@ -490,12 +519,12 @@ export default function Tokens() {
                             {t('tokens.supportedModels')} ({tokenModels[token.id]?.count || 0})
                           </p>
                           {tokenModels[token.id]?.restricted_by_models && (
-                            <span className="px-2 py-0.5 rounded-full text-[11px] bg-brand-500/10 text-brand-500">
+                            <span className="px-2 py-0.5 rounded-full text-[11px] bg-page-link/10 text-page-link">
                               {t('tokens.restrictedByModels')}
                             </span>
                           )}
                           {tokenModels[token.id]?.restricted_by_providers && (
-                            <span className="px-2 py-0.5 rounded-full text-[11px] bg-brand-500/10 text-brand-500">
+                            <span className="px-2 py-0.5 rounded-full text-[11px] bg-page-link/10 text-page-link">
                               {t('tokens.restrictedByProviders')}
                             </span>
                           )}
@@ -531,14 +560,98 @@ export default function Tokens() {
         )}
       </div>
 
-      <div className="mt-8">
-        <ConfigExporter tokens={visibleTokens} />
-      </div>
+          </QuickStartStep>
 
-      <div className="mt-10">
-        <DownloadCatalog />
-      </div>
+          <QuickStartStep
+            number={2}
+            icon={Download}
+            title={t('quickstart.step2Title')}
+            description={t('quickstart.step2Desc')}
+            open={visibleTokens.length > 0}
+          >
+            <DownloadCatalog embedded />
+          </QuickStartStep>
+
+          <QuickStartStep
+            number={3}
+            icon={Settings2}
+            title={t('quickstart.step3Title')}
+            description={t('quickstart.step3Desc')}
+          >
+            <ConfigExporter tokens={visibleTokens} />
+          </QuickStartStep>
+
+          <QuickStartStep
+            number={4}
+            icon={Send}
+            title={t('quickstart.step4Title')}
+            description={t('quickstart.step4Desc')}
+          >
+            <div className="rounded-2xl border border-page-link/20 bg-gradient-to-br from-page-link/10 to-transparent p-5 md:p-6">
+              <div className="flex items-start gap-4">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-page-link text-white shadow-lg shadow-page-link/20">
+                  <Rocket className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-page">{t('quickstart.finalHeading')}</h3>
+                  <p className="mt-1 text-sm leading-6 text-page-secondary">{t('quickstart.verifyHint')}</p>
+                </div>
+              </div>
+              <div className="mt-5 grid gap-3 md:grid-cols-[1fr_auto]">
+                <div className="rounded-xl border border-page-divider bg-page-inset/60 px-4 py-3">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-page-muted">
+                    {t('quickstart.testPromptLabel')}
+                  </p>
+                  <code className="mt-1.5 block text-sm text-page">{t('quickstart.testPrompt')}</code>
+                </div>
+                <Link to="/logs" className="btn-primary inline-flex items-center justify-center gap-2 px-5">
+                  {t('quickstart.viewLogs')}
+                  <CircleCheck className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+          </QuickStartStep>
+        </div>
+      </section>
     </div>
+  );
+}
+
+function QuickStartStep({ number, icon: Icon, title, description, complete = false, completeLabel, open = false, children }) {
+  return (
+    <details
+      name="api-quickstart"
+      open={open}
+      className="group/step overflow-hidden rounded-2xl border border-page-divider bg-page-surface/80 transition-colors open:border-page-link/25"
+    >
+      <summary className="flex cursor-pointer list-none items-center gap-4 px-4 py-4 outline-none transition-colors hover:bg-page-surface-hover focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-page-link/50 md:px-5 [&::-webkit-details-marker]:hidden">
+        <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border ${
+          complete
+            ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-500'
+            : 'border-page-link/20 bg-page-link/10 text-page-link'
+        }`}>
+          {complete ? <CircleCheck className="h-5 w-5" /> : <Icon className="h-5 w-5" />}
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-page-muted">
+              {String(number).padStart(2, '0')}
+            </span>
+            <h2 className="text-base font-bold text-page md:text-lg">{title}</h2>
+            {complete && (
+              <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold text-emerald-500">
+                {completeLabel}
+              </span>
+            )}
+          </div>
+          <p className="mt-1 text-xs leading-5 text-page-secondary md:text-sm">{description}</p>
+        </div>
+        <ChevronDown className="h-5 w-5 shrink-0 text-page-muted transition-transform duration-200 group-open/step:rotate-180" />
+      </summary>
+      <div className="border-t border-page-divider bg-page-inset/20 px-4 py-5 md:px-6 md:py-6">
+        {children}
+      </div>
+    </details>
   );
 }
 
@@ -558,7 +671,7 @@ function KeyGroupCard({ group, parseTags, onSelect, onViewPricing, symbol, cnyRa
       className={`glass-sm rounded-xl p-4 border border-page-divider transition-all ${
         isUnavailable
           ? 'opacity-75'
-          : 'hover:border-brand-500/40 cursor-pointer group'
+          : 'hover:border-page-link/40 cursor-pointer group'
       }`}
       onClick={() => !isUnavailable && onSelect(group)}
     >
@@ -618,8 +731,8 @@ function KeyGroupCard({ group, parseTags, onSelect, onViewPricing, symbol, cnyRa
 
           {!isUnavailable && (
             <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-              <span className="text-xs font-medium text-brand-500">{t('tokens.create')}</span>
-              <svg className="w-4 h-4 text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <span className="text-xs font-medium text-page-link">{t('tokens.create')}</span>
+              <svg className="w-4 h-4 text-page-link" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </div>
@@ -702,12 +815,12 @@ function GroupPricingModal({
               </span>
             )}
             {summary?.provider_limited && (
-              <span className="px-2.5 py-1 rounded-full text-xs bg-brand-500/10 text-brand-500">
+              <span className="px-2.5 py-1 rounded-full text-xs bg-page-link/10 text-page-link">
                 {t('tokens.restrictedByProviders')}
               </span>
             )}
             {summary?.model_limited && (
-              <span className="px-2.5 py-1 rounded-full text-xs bg-brand-500/10 text-brand-500">
+              <span className="px-2.5 py-1 rounded-full text-xs bg-page-link/10 text-page-link">
                 {t('tokens.restrictedByModels')}
               </span>
             )}
@@ -738,7 +851,7 @@ function GroupPricingModal({
         <div className="px-6 py-5 overflow-y-auto max-h-[58vh]">
           {loading ? (
             <div className="flex items-center gap-2 text-sm text-page-secondary">
-              <div className="w-4 h-4 border-2 border-brand-500/30 border-t-brand-500 rounded-full animate-spin" />
+              <div className="w-4 h-4 border-2 border-page-link/30 border-t-page-link rounded-full animate-spin" />
               <span>{t('tokens.groupPricingLoading')}</span>
             </div>
           ) : !hasItems ? (

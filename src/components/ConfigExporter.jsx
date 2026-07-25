@@ -9,6 +9,7 @@ import {
 } from '../constants/downloads';
 
 const TOOLS = [
+  { id: 'codex', name: 'Codex', path: '~/.codex/config.toml' },
   { id: 'claudecode', name: 'Claude Code', path: '~/.claude/settings.json' },
   { id: 'hermes', name: 'Hermes', path: 'hermes-subrouter.sh' },
   { id: 'openclaw', name: 'OpenClaw', path: '~/.openclaw/openclaw.json' },
@@ -16,11 +17,6 @@ const TOOLS = [
     id: 'opencode',
     name: 'OpenCode',
     path: '~/.config/opencode/opencode.json',
-  },
-  {
-    id: 'cursor',
-    name: 'Cursor',
-    path: 'Settings -> Models -> OpenAI API Key',
   },
   { id: 'curl', name: 'cURL', path: 'Terminal' },
   { id: 'python', name: 'Python SDK', path: 'main.py' },
@@ -149,7 +145,7 @@ function ThemedSelect({
                     type="button"
                     className={`flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors ${
                       selected
-                        ? 'bg-brand-500/15 text-page'
+                        ? 'bg-page-link/15 text-page'
                         : 'text-page-secondary hover:bg-page-surface-hover hover:text-page'
                     }`}
                     onClick={() => {
@@ -164,7 +160,7 @@ function ThemedSelect({
                     </span>
                     {selected && (
                       <svg
-                        className="h-4 w-4 flex-shrink-0 text-brand-400"
+                        className="h-4 w-4 flex-shrink-0 text-page-link"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -198,7 +194,7 @@ const ConfigExporter = ({ tokens = [] }) => {
   const [selectedTokenId, setSelectedTokenId] = useState(null);
   const [availableModels, setAvailableModels] = useState([]);
   const [selectedModel, setSelectedModel] = useState('');
-  const [selectedTool, setSelectedTool] = useState('claudecode');
+  const [selectedTool, setSelectedTool] = useState('codex');
   const [selectedCCSwitchApp, setSelectedCCSwitchApp] = useState('codex');
   const [selectedEndpointId, setSelectedEndpointId] = useState('overseas-direct');
   const [loadingModels, setLoadingModels] = useState(false);
@@ -577,10 +573,22 @@ echo "Hermes profile exported to ./$PROFILE_NAME.tar.gz"`;
   "model": "${modelRef}"
 }`;
       }
-      case 'cursor':
-        return `API Key: ${apiKey}
-Base URL: ${apiServerAddress}/v1
-Model: ${selectedModel}`;
+      case 'codex':
+        return `# ~/.codex/config.toml
+model_provider = "api_route"
+model = "${selectedModel}"
+disable_response_storage = true
+
+[model_providers.api_route]
+name = "API Route"
+base_url = "${apiServerAddress}/v1"
+wire_api = "responses"
+requires_openai_auth = true
+
+# ~/.codex/auth.json
+{
+  "OPENAI_API_KEY": "${apiKey}"
+}`;
       case 'curl':
         return `curl ${apiServerAddress}/v1/chat/completions \\
   -H "Content-Type: application/json" \\
@@ -638,8 +646,8 @@ print(message.content[0].text)`;
       case 'python':
       case 'anthropic':
         return 'main.py';
-      case 'cursor':
-        return 'cursor-config.txt';
+      case 'codex':
+        return 'codex-config.txt';
       default:
         return (
           selectedToolMeta.path.split('/').pop() ||
@@ -797,7 +805,7 @@ print(message.content[0].text)`;
         <div className="px-5 py-4 border-b border-page-divider">
           <h4 className="font-semibold text-sm text-page flex items-center gap-2">
             <svg
-              className="w-4 h-4 text-brand-400"
+              className="w-4 h-4 text-page-link"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -901,7 +909,7 @@ print(message.content[0].text)`;
                   onClick={() => setSelectedEndpointId(endpoint.id)}
                   className={`rounded-xl border px-3 py-2 text-left transition-all ${
                     selectedEndpointId === endpoint.id
-                      ? 'border-brand-500 bg-brand-500/10 text-page'
+                      ? 'border-page-link bg-page-link/10 text-page'
                       : 'border-page-divider bg-page-inset/40 text-page-secondary hover:bg-page-surface-hover'
                   }`}
                 >
@@ -992,24 +1000,18 @@ print(message.content[0].text)`;
             <label className="text-xs font-medium text-page-label mb-2 block">
               {t('config.selectTool')}
             </label>
-            <div className="flex flex-wrap gap-2">
-              {TOOLS.map((tool) => (
-                <button
-                  key={tool.id}
-                  onClick={() => setSelectedTool(tool.id)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    selectedTool === tool.id
-                      ? 'bg-brand-500 text-white shadow-sm'
-                      : 'surface text-page-secondary hover:bg-page-surface-hover'
-                  }`}
-                >
-                  {tool.name}
-                </button>
-              ))}
-            </div>
+            <ThemedSelect
+              value={selectedTool}
+              onChange={setSelectedTool}
+              options={TOOLS.map((tool) => ({
+                value: tool.id,
+                label: tool.name,
+              }))}
+              placeholder={t('config.selectTool')}
+            />
           </div>
 
-          <div className="rounded-xl border border-brand-500/20 bg-brand-500/5 px-4 py-4 space-y-4">
+          <div className="rounded-xl border border-page-link/20 bg-page-link/5 px-4 py-4 space-y-4">
             <div className="flex items-start justify-between gap-3 flex-wrap">
               <div>
                 <p className="text-sm font-semibold text-page">
@@ -1019,7 +1021,7 @@ print(message.content[0].text)`;
                   {t('config.ccswitchHint')}
                 </p>
               </div>
-              <span className="px-2.5 py-1 rounded-full text-[11px] font-medium bg-brand-500/15 text-brand-300">
+              <span className="px-2.5 py-1 rounded-full text-[11px] font-medium bg-page-link/15 text-page-link">
                 CC Switch
               </span>
             </div>
@@ -1028,21 +1030,15 @@ print(message.content[0].text)`;
               <p className="text-xs font-medium text-page-label mb-2">
                 {t('config.selectCCSwitchApp')}
               </p>
-              <div className="flex flex-wrap gap-2">
-                {CCSWITCH_APPS.map((app) => (
-                  <button
-                    key={app.id}
-                    onClick={() => setSelectedCCSwitchApp(app.id)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                      selectedCCSwitchApp === app.id
-                        ? 'bg-brand-500 text-white shadow-sm'
-                        : 'bg-transparent border border-page-divider text-page-secondary hover:bg-page-surface-hover'
-                    }`}
-                  >
-                    {app.name}
-                  </button>
-                ))}
-              </div>
+              <ThemedSelect
+                value={selectedCCSwitchApp}
+                onChange={setSelectedCCSwitchApp}
+                options={CCSWITCH_APPS.map((app) => ({
+                  value: app.id,
+                  label: app.name,
+                }))}
+                placeholder={t('config.selectCCSwitchApp')}
+              />
             </div>
 
             <div className="flex flex-wrap gap-2">
@@ -1066,11 +1062,6 @@ print(message.content[0].text)`;
               </button>
             </div>
 
-            <div className="rounded-lg bg-page-inset/60 px-3 py-2">
-              <code className="text-[11px] leading-relaxed text-page-muted break-all">
-                {ccSwitchLink}
-              </code>
-            </div>
           </div>
         </div>
 
