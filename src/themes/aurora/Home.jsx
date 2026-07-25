@@ -332,7 +332,7 @@ function PackageCard({ pkg, index, models, fmtCNY, t, user }) {
         )}
       </div>
       <div className="mt-5">
-        <PrimaryLink to={user ? '/packages' : '/register'}>{user ? t('home.subscribe') : t('home.getStarted')}</PrimaryLink>
+        <PrimaryLink to={user ? '/pricing/packages' : '/register'}>{user ? t('home.subscribe') : t('home.getStarted')}</PrimaryLink>
       </div>
     </div>
   );

@@ -177,7 +177,7 @@ export default function MinimalHome() {
                   {equiv.length > 0 && (
                     <p className="text-xs text-amber-300/80 mt-2">🔥 <RotatingEquiv items={equiv} text={(item) => t('packages.officialEquiv', { model: item.label, amount: item.equivDollars })} /></p>
                   )}
-                  <Link to={user ? '/packages' : '/register'} className="mt-4 py-2.5 rounded-lg bg-neutral-800 text-white font-medium text-sm text-center hover:bg-neutral-700 transition-colors">
+                  <Link to={user ? '/pricing/packages' : '/register'} className="mt-4 py-2.5 rounded-lg bg-neutral-800 text-white font-medium text-sm text-center hover:bg-neutral-700 transition-colors">
                     {user ? t('home.subscribe') : t('home.getStarted')}
                   </Link>
                 </div>

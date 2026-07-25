@@ -604,7 +604,7 @@ export default function Tokens() {
                   </p>
                   <code className="mt-1.5 block text-sm text-page">{t('quickstart.testPrompt')}</code>
                 </div>
-                <Link to="/logs" className="btn-primary inline-flex items-center justify-center gap-2 px-5">
+                <Link to="/dashboard/logs" className="btn-primary inline-flex items-center justify-center gap-2 px-5">
                   {t('quickstart.viewLogs')}
                   <CircleCheck className="h-4 w-4" />
                 </Link>

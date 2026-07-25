@@ -5,7 +5,6 @@ import toast from 'react-hot-toast';
 import { getTokens, getUserLogs, getUserLogsStat, Q } from '../api';
 import { useCurrency } from '../context/SiteContext';
 import DateTimePicker from '../components/DateTimePicker';
-import LogSubnav from '../components/LogSubnav';
 
 function formatTime(unix) {
   if (!unix) return '-';
@@ -405,8 +404,6 @@ export default function Logs() {
         <h1 className="text-3xl font-heading font-bold tracking-tight text-[#3D3024]">{t('logs.title')}</h1>
         <p className="mt-2 text-sm leading-6 text-[#806D5D]">{t('logs.subtitle')}</p>
       </div>
-      <LogSubnav active="logs" />
-
       {/* Filters */}
       <form
         className="mb-6 rounded-[24px] border border-[#E5D7CB] bg-white/75 p-5 shadow-[0_16px_45px_rgba(82,61,43,0.06)]"

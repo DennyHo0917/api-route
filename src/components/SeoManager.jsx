@@ -18,8 +18,8 @@ const STRUCTURED_DATA_TOPICS = [
   'OpenAI-compatible API',
   'AI API reseller platform',
 ];
-const INDEXABLE_PATHS = new Set(['/', '/pricing', '/packages', '/apps', '/ai-api-reseller-platform', '/faq', '/privacy-policy', '/terms-of-service']);
-const PRIVATE_PATHS = new Set(['/login', '/register', '/dashboard', '/tokens', '/logs', '/tasks', '/topup', '/account']);
+const INDEXABLE_PATHS = new Set(['/', '/pricing', '/pricing/packages', '/apps', '/ai-api-reseller-platform', '/faq', '/privacy-policy', '/terms-of-service']);
+const PRIVATE_PATHS = new Set(['/login', '/register', '/dashboard', '/dashboard/logs', '/dashboard/tasks', '/tokens', '/logs', '/tasks', '/topup', '/account']);
 const LANGUAGE_HREFLANGS = {
   zh: 'zh-CN',
   en: 'en',
@@ -146,7 +146,7 @@ function getPageCopy(pathname, copy, languageKey) {
   }
   if (pathname === '/') return copy.home;
   if (pathname === '/pricing') return copy.pricing;
-  if (pathname === '/packages') return copy.packages;
+  if (pathname === '/pricing/packages') return copy.packages;
   if (pathname === '/apps') return copy.apps;
   if (pathname === '/ai-api-reseller-platform') return copy.subSite;
   if (pathname === '/faq') return getFaqSeoPage(languageKey);

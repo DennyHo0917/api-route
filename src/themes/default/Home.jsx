@@ -243,7 +243,7 @@ export default function DefaultHome() {
                     </div>
 
                     <Link
-                      to={user ? '/packages' : '/register'}
+                      to={user ? '/pricing/packages' : '/register'}
                       className={`mt-5 inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors ${
                         featured ? 'bg-indigo-700 text-white hover:bg-indigo-800' : 'bg-slate-950 text-white hover:bg-indigo-700'
                       }`}

@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { ExternalLink, Image, Loader2, RotateCcw, Search, Video, X } from 'lucide-react';
 import { getUserMjTasks, getUserTasks } from '../api';
 import DateTimePicker from '../components/DateTimePicker';
-import LogSubnav from '../components/LogSubnav';
 
 const PAGE_SIZE = 20;
 
@@ -276,8 +275,6 @@ export default function Tasks() {
         <h1 className="mb-1 text-2xl font-heading font-bold text-page">{t('tasks.title')}</h1>
         <p className="text-sm text-page-secondary">{t('tasks.subtitle')}</p>
       </div>
-      <LogSubnav active="tasks" />
-
       <div className="mb-6 flex justify-center">
         <div className="inline-flex rounded-full bg-page-surface p-1">
           {[
@@ -292,7 +289,7 @@ export default function Tasks() {
                 onClick={() => switchMode(item.key)}
                 className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
                   mode === item.key
-                    ? 'bg-brand-600 text-white'
+                    ? 'bg-page-link text-white'
                     : 'text-page-muted hover:bg-page-surface-hover hover:text-page'
                 }`}
               >

@@ -1,5 +1,6 @@
 import React, { lazy, Suspense, useEffect } from 'react';
-import { Navigate, Routes, Route, useLocation } from 'react-router-dom';
+import { Navigate, NavLink, Outlet, Routes, Route, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import AuthGuard from './components/AuthGuard';
 import NotificationBell from './components/NotificationBell';
 import SeoManager from './components/SeoManager';
@@ -53,6 +54,50 @@ function AuthReturnTracker() {
   return null;
 }
 
+function MergedPageLayout({ labelKey, tabs }) {
+  const { t } = useTranslation();
+
+  return (
+    <>
+      <div className="mx-auto flex max-w-7xl justify-center px-5 pt-6 md:px-8">
+        <nav
+          aria-label={t(labelKey)}
+          className="inline-flex max-w-full gap-1 overflow-x-auto rounded-full border border-page-divider bg-page-surface p-1.5 shadow-sm"
+        >
+          {tabs.map((tab) => (
+            <NavLink
+              key={tab.to}
+              to={tab.to}
+              end={tab.end}
+              className={({ isActive }) =>
+                `shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+                  isActive
+                    ? 'bg-page-link text-white shadow-sm'
+                    : 'text-page-secondary hover:bg-page-surface-hover hover:text-page'
+                }`
+              }
+            >
+              {t(tab.labelKey)}
+            </NavLink>
+          ))}
+        </nav>
+      </div>
+      <Outlet />
+    </>
+  );
+}
+
+const PRICING_TABS = [
+  { to: '/pricing', labelKey: 'nav.pricing', end: true },
+  { to: '/pricing/packages', labelKey: 'nav.packages' },
+];
+
+const DASHBOARD_TABS = [
+  { to: '/dashboard', labelKey: 'nav.dashboard', end: true },
+  { to: '/dashboard/logs', labelKey: 'logs.callLogs' },
+  { to: '/dashboard/tasks', labelKey: 'tasks.title' },
+];
+
 function ThemedRoutes() {
   const { Home, Layout } = useTheme();
 
@@ -63,8 +108,14 @@ function ThemedRoutes() {
         {/* Public pages with themed layout */}
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
-          <Route path="/pricing" element={<Pricing />} />
-          <Route path="/packages" element={<Packages />} />
+          <Route
+            path="/pricing"
+            element={<MergedPageLayout labelKey="nav.pricing" tabs={PRICING_TABS} />}
+          >
+            <Route index element={<Pricing />} />
+            <Route path="packages" element={<Packages />} />
+          </Route>
+          <Route path="/packages" element={<Navigate to="/pricing/packages" replace />} />
           <Route path="/apps" element={<AppMarket />} />
           <Route path="/ai-api-reseller-platform" element={<SubDistributor />} />
           <Route path="/sub-site" element={<LegacySubSiteRedirect />} />
@@ -76,10 +127,17 @@ function ThemedRoutes() {
 
           {/* Protected pages */}
           <Route element={<AuthGuard />}>
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route
+              path="/dashboard"
+              element={<MergedPageLayout labelKey="nav.dashboard" tabs={DASHBOARD_TABS} />}
+            >
+              <Route index element={<Dashboard />} />
+              <Route path="logs" element={<Logs />} />
+              <Route path="tasks" element={<Tasks />} />
+            </Route>
             <Route path="/tokens" element={<Tokens />} />
-            <Route path="/logs" element={<Logs />} />
-            <Route path="/tasks" element={<Tasks />} />
+            <Route path="/logs" element={<Navigate to="/dashboard/logs" replace />} />
+            <Route path="/tasks" element={<Navigate to="/dashboard/tasks" replace />} />
             <Route path="/topup" element={<Topup />} />
             <Route path="/account" element={<Account />} />
           </Route>

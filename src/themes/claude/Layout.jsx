@@ -54,7 +54,6 @@ export default function ClaudeLayout() {
   const isNavActive = (to) => isSiteNavActive(location.pathname, to);
   const getNavLabel = (item) => {
     if (item.to === '/ai-api-reseller-platform') return t('subDist.navShort');
-    if (item.to === '/logs') return t('nav.logsShort');
     return item.label;
   };
   const supportLink = getSupportLink(site);
