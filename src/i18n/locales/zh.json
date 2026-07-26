@@ -624,6 +624,8 @@
     "topup.walletAddress": "钱包地址",
     "topup.amount": "金额",
     "topup.chain": "链",
+    "topup.cryptoExactAmountPrefix": "请确保转账金额为",
+    "topup.cryptoExactAmountSuffix": "，金额不一致将导致入账失败。",
     "topup.waitingPayment": "等待支付中...",
     "topup.close": "关闭",
     "topup.selectChain": "请选择区块链网络",

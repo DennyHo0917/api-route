@@ -545,6 +545,8 @@
     "topup.activatingPackage": "有効化中...",
     "topup.packageActivated": "{{name}} を有効化しました。",
     "topup.walletAddress": "ウォレットアドレス",
+    "topup.cryptoExactAmountPrefix": "送金額が ",
+    "topup.cryptoExactAmountSuffix": " であることを確認してください。金額が異なると入金に失敗します。",
     "topup.waitingPayment": "支払いを待っています...",
     "topup.close": "閉じる",
     "topup.token": "トークン",

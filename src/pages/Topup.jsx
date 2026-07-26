@@ -743,6 +743,13 @@ export default function Topup() {
                   <p className="text-sm text-page font-medium">{selectedChainLabel || cryptoOrder.chain}</p>
                 </div>
               </div>
+              <p className="rounded-xl border border-orange-500/25 bg-orange-500/10 px-4 py-3 text-sm leading-6 text-page-secondary">
+                {t('topup.cryptoExactAmountPrefix')}
+                <strong className="text-base font-bold text-orange-500">{cryptoOrder.amount}</strong>
+                {' '}
+                {cryptoOrder.token}
+                {t('topup.cryptoExactAmountSuffix')}
+              </p>
               {cryptoPolling && (
                 <div className="flex items-center gap-2 text-sm text-page-secondary">
                   <div className="w-4 h-4 border-2 border-brand-500/30 border-t-brand-500 rounded-full animate-spin" />

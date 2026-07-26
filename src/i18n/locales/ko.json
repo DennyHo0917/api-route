@@ -545,6 +545,8 @@
     "topup.activatingPackage": "활성화 중...",
     "topup.packageActivated": "{{name}}이 활성화되었습니다.",
     "topup.walletAddress": "지갑 주소",
+    "topup.cryptoExactAmountPrefix": "송금 금액이 정확히 ",
+    "topup.cryptoExactAmountSuffix": "인지 확인하세요. 금액이 다르면 입금에 실패합니다.",
     "topup.waitingPayment": "결제를 기다리는 중...",
     "topup.close": "닫기",
     "topup.token": "토큰",

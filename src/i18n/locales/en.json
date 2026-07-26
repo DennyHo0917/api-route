@@ -624,6 +624,8 @@
     "topup.walletAddress": "Wallet Address",
     "topup.amount": "Amount",
     "topup.chain": "Chain",
+    "topup.cryptoExactAmountPrefix": "Please ensure the transfer amount is ",
+    "topup.cryptoExactAmountSuffix": ". A different amount will fail to credit.",
     "topup.waitingPayment": "Waiting for payment...",
     "topup.close": "Close",
     "topup.selectChain": "Please select a blockchain network",
