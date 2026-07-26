@@ -2198,3 +2198,35 @@ html[data-color-scheme='dark'] .theme-claude .sub-dist-router-map__model-logo {
     transform: translateY(-50%);
   }
 }
+
+.dashboard-loading-text {
+  color: rgb(var(--page-text-secondary));
+  background: linear-gradient(
+    90deg,
+    rgb(var(--page-text-secondary)) 20%,
+    rgb(var(--page-link)) 50%,
+    rgb(var(--page-text-secondary)) 80%
+  );
+  background-size: 250% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: dashboard-loading-shimmer 1.8s linear infinite;
+}
+
+@keyframes dashboard-loading-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-loading-text {
+    background: none;
+    -webkit-text-fill-color: currentColor;
+    animation: none;
+  }
+}

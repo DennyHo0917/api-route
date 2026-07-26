@@ -28,7 +28,6 @@ const DASHBOARD_LOG_PAGE_SIZE = 1000;
 
 // ponytail: page-session cache; refresh the browser page to pull fresh dashboard logs.
 let dashboardLogsCache = null;
-let dashboardErrorsCache = null;
 
 const fetchDashboardLogs = async (baseParams) => {
   const logs = [];
@@ -139,9 +138,7 @@ export default function Dashboard() {
   const [analyticsAnimationKey, setAnalyticsAnimationKey] = useState(0);
   const [analytics, setAnalytics] = useState({
     logsLoading: true,
-    errorsLoading: true,
     logs: [],
-    errors: [],
   });
 
   // Invitation / Aff
@@ -201,9 +198,7 @@ export default function Dashboard() {
     setAnalytics((current) => ({
       ...current,
       logsLoading: !dashboardLogsCache,
-      errorsLoading: !dashboardErrorsCache,
       logs: dashboardLogsCache || current.logs,
-      errors: dashboardErrorsCache || current.errors,
     }));
 
     if (!dashboardLogsCache) {
@@ -221,20 +216,6 @@ export default function Dashboard() {
         });
     }
 
-    if (!dashboardErrorsCache) {
-      getUserLogs({ ...baseParams, type: '5', p: 1, page_size: 3 })
-        .then((res) => {
-          dashboardErrorsCache = res.data.success ? res.data.data?.items || [] : [];
-          setAnalytics((current) => ({
-            ...current,
-            errorsLoading: false,
-            errors: dashboardErrorsCache,
-          }));
-        })
-        .catch(() => {
-          setAnalytics((current) => ({ ...current, errorsLoading: false }));
-        });
-    }
   }, []);
 
   useEffect(() => {
@@ -335,10 +316,6 @@ export default function Dashboard() {
   const activeLogs = useMemo(
     () => filterLogsByBounds(analytics.logs, analyticsBounds),
     [analytics.logs, analyticsBounds],
-  );
-  const activeErrors = useMemo(
-    () => filterLogsByBounds(analytics.errors, analyticsBounds),
-    [analytics.errors, analyticsBounds],
   );
   const analyticsStat = useMemo(
     () => summarizeLogs(activeLogs, analyticsBounds.start, analyticsBounds.end),
@@ -486,13 +463,6 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-10">
-      <div className="mb-8">
-        <h1 className="text-2xl font-heading font-bold text-page mb-1">
-          {t('dashboard.welcome')} {user?.display_name || user?.username || 'User'}
-        </h1>
-        <p className="text-sm text-page-secondary">{t('dashboard.manageDesc')}</p>
-      </div>
-
       <section className="mb-10">
         <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
@@ -572,6 +542,7 @@ export default function Dashboard() {
             rate={rate}
             decimals={decimals}
             loading={analytics.logsLoading}
+            loadingLabel={t('dashboard.loadingLargeDataset')}
             animationKey={chartAnimationKey}
           />
           <div className="grid grid-cols-1 gap-6">
@@ -600,12 +571,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <RecentErrors
-          title={t('dashboard.recentErrors')}
-          emptyText={t('dashboard.noRecentErrors')}
-          items={activeErrors}
-          loading={analytics.errorsLoading}
-        />
       </section>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
@@ -911,7 +876,6 @@ export default function Dashboard() {
     </div>
   );
 }
-
 function MetricCard({ label, value, loading, prefix = '', decimals = 0, animationKey }) {
   return (
     <div className="glass rounded-2xl p-5">
@@ -935,7 +899,7 @@ function MetricCard({ label, value, loading, prefix = '', decimals = 0, animatio
   );
 }
 
-function TrendBars({ title, items, symbol, rate, decimals, loading, animationKey }) {
+function TrendBars({ title, items, symbol, rate, decimals, loading, loadingLabel, animationKey }) {
   const maxQuota = Math.max(1, ...items.map((item) => item.quota));
 
   return (
@@ -944,7 +908,15 @@ function TrendBars({ title, items, symbol, rate, decimals, loading, animationKey
         <h3 className="text-lg font-semibold text-page">{title}</h3>
       </div>
       {loading ? (
-        <div className="h-72 animate-pulse rounded-xl bg-page-surface" />
+        <div className="flex h-72 items-center justify-center rounded-xl bg-page-surface">
+          <span
+            role="status"
+            aria-live="polite"
+            className="dashboard-loading-text text-base font-semibold"
+          >
+            {loadingLabel}
+          </span>
+        </div>
       ) : (
         <div className="h-72">
           <div className="flex h-56 items-end gap-2 border-b border-page-divider">
@@ -1050,28 +1022,5 @@ function AnimatedProgressFill({ targetWidth }) {
       className="h-full rounded-full bg-page-link transition-[width] duration-700 ease-out"
       style={{ width }}
     />
-  );
-}
-
-function RecentErrors({ title, emptyText, items, loading }) {
-  return (
-    <div className="glass mt-6 rounded-2xl p-6">
-      <h3 className="mb-4 text-lg font-semibold text-page">{title}</h3>
-      {loading ? (
-        <div className="h-20 animate-pulse rounded-xl bg-page-surface" />
-      ) : items.length === 0 ? (
-        <p className="text-sm text-page-muted">{emptyText}</p>
-      ) : (
-        <div className="divide-y divide-page">
-          {items.map((item) => (
-            <div key={item.id || item.request_id || item.created_at} className="grid gap-2 py-3 text-sm md:grid-cols-[160px_1fr_160px]">
-              <span className="text-page-secondary">{item.created_at ? new Date(item.created_at * 1000).toLocaleString() : '-'}</span>
-              <span className="min-w-0 truncate text-page">{item.content || item.model_name || '-'}</span>
-              <span className="min-w-0 truncate font-mono text-xs text-page-muted">{item.request_id || item.token_name || '-'}</span>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
   );
 }

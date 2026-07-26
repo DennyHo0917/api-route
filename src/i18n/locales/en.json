@@ -695,6 +695,7 @@
     "dashboard.topupDesc": "Top up online or redeem a voucher to balance",
     "dashboard.analyticsTitle": "Data Overview",
     "dashboard.analyticsSubtitle": "Usage, cost, model, and API key activity for the selected period",
+    "dashboard.loadingLargeDataset": "There’s a lot of data. Loading, please wait...",
     "dashboard.range24h": "24h",
     "dashboard.rangeToday": "Today",
     "dashboard.range7d": "7 days",
@@ -707,8 +708,6 @@
     "dashboard.costTrend": "Cost Trend",
     "dashboard.modelBreakdown": "Model Cost",
     "dashboard.keyBreakdown": "API Key Cost",
-    "dashboard.recentErrors": "Recent Errors",
-    "dashboard.noRecentErrors": "No recent errors",
     "dashboard.requestsUnit": "requests",
     "dashboard.tokensUnit": "tokens",
 

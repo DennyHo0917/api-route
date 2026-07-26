@@ -5,6 +5,7 @@ import AuthGuard from './components/AuthGuard';
 import NotificationBell from './components/NotificationBell';
 import SeoManager from './components/SeoManager';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { useAuth } from './context/AuthContext';
 import { rememberAuthReturnTo } from './utils/authReturn';
 
 const Login = lazy(() => import('./pages/Login'));
@@ -55,15 +56,34 @@ function AuthReturnTracker() {
   return null;
 }
 
-function MergedPageLayout({ labelKey, tabs }) {
+function MergedPageLayout({ labelKey, tabs, showWelcome = false }) {
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const location = useLocation();
+  const welcomeVisible = showWelcome && location.pathname === tabs[0].to;
 
   return (
     <>
-      <div className="mx-auto flex max-w-7xl justify-center px-5 pt-6 md:px-8">
+      <div
+        className={`mx-auto max-w-7xl px-6 pt-8 ${
+          welcomeVisible
+            ? 'grid gap-5 md:grid-cols-[1fr_auto_1fr] md:items-center'
+            : 'flex justify-center'
+        }`}
+      >
+        {welcomeVisible && (
+          <div className="text-left">
+            <h1 className="mb-1 text-2xl font-heading font-bold text-page">
+              {t('dashboard.welcome')} {user?.display_name || user?.username || 'User'}
+            </h1>
+            <p className="text-sm text-page-secondary">{t('dashboard.manageDesc')}</p>
+          </div>
+        )}
         <nav
           aria-label={t(labelKey)}
-          className="inline-flex max-w-full gap-1 overflow-x-auto rounded-full border border-page-divider bg-page-surface p-1.5 shadow-sm"
+          className={`inline-flex max-w-full gap-1 overflow-x-auto rounded-full border border-page-divider bg-page-surface p-1.5 shadow-sm ${
+            welcomeVisible ? 'justify-self-start md:col-start-2 md:justify-self-center' : ''
+          }`}
         >
           {tabs.map((tab) => (
             <NavLink
@@ -94,7 +114,7 @@ const PRICING_TABS = [
 ];
 
 const DASHBOARD_TABS = [
-  { to: '/dashboard', labelKey: 'nav.dashboard', end: true },
+  { to: '/dashboard', labelKey: 'dashboard.analyticsTitle', end: true },
   { to: '/dashboard/logs', labelKey: 'logs.callLogs' },
   { to: '/dashboard/tasks', labelKey: 'tasks.title' },
 ];
@@ -130,7 +150,7 @@ function ThemedRoutes() {
           <Route element={<AuthGuard />}>
             <Route
               path="/dashboard"
-              element={<MergedPageLayout labelKey="nav.dashboard" tabs={DASHBOARD_TABS} />}
+              element={<MergedPageLayout labelKey="nav.dashboard" tabs={DASHBOARD_TABS} showWelcome />}
             >
               <Route index element={<Dashboard />} />
               <Route path="logs" element={<Logs />} />
