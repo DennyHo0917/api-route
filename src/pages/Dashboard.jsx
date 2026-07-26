@@ -715,7 +715,10 @@ export default function Dashboard() {
                           </p>
                         </div>
                         <span className="shrink-0 text-sm font-medium text-page-success">
-                          +{symbol}{((item.commission_quota / Q) * rate).toFixed(Math.max(decimals, 2))}
+                          +{symbol}{((item.commission_quota / Q) * rate).toLocaleString(undefined, {
+                            minimumFractionDigits: Math.max(decimals, 2),
+                            maximumFractionDigits: Math.max(decimals, 6),
+                          })}
                         </span>
                       </div>
                     ))}
