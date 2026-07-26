@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Headset, LogOut, Menu, Moon, Sun, UserRound, X } from 'lucide-react';
+import { ChevronDown, Headset, KeyRound, LogOut, Menu, Moon, Sun, UserRound, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { COLOR_SCHEME_STORAGE_KEY, useCurrency, useSite } from '../../context/SiteContext';
 import { Q } from '../../api';
@@ -44,7 +44,9 @@ export default function ClaudeLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [snapDeckAtEnd, setSnapDeckAtEnd] = useState(false);
+  const userMenuRef = useRef(null);
   const [colorScheme, setColorScheme] = useState(() => (
     document.documentElement.dataset.colorScheme === 'dark' ? 'dark' : 'light'
   ));
@@ -52,7 +54,7 @@ export default function ClaudeLayout() {
   const rawSiteName = site?.name || 'API-Route';
   const siteName = rawSiteName.toLowerCase() === 'api-route' ? 'API-Route' : rawSiteName;
   const visibleNavItems = getVisibleNavItems(getSiteNavItems({ t, site }), user);
-  const desktopNavItems = visibleNavItems;
+  const primaryNavItems = visibleNavItems;
   const isNavActive = (to) => isSiteNavActive(location.pathname, to);
   const getNavLabel = (item) => {
     if (item.to === '/ai-api-reseller-platform') return t('subDist.navShort');
@@ -71,7 +73,23 @@ export default function ClaudeLayout() {
 
   useEffect(() => {
     setMobileMenuOpen(false);
+    setUserMenuOpen(false);
   }, [location.pathname]);
+
+  useEffect(() => {
+    if (!userMenuOpen) return undefined;
+    const closeUserMenu = (event) => {
+      if (event.key === 'Escape' || !userMenuRef.current?.contains(event.target)) {
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener('pointerdown', closeUserMenu);
+    document.addEventListener('keydown', closeUserMenu);
+    return () => {
+      document.removeEventListener('pointerdown', closeUserMenu);
+      document.removeEventListener('keydown', closeUserMenu);
+    };
+  }, [userMenuOpen]);
 
   useEffect(() => {
     setSnapDeckAtEnd(false);
@@ -168,7 +186,7 @@ export default function ClaudeLayout() {
           </Link>
 
           <nav className="hidden min-w-0 items-center gap-1 justify-self-center lg:flex">
-            {desktopNavItems.map((item) => (
+            {primaryNavItems.map((item) => (
               <Link
                 key={item.to}
                 to={item.to}
@@ -221,22 +239,55 @@ export default function ClaudeLayout() {
             )}
 
             {user ? (
-              <>
-                <Link
-                  to="/account"
-                  className="hidden items-center gap-2 rounded-full border border-[#E8DDD0] bg-white/70 px-3 py-2 text-sm font-medium text-[#5E4E40] transition-colors hover:border-[#D9C5B2] hover:bg-white sm:flex"
+              <div ref={userMenuRef} className="relative">
+                <button
+                  type="button"
+                  onClick={() => setUserMenuOpen((open) => !open)}
+                  className="flex h-10 items-center gap-2 rounded-full border border-[#E8DDD0] bg-white/70 px-2 text-sm font-medium text-[#5E4E40] transition-colors hover:border-[#D9C5B2] hover:bg-white sm:px-3"
+                  aria-haspopup="menu"
+                  aria-expanded={userMenuOpen}
                 >
                   <UserRound size={15} />
-                  <span className="max-w-24 truncate">{user.display_name || user.username}</span>
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="hidden rounded-full p-2.5 text-[#8B7D6E] transition-colors hover:bg-white hover:text-[#D97757] sm:block"
-                  title={t('nav.logout')}
-                >
-                  <LogOut size={17} />
+                  <span className="hidden max-w-24 truncate sm:block">{user.display_name || user.username}</span>
+                  <ChevronDown
+                    size={14}
+                    className={`hidden transition-transform sm:block ${userMenuOpen ? 'rotate-180' : ''}`}
+                  />
                 </button>
-              </>
+                {userMenuOpen && (
+                  <div
+                    role="menu"
+                    className="absolute right-0 top-[calc(100%+10px)] z-[60] w-48 overflow-hidden rounded-2xl border border-[#E8DDD0] bg-white p-1.5 shadow-xl shadow-[#6B4B35]/10"
+                  >
+                    <Link
+                      to="/account"
+                      role="menuitem"
+                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-[#5E4E40] transition-colors hover:bg-[#FAF6F1] hover:text-[#3D3024]"
+                    >
+                      <UserRound size={16} />
+                      {t('nav.account')}
+                    </Link>
+                    <Link
+                      to="/api-keys"
+                      role="menuitem"
+                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-[#5E4E40] transition-colors hover:bg-[#FAF6F1] hover:text-[#3D3024]"
+                    >
+                      <KeyRound size={16} />
+                      {t('nav.apiAccess')}
+                    </Link>
+                    <div className="my-1 border-t border-[#E8DDD0]" />
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={handleLogout}
+                      className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-[#D97757] transition-colors hover:bg-[#FAF6F1]"
+                    >
+                      <LogOut size={16} />
+                      {t('nav.logout')}
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
               <>
                 <Link
@@ -267,7 +318,7 @@ export default function ClaudeLayout() {
         {mobileMenuOpen && (
           <div className="border-t border-[#E8DDD0] bg-[#FAF6F1] lg:hidden">
             <nav className="mx-auto grid max-w-7xl gap-1 px-5 py-4 md:grid-cols-2 md:px-8">
-              {visibleNavItems.map((item) => (
+              {primaryNavItems.map((item) => (
                 <Link
                   key={item.to}
                   to={item.to}
@@ -300,15 +351,6 @@ export default function ClaudeLayout() {
                     {t('nav.signUp')}
                   </Link>
                 </>
-              )}
-              {user && (
-                <button
-                  onClick={handleLogout}
-                  className="mt-2 flex items-center gap-2 rounded-xl px-4 py-3 text-left text-sm text-[#D97757] hover:bg-white/70"
-                >
-                  <LogOut size={16} />
-                  {t('nav.logout')}
-                </button>
               )}
             </nav>
           </div>

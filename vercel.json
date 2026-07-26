@@ -141,6 +141,42 @@
       ]
     },
     {
+      "source": "/chats",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/:lang/chats",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/api-keys",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/:lang/api-keys",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
       "source": "/logs",
       "headers": [
         {
@@ -252,6 +288,22 @@
     },
     {
       "source": "/:lang/tokens",
+      "destination": "/"
+    },
+    {
+      "source": "/chats",
+      "destination": "/"
+    },
+    {
+      "source": "/:lang/chats",
+      "destination": "/"
+    },
+    {
+      "source": "/api-keys",
+      "destination": "/"
+    },
+    {
+      "source": "/:lang/api-keys",
       "destination": "/"
     },
     {

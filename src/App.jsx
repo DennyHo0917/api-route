@@ -10,6 +10,7 @@ import { rememberAuthReturnTo } from './utils/authReturn';
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
+const QuickStart = lazy(() => import('./pages/QuickStart'));
 const Tokens = lazy(() => import('./pages/Tokens'));
 const Packages = lazy(() => import('./pages/Packages'));
 const Pricing = lazy(() => import('./pages/Pricing'));
@@ -135,7 +136,9 @@ function ThemedRoutes() {
               <Route path="logs" element={<Logs />} />
               <Route path="tasks" element={<Tasks />} />
             </Route>
-            <Route path="/tokens" element={<Tokens />} />
+            <Route path="/chats" element={<QuickStart />} />
+            <Route path="/tokens" element={<Navigate to="/chats" replace />} />
+            <Route path="/api-keys" element={<Tokens />} />
             <Route path="/logs" element={<Navigate to="/dashboard/logs" replace />} />
             <Route path="/tasks" element={<Navigate to="/dashboard/tasks" replace />} />
             <Route path="/topup" element={<Topup />} />

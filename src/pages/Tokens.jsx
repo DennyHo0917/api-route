@@ -28,7 +28,6 @@ export default function Tokens() {
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [expandedTokens, setExpandedTokens] = useState({});
   const [tokenModels, setTokenModels] = useState({});
-
   // Key groups
   const [keyGroups, setKeyGroups] = useState([]);
   const [activePricingGroup, setActivePricingGroup] = useState(null);
@@ -246,23 +245,30 @@ export default function Tokens() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-10">
+    <div className="mx-auto max-w-7xl px-6 py-10">
       <section className="relative overflow-hidden rounded-[28px] border border-page-link/20 bg-page-surface shadow-xl shadow-black/5">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-x-0 top-0 h-52 bg-gradient-to-br from-page-link/15 via-page-link/5 to-transparent"
         />
-        <header className="relative border-b border-page-divider px-6 py-7 md:px-8 md:py-9">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-page-link/20 bg-page-link/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-page-link">
-            <Sparkles className="h-3.5 w-3.5" />
-            {t('quickstart.badge')}
+        <header className="relative flex flex-col gap-5 border-b border-page-divider px-6 py-7 md:flex-row md:items-center md:justify-between md:px-8 md:py-9">
+          <div>
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-page-link/20 bg-page-link/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-page-link">
+              <Sparkles className="h-3.5 w-3.5" />
+              {t('quickstart.badge')}
+            </div>
+            <h1 className="max-w-2xl text-2xl font-black tracking-tight text-page md:text-4xl">
+              {t('quickstart.title')}
+            </h1>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-page-secondary md:text-base">
+              {t('quickstart.subtitle')}
+            </p>
           </div>
-          <h1 className="max-w-2xl text-2xl font-black tracking-tight text-page md:text-4xl">
-            {t('quickstart.title')}
-          </h1>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-page-secondary md:text-base">
-            {t('quickstart.subtitle')}
-          </p>
+          <div>
+            <Link to="/chats" className="btn-secondary">
+              {t('quickstart.webChat')}
+            </Link>
+          </div>
         </header>
 
         <div className="relative space-y-3 p-3 md:p-5">

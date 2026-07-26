@@ -19,7 +19,7 @@ const STRUCTURED_DATA_TOPICS = [
   'AI API reseller platform',
 ];
 const INDEXABLE_PATHS = new Set(['/', '/pricing', '/pricing/packages', '/apps', '/ai-api-reseller-platform', '/faq', '/privacy-policy', '/terms-of-service']);
-const PRIVATE_PATHS = new Set(['/login', '/register', '/dashboard', '/dashboard/logs', '/dashboard/tasks', '/tokens', '/logs', '/tasks', '/topup', '/account']);
+const PRIVATE_PATHS = new Set(['/login', '/register', '/dashboard', '/dashboard/logs', '/dashboard/tasks', '/chats', '/tokens', '/api-keys', '/logs', '/tasks', '/topup', '/account']);
 const LANGUAGE_HREFLANGS = {
   zh: 'zh-CN',
   en: 'en',
