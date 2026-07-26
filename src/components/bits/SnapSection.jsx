@@ -34,7 +34,7 @@ export default function SnapSection({
     <section
       ref={ref}
       data-snap-section="true"
-      className={`flex min-h-[calc(100vh-72px)] snap-start snap-always items-center ${className}`}
+      className={`flex min-h-0 items-center lg:min-h-[calc(100vh-72px)] lg:snap-start lg:snap-always ${className}`}
       style={deckHeight ? { height: deckHeight } : undefined}
     >
       <SnapSectionContext.Provider value={isActive}>
@@ -60,9 +60,20 @@ export function SnapDeck({ children, className = '' }) {
   const activeIndexRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const [height, setHeight] = useState(0);
+  const [snapEnabled, setSnapEnabled] = useState(() => (
+    typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches
+  ));
   const allChildren = Children.toArray(children);
   const slides = allChildren.filter((child) => child?.type === SnapSection);
   const overlays = allChildren.filter((child) => child?.type !== SnapSection);
+
+  useEffect(() => {
+    const media = window.matchMedia('(min-width: 1024px)');
+    const update = () => setSnapEnabled(media.matches);
+    update();
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
+  }, []);
 
   useEffect(() => {
     const el = ref.current;
@@ -152,22 +163,22 @@ export function SnapDeck({ children, className = '' }) {
   return (
     <div
       ref={ref}
-      className={`h-[calc(100vh-72px)] overflow-hidden ${className}`}
-      onWheel={onWheel}
-      onTouchStart={onTouchStart}
-      onTouchEnd={onTouchEnd}
-      onClick={onClick}
+      className={`${snapEnabled ? 'h-[calc(100vh-72px)] overflow-hidden' : ''} ${className}`}
+      onWheel={snapEnabled ? onWheel : undefined}
+      onTouchStart={snapEnabled ? onTouchStart : undefined}
+      onTouchEnd={snapEnabled ? onTouchEnd : undefined}
+      onClick={snapEnabled ? onClick : undefined}
     >
       <div
         style={{
-          transform: `translate3d(0, -${activeIndex * height}px, 0)`,
+          transform: snapEnabled ? `translate3d(0, -${activeIndex * height}px, 0)` : undefined,
           transition: 'transform 1080ms cubic-bezier(0.16, 1, 0.3, 1)',
-          willChange: 'transform',
+          willChange: snapEnabled ? 'transform' : undefined,
         }}
       >
         {slides.map((child, index) => cloneElement(child, {
-          activeOverride: index === activeIndex,
-          deckHeight: height || undefined,
+          activeOverride: snapEnabled ? index === activeIndex : true,
+          deckHeight: snapEnabled ? height || undefined : null,
         }))}
       </div>
       {overlays}

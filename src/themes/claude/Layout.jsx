@@ -158,25 +158,25 @@ export default function ClaudeLayout() {
   };
 
   const footerClassName = isSnapDeckPage
-    ? `fixed inset-x-0 bottom-0 z-40 border-t border-[#E8DDD0] bg-[#F1E8DE] shadow-[0_-18px_48px_rgba(84,57,36,0.08)] transition-all duration-500 ease-out ${
-      snapDeckAtEnd ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-full opacity-0'
+    ? `relative mt-auto border-t border-[#E8DDD0] bg-[#F1E8DE] shadow-[0_-18px_48px_rgba(84,57,36,0.08)] lg:fixed lg:inset-x-0 lg:bottom-0 lg:z-40 lg:transition-all lg:duration-500 lg:ease-out ${
+      snapDeckAtEnd ? 'lg:translate-y-0 lg:opacity-100' : 'lg:pointer-events-none lg:translate-y-full lg:opacity-0'
     }`
     : 'mt-auto border-t border-[#E8DDD0] bg-[#F1E8DE]';
 
   return (
     <div className="theme-light theme-claude min-h-screen flex flex-col bg-[#FAF6F1] text-[#3D3024]">
       <header className="sticky top-0 z-50 border-b border-[#E8DDD0] bg-[#FAF6F1]/92 backdrop-blur-xl">
-        <div className="grid h-[72px] w-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-5 px-5 md:px-8">
-          <Link to="/" className="group flex shrink-0 items-center gap-3 justify-self-start">
+        <div className="grid h-[72px] w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 sm:px-5 md:px-8 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:gap-5">
+          <Link to="/" className="group flex min-w-0 items-center gap-3 justify-self-start">
             {site?.logo ? (
-              <img src={site.logo} alt={siteName} className="h-9 w-9 rounded-xl object-contain" />
+              <img src={site.logo} alt={siteName} className="h-9 w-9 shrink-0 rounded-xl object-contain" />
             ) : (
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#D97757] text-sm font-bold text-white shadow-sm">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#D97757] text-sm font-bold text-white shadow-sm">
                 {siteName.charAt(0).toUpperCase()}
               </div>
             )}
-            <div>
-              <span className="block text-[17px] font-bold leading-none text-[#3D3024] transition-colors group-hover:text-[#D97757]">
+            <div className="min-w-0">
+              <span className="block truncate text-[17px] font-bold leading-none text-[#3D3024] transition-colors group-hover:text-[#D97757]">
                 {siteName}
               </span>
               <span className="mt-1 hidden text-[10px] font-medium uppercase tracking-[0.18em] text-[#9B8876] sm:block">
@@ -214,14 +214,16 @@ export default function ClaudeLayout() {
                 <Headset size={17} />
               </a>
             )}
-            <LanguageSwitch
-              iconOnly
-              className="border border-[#E5D4C6] bg-white/65 text-[#8F5D48] hover:border-[#D8BBA7] hover:bg-[#FFF9F4] hover:text-[#C4613F]"
-            />
+            <div className="hidden sm:block">
+              <LanguageSwitch
+                iconOnly
+                className="border border-[#E5D4C6] bg-white/65 text-[#8F5D48] hover:border-[#D8BBA7] hover:bg-[#FFF9F4] hover:text-[#C4613F]"
+              />
+            </div>
             <button
               type="button"
               onClick={toggleColorScheme}
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#E5D4C6] bg-white/65 text-[#8F5D48] transition-colors hover:border-[#D8BBA7] hover:bg-[#FFF9F4] hover:text-[#C4613F]"
+              className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#E5D4C6] bg-white/65 text-[#8F5D48] transition-colors hover:border-[#D8BBA7] hover:bg-[#FFF9F4] hover:text-[#C4613F] sm:flex"
               title={colorScheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
               aria-label={colorScheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
             >
@@ -231,7 +233,7 @@ export default function ClaudeLayout() {
             {user && (
               <Link
                 to="/topup"
-                className="flex h-10 shrink-0 items-center rounded-full border border-[#E8DDD0] bg-white/70 px-3 text-sm font-semibold tabular-nums text-[#5E4E40] transition-colors hover:border-[#D9C5B2] hover:bg-white"
+                className="hidden h-10 shrink-0 items-center rounded-full border border-[#E8DDD0] bg-white/70 px-3 text-sm font-semibold tabular-nums text-[#5E4E40] transition-colors hover:border-[#D9C5B2] hover:bg-white md:flex"
                 title={t('dashboard.balance')}
               >
                 {symbol}{balance}
@@ -353,6 +355,29 @@ export default function ClaudeLayout() {
                 </>
               )}
             </nav>
+            <div className="flex items-center gap-2 border-t border-[#E8DDD0] px-5 py-3 sm:hidden">
+              {user && (
+                <Link
+                  to="/topup"
+                  className="flex h-10 flex-1 items-center justify-center rounded-xl border border-[#E8DDD0] bg-white/70 px-3 text-sm font-semibold tabular-nums text-[#5E4E40]"
+                >
+                  {t('dashboard.balance')}：{symbol}{balance}
+                </Link>
+              )}
+              <LanguageSwitch
+                iconOnly
+                className="border border-[#E5D4C6] bg-white/65 text-[#8F5D48]"
+              />
+              <button
+                type="button"
+                onClick={toggleColorScheme}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#E5D4C6] bg-white/65 text-[#8F5D48]"
+                title={colorScheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+                aria-label={colorScheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              >
+                {colorScheme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+              </button>
+            </div>
           </div>
         )}
       </header>

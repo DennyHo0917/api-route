@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Bot, MessageSquarePlus, Send, Settings2, Square, Trash2, UserRound } from 'lucide-react';
+import { Bot, Menu, MessageSquarePlus, Send, Settings2, Square, Trash2, UserRound, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { getTokenSupportedModels } from '../api';
@@ -85,6 +85,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
   const [loadingModels, setLoadingModels] = useState(false);
   const [loadingHistory, setLoadingHistory] = useState(true);
   const [generating, setGenerating] = useState(false);
+  const [mobileHistoryOpen, setMobileHistoryOpen] = useState(false);
   const abortControllerRef = useRef(null);
   const messagesContainerRef = useRef(null);
 
@@ -177,6 +178,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
 
   const startNewConversation = () => {
     if (generating) return;
+    setMobileHistoryOpen(false);
     setActiveConversation(null);
     setMessages([]);
     setInput('');
@@ -184,6 +186,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
 
   const openConversation = (conversation) => {
     if (generating) return;
+    setMobileHistoryOpen(false);
     setActiveConversation(conversation);
     setMessages(conversation.messages || []);
     if (models.some((model) => model.name === conversation.model)) {
@@ -297,17 +300,35 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
   };
 
   return (
-    <div className="grid min-h-[calc(100dvh-4rem)] overflow-hidden border-y border-page-divider bg-page-surface lg:h-[calc(100dvh-4rem)] lg:grid-cols-[280px_minmax(0,1fr)]">
-      <aside className="flex max-h-64 flex-col border-b border-page-divider bg-page-inset/35 p-3 lg:max-h-none lg:border-b-0 lg:border-r">
+    <div className="relative grid h-[calc(100dvh-72px)] overflow-hidden border-y border-page-divider bg-page-surface lg:grid-cols-[280px_minmax(0,1fr)]">
+      {mobileHistoryOpen && (
         <button
           type="button"
-          onClick={startNewConversation}
-          disabled={generating}
-          className="btn-primary flex h-11 w-full items-center justify-center gap-2"
-        >
-          <MessageSquarePlus size={17} />
-          {t('chat.newConversation')}
-        </button>
+          className="fixed inset-0 z-[55] bg-black/40 lg:hidden"
+          onClick={() => setMobileHistoryOpen(false)}
+          aria-label={t('topup.close')}
+        />
+      )}
+      <aside className={`${mobileHistoryOpen ? 'fixed inset-y-0 left-0 z-[60] flex w-[85vw] max-w-80' : 'hidden'} flex-col border-r border-page-divider bg-page-surface p-3 shadow-2xl lg:static lg:z-auto lg:flex lg:w-auto lg:max-w-none lg:bg-page-inset/35 lg:shadow-none`}>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={startNewConversation}
+            disabled={generating}
+            className="btn-primary flex h-11 flex-1 items-center justify-center gap-2"
+          >
+            <MessageSquarePlus size={17} />
+            {t('chat.newConversation')}
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobileHistoryOpen(false)}
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-page-secondary hover:bg-page-surface-hover lg:hidden"
+            aria-label={t('topup.close')}
+          >
+            <X size={19} />
+          </button>
+        </div>
         <p className="px-2 pb-2 pt-4 text-xs text-page-muted">{t('chat.localOnly')}</p>
         <div className="space-y-1 overflow-y-auto">
           {loadingHistory ? (
@@ -348,15 +369,23 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
         </div>
       </aside>
 
-      <section className="flex min-h-[560px] min-w-0 flex-col lg:min-h-0">
-        <header className="flex flex-wrap items-center justify-between gap-3 border-b border-page-divider px-4 py-3 sm:px-5">
-          <div>
-            <p className="text-xs text-page-muted">{t('chat.model')}</p>
+      <section className="flex min-h-0 min-w-0 flex-col">
+        <header className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 border-b border-page-divider px-3 py-2.5 sm:px-5 sm:py-3">
+          <button
+            type="button"
+            onClick={() => setMobileHistoryOpen(true)}
+            className="flex h-10 w-10 items-center justify-center rounded-xl text-page-secondary hover:bg-page-surface-hover lg:hidden"
+            aria-label={t('chat.localOnly')}
+          >
+            <Menu size={20} />
+          </button>
+          <div className="min-w-0">
+            <p className="hidden text-xs text-page-muted sm:block">{t('chat.model')}</p>
             <select
               value={selectedModel}
               onChange={changeModel}
               disabled={loadingModels || models.length === 0 || generating}
-              className="mt-1 max-w-[320px] rounded-xl border border-page-divider bg-page-surface px-3 py-2 text-sm font-semibold text-page focus:border-page-link focus:outline-none"
+              className="w-full min-w-0 truncate rounded-xl border border-page-divider bg-page-surface px-3 py-2 text-sm font-semibold text-page focus:border-page-link focus:outline-none sm:mt-1 sm:max-w-[320px]"
             >
               {models.length === 0 && (
                 <option value="">
@@ -368,7 +397,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
               ))}
             </select>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-end gap-2">
             <span className="hidden items-center gap-1.5 text-xs text-page-muted sm:inline-flex">
               <span className="h-1.5 w-1.5 rounded-full bg-page-success" />
               {t('chat.savedLocally')}
@@ -377,16 +406,26 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
               type="button"
               onClick={onOpenLocalSetup}
               disabled={generating}
-              className="btn-secondary flex items-center gap-2"
+              className="btn-secondary hidden items-center gap-2 lg:flex"
             >
               <Settings2 size={15} />
               {t('quickstart.localApps')}
+            </button>
+            <button
+              type="button"
+              onClick={startNewConversation}
+              disabled={generating}
+              className="flex h-10 w-10 items-center justify-center rounded-xl text-page-secondary hover:bg-page-surface-hover lg:hidden"
+              title={t('chat.newConversation')}
+              aria-label={t('chat.newConversation')}
+            >
+              <MessageSquarePlus size={19} />
             </button>
           </div>
         </header>
 
         {enabledTokens.length === 0 ? (
-          <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
+          <div className="flex flex-1 flex-col items-center justify-center px-4 text-center sm:px-6">
             <Bot className="h-10 w-10 text-page-link" />
             <h2 className="mt-4 text-xl font-semibold text-page">{t('chat.noKey')}</h2>
             <p className="mt-2 max-w-md text-sm leading-6 text-page-secondary">{t('chat.noKeyDesc')}</p>
@@ -396,36 +435,36 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
           </div>
         ) : (
           <>
-            <div ref={messagesContainerRef} className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
+            <div ref={messagesContainerRef} className="flex-1 overflow-y-auto px-3 py-4 sm:px-6 sm:py-6">
               {messages.length === 0 ? (
-                <div className="flex h-full min-h-72 flex-col items-center justify-center text-center">
+                <div className="flex h-full min-h-0 flex-col items-center justify-center px-3 text-center">
                   <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-page-link/10 text-page-link">
                     <Bot size={24} />
                   </span>
-                  <h2 className="mt-4 text-2xl font-semibold text-page">{t('chat.welcome')}</h2>
+                  <h2 className="mt-4 text-xl font-semibold text-page sm:text-2xl">{t('chat.welcome')}</h2>
                   <p className="mt-2 max-w-lg text-sm leading-6 text-page-secondary">{t('chat.welcomeDesc')}</p>
                 </div>
               ) : (
-                <div className="mx-auto max-w-3xl space-y-5">
+                <div className="mx-auto max-w-3xl space-y-4 sm:space-y-5">
                   {messages.map((message) => (
                     <div
                       key={message.id}
-                      className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                      className={`flex gap-2 sm:gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
                       {message.role === 'assistant' && (
                         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-page-link/10 text-page-link">
                           <Bot size={16} />
                         </span>
                       )}
-                      <div className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm leading-7 ${
+                      <div className={`max-w-[90%] whitespace-pre-wrap rounded-2xl text-sm leading-7 sm:max-w-[85%] sm:px-4 sm:py-3 ${
                         message.role === 'user'
-                          ? 'bg-page-link text-white'
-                          : 'border border-page-divider bg-page-surface text-page'
+                          ? 'bg-page-link px-4 py-2.5 text-white'
+                          : 'px-1 py-2 text-page sm:border sm:border-page-divider sm:bg-page-surface'
                       }`}>
                         {message.content || (generating ? '…' : '')}
                       </div>
                       {message.role === 'user' && (
-                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-page-inset text-page-secondary">
+                        <span className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-page-inset text-page-secondary sm:flex">
                           <UserRound size={16} />
                         </span>
                       )}
@@ -435,7 +474,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
               )}
             </div>
 
-            <div className="border-t border-page-divider p-4 sm:p-5">
+            <div className="border-t border-page-divider p-3 sm:p-5">
               <div className="mx-auto flex max-w-3xl items-end gap-2 rounded-2xl border border-page-divider bg-page-surface p-2 focus-within:border-page-link/60">
                 <textarea
                   value={input}
@@ -446,7 +485,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
                       sendMessage();
                     }
                   }}
-                  rows={2}
+                  rows={1}
                   disabled={generating || !selectedModel}
                   placeholder={t('chat.placeholder')}
                   className="max-h-40 min-h-12 flex-1 resize-none bg-transparent px-3 py-2 text-sm leading-6 text-page outline-none placeholder:text-page-muted"
@@ -462,7 +501,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
                   {generating ? <Square size={15} /> : <Send size={17} />}
                 </button>
               </div>
-              <p className="mt-2 text-center text-[11px] text-page-muted">{t('chat.disclaimer')}</p>
+              <p className="mt-2 hidden text-center text-[11px] text-page-muted sm:block">{t('chat.disclaimer')}</p>
             </div>
           </>
         )}
