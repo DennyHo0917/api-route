@@ -508,39 +508,39 @@ export default function Topup() {
   }
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-col px-5 py-10 md:px-8 md:py-14">
-      <div className="order-1 mb-8">
+    <div className="mx-auto flex max-w-6xl flex-col px-4 py-6 sm:px-5 sm:py-10 md:px-8 md:py-14">
+      <div className="order-1 mb-6 sm:mb-8">
         <p className="route-kicker">{t('topup.eyebrow')}</p>
-        <h1 className="mt-2 text-3xl font-bold tracking-[-0.035em] text-page md:text-4xl">{t('topup.title')}</h1>
-        <p className="mt-3 max-w-2xl text-sm leading-7 text-page-secondary md:text-base">{t('topup.subtitle')}</p>
+        <h1 className="mt-2 text-2xl font-bold tracking-[-0.035em] text-page sm:text-3xl md:text-4xl">{t('topup.title')}</h1>
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-page-secondary sm:mt-3 sm:leading-7 md:text-base">{t('topup.subtitle')}</p>
       </div>
 
       {/* Balance Stats */}
-      <div className="order-2 mb-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <div className="glass rounded-2xl p-4">
+      <div className="order-2 mb-6 grid grid-cols-2 gap-2 sm:mb-8 sm:gap-3 lg:grid-cols-4">
+        <div className="glass min-w-0 rounded-xl p-3 sm:rounded-2xl sm:p-4">
           <p className="mb-1 text-xs text-page-secondary">{t('dashboard.balance')}</p>
-          <div className="text-xl font-bold text-page">
+          <div className="break-all text-lg font-bold leading-tight text-page sm:text-xl">
             {symbol}<CountUp from={0} to={balanceDollars} duration={1.5} decimals={decimals} />
           </div>
         </div>
 
-        <div className="glass rounded-2xl p-4">
+        <div className="glass min-w-0 rounded-xl p-3 sm:rounded-2xl sm:p-4">
           <p className="mb-1 text-xs text-page-secondary">{t('dashboard.used')}</p>
-          <div className="text-xl font-bold text-page">
+          <div className="break-all text-lg font-bold leading-tight text-page sm:text-xl">
             {symbol}<CountUp from={0} to={usedQuota / Q * rate} duration={1.5} decimals={decimals} />
           </div>
         </div>
 
-        <div className="glass rounded-2xl p-4">
+        <div className="glass min-w-0 rounded-xl p-3 sm:rounded-2xl sm:p-4">
           <p className="mb-1 text-xs text-page-secondary">{t('dashboard.packageUsed')}</p>
-          <div className="text-xl font-bold text-page">
+          <div className="break-all text-lg font-bold leading-tight text-page sm:text-xl">
             {symbol}<CountUp from={0} to={packageUsedQuota / Q * rate} duration={1.5} decimals={decimals} />
           </div>
         </div>
 
-        <div className="glass rounded-2xl p-4">
+        <div className="glass min-w-0 rounded-xl p-3 sm:rounded-2xl sm:p-4">
           <p className="mb-1 text-xs text-page-secondary">{t('dashboard.totalRequests')}</p>
-          <div className="text-xl font-bold text-page">
+          <div className="break-all text-lg font-bold leading-tight text-page sm:text-xl">
             <CountUp from={0} to={requestCount} duration={1.5} />
           </div>
         </div>
@@ -548,9 +548,9 @@ export default function Topup() {
 
       {/* Online Topup */}
       {site?.enable_topup && paymentOptions.length > 0 && (
-        <div className="order-3 mb-8 grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(300px,0.65fr)]">
-          <div className="space-y-4">
-            <section className="glass p-5 sm:p-6">
+        <div className="order-3 mb-6 grid gap-3 sm:mb-8 sm:gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(300px,0.65fr)]">
+          <div className="space-y-3 sm:space-y-4">
+            <section className="glass p-4 sm:p-6">
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-page">{t('topup.selectAmount')}</h2>
                 <span className="rounded-full border border-page-divider px-3 py-1 text-xs font-medium text-page-secondary">
@@ -558,13 +558,13 @@ export default function Topup() {
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <div className="grid grid-cols-4 gap-2 sm:gap-3">
                 {presetAmounts.map((val) => (
                   <button
                     key={val}
                     type="button"
                     onClick={() => handlePreset(val)}
-                    className={`min-h-20 rounded-xl px-3 text-lg font-semibold transition-all ${
+                    className={`min-h-14 rounded-lg px-1 text-sm font-semibold transition-all sm:min-h-20 sm:rounded-xl sm:px-3 sm:text-lg ${
                       selectedPreset === val
                         ? 'bg-brand-500 text-white shadow-lg shadow-brand-500/25'
                         : 'glass-sm text-page hover:bg-page-surface-hover'
@@ -616,9 +616,9 @@ export default function Topup() {
               </div>
             </section>
 
-            <section className="glass p-5 sm:p-6">
+            <section className="glass p-4 sm:p-6">
               <h2 className="mb-4 text-lg font-semibold text-page">{t('topup.paymentMethod')}</h2>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
                 {paymentOptions.map((method) => {
                   const minForMethod = Number(method.min_topup) || 0;
                   return (
@@ -632,7 +632,7 @@ export default function Topup() {
                             amount: `${symbol}${formatCurrencyAmount(minForMethod * rate)}`,
                           })
                         : undefined}
-                      className={`flex min-h-14 items-center justify-center gap-2 rounded-xl px-3 text-sm font-semibold transition-all ${
+                      className={`flex min-h-12 items-center justify-center gap-2 rounded-xl px-2 text-sm font-semibold transition-all sm:min-h-14 sm:px-3 ${
                         selectedPaymentMethod === method.type
                           ? 'border border-brand-500 bg-brand-500/10 text-page shadow-sm'
                           : 'glass-sm text-page-label hover:bg-page-surface-hover hover:text-page'
@@ -690,7 +690,7 @@ export default function Topup() {
             </section>
           </div>
 
-          <aside className="glass flex min-h-[320px] flex-col p-6">
+          <aside className="glass flex min-h-0 flex-col p-4 sm:p-6 lg:min-h-[320px]">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-page">{t('topup.rechargeAmountLabel')}</h2>
               <span className="rounded-full border border-page-divider px-3 py-1 text-xs font-medium text-page-secondary">
@@ -698,12 +698,12 @@ export default function Topup() {
               </span>
             </div>
 
-            <div className="flex flex-1 flex-col items-center justify-center py-10 text-center">
-              <p className="text-4xl font-bold tracking-tight text-page sm:text-5xl">
+            <div className="flex flex-1 flex-col items-center justify-center py-5 text-center sm:py-8 lg:py-10">
+              <p className="break-all text-3xl font-bold tracking-tight text-page sm:text-5xl">
                 {symbol}{confirmedDisplayAmount}
               </p>
               {selectedMethod && (
-                <p className="mt-4 text-sm text-page-secondary">
+                <p className="mt-2 text-sm text-page-secondary sm:mt-4">
                   {t('topup.paymentMethod')}: {selectedMethod.name}
                 </p>
               )}
@@ -725,15 +725,15 @@ export default function Topup() {
 
       {/* Crypto Payment Modal */}
       {cryptoOrder && (
-        <div className="modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setCryptoOrder(null)}>
-          <div className="glass rounded-2xl p-6 max-w-md w-full mx-4" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 backdrop-blur-sm" onClick={() => setCryptoOrder(null)}>
+          <div className="glass max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto rounded-2xl p-4 sm:p-6" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-semibold text-page mb-4">{t('topup.cryptoPayment')}</h3>
             <div className="space-y-4">
               <div className="glass-sm rounded-xl p-4">
                 <p className="text-xs text-page-secondary mb-1">{t('topup.walletAddress')}</p>
                 <p className="text-sm text-page font-mono break-all">{cryptoOrder.wallet}</p>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-3 sm:grid-cols-2">
                 <div className="glass-sm rounded-xl p-3">
                   <p className="text-xs text-page-secondary mb-1">{t('topup.amount')}</p>
                   <p className="text-sm text-page font-medium">{cryptoOrder.amount} {cryptoOrder.token}</p>
@@ -768,7 +768,7 @@ export default function Topup() {
       )}
 
       {/* History */}
-      <section className="order-4 mb-6 glass rounded-2xl p-6">
+      <section className="order-4 mb-6 glass rounded-2xl p-4 sm:p-6">
           <h2 className="text-lg font-semibold text-page mb-4">{t('topup.history')}</h2>
           {historyLoading ? (
             <div className="flex justify-center py-8">
@@ -779,14 +779,16 @@ export default function Topup() {
           ) : (
             <div className="space-y-2">
               {history.map((item, i) => (
-                <div key={i} className="flex items-center justify-between glass-sm rounded-xl px-4 py-3">
-                  <div>
-                    <p className="text-sm text-page">{symbol}{(Number(item.amount) * rate).toFixed(decimals)}</p>
-                    <p className="text-xs text-page-muted">
-                      {new Date(item.create_time * 1000).toLocaleString()} · {formatPaymentMethodName(item.payment_method) || t('topup.redeemCode')}
+                <div key={i} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-xl px-3 py-3 glass-sm sm:px-4">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-page">{symbol}{(Number(item.amount) * rate).toFixed(decimals)}</p>
+                    <p className="mt-0.5 text-xs leading-5 text-page-muted">
+                      <span className="block sm:inline">{new Date(item.create_time * 1000).toLocaleString()}</span>
+                      <span className="hidden sm:inline"> · </span>
+                      <span className="block break-all sm:inline">{formatPaymentMethodName(item.payment_method) || t('topup.redeemCode')}</span>
                     </p>
                   </div>
-                  <span className={`text-xs px-2 py-1 rounded-full ${
+                  <span className={`shrink-0 rounded-full px-2 py-1 text-xs ${
                     item.status === 'success'
                       ? 'bg-green-500/10 text-page-success'
                       : item.status === 'pending'
@@ -809,7 +811,7 @@ export default function Topup() {
           aria-modal="true"
           aria-labelledby="redeem-dialog-title"
         >
-          <div className="glass w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+          <div className="glass max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto p-4 sm:p-6" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h2 id="redeem-dialog-title" className="text-lg font-semibold text-page">
