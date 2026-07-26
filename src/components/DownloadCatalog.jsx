@@ -76,7 +76,14 @@ export default function DownloadCatalog({ embedded = false }) {
                           }`}
                         >
                           <Download className="h-3.5 w-3.5" />
-                          {link.official ? `${tool.title} ${t('downloads.officialDownload')}` : link.label}
+                          {link.official
+                            ? `${tool.title} ${t('downloads.officialDownload')}`
+                            : (isZh ? link.labelZh || link.label : link.label)}
+                          {link.recommendedBadge && (
+                            <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+                              {isZh ? '推荐' : 'Recommended'}
+                            </span>
+                          )}
                         </a>
                       ))}
                     </div>

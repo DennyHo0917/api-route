@@ -568,6 +568,7 @@
     "topup.processing": "Processing...",
     "topup.calculating": "Calculating...",
     "topup.payAmountLabel": "Amount to pay",
+    "topup.confirmPayment": "Confirm payment {{amount}}",
     "topup.enterAmount": "Please enter a top-up amount",
     "topup.minimumAmount": "Top-up amount cannot be lower than {{min}}",
     "topup.gatewayMinimumAmount": "{{channel}} requires a minimum top-up of {{amount}}",

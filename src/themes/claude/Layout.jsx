@@ -3,7 +3,8 @@ import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Headset, LogOut, Menu, Moon, Sun, UserRound, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { COLOR_SCHEME_STORAGE_KEY, useSite } from '../../context/SiteContext';
+import { COLOR_SCHEME_STORAGE_KEY, useCurrency, useSite } from '../../context/SiteContext';
+import { Q } from '../../api';
 import LanguageSwitch from '../../components/LanguageSwitch';
 import {
   getSiteNavItems,
@@ -39,6 +40,7 @@ export default function ClaudeLayout() {
   const { t, i18n } = useTranslation();
   const { user, logout } = useAuth();
   const { site } = useSite();
+  const { symbol, rate } = useCurrency();
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -57,6 +59,7 @@ export default function ClaudeLayout() {
     return item.label;
   };
   const supportLink = getSupportLink(site);
+  const balance = ((Number(user?.quota) || 0) / Q * rate).toFixed(2);
   const supportLabel = supportLink?.isTelegram
     ? t('nav.telegramSupport')
     : t('nav.contactSupport');
@@ -145,8 +148,8 @@ export default function ClaudeLayout() {
   return (
     <div className="theme-light theme-claude min-h-screen flex flex-col bg-[#FAF6F1] text-[#3D3024]">
       <header className="sticky top-0 z-50 border-b border-[#E8DDD0] bg-[#FAF6F1]/92 backdrop-blur-xl">
-        <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between gap-5 px-5 md:px-8">
-          <Link to="/" className="flex shrink-0 items-center gap-3 group">
+        <div className="grid h-[72px] w-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-5 px-5 md:px-8">
+          <Link to="/" className="group flex shrink-0 items-center gap-3 justify-self-start">
             {site?.logo ? (
               <img src={site.logo} alt={siteName} className="h-9 w-9 rounded-xl object-contain" />
             ) : (
@@ -164,7 +167,7 @@ export default function ClaudeLayout() {
             </div>
           </Link>
 
-          <nav className="hidden min-w-0 items-center gap-1 lg:flex">
+          <nav className="hidden min-w-0 items-center gap-1 justify-self-center lg:flex">
             {desktopNavItems.map((item) => (
               <Link
                 key={item.to}
@@ -180,7 +183,7 @@ export default function ClaudeLayout() {
             ))}
           </nav>
 
-          <div className="flex shrink-0 items-center gap-1.5">
+          <div className="flex shrink-0 items-center justify-self-end gap-1.5">
             {supportLink && (
               <a
                 href={supportLink.href}
@@ -206,6 +209,16 @@ export default function ClaudeLayout() {
             >
               {colorScheme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
             </button>
+
+            {user && (
+              <Link
+                to="/topup"
+                className="flex h-10 shrink-0 items-center rounded-full border border-[#E8DDD0] bg-white/70 px-3 text-sm font-semibold tabular-nums text-[#5E4E40] transition-colors hover:border-[#D9C5B2] hover:bg-white"
+                title={t('dashboard.balance')}
+              >
+                {symbol}{balance}
+              </Link>
+            )}
 
             {user ? (
               <>

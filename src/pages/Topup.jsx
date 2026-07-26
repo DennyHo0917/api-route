@@ -1,10 +1,8 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { useSite } from '../context/SiteContext';
 import {
-  ArrowRight,
-  CheckCircle2,
   TicketCheck,
   TicketPercent,
   WalletCards,
@@ -57,6 +55,7 @@ const QUIET_REQUEST_CONFIG = {
   skipErrorHandler: true,
   ...(import.meta.env.DEV ? { timeout: 8000 } : {}),
 };
+const DEFAULT_TOPUP_AMOUNTS = [1, 2, 5, 10, 20, 50, 100, 200];
 
 function shouldUseSameTabPaymentRedirect() {
   if (typeof window === 'undefined') return false;
@@ -102,7 +101,7 @@ export default function Topup() {
   const { t } = useTranslation();
   const { user, refreshUser } = useAuth();
   const { site } = useSite();
-  const { symbol, rate, decimals } = useCurrency();
+  const { symbol, rate, code, decimals } = useCurrency();
 
   const [usage, setUsage] = useState(null);
   const [topupInfo, setTopupInfo] = useState(null);
@@ -111,13 +110,16 @@ export default function Topup() {
   // Redeem code
   const [redeemInput, setRedeemInput] = useState('');
   const [redeeming, setRedeeming] = useState(false);
+  const [showRedeemModal, setShowRedeemModal] = useState(false);
 
   // Online topup
   const [amount, setAmount] = useState('');
   const [displayAmount, setDisplayAmount] = useState('');
   const [selectedPreset, setSelectedPreset] = useState(null);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [payingMethod, setPayingMethod] = useState('');
+  const initializedAmount = useRef(false);
 
   // Crypto modal
   const [cryptoOrder, setCryptoOrder] = useState(null);
@@ -126,28 +128,31 @@ export default function Topup() {
   const [selectedToken, setSelectedToken] = useState('usdt');
 
   // History
-  const [showHistory, setShowHistory] = useState(false);
   const [history, setHistory] = useState([]);
-  const [historyLoading, setHistoryLoading] = useState(false);
+  const [historyLoading, setHistoryLoading] = useState(true);
 
-  const presetAmounts = topupInfo?.amount_options || [1, 5, 10, 20, 50, 100];
+  const presetAmounts = DEFAULT_TOPUP_AMOUNTS;
   const minTopup = topupInfo?.min_topup || 1;
   const payMethods = topupInfo?.pay_methods || [];
   const enableOnline = topupInfo?.enable_online_topup;
   const enableStripe = topupInfo?.enable_stripe_topup;
   const enableCreem = topupInfo?.enable_creem_topup;
   const enableCrypto = topupInfo?.enable_crypto_topup;
-  const hasAnyPayment = enableOnline || enableStripe || enableCreem || enableCrypto;
-
   const loadData = useCallback(async () => {
+    if (site?.enable_topup) setHistoryLoading(true);
     try {
-      const [usageRes, topupRes] = await Promise.all([
+      const [usageRes, topupRes, historyRes] = await Promise.all([
         getUserUsage(QUIET_REQUEST_CONFIG).catch(() => null),
         site?.enable_topup ? getTopupInfo(QUIET_REQUEST_CONFIG).catch(() => null) : Promise.resolve(null),
+        site?.enable_topup
+          ? getTopupHistory({ page: 1, page_size: 20 }).catch(() => null)
+          : Promise.resolve(null),
       ]);
       if (usageRes?.data?.success) setUsage(usageRes.data.data);
       if (topupRes?.data?.data) setTopupInfo(topupRes.data.data);
+      if (historyRes?.data?.data?.items) setHistory(historyRes.data.data.items);
     } catch (e) { /* interceptor */ }
+    setHistoryLoading(false);
     setLoading(false);
   }, [site?.enable_topup]);
 
@@ -175,6 +180,15 @@ export default function Topup() {
     return Math.max(minTopup, Math.round(numeric / rate));
   }, [minTopup, rate]);
 
+  useEffect(() => {
+    if (initializedAmount.current || !topupInfo || presetAmounts.length === 0) return;
+    initializedAmount.current = true;
+    const defaultAmount = 10;
+    setSelectedPreset(defaultAmount);
+    setAmount(String(defaultAmount));
+    setDisplayAmount(toDisplayAmount(defaultAmount));
+  }, [topupInfo, presetAmounts, toDisplayAmount]);
+
   const handleRedeem = async (e) => {
     e.preventDefault();
     if (!redeemInput.trim()) return;
@@ -184,6 +198,7 @@ export default function Topup() {
       const res = await redeemCode(redeemInput.trim());
       if (res.data.success) {
         setRedeemInput('');
+        setShowRedeemModal(false);
         await Promise.all([
           loadData(),
           refreshUser({ skipErrorHandler: true }),
@@ -431,18 +446,6 @@ export default function Topup() {
       : getCreemMinTopup(creemProducts);
   }, [topupInfo?.creem_min_topup, creemProducts]);
 
-  // History
-  const loadHistory = async () => {
-    setHistoryLoading(true);
-    try {
-      const res = await getTopupHistory({ page: 1, page_size: 20 });
-      if (res.data.data?.items) {
-        setHistory(res.data.data.items);
-      }
-    } catch (e) { /* interceptor */ }
-    setHistoryLoading(false);
-  };
-
   const topupPayMethods = useMemo(() => {
     const methods = (payMethods || [])
       .filter((m) => m?.type && m.type !== 'crypto')
@@ -469,23 +472,32 @@ export default function Topup() {
     return methods;
   }, [payMethods, enableCreem, creemProducts, creemMinTopup]);
 
-  const redeemSteps = [
-    {
-      icon: TicketCheck,
-      title: t('topup.stepRedeemTitle'),
-      description: t('topup.stepRedeemDesc'),
-    },
-    {
-      icon: WalletCards,
-      title: t('topup.balanceStepCreditTitle'),
-      description: t('topup.balanceStepCreditDesc'),
-    },
-    {
-      icon: CheckCircle2,
-      title: t('topup.stepChoosePackageTitle'),
-      description: t('topup.stepChoosePackageDesc'),
-    },
-  ];
+  const paymentOptions = useMemo(() => {
+    const methods = topupPayMethods.filter((method) => {
+      if (isCreemPayment(method.type)) return enableCreem;
+      if (isStripePayment(method.type)) return enableStripe;
+      return enableOnline;
+    });
+    if (enableCrypto && availableChains.length > 0) {
+      methods.push({ name: t('topup.cryptoPayment'), type: 'crypto' });
+    }
+    return methods;
+  }, [topupPayMethods, enableOnline, enableStripe, enableCreem, enableCrypto, availableChains.length, t]);
+
+  useEffect(() => {
+    if (paymentOptions.some((method) => method.type === selectedPaymentMethod)) return;
+    setSelectedPaymentMethod(paymentOptions[0]?.type || '');
+  }, [paymentOptions, selectedPaymentMethod]);
+
+  const selectedMethod = paymentOptions.find((method) => method.type === selectedPaymentMethod);
+  const confirmedDisplayAmount = amount ? toDisplayAmount(amount) : formatCurrencyAmount(0);
+  const handleConfirmPayment = () => {
+    if (selectedPaymentMethod === 'crypto') {
+      handleCryptoPay();
+    } else if (selectedPaymentMethod) {
+      handlePay(selectedPaymentMethod);
+    }
+  };
 
   if (loading) {
     return (
@@ -504,7 +516,7 @@ export default function Topup() {
       </div>
 
       {/* Balance Stats */}
-      <div className="order-3 mb-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="order-2 mb-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
         <div className="glass rounded-2xl p-4">
           <p className="mb-1 text-xs text-page-secondary">{t('dashboard.balance')}</p>
           <div className="text-xl font-bold text-page">
@@ -535,192 +547,179 @@ export default function Topup() {
       </div>
 
       {/* Online Topup */}
-      {site?.enable_topup && (enableOnline || enableStripe || enableCreem || enableCrypto) && (topupPayMethods.length > 0 || enableCrypto) && (
-        <div className="order-2 mb-6 rounded-2xl border border-[#E6D8CC] bg-white/65 p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold text-page">{t('topup.onlineTopup')}</h2>
-            <button
-              onClick={() => { setShowHistory(!showHistory); if (!showHistory) loadHistory(); }}
-              className="text-sm text-page-secondary hover:text-page transition-colors"
-            >
-              {showHistory ? t('topup.hideHistory') : t('topup.viewHistory')}
-            </button>
-          </div>
+      {site?.enable_topup && paymentOptions.length > 0 && (
+        <div className="order-3 mb-8 grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(300px,0.65fr)]">
+          <div className="space-y-4">
+            <section className="glass p-5 sm:p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="text-lg font-semibold text-page">{t('topup.selectAmount')}</h2>
+                <span className="rounded-full border border-page-divider px-3 py-1 text-xs font-medium text-page-secondary">
+                  {code}
+                </span>
+              </div>
 
-          {/* Preset Amounts */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-page-label mb-3">{t('topup.selectAmount')}</label>
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-              {presetAmounts.map((val) => (
-                <button
-                  key={val}
-                  onClick={() => handlePreset(val)}
-                  className={`py-2.5 px-3 rounded-xl text-sm font-medium transition-all ${
-                    selectedPreset === val
-                      ? 'bg-brand-500 text-white shadow-lg shadow-brand-500/25'
-                      : 'glass-sm text-page-label hover:text-page hover:bg-page-surface-hover'
-                  }`}
-                >
-                  {symbol}{formatCurrencyAmount(val * rate)}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Custom Amount */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-page-label mb-2">{t('topup.customAmount')}</label>
-            <div className="flex gap-3">
-              <input
-                type="number"
-                value={displayAmount}
-                onChange={(e) => {
-                  const currentValue = e.target.value;
-                  setDisplayAmount(currentValue);
-                  setSelectedPreset(null);
-                  const quotaAmount = toQuotaAmount(currentValue);
-                  setAmount(quotaAmount === '' ? '' : String(quotaAmount));
-                }}
-                onBlur={(e) => {
-                  const quotaAmount = toQuotaAmount(e.target.value);
-                  if (quotaAmount === '') {
-                    setDisplayAmount('');
-                    setAmount('');
-                    return;
-                  }
-                  setAmount(String(quotaAmount));
-                  setDisplayAmount(toDisplayAmount(quotaAmount));
-                }}
-                min={minTopup * rate}
-                step="0.01"
-                placeholder={t('topup.amountPlaceholder', { min: `${symbol}${formatCurrencyAmount(minTopup * rate)}` })}
-                className="input flex-1"
-              />
-            </div>
-            <p className="text-xs text-page-muted mt-2">
-              {t('topup.customAmountHint')}
-            </p>
-            {amount ? (
-              <p className="text-xs text-page-muted mt-2">
-                {t('topup.rechargeAmountLabel')}: {symbol}{displayAmount || toDisplayAmount(amount)}
-              </p>
-            ) : null}
-          </div>
-
-          {/* Payment Methods */}
-          <div>
-            <label className="block text-sm font-medium text-page-label mb-3">{t('topup.paymentMethod')}</label>
-            <div className="flex flex-wrap gap-2">
-              {topupPayMethods.map((method) => {
-                const isCurrentLoading = paymentLoading && payingMethod === method.type;
-                const isMethodStripe = isStripePayment(method.type);
-                const isMethodCreem = isCreemPayment(method.type);
-                const minForMethod = Number(method.min_topup) || 0;
-                const belowGatewayMin =
-                  (isMethodStripe || isMethodCreem) &&
-                  minForMethod > Number(amount || 0);
-                const disabled =
-                  paymentLoading ||
-                  !amount ||
-                  (!enableOnline && !isMethodStripe && !isMethodCreem) ||
-                  (!enableStripe && isMethodStripe) ||
-                  (!enableCreem && isMethodCreem);
-                return (
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {presetAmounts.map((val) => (
                   <button
-                    key={method.type}
-                    onClick={() => handlePay(method.type)}
-                    disabled={disabled}
-                    title={
-                      belowGatewayMin
+                    key={val}
+                    type="button"
+                    onClick={() => handlePreset(val)}
+                    className={`min-h-20 rounded-xl px-3 text-lg font-semibold transition-all ${
+                      selectedPreset === val
+                        ? 'bg-brand-500 text-white shadow-lg shadow-brand-500/25'
+                        : 'glass-sm text-page hover:bg-page-surface-hover'
+                    }`}
+                  >
+                    {symbol}{formatCurrencyAmount(val * rate)}
+                  </button>
+                ))}
+              </div>
+
+              <div className="mt-5">
+                <label className="mb-2 block text-sm font-medium text-page-label">{t('topup.customAmount')}</label>
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <input
+                    type="number"
+                    value={displayAmount}
+                    onChange={(e) => {
+                      const currentValue = e.target.value;
+                      setDisplayAmount(currentValue);
+                      setSelectedPreset(null);
+                      const quotaAmount = toQuotaAmount(currentValue);
+                      setAmount(quotaAmount === '' ? '' : String(quotaAmount));
+                    }}
+                    onBlur={(e) => {
+                      const quotaAmount = toQuotaAmount(e.target.value);
+                      if (quotaAmount === '') {
+                        setDisplayAmount('');
+                        setAmount('');
+                        return;
+                      }
+                      setAmount(String(quotaAmount));
+                      setDisplayAmount(toDisplayAmount(quotaAmount));
+                    }}
+                    min={minTopup * rate}
+                    step="0.01"
+                    placeholder={t('topup.amountPlaceholder', { min: `${symbol}${formatCurrencyAmount(minTopup * rate)}` })}
+                    className="input h-12 sm:max-w-xs"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowRedeemModal(true)}
+                    className="btn-secondary flex h-12 items-center justify-center gap-2 whitespace-nowrap"
+                  >
+                    <TicketCheck size={17} />
+                    {t('topup.redeemTitle')}
+                  </button>
+                </div>
+                <p className="mt-2 text-xs text-page-muted">{t('topup.customAmountHint')}</p>
+              </div>
+            </section>
+
+            <section className="glass p-5 sm:p-6">
+              <h2 className="mb-4 text-lg font-semibold text-page">{t('topup.paymentMethod')}</h2>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                {paymentOptions.map((method) => {
+                  const minForMethod = Number(method.min_topup) || 0;
+                  return (
+                    <button
+                      key={method.type}
+                      type="button"
+                      onClick={() => setSelectedPaymentMethod(method.type)}
+                      title={minForMethod > 0
                         ? t('topup.gatewayMinimumAmount', {
                             channel: method.name,
                             amount: `${symbol}${formatCurrencyAmount(minForMethod * rate)}`,
                           })
-                        : undefined
-                    }
-                    className="px-4 py-2.5 rounded-xl text-sm font-medium glass-sm text-page-label hover:text-page hover:bg-page-surface-hover disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-                  >
-                    {isCurrentLoading ? t('topup.processing') : method.name}
-                  </button>
-                );
-              })}
-            </div>
+                        : undefined}
+                      className={`flex min-h-14 items-center justify-center gap-2 rounded-xl px-3 text-sm font-semibold transition-all ${
+                        selectedPaymentMethod === method.type
+                          ? 'border border-brand-500 bg-brand-500/10 text-page shadow-sm'
+                          : 'glass-sm text-page-label hover:bg-page-surface-hover hover:text-page'
+                      }`}
+                    >
+                      <WalletCards size={18} className={selectedPaymentMethod === method.type ? 'text-brand-500' : 'text-page-secondary'} />
+                      <span className="truncate">{method.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {selectedPaymentMethod === 'crypto' && (
+                <div className="mt-4 grid gap-4 rounded-xl border border-page-divider bg-page-surface/50 p-4 sm:grid-cols-2">
+                  <div>
+                    <p className="mb-2 text-xs font-medium text-page-label">{t('topup.cryptoStepChain')}</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {availableChains.map((chain) => (
+                        <button
+                          key={chain.key}
+                          type="button"
+                          onClick={() => setSelectedChain(chain.key)}
+                          className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
+                            selectedChain === chain.key
+                              ? 'bg-brand-500 text-white'
+                              : 'glass-sm text-page-label hover:bg-page-surface-hover'
+                          }`}
+                        >
+                          {chain.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="mb-2 text-xs font-medium text-page-label">{t('topup.cryptoStepToken')}</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {['usdt', 'usdc'].map((token) => (
+                        <button
+                          key={token}
+                          type="button"
+                          onClick={() => setSelectedToken(token)}
+                          className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
+                            selectedToken === token
+                              ? 'bg-brand-500 text-white'
+                              : 'glass-sm text-page-label hover:bg-page-surface-hover'
+                          }`}
+                        >
+                          {token.toUpperCase()}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </section>
           </div>
 
-          {/* Crypto Payment (inline) */}
-          {enableCrypto && availableChains.length > 0 && (
-            <div className="mt-6 pt-6 border-t border-page-divider">
-              <label className="block text-sm font-medium text-page-label mb-3">{t('topup.cryptoPayment')}</label>
-              <div className="rounded-xl border border-page-divider bg-page-surface/50 p-4 space-y-4">
-                <p className="text-xs text-page-muted">
-                  {t('topup.cryptoSelectionHint')}
-                </p>
-
-                <div>
-                  <p className="text-xs font-medium text-page-label mb-2">
-                    {t('topup.cryptoStepChain')}
-                  </p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {availableChains.map((chain) => (
-                      <button
-                        key={chain.key}
-                        onClick={() => setSelectedChain(chain.key)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                          selectedChain === chain.key
-                            ? 'bg-brand-500 text-white shadow-lg shadow-brand-500/25'
-                            : 'glass-sm text-page-label hover:text-page hover:bg-page-surface-hover'
-                        }`}
-                      >
-                        {chain.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <p className="text-xs font-medium text-page-label mb-2">
-                    {t('topup.cryptoStepToken')}
-                  </p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {['usdt', 'usdc'].map((token) => (
-                      <button
-                        key={token}
-                        onClick={() => setSelectedToken(token)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                          selectedToken === token
-                            ? 'bg-brand-500 text-white shadow-lg shadow-brand-500/25'
-                            : 'glass-sm text-page-label hover:text-page hover:bg-page-surface-hover'
-                        }`}
-                      >
-                        {token.toUpperCase()}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="rounded-lg bg-page-inset/60 px-3 py-3">
-                  <p className="text-[11px] text-page-muted mb-1">
-                    {t('topup.cryptoSelectedSummary')}
-                  </p>
-                  <p className="text-sm font-medium text-page">
-                    {selectedCryptoLabel}
-                  </p>
-                </div>
-
-                <button
-                  onClick={handleCryptoPay}
-                  disabled={paymentLoading || !amount}
-                  className="btn-primary w-full justify-center flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  {paymentLoading && payingMethod === 'crypto' ? (
-                    t('topup.processing')
-                  ) : (
-                    t('topup.generateCryptoAddress', { method: selectedCryptoLabel })
-                  )}
-                </button>
-              </div>
+          <aside className="glass flex min-h-[320px] flex-col p-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-page">{t('topup.rechargeAmountLabel')}</h2>
+              <span className="rounded-full border border-page-divider px-3 py-1 text-xs font-medium text-page-secondary">
+                {code}
+              </span>
             </div>
-          )}
+
+            <div className="flex flex-1 flex-col items-center justify-center py-10 text-center">
+              <p className="text-4xl font-bold tracking-tight text-page sm:text-5xl">
+                {symbol}{confirmedDisplayAmount}
+              </p>
+              {selectedMethod && (
+                <p className="mt-4 text-sm text-page-secondary">
+                  {t('topup.paymentMethod')}: {selectedMethod.name}
+                </p>
+              )}
+            </div>
+
+            <button
+              type="button"
+              onClick={handleConfirmPayment}
+              disabled={paymentLoading || !amount || !selectedPaymentMethod}
+              className="btn-primary flex min-h-12 w-full items-center justify-center"
+            >
+              {paymentLoading
+                ? t('topup.processing')
+                : t('topup.confirmPayment', { amount: `${symbol}${confirmedDisplayAmount}` })}
+            </button>
+          </aside>
         </div>
       )}
 
@@ -762,8 +761,7 @@ export default function Topup() {
       )}
 
       {/* History */}
-      {showHistory && (
-        <div className="order-5 mb-6 glass rounded-2xl p-6">
+      <section className="order-4 mb-6 glass rounded-2xl p-6">
           <h2 className="text-lg font-semibold text-page mb-4">{t('topup.history')}</h2>
           {historyLoading ? (
             <div className="flex justify-center py-8">
@@ -794,31 +792,38 @@ export default function Topup() {
               ))}
             </div>
           )}
-        </div>
-      )}
+      </section>
 
-      {/* Redeem Code */}
-      <div className="order-4 mb-8 overflow-hidden rounded-[28px] border border-[#DDCCBE] bg-white/80 shadow-[0_24px_65px_rgba(96,69,48,0.1)]">
-        <div className="grid lg:grid-cols-[1.2fr_0.8fr]">
-          <div className="p-6 sm:p-8">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-              <div className="min-w-0">
-                <span className="inline-flex items-center gap-2 rounded-full bg-[#F8EAE0] px-3 py-1.5 text-xs font-semibold text-[#C56547]">
-                  <TicketCheck size={14} />
+      {showRedeemModal && (
+        <div
+          className="modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 backdrop-blur-sm"
+          onClick={() => setShowRedeemModal(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="redeem-dialog-title"
+        >
+          <div className="glass w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2 id="redeem-dialog-title" className="text-lg font-semibold text-page">
                   {t('topup.redeemTitle')}
-                </span>
-                <h2 className="mt-4 text-2xl font-semibold tracking-tight text-[#3D3024]">
-                  {t('topup.redeemBalanceHeading')}
                 </h2>
+                <p className="mt-1 text-sm text-page-secondary">{t('topup.redeemBalanceHeading')}</p>
               </div>
+              <button
+                type="button"
+                onClick={() => setShowRedeemModal(false)}
+                className="text-sm text-page-secondary transition-colors hover:text-page"
+              >
+                {t('topup.close')}
+              </button>
             </div>
 
-            <form onSubmit={handleRedeem} className="mt-6 space-y-3">
+            <form onSubmit={handleRedeem} className="mt-5 space-y-3">
               <label className="block">
-                <span className="mb-2 block text-xs font-medium text-[#766657]">
-                  {t('topup.enterRedeemCode')}
-                </span>
+                <span className="mb-2 block text-sm font-medium text-page-label">{t('topup.enterRedeemCode')}</span>
                 <input
+                  autoFocus
                   type="text"
                   value={redeemInput}
                   onChange={(e) => setRedeemInput(e.target.value)}
@@ -828,56 +833,16 @@ export default function Topup() {
               </label>
               <button
                 type="submit"
-                disabled={redeeming}
-                className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[#D97757] px-5 text-sm font-semibold text-white transition-colors hover:bg-[#E38969] disabled:opacity-50"
+                disabled={redeeming || !redeemInput.trim()}
+                className="btn-primary flex h-12 w-full items-center justify-center gap-2"
               >
                 <TicketPercent size={17} />
                 {redeeming ? t('topup.redeeming') : t('topup.redeemBalance')}
-                {!redeeming && <ArrowRight size={16} />}
               </button>
             </form>
           </div>
-
-          <aside className="border-t border-[#E6D7CA] bg-[#FBF2EA] p-6 sm:p-8 lg:border-l lg:border-t-0">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#C56547]">
-              {t('topup.stepsTitle')}
-            </p>
-            <div className="mt-6 space-y-6">
-              {redeemSteps.map(({ icon: Icon, title, description }, index) => (
-                <div key={title} className="flex gap-4">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-[#E4CFC0] bg-white/70 text-[#C56547]">
-                    <Icon size={18} />
-                  </span>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-[#A9826B]">0{index + 1}</span>
-                      <h3 className="text-sm font-semibold text-[#3D3024]">{title}</h3>
-                    </div>
-                    <p className="mt-1 text-xs leading-5 text-[#806D5D]">{description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-8 rounded-2xl border border-[#E2CDBE] bg-white/65 p-4">
-              <div className="flex items-center gap-2 text-sm font-semibold text-[#3D3024]">
-                <CheckCircle2 size={17} className="text-[#C56547]" />
-                {t('topup.balanceDirectCredit')}
-              </div>
-              <p className="mt-2 text-xs leading-5 text-[#806D5D]">
-                {t('topup.balanceDirectCreditDesc')}
-              </p>
-            </div>
-
-            {hasAnyPayment && (
-              <div className="mt-5 flex items-start gap-3 text-xs leading-5 text-[#8D7867]">
-                <WalletCards size={16} className="mt-0.5 shrink-0" />
-                <span>{t('topup.balanceOptionHint')}</span>
-              </div>
-            )}
-          </aside>
         </div>
-      </div>
+      )}
     </div>
   );
 }

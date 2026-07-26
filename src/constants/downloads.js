@@ -35,6 +35,13 @@ export const DOWNLOAD_TOOLS = [
         title: 'Download',
         links: [
           { label: 'Codex Official Download', href: OFFICIAL_DOWNLOADS.codex, recommended: true, official: true },
+          {
+            label: 'One-click deployment',
+            labelZh: '一键部署',
+            href: 'https://pub-152ae4d5931a4aa2b1f8a5cb02f80fda.r2.dev/install-codex-windows.cmd',
+            recommended: true,
+            recommendedBadge: true,
+          },
         ],
       },
     ],

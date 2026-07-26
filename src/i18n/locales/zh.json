@@ -568,6 +568,7 @@
     "topup.processing": "处理中...",
     "topup.calculating": "计算中...",
     "topup.payAmountLabel": "实付金额",
+    "topup.confirmPayment": "确认支付 {{amount}}",
     "topup.enterAmount": "请输入充值金额",
     "topup.minimumAmount": "充值金额不能低于 {{min}}",
     "topup.gatewayMinimumAmount": "{{channel}} 渠道最低充值 {{amount}}",

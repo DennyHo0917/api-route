@@ -635,6 +635,7 @@
     "topup.amountPlaceholder": "금액 입력(최소 {{min}})",
     "topup.calculating": "계산 중...",
     "topup.payAmountLabel": "결제 금액",
+    "topup.confirmPayment": "{{amount}} 결제하기",
     "topup.enterAmount": "충전 금액을 입력해 주세요",
     "topup.minimumAmount": "충전 금액은 {{min}}보다 낮을 수 없습니다",
     "topup.gatewayMinimumAmount": "{{channel}}의 최소 충전 금액은 {{amount}}입니다",

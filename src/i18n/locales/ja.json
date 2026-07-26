@@ -635,6 +635,7 @@
     "topup.amountPlaceholder": "金額を入力（最低 {{min}}）",
     "topup.calculating": "計算中...",
     "topup.payAmountLabel": "支払い金額",
+    "topup.confirmPayment": "{{amount}} を支払う",
     "topup.enterAmount": "チャージ金額を入力してください",
     "topup.minimumAmount": "チャージ金額は {{min}} 未満にできません",
     "topup.gatewayMinimumAmount": "{{channel}} の最低チャージ金額は {{amount}} です",
