@@ -55,7 +55,7 @@ export default function MarketHome() {
                 <MarketButton to={user ? '/dashboard' : '/register'}>
                   {user ? t('home.goToDashboard') : t('home.getStarted')}
                 </MarketButton>
-                <Link to="/pricing/packages" className="inline-flex items-center justify-center rounded-lg border border-stone-300 bg-white px-6 py-3 text-sm font-bold text-stone-800 shadow-sm transition-colors hover:border-stone-400 hover:bg-stone-50">
+                <Link to="/topup/packages" className="inline-flex items-center justify-center rounded-lg border border-stone-300 bg-white px-6 py-3 text-sm font-bold text-stone-800 shadow-sm transition-colors hover:border-stone-400 hover:bg-stone-50">
                   {t('home.plansPackages')}
                 </Link>
               </div>
@@ -265,7 +265,7 @@ function PackageCard({ pkg, index, models, fmtCNY, t, user }) {
         )}
       </div>
       <div className="mt-5">
-        <MarketButton to={user ? '/pricing/packages' : '/register'}>{user ? t('home.subscribe') : t('home.getStarted')}</MarketButton>
+        <MarketButton to={user ? '/topup/packages' : '/register'}>{user ? t('home.subscribe') : t('home.getStarted')}</MarketButton>
       </div>
     </div>
   );

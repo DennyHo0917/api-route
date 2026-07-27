@@ -118,7 +118,7 @@ export default function Faq() {
           <Link to="/pricing" className="btn-secondary">
             {t('nav.pricing')}
           </Link>
-          <Link to="/pricing/packages" className="btn-primary">
+          <Link to="/topup/packages" className="btn-primary">
             {t('nav.packages')}
           </Link>
         </div>

@@ -194,7 +194,7 @@ export default function CorporateHome() {
                   {equiv.length > 0 && (
                     <p className="text-xs text-amber-600 mt-2">🔥 <RotatingEquiv items={equiv} text={(item) => t('packages.officialEquiv', { model: item.label, amount: item.equivDollars })} /></p>
                   )}
-                  <Link to={user ? '/pricing/packages' : '/register'} className={`mt-4 py-2.5 rounded-lg font-medium text-sm text-center transition-colors ${
+                  <Link to={user ? '/topup/packages' : '/register'} className={`mt-4 py-2.5 rounded-lg font-medium text-sm text-center transition-colors ${
                     i === 1
                       ? 'bg-slate-900 text-white hover:bg-slate-800'
                       : 'bg-slate-100 text-slate-700 hover:bg-slate-200'

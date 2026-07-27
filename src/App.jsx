@@ -108,9 +108,9 @@ function MergedPageLayout({ labelKey, tabs, showWelcome = false }) {
   );
 }
 
-const PRICING_TABS = [
-  { to: '/pricing', labelKey: 'nav.pricing', end: true },
-  { to: '/pricing/packages', labelKey: 'nav.packages' },
+const TOPUP_TABS = [
+  { to: '/topup', labelKey: 'nav.topup', end: true },
+  { to: '/topup/packages', labelKey: 'nav.packages' },
 ];
 
 const DASHBOARD_TABS = [
@@ -129,14 +129,9 @@ function ThemedRoutes() {
         {/* Public pages with themed layout */}
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
-          <Route
-            path="/pricing"
-            element={<MergedPageLayout labelKey="nav.pricing" tabs={PRICING_TABS} />}
-          >
-            <Route index element={<Pricing />} />
-            <Route path="packages" element={<Packages />} />
-          </Route>
-          <Route path="/packages" element={<Navigate to="/pricing/packages" replace />} />
+          <Route path="/pricing" element={<Pricing />} />
+          <Route path="/pricing/packages" element={<Navigate to="/topup/packages" replace />} />
+          <Route path="/packages" element={<Navigate to="/topup/packages" replace />} />
           <Route path="/apps" element={<AppMarket />} />
           <Route path="/ai-api-reseller-platform" element={<SubDistributor />} />
           <Route path="/sub-site" element={<LegacySubSiteRedirect />} />
@@ -161,7 +156,13 @@ function ThemedRoutes() {
             <Route path="/api-keys" element={<Tokens />} />
             <Route path="/logs" element={<Navigate to="/dashboard/logs" replace />} />
             <Route path="/tasks" element={<Navigate to="/dashboard/tasks" replace />} />
-            <Route path="/topup" element={<Topup />} />
+            <Route
+              path="/topup"
+              element={<MergedPageLayout labelKey="nav.topup" tabs={TOPUP_TABS} />}
+            >
+              <Route index element={<Topup />} />
+              <Route path="packages" element={<Packages />} />
+            </Route>
             <Route path="/account" element={<Account />} />
           </Route>
         </Route>
