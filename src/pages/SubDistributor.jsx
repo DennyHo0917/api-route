@@ -21,6 +21,7 @@ import { createSubDistributorOrder, getSubDistributorInfo } from '../api';
 import { useAuth } from '../context/AuthContext';
 import { useCurrency } from '../context/SiteContext';
 import { getLocalizedPath, normalizeAppLanguage } from '../i18n/languageUtils';
+import { getDiscountPrice } from '../utils/discountPrice';
 import FadeContent from '../components/bits/FadeContent';
 import SnapSection, { SnapDeck } from '../components/bits/SnapSection';
 
@@ -502,7 +503,7 @@ const MARKETING_COPY = {
 export default function SubDistributor() {
   const { t, i18n } = useTranslation();
   const { user, refreshUser, loading: authLoading } = useAuth();
-  const { fmtCNY } = useCurrency();
+  const { fmtCNY, cnyRate } = useCurrency();
   const location = useLocation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -545,6 +546,7 @@ export default function SubDistributor() {
   );
   const language = normalizeAppLanguage(i18n.resolvedLanguage || i18n.language);
   const copy = MARKETING_COPY[language] || MARKETING_COPY.en;
+  const discountPrice = getDiscountPrice(Number(subInfo?.price || 0) * cnyRate);
   const launchEvents = useMemo(
     () => buildLaunchEvents(launchBatch.key, launchBatch.generatedAt),
     [launchBatch.key, launchBatch.generatedAt]
@@ -808,7 +810,19 @@ export default function SubDistributor() {
             <div className="glass h-full rounded-3xl p-5 shadow-sm">
             <div className="mb-4">
               <p className="text-sm font-semibold text-page-link">{copy.panelTitle}</p>
-              <h2 className="mt-2 text-2xl font-bold text-page">{fmtCNY(subInfo?.price || 0)}</h2>
+              <div className="mt-2 flex flex-wrap items-baseline gap-2">
+                {discountPrice && (
+                  <span className="text-sm text-page-muted line-through">
+                    {fmtCNY(discountPrice.original / cnyRate)}
+                  </span>
+                )}
+                <h2 className="text-2xl font-bold text-page">{fmtCNY(subInfo?.price || 0)}</h2>
+                {discountPrice && (
+                  <span className="rounded-full bg-page-link/10 px-2 py-0.5 text-xs font-semibold text-page-link">
+                    -{discountPrice.discountPercent}%
+                  </span>
+                )}
+              </div>
               <p className="mt-2 text-sm leading-6 text-page-secondary">{copy.panelDesc}</p>
             </div>
             <div className="mb-4 overflow-hidden rounded-2xl border border-page-divider bg-page-surface">
