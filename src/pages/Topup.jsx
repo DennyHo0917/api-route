@@ -57,6 +57,7 @@ const QUIET_REQUEST_CONFIG = {
   ...(import.meta.env.DEV ? { timeout: 8000 } : {}),
 };
 const DEFAULT_TOPUP_AMOUNTS = [1, 2, 5, 10, 20, 50, 100, 200];
+const PENDING_TOPUP_ANALYTICS_KEY = 'ga_pending_topup';
 
 function shouldUseSameTabPaymentRedirect() {
   if (typeof window === 'undefined') return false;
@@ -108,6 +109,48 @@ function getTopupAnalyticsItem(value) {
   };
 }
 
+function getTopupHistoryTransactionId(item) {
+  return String(
+    item?.trade_no ||
+    item?.out_trade_no ||
+    item?.order_id ||
+    item?.id ||
+    `${item?.payment_method || 'topup'}_${item?.create_time || 'unknown'}_${item?.amount || 0}`
+  );
+}
+
+function trackTopupPurchaseOnce(item, currency, exchangeRate, precision) {
+  if (!item || item.status !== 'success' || !item.payment_method) return false;
+  const transactionId = getTopupHistoryTransactionId(item);
+  const storageKey = `ga_purchase_topup_${transactionId}`;
+  try {
+    if (localStorage.getItem(storageKey)) return true;
+  } catch {
+    // Ignore storage failures; the event can still be sent.
+  }
+
+  const value = Number((Number(item.amount || 0) * exchangeRate).toFixed(precision));
+  if (!Number.isFinite(value) || value <= 0) return false;
+
+  const sent = trackEvent('purchase', {
+    transaction_id: transactionId,
+    affiliation: 'API-Route balance top-up',
+    currency,
+    value,
+    payment_method: item.payment_method,
+    items: [getTopupAnalyticsItem(value)],
+  });
+
+  if (sent) {
+    try {
+      localStorage.setItem(storageKey, '1');
+    } catch {
+      // Best-effort de-dupe only.
+    }
+  }
+  return sent;
+}
+
 export default function Topup() {
   const { t } = useTranslation();
   const { user, refreshUser } = useAuth();
@@ -131,6 +174,7 @@ export default function Topup() {
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [payingMethod, setPayingMethod] = useState('');
   const initializedAmount = useRef(false);
+  const returnPurchaseCheckStarted = useRef(false);
 
   // Crypto modal
   const [cryptoOrder, setCryptoOrder] = useState(null);
@@ -150,6 +194,7 @@ export default function Topup() {
   const enableCreem = topupInfo?.enable_creem_topup;
   const enableCrypto = topupInfo?.enable_crypto_topup;
   const loadData = useCallback(async () => {
+    let historyItems = [];
     if (site?.enable_topup) setHistoryLoading(true);
     try {
       const [usageRes, topupRes, historyRes] = await Promise.all([
@@ -161,13 +206,61 @@ export default function Topup() {
       ]);
       if (usageRes?.data?.success) setUsage(usageRes.data.data);
       if (topupRes?.data?.data) setTopupInfo(topupRes.data.data);
-      if (historyRes?.data?.data?.items) setHistory(historyRes.data.data.items);
+      historyItems = historyRes?.data?.data?.items || [];
+      if (historyRes?.data?.data?.items) setHistory(historyItems);
     } catch (e) { /* interceptor */ }
     setHistoryLoading(false);
     setLoading(false);
+    return historyItems;
   }, [site?.enable_topup]);
 
   useEffect(() => { loadData(); }, [loadData]);
+
+  useEffect(() => {
+    if (!site?.enable_topup || returnPurchaseCheckStarted.current) return;
+    if (new URLSearchParams(window.location.search).get('payment') !== 'return') return;
+
+    returnPurchaseCheckStarted.current = true;
+    let cancelled = false;
+    let timeoutId;
+    let attempts = 0;
+
+    const checkLatestTopup = async () => {
+      attempts += 1;
+      const items = await loadData();
+      let pendingTopup = null;
+      try {
+        pendingTopup = JSON.parse(localStorage.getItem(PENDING_TOPUP_ANALYTICS_KEY) || 'null');
+      } catch {
+        pendingTopup = null;
+      }
+      const latestSuccess = items
+        .filter((item) => item?.status === 'success' && item?.payment_method)
+        .filter((item) => !pendingTopup || (
+          Number(item.amount) === Number(pendingTopup.amount) &&
+          Number(item.create_time || 0) >= Number(pendingTopup.started_at || 0)
+        ))
+        .sort((a, b) => Number(b.create_time || 0) - Number(a.create_time || 0))[0];
+
+      if (!cancelled && trackTopupPurchaseOnce(latestSuccess, code || 'CNY', rate, decimals)) {
+        try {
+          localStorage.removeItem(PENDING_TOPUP_ANALYTICS_KEY);
+        } catch {
+          // Best-effort cleanup only.
+        }
+        return;
+      }
+      if (!cancelled && attempts < 5) {
+        timeoutId = window.setTimeout(checkLatestTopup, 3000);
+      }
+    };
+
+    checkLatestTopup();
+    return () => {
+      cancelled = true;
+      if (timeoutId) window.clearTimeout(timeoutId);
+    };
+  }, [code, decimals, loadData, rate, site?.enable_topup]);
 
   const quota = usage?.quota ?? user?.quota ?? 0;
   const usedQuota = usage?.used_quota ?? user?.used_quota ?? 0;
@@ -298,6 +391,14 @@ export default function Topup() {
         payment_method: method,
         items: [getTopupAnalyticsItem(analyticsValue)],
       });
+      try {
+        localStorage.setItem(PENDING_TOPUP_ANALYTICS_KEY, JSON.stringify({
+          amount: payAmount,
+          started_at: Math.floor(Date.now() / 1000) - 60,
+        }));
+      } catch {
+        // Purchase tracking can still fall back to latest successful top-up.
+      }
 
       if (isCreemPayment(method)) {
         const res = await createCreemOrder({
