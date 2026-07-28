@@ -18,6 +18,7 @@ const webChatModels = filterAvailableModels(
         { name: 'moonshotai/kimi-k3', tokenId: 1 },
         { name: 'glm-5.3', tokenId: 1 },
         { name: 'x-ai/grok-4.6', tokenId: 1 },
+        { name: 'grok-4.6', tokenId: 2 },
         { name: 'openai/o1-pro', tokenId: 1 },
         { name: 'qwen/qwen3.5-plus-20260420', tokenId: 1 },
         { name: 'gpt-image-2', tokenId: 1 },
@@ -35,6 +36,7 @@ const webChatModels = filterAvailableModels(
       { model_name: 'moonshotai/kimi-k3', category: 'chat', vendor_name: 'Moonshot' },
       { model_name: 'glm-5.3', category: 'chat', vendor_name: '智谱' },
       { model_name: 'x-ai/grok-4.6', category: 'chat', vendor_name: 'xAI' },
+      { model_name: 'grok-4.6', category: 'chat', vendor_name: 'xAI' },
       { model_name: 'openai/o1-pro', category: 'chat', vendor_name: 'OpenAI' },
       { model_name: 'qwen/qwen3.5-plus-20260420', category: 'chat', vendor_name: '阿里巴巴' },
     ],
@@ -50,7 +52,7 @@ assert.deepEqual(
     'deepseek/deepseek-v4-pro',
     'moonshotai/kimi-k3',
     'glm-5.3',
-    'x-ai/grok-4.6',
+    'grok-4.6',
   ],
 );
 
@@ -76,11 +78,14 @@ assert.deepEqual(
 );
 
 assert.equal(modelSupportsImageUpload('gpt-5.6-sol'), true);
-assert.equal(modelSupportsImageUpload('claude-opus-4-8'), true);
-assert.equal(modelSupportsImageUpload('google/gemini-3.5-flash'), true);
-assert.equal(modelSupportsImageUpload('x-ai/grok-4.3'), true);
+assert.equal(modelSupportsImageUpload('claude-fable-5'), true);
+assert.equal(modelSupportsImageUpload('google/gemini-3.6-flash'), true);
+assert.equal(modelSupportsImageUpload('moonshotai/kimi-k3'), true);
 assert.equal(modelSupportsImageUpload('x-ai/grok-4.5'), true);
-assert.equal(modelSupportsImageUpload('DeepSeek-V3.2'), false);
+assert.equal(modelSupportsImageUpload('x-ai/grok-4.20-multi-agent-beta-0309'), true);
+assert.equal(modelSupportsImageUpload('deepseek/deepseek-v4-pro'), false);
+assert.equal(modelSupportsImageUpload('glm-5.2'), false);
+assert.equal(modelSupportsImageUpload('unknown/model'), false);
 assert.deepEqual(
   toChatCompletionMessage({
     role: 'user',

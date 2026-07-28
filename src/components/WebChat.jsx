@@ -112,6 +112,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
   const [messages, setMessages] = useState([]);
   const [models, setModels] = useState([]);
   const [selectedModel, setSelectedModel] = useState(DEFAULT_MODEL);
+  const [pendingModel, setPendingModel] = useState('');
   const [input, setInput] = useState('');
   const [attachment, setAttachment] = useState(null);
   const [loadingModels, setLoadingModels] = useState(false);
@@ -253,23 +254,26 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
     }
   };
 
-  const changeModel = async (event) => {
-    const model = event.target.value;
+  const applyModelChange = (model) => {
     setSelectedModel(model);
     if (attachment && !modelSupportsImageUpload(model)) {
       setAttachment(null);
       toast.error(t('chat.attachmentsUnsupported'));
     }
-    if (!activeConversation) return;
-    try {
-      await persistConversation({
-        ...activeConversation,
-        model,
-        updatedAt: Date.now(),
-      });
-    } catch {
-      toast.error(t('chat.storageError'));
+    if (activeConversation && activeConversation.model !== model) {
+      setActiveConversation(null);
+      setMessages([]);
     }
+    setPendingModel('');
+  };
+
+  const changeModel = (event) => {
+    const model = event.target.value;
+    if (activeConversation && activeConversation.model !== model) {
+      setPendingModel(model);
+      return;
+    }
+    applyModelChange(model);
   };
 
   const selectImage = async (event) => {
@@ -384,7 +388,8 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
   };
 
   return (
-    <div className="relative grid h-[calc(100dvh-72px)] overflow-hidden border-y border-page-divider bg-page-surface lg:grid-cols-[280px_minmax(0,1fr)]">
+    <>
+      <div className="relative grid h-[calc(100dvh-72px)] overflow-hidden border-y border-page-divider bg-page-surface lg:grid-cols-[280px_minmax(0,1fr)]">
       {mobileHistoryOpen && (
         <button
           type="button"
@@ -434,8 +439,13 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
                 className="min-w-0 flex-1 px-3 py-2.5 text-left"
               >
                 <span className="block truncate text-sm font-medium">{conversation.title}</span>
-                <span className="mt-0.5 block text-[11px] text-page-muted">
-                  {new Date(conversation.updatedAt).toLocaleDateString()}
+                <span className="mt-1 flex items-center gap-1.5 text-[11px] text-page-muted">
+                  <span>{new Date(conversation.updatedAt).toLocaleDateString()}</span>
+                  {conversation.model && (
+                    <span className="max-w-32 truncate rounded-md bg-page-surface px-1.5 py-0.5 text-[10px] text-page-secondary">
+                      {conversation.model.split('/').pop()}
+                    </span>
+                  )}
                 </span>
               </button>
               <button
@@ -650,6 +660,32 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
           </>
         )}
       </section>
-    </div>
+      </div>
+      {pendingModel && (
+        <div className="modal-overlay fixed inset-0 z-[100] flex items-center justify-center bg-black/55 px-4 py-6 backdrop-blur-sm">
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="switch-model-title"
+            className="glass w-full max-w-md rounded-3xl p-6 shadow-2xl"
+          >
+            <h2 id="switch-model-title" className="text-xl font-bold text-page">
+              {t('chat.switchModelTitle')}
+            </h2>
+            <p className="mt-3 text-sm leading-7 text-page-secondary">
+              {t('chat.switchModelDesc', { model: pendingModel.split('/').pop() })}
+            </p>
+            <div className="mt-6 grid grid-cols-2 gap-3">
+              <button type="button" onClick={() => setPendingModel('')} className="btn-secondary" autoFocus>
+                {t('tokens.cancel')}
+              </button>
+              <button type="button" onClick={() => applyModelChange(pendingModel)} className="btn-primary">
+                {t('chat.switchModelConfirm')}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
+    </>
   );
 }

@@ -1,19 +1,4 @@
-const IMAGE_INPUT_MODEL_ALLOWLIST = new Set([
-  'gpt-5.5',
-  'gpt-5.5-pro',
-  'gpt-5.6-luna',
-  'gpt-5.6-sol',
-  'gpt-5.6-terra',
-  'claude-sonnet-4-6',
-  'claude-opus-4-7',
-  'claude-opus-4-8',
-  'google/gemini-3.1-flash-lite',
-  'google/gemini-3.1-pro-preview',
-  'google/gemini-3.5-flash',
-  'google/gemini-3.5-flash-lite',
-  'x-ai/grok-4.3',
-  'x-ai/grok-4.5',
-]);
+const IMAGE_INPUT_MODEL_PATTERN = /(^|\/)(gpt-|claude-|gemini-|kimi-|grok-)/;
 
 const normalizeModelName = (name) => String(name || '').toLowerCase();
 const compareModelNames = (a, b) => {
@@ -40,7 +25,7 @@ const getWebChatFamily = (model) => {
 };
 
 export const modelSupportsImageUpload = (name) => (
-  IMAGE_INPUT_MODEL_ALLOWLIST.has(normalizeModelName(name))
+  IMAGE_INPUT_MODEL_PATTERN.test(normalizeModelName(name))
 );
 
 export function toChatCompletionMessage(message, includeImage = true) {
@@ -87,6 +72,7 @@ export function filterAvailableModels(groups, siteModels) {
     siteModels,
     true,
   );
+  const seenDisplayNames = new Set();
 
   return models
     .filter((model) => (
@@ -98,6 +84,12 @@ export function filterAvailableModels(groups, siteModels) {
       const familyDiff = getWebChatFamily(siteModelsByName.get(aName))
         - getWebChatFamily(siteModelsByName.get(bName));
       return familyDiff || compareModelNames(a.name, b.name);
+    })
+    .filter((model) => {
+      const displayName = normalizeModelName(model.name).split('/').pop();
+      if (seenDisplayNames.has(displayName)) return false;
+      seenDisplayNames.add(displayName);
+      return true;
     });
 }
 

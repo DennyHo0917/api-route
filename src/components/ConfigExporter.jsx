@@ -267,7 +267,7 @@ const ConfigExporter = ({ tokens = [] }) => {
     () =>
       availableModels.map((model) => ({
         value: model,
-        label: model.split('/').pop(),
+        label: model,
       })),
     [availableModels],
   );
