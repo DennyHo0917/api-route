@@ -273,7 +273,7 @@ export default function ClaudeHome() {
                 <ArrowRight size={16} className="route-motion-arrow" />
               </Link>
               <Link
-                to="/topup/packages"
+                to="/packages"
                 className="route-motion-button inline-flex items-center justify-center gap-2 rounded-full border border-[#DCCBBD] bg-white/75 px-6 py-3.5 text-sm font-semibold text-[#59483A] transition-all hover:border-[#CBAE98] hover:bg-white"
               >
                 <TicketCheck size={17} />
@@ -483,7 +483,7 @@ export default function ClaudeHome() {
               <p className="mt-2 max-w-xl text-sm leading-6 text-[#7D6B5B]">{t('home.choosePlan')}</p>
             </FadeContent>
             <FadeContent direction="right" distance={36} duration={750} delay={80}>
-              <Link to="/topup/packages" className="route-motion-link inline-flex items-center gap-2 text-sm font-semibold text-[#C56547] hover:text-[#A84F34]">
+              <Link to="/packages" className="route-motion-link inline-flex items-center gap-2 text-sm font-semibold text-[#C56547] hover:text-[#A84F34]">
                 {t('home.viewAllPackages')}
                 <ArrowRight size={15} className="route-motion-arrow" />
               </Link>

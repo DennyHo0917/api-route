@@ -130,8 +130,8 @@ function ThemedRoutes() {
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/pricing" element={<Pricing />} />
-          <Route path="/pricing/packages" element={<Navigate to="/topup/packages" replace />} />
-          <Route path="/packages" element={<Navigate to="/topup/packages" replace />} />
+          <Route path="/pricing/packages" element={<Navigate to="/packages" replace />} />
+          <Route path="/packages" element={<Packages />} />
           <Route path="/apps" element={<AppMarket />} />
           <Route path="/ai-api-reseller-platform" element={<SubDistributor />} />
           <Route path="/sub-site" element={<LegacySubSiteRedirect />} />

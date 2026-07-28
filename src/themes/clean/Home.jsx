@@ -192,7 +192,7 @@ export default function CleanHome() {
                   {equiv.length > 0 && (
                     <p className="text-xs text-amber-600 mt-2">🔥 <RotatingEquiv items={equiv} text={(item) => t('packages.officialEquiv', { model: item.label, amount: item.equivDollars })} /></p>
                   )}
-                  <Link to={user ? '/topup/packages' : '/register'} className={`mt-4 py-2.5 rounded-lg font-medium text-sm text-center transition-colors ${
+                  <Link to={user ? '/topup/packages' : '/packages'} className={`mt-4 py-2.5 rounded-lg font-medium text-sm text-center transition-colors ${
                     i === 1
                       ? 'bg-blue-600 text-white hover:bg-blue-700'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'

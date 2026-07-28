@@ -182,7 +182,7 @@ export default function DarkHome() {
                   {equiv.length > 0 && (
                     <p className="text-xs text-amber-300/80 mt-2">🔥 <RotatingEquiv items={equiv} text={(item) => t('packages.officialEquiv', { model: item.label, amount: item.equivDollars })} /></p>
                   )}
-                  <Link to={user ? '/topup/packages' : '/register'} className={`mt-4 py-2.5 rounded-lg font-medium text-sm text-center transition-colors ${
+                  <Link to={user ? '/topup/packages' : '/packages'} className={`mt-4 py-2.5 rounded-lg font-medium text-sm text-center transition-colors ${
                     i === 1
                       ? 'bg-emerald-500 text-black hover:bg-emerald-400'
                       : 'bg-neutral-800 text-white hover:bg-neutral-700'
