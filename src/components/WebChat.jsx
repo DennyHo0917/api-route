@@ -24,6 +24,7 @@ import { readChatResponse } from '../utils/chatResponse';
 
 const DB_NAME = 'api-route-web-chat';
 const STORE_NAME = 'conversations';
+const DEFAULT_MODEL = 'gpt-5.5';
 const MAX_IMAGE_SIZE_MB = 3;
 const MAX_IMAGE_SIZE = MAX_IMAGE_SIZE_MB * 1024 * 1024;
 const SUPPORTED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
@@ -110,7 +111,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
   const [activeConversation, setActiveConversation] = useState(null);
   const [messages, setMessages] = useState([]);
   const [models, setModels] = useState([]);
-  const [selectedModel, setSelectedModel] = useState('');
+  const [selectedModel, setSelectedModel] = useState(DEFAULT_MODEL);
   const [input, setInput] = useState('');
   const [attachment, setAttachment] = useState(null);
   const [loadingModels, setLoadingModels] = useState(false);
@@ -179,7 +180,9 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
       setSelectedModel((current) => (
         uniqueModels.some((model) => model.name === current)
           ? current
-          : uniqueModels[0]?.name || ''
+          : uniqueModels.find((model) => model.name === DEFAULT_MODEL)?.name
+            || uniqueModels[0]?.name
+            || ''
       ));
     }).catch(() => {
       if (cancelled) return;
@@ -216,6 +219,9 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
     setMessages([]);
     setInput('');
     setAttachment(null);
+    setSelectedModel(
+      models.find((model) => model.name === DEFAULT_MODEL)?.name || models[0]?.name || '',
+    );
   };
 
   const openConversation = (conversation) => {
@@ -620,7 +626,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
                     rows={1}
                     disabled={generating || !selectedModel}
                     placeholder={t('chat.placeholder')}
-                    className="max-h-40 min-h-12 flex-1 resize-none bg-transparent px-3 py-2 text-sm leading-6 text-page outline-none placeholder:text-page-muted"
+                    className="max-h-40 min-h-10 flex-1 resize-none bg-transparent px-3 py-2 text-sm leading-6 text-page outline-none placeholder:text-page-muted"
                   />
                   <button
                     type="button"

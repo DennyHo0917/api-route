@@ -124,11 +124,12 @@ export default function ClaudeLayout() {
     }
 
     const rect = event.currentTarget.getBoundingClientRect();
-    const x = rect.left + rect.width / 2;
-    const y = rect.top + rect.height / 2;
+    const scale = window.devicePixelRatio || 1;
+    const x = (rect.left + rect.width / 2) * scale;
+    const y = (rect.top + rect.height / 2) * scale;
     const radius = Math.hypot(
-      Math.max(x, window.innerWidth - x),
-      Math.max(y, window.innerHeight - y),
+      Math.max(x, window.innerWidth * scale - x),
+      Math.max(y, window.innerHeight * scale - y),
     );
 
     const transition = document.startViewTransition(() => {
