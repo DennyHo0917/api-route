@@ -711,7 +711,7 @@ export default function Topup() {
 
               <div className="mt-5">
                 <label className="mb-2 block text-sm font-medium text-page-label">{t('topup.customAmount')}</label>
-                <div className="flex flex-col gap-3 sm:flex-row">
+                <div className="grid gap-3 sm:grid-cols-4">
                   <input
                     type="number"
                     value={displayAmount}
@@ -735,12 +735,12 @@ export default function Topup() {
                     min={minTopup * rate}
                     step="0.01"
                     placeholder={t('topup.amountPlaceholder', { min: `${symbol}${formatCurrencyAmount(minTopup * rate)}` })}
-                    className="input h-12 sm:max-w-xs"
+                    className="input h-12 min-w-0 sm:col-span-2"
                   />
                   <button
                     type="button"
                     onClick={() => setShowRedeemModal(true)}
-                    className="btn-secondary flex h-12 items-center justify-center gap-2 whitespace-nowrap"
+                    className="btn-secondary flex h-12 min-w-0 items-center justify-center gap-1.5 whitespace-nowrap px-2 text-xs sm:col-span-1 lg:gap-2 lg:px-3 lg:text-sm"
                   >
                     <TicketCheck size={17} />
                     {t('topup.redeemTitle')}

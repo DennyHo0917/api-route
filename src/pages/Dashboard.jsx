@@ -244,6 +244,11 @@ export default function Dashboard() {
     });
   };
 
+  const handleShareAffLink = () => {
+    const text = t('loginNotice.xPost', { link: affLink });
+    window.open(`https://x.com/intent/post?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
+  };
+
   const handleAnalyticsRangeClick = (range) => {
     setAnalyticsRange(range);
     setAnalyticsAnimationKey((current) => current + 1);
@@ -653,10 +658,13 @@ export default function Dashboard() {
 
           <div className="mb-5">
             <label className="block text-sm font-medium text-page-label mb-2">{t('topup.inviteLink')}</label>
-            <div className="flex gap-2">
-              <input type="text" readOnly value={affLink} className="input flex-1 text-sm" />
-              <button onClick={handleCopyAffLink} className="btn-primary whitespace-nowrap text-sm px-4">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <input type="text" readOnly value={affLink} className="input min-w-0 text-sm sm:flex-1" />
+              <button type="button" onClick={handleCopyAffLink} className="btn-primary whitespace-nowrap px-4 text-sm">
                 {t('topup.copy')}
+              </button>
+              <button type="button" onClick={handleShareAffLink} className="btn-secondary whitespace-nowrap px-4 text-sm">
+                {t('loginNotice.shareToX')}
               </button>
             </div>
           </div>

@@ -4,7 +4,6 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { getAffCode } from '../api';
 import { useAuth } from '../context/AuthContext';
-import noticeContent from '../content/login-notice.md?raw';
 
 export default function LoginNotice() {
   const { t } = useTranslation();
@@ -74,9 +73,8 @@ export default function LoginNotice() {
         </h2>
 
         <div className="mt-5 space-y-3 text-base leading-8 text-page-secondary">
-          {noticeContent.trim().split(/\n\s*\n/).map((paragraph, index) => (
-            <p key={index} className="whitespace-pre-line">{paragraph}</p>
-          ))}
+          <p>{t('loginNotice.thanks')}</p>
+          <p>{t('loginNotice.update')}</p>
         </div>
 
         <div className="mt-6 rounded-2xl border border-page-divider bg-page-inset/60 p-4">
