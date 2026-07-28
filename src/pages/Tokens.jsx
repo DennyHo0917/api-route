@@ -245,7 +245,7 @@ export default function Tokens() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-10">
+    <div className="mx-auto w-full max-w-5xl px-6 py-10">
       <section className="relative overflow-hidden rounded-[28px] border border-page-link/20 bg-page-surface shadow-xl shadow-black/5">
         <div
           aria-hidden="true"
@@ -628,7 +628,7 @@ function QuickStartStep({ number, icon: Icon, title, description, complete = fal
     <details
       name="api-quickstart"
       open={open}
-      className="group/step overflow-hidden rounded-2xl border border-page-divider bg-page-surface/80 transition-colors open:border-page-link/25"
+      className="group/step w-full min-w-0 overflow-hidden rounded-2xl border border-page-divider bg-page-surface/80 transition-colors open:border-page-link/25"
     >
       <summary className="flex cursor-pointer list-none items-center gap-4 px-4 py-4 outline-none transition-colors hover:bg-page-surface-hover focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-page-link/50 md:px-5 [&::-webkit-details-marker]:hidden">
         <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border ${
@@ -654,7 +654,7 @@ function QuickStartStep({ number, icon: Icon, title, description, complete = fal
         </div>
         <ChevronDown className="h-5 w-5 shrink-0 text-page-muted transition-transform duration-200 group-open/step:rotate-180" />
       </summary>
-      <div className="border-t border-page-divider bg-page-inset/20 px-4 py-5 md:px-6 md:py-6">
+      <div className="min-w-0 border-t border-page-divider bg-page-inset/20 px-4 py-5 md:px-6 md:py-6">
         {children}
       </div>
     </details>

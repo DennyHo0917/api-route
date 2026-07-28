@@ -31,12 +31,12 @@ export default function DownloadCatalog({ embedded = false }) {
         </p>
       </div>}
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid w-full min-w-0 gap-4 lg:grid-cols-2">
         {DOWNLOAD_TOOLS.map((tool) => {
           const Icon = iconMap[tool.id] || Download;
 
           return (
-            <article key={tool.id} className="glass rounded-xl p-5">
+            <article key={tool.id} className="glass min-w-0 rounded-xl p-5">
               <div className="flex items-start gap-3">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-page-link/10 text-page-link">
                   <Icon className="h-5 w-5" />
@@ -58,7 +58,7 @@ export default function DownloadCatalog({ embedded = false }) {
 
               <div className="mt-4 space-y-3">
                 {tool.groups.map((group) => (
-                  <div key={group.title} className="flex items-center gap-3 overflow-x-auto">
+                  <div key={group.title} className="flex min-w-0 items-center gap-3 overflow-x-auto">
                     <p className="shrink-0 text-xs font-semibold uppercase tracking-wide text-page-muted">
                       {group.title === 'Download' ? t('downloads.download') : group.title}
                     </p>

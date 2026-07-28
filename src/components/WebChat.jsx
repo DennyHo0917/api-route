@@ -477,7 +477,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
                 </option>
               )}
               {models.map((model) => (
-                <option key={model.name} value={model.name}>{model.name}</option>
+                <option key={model.name} value={model.name}>{model.name.split('/').pop()}</option>
               ))}
             </select>
           </div>

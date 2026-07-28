@@ -33,7 +33,6 @@ export default function Login() {
     try {
       const result = await login(username, form.password);
       if (result.success) {
-        toast.success(t('login.welcomeBackToast'));
         navigate(returnTo, { replace: true });
         return; // component may unmount — skip setLoading
       }

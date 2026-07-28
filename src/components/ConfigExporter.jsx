@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
-import { getTokenSupportedModels } from '../api';
+import { getSiteModels, getTokenSupportedModels } from '../api';
 import { useSite } from '../context/SiteContext';
+import { filterListedModels } from '../utils/chatModels';
 import {
   CCSWITCH_PRIMARY_DOWNLOAD,
   CCSWITCH_REPO_URL,
@@ -56,13 +57,18 @@ function ThemedSelect({
   renderValue,
   renderOption,
   emptyLabel,
+  searchable = false,
+  searchPlaceholder,
+  noMatchLabel,
 }) {
   const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
   const rootRef = useRef(null);
 
   useEffect(() => {
     if (disabled) {
       setOpen(false);
+      setQuery('');
     }
   }, [disabled]);
 
@@ -72,12 +78,14 @@ function ThemedSelect({
     const handlePointerDown = (event) => {
       if (!rootRef.current?.contains(event.target)) {
         setOpen(false);
+        setQuery('');
       }
     };
 
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
         setOpen(false);
+        setQuery('');
       }
     };
 
@@ -98,19 +106,29 @@ function ThemedSelect({
       ? renderValue(selectedOption)
       : selectedOption.label
     : placeholder;
+  const normalizedQuery = query.trim().toLowerCase();
+  const visibleOptions = searchable && normalizedQuery
+    ? options.filter((option) => (
+      `${option.label} ${option.value}`.toLowerCase().includes(normalizedQuery)
+    ))
+    : options;
 
   return (
-    <div ref={rootRef} className="relative">
+    <div ref={rootRef} className="relative min-w-0">
       <button
         type="button"
         className="input input-solid flex items-center justify-between gap-3 text-left disabled:cursor-not-allowed disabled:opacity-60"
-        onClick={() => !disabled && setOpen((prev) => !prev)}
+        onClick={() => {
+          if (disabled) return;
+          if (open) setQuery('');
+          setOpen(!open);
+        }}
         aria-haspopup="listbox"
         aria-expanded={open}
         disabled={disabled}
       >
         <span
-          className={`block truncate ${
+          className={`block min-w-0 flex-1 truncate ${
             selectedOption ? 'text-page' : 'text-page-muted'
           }`}
         >
@@ -135,9 +153,22 @@ function ThemedSelect({
 
       {open && (
         <div className="select-panel absolute left-0 right-0 top-full z-30 mt-2 overflow-hidden rounded-xl">
+          {searchable && (
+            <div className="border-b border-page-divider p-2">
+              <input
+                type="search"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder={searchPlaceholder}
+                aria-label={searchPlaceholder}
+                autoFocus
+                className="input input-solid"
+              />
+            </div>
+          )}
           <div className="max-h-72 overflow-y-auto p-1.5" role="listbox">
-            {options.length > 0 ? (
-              options.map((option) => {
+            {visibleOptions.length > 0 ? (
+              visibleOptions.map((option) => {
                 const selected = option.value === value;
                 return (
                   <button
@@ -151,6 +182,7 @@ function ThemedSelect({
                     onClick={() => {
                       onChange(option.value);
                       setOpen(false);
+                      setQuery('');
                     }}
                     role="option"
                     aria-selected={selected}
@@ -178,7 +210,7 @@ function ThemedSelect({
               })
             ) : (
               <div className="px-3 py-2 text-sm text-page-muted">
-                {emptyLabel}
+                {normalizedQuery ? noMatchLabel : emptyLabel}
               </div>
             )}
           </div>
@@ -235,7 +267,7 @@ const ConfigExporter = ({ tokens = [] }) => {
     () =>
       availableModels.map((model) => ({
         value: model,
-        label: model,
+        label: model.split('/').pop(),
       })),
     [availableModels],
   );
@@ -267,11 +299,20 @@ const ConfigExporter = ({ tokens = [] }) => {
       setLoadingModels(true);
       setModelsError(false);
       try {
-        const res = await getTokenSupportedModels(selectedToken.id);
+        const [tokenRes, siteRes] = await Promise.all([
+          getTokenSupportedModels(selectedToken.id),
+          getSiteModels(),
+        ]);
         if (cancelled) return;
 
-        if (res.data.success) {
-          const models = res.data.data?.models || [];
+        if (tokenRes.data.success && siteRes.data.success) {
+          const models = filterListedModels(
+            [(tokenRes.data.data?.models || []).map((name) => ({
+              name,
+              tokenId: selectedToken.id,
+            }))],
+            siteRes.data.data || [],
+          ).map((model) => model.name);
           setAvailableModels(models);
           setSelectedModel((prev) =>
             prev && models.includes(prev) ? prev : models[0] || '',
@@ -801,7 +842,7 @@ print(message.content[0].text)`;
 
   return (
     <>
-      <div className="glass rounded-2xl overflow-hidden">
+      <div className="glass w-full min-w-0 overflow-hidden rounded-2xl">
         <div className="px-5 py-4 border-b border-page-divider">
           <h4 className="font-semibold text-sm text-page flex items-center gap-2">
             <svg
@@ -881,6 +922,9 @@ print(message.content[0].text)`;
                   ? t('tokens.loadSupportedModelsFailed')
                   : t('tokens.noSupportedModels')
               }
+              searchable
+              searchPlaceholder={t('config.searchModel')}
+              noMatchLabel={t('config.noModelMatch')}
             />
           </div>
 

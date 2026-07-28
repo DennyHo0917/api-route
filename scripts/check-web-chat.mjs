@@ -1,36 +1,85 @@
 import assert from 'node:assert/strict';
 import {
   filterAvailableModels,
+  filterListedModels,
   modelSupportsImageUpload,
   toChatCompletionMessage,
 } from '../src/utils/chatModels.js';
 import { readChatResponse } from '../src/utils/chatResponse.js';
 
-assert.deepEqual(
-  filterAvailableModels(
+const webChatModels = filterAvailableModels(
     [
       [
+        { name: 'claude-opus-4-8', tokenId: 2 },
         { name: 'gpt-5.5', tokenId: 1 },
+        { name: 'gpt-5.7', tokenId: 1 },
+        { name: 'google/gemini-3.6-flash', tokenId: 1 },
+        { name: 'deepseek/deepseek-v4-pro', tokenId: 1 },
+        { name: 'moonshotai/kimi-k3', tokenId: 1 },
+        { name: 'glm-5.3', tokenId: 1 },
+        { name: 'x-ai/grok-4.6', tokenId: 1 },
+        { name: 'openai/o1-pro', tokenId: 1 },
+        { name: 'qwen/qwen3.5-plus-20260420', tokenId: 1 },
         { name: 'gpt-image-2', tokenId: 1 },
         { name: 'retired-model', tokenId: 1 },
       ],
-      [{ name: 'GPT-5.5', tokenId: 2 }, { name: 'claude-opus-4-8', tokenId: 2 }],
+      [{ name: 'GPT-5.5', tokenId: 2 }],
     ],
     [
-      { model_name: 'gpt-5.5', category: 'chat' },
+      { model_name: 'gpt-5.5', category: 'chat', vendor_name: 'OpenAI' },
+      { model_name: 'gpt-5.7', category: 'chat', vendor_name: 'OpenAI' },
+      { model_name: 'gpt-image-2', category: 'image', vendor_name: 'OpenAI' },
+      { model_name: 'claude-opus-4-8', category: 'chat', vendor_name: 'Anthropic' },
+      { model_name: 'google/gemini-3.6-flash', category: 'chat', vendor_name: 'Google' },
+      { model_name: 'deepseek/deepseek-v4-pro', category: 'chat', vendor_name: 'DeepSeek' },
+      { model_name: 'moonshotai/kimi-k3', category: 'chat', vendor_name: 'Moonshot' },
+      { model_name: 'glm-5.3', category: 'chat', vendor_name: '智谱' },
+      { model_name: 'x-ai/grok-4.6', category: 'chat', vendor_name: 'xAI' },
+      { model_name: 'openai/o1-pro', category: 'chat', vendor_name: 'OpenAI' },
+      { model_name: 'qwen/qwen3.5-plus-20260420', category: 'chat', vendor_name: '阿里巴巴' },
+    ],
+  );
+
+assert.deepEqual(
+  webChatModels.map((model) => model.name),
+  [
+    'gpt-5.5',
+    'gpt-5.7',
+    'claude-opus-4-8',
+    'google/gemini-3.6-flash',
+    'deepseek/deepseek-v4-pro',
+    'moonshotai/kimi-k3',
+    'glm-5.3',
+    'x-ai/grok-4.6',
+  ],
+);
+
+assert.deepEqual(
+  filterListedModels(
+    [[
+      { name: 'new-provider/new-chat-model', tokenId: 1 },
+      { name: 'qwen/qwen3.5-plus-20260420', tokenId: 1 },
+      { name: 'gpt-image-2', tokenId: 1 },
+      { name: 'retired-model', tokenId: 1 },
+    ]],
+    [
+      { model_name: 'qwen/qwen3.5-plus-20260420', category: 'chat' },
+      { model_name: 'new-provider/new-chat-model', category: 'chat' },
       { model_name: 'gpt-image-2', category: 'image' },
-      { model_name: 'claude-opus-4-8', category: 'chat' },
     ],
   ),
   [
-    { name: 'gpt-5.5', tokenId: 1 },
-    { name: 'claude-opus-4-8', tokenId: 2 },
+    { name: 'gpt-image-2', tokenId: 1 },
+    { name: 'new-provider/new-chat-model', tokenId: 1 },
+    { name: 'qwen/qwen3.5-plus-20260420', tokenId: 1 },
   ],
 );
 
 assert.equal(modelSupportsImageUpload('gpt-5.6-sol'), true);
 assert.equal(modelSupportsImageUpload('claude-opus-4-8'), true);
 assert.equal(modelSupportsImageUpload('google/gemini-3.5-flash'), true);
+assert.equal(modelSupportsImageUpload('x-ai/grok-4.3'), true);
+assert.equal(modelSupportsImageUpload('x-ai/grok-4.5'), true);
 assert.equal(modelSupportsImageUpload('DeepSeek-V3.2'), false);
 assert.deepEqual(
   toChatCompletionMessage({

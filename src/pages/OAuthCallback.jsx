@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { getAuthReturnTo } from '../utils/authReturn';
 
@@ -34,7 +33,6 @@ export default function OAuthCallback() {
           setError(result.message || t('login.oauthFailed'));
           return;
         }
-        toast.success(t('login.welcomeBackToast'));
         navigate(returnTo, { replace: true });
       })
       .catch((err) => {
