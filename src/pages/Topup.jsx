@@ -57,6 +57,7 @@ const QUIET_REQUEST_CONFIG = {
   ...(import.meta.env.DEV ? { timeout: 8000 } : {}),
 };
 const DEFAULT_TOPUP_AMOUNTS = [1, 2, 5, 10, 20, 50, 100, 200];
+const HISTORY_PAGE_SIZE = 10;
 const PENDING_TOPUP_ANALYTICS_KEY = 'ga_pending_topup';
 
 function shouldUseSameTabPaymentRedirect() {
@@ -185,6 +186,8 @@ export default function Topup() {
   // History
   const [history, setHistory] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(true);
+  const [historyPage, setHistoryPage] = useState(1);
+  const [historyTotal, setHistoryTotal] = useState(0);
 
   const presetAmounts = DEFAULT_TOPUP_AMOUNTS;
   const minTopup = topupInfo?.min_topup || 1;
@@ -193,7 +196,7 @@ export default function Topup() {
   const enableStripe = topupInfo?.enable_stripe_topup;
   const enableCreem = topupInfo?.enable_creem_topup;
   const enableCrypto = topupInfo?.enable_crypto_topup;
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(async (requestedHistoryPage = historyPage) => {
     let historyItems = [];
     if (site?.enable_topup) setHistoryLoading(true);
     try {
@@ -201,18 +204,22 @@ export default function Topup() {
         getUserUsage(QUIET_REQUEST_CONFIG).catch(() => null),
         site?.enable_topup ? getTopupInfo(QUIET_REQUEST_CONFIG).catch(() => null) : Promise.resolve(null),
         site?.enable_topup
-          ? getTopupHistory({ page: 1, page_size: 20 }).catch(() => null)
+          ? getTopupHistory({ page: requestedHistoryPage, page_size: HISTORY_PAGE_SIZE }).catch(() => null)
           : Promise.resolve(null),
       ]);
       if (usageRes?.data?.success) setUsage(usageRes.data.data);
       if (topupRes?.data?.data) setTopupInfo(topupRes.data.data);
       historyItems = historyRes?.data?.data?.items || [];
-      if (historyRes?.data?.data?.items) setHistory(historyItems);
+      if (historyRes?.data?.data?.items) {
+        const total = Number(historyRes.data.data.total ?? historyItems.length);
+        setHistory(historyItems);
+        setHistoryTotal(Number.isFinite(total) ? total : historyItems.length);
+      }
     } catch (e) { /* interceptor */ }
     setHistoryLoading(false);
     setLoading(false);
     return historyItems;
-  }, [site?.enable_topup]);
+  }, [historyPage, site?.enable_topup]);
 
   useEffect(() => { loadData(); }, [loadData]);
 
@@ -267,6 +274,7 @@ export default function Topup() {
   const packageUsedQuota = usage?.package_used_quota ?? user?.package_used_quota ?? 0;
   const requestCount = usage?.request_count ?? user?.request_count ?? 0;
   const balanceDollars = quota / Q * rate;
+  const historyTotalPages = Math.max(1, Math.ceil(historyTotal / HISTORY_PAGE_SIZE));
 
   const formatCurrencyAmount = useCallback((value) => {
     if (value === '' || value == null || Number.isNaN(Number(value))) return '';
@@ -303,8 +311,9 @@ export default function Topup() {
       if (res.data.success) {
         setRedeemInput('');
         setShowRedeemModal(false);
+        setHistoryPage(1);
         await Promise.all([
-          loadData(),
+          loadData(1),
           refreshUser({ skipErrorHandler: true }),
         ]);
         toast.success(t('topup.balanceRedeemed'));
@@ -526,7 +535,8 @@ export default function Topup() {
           setCryptoPolling(false);
           setCryptoOrder(null);
           toast.success(t('topup.paymentSuccess'));
-          await Promise.all([loadData(), refreshUser()]);
+          setHistoryPage(1);
+          await Promise.all([loadData(1), refreshUser()]);
         } else if (res.data.data?.status === 'expired') {
           clearInterval(interval);
           setCryptoPolling(false);
@@ -911,29 +921,54 @@ export default function Topup() {
           ) : history.length === 0 ? (
             <p className="text-sm text-page-muted text-center py-8">{t('topup.noHistory')}</p>
           ) : (
-            <div className="space-y-2">
-              {history.map((item, i) => (
-                <div key={i} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-xl px-3 py-3 glass-sm sm:px-4">
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-page">{symbol}{(Number(item.amount) * rate).toFixed(decimals)}</p>
-                    <p className="mt-0.5 text-xs leading-5 text-page-muted">
-                      <span className="block sm:inline">{new Date(item.create_time * 1000).toLocaleString()}</span>
-                      <span className="hidden sm:inline"> · </span>
-                      <span className="block break-all sm:inline">{formatPaymentMethodName(item.payment_method) || t('topup.redeemCode')}</span>
-                    </p>
+            <>
+              <div className="space-y-2">
+                {history.map((item, i) => (
+                  <div key={i} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-xl px-3 py-3 glass-sm sm:px-4">
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-page">{symbol}{(Number(item.amount) * rate).toFixed(decimals)}</p>
+                      <p className="mt-0.5 text-xs leading-5 text-page-muted">
+                        <span className="block sm:inline">{new Date(item.create_time * 1000).toLocaleString()}</span>
+                        <span className="hidden sm:inline"> · </span>
+                        <span className="block break-all sm:inline">{formatPaymentMethodName(item.payment_method) || t('topup.redeemCode')}</span>
+                      </p>
+                    </div>
+                    <span className={`shrink-0 rounded-full px-2 py-1 text-xs ${
+                      item.status === 'success'
+                        ? 'bg-green-500/10 text-page-success'
+                        : item.status === 'pending'
+                          ? 'bg-yellow-500/10 text-page-warning'
+                          : 'bg-red-500/10 text-page-danger'
+                    }`}>
+                      {item.status === 'success' ? t('topup.statusSuccess') : item.status === 'pending' ? t('topup.statusPending') : t('topup.statusFailed')}
+                    </span>
                   </div>
-                  <span className={`shrink-0 rounded-full px-2 py-1 text-xs ${
-                    item.status === 'success'
-                      ? 'bg-green-500/10 text-page-success'
-                      : item.status === 'pending'
-                        ? 'bg-yellow-500/10 text-page-warning'
-                        : 'bg-red-500/10 text-page-danger'
-                  }`}>
-                    {item.status === 'success' ? t('topup.statusSuccess') : item.status === 'pending' ? t('topup.statusPending') : t('topup.statusFailed')}
+                ))}
+              </div>
+              {historyTotalPages > 1 && (
+                <div className="mt-4 flex items-center justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setHistoryPage((page) => Math.max(1, page - 1))}
+                    disabled={historyPage === 1}
+                    className="btn-secondary px-4 py-2 disabled:opacity-30"
+                  >
+                    {t('logs.prev')}
+                  </button>
+                  <span className="px-2 text-sm text-page-secondary">
+                    {historyPage} / {historyTotalPages}
                   </span>
+                  <button
+                    type="button"
+                    onClick={() => setHistoryPage((page) => Math.min(historyTotalPages, page + 1))}
+                    disabled={historyPage === historyTotalPages}
+                    className="btn-secondary px-4 py-2 disabled:opacity-30"
+                  >
+                    {t('logs.next')}
+                  </button>
                 </div>
-              ))}
-            </div>
+              )}
+            </>
           )}
       </section>
 
