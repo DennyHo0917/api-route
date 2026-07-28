@@ -1,13 +1,32 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Bot, Menu, MessageSquarePlus, Send, Settings2, Square, Trash2, UserRound, X } from 'lucide-react';
+import {
+  Bot,
+  Menu,
+  MessageSquarePlus,
+  Paperclip,
+  Send,
+  Settings2,
+  Square,
+  Trash2,
+  UserRound,
+  X,
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
-import { getTokenSupportedModels } from '../api';
+import { getSiteModels, getTokenSupportedModels } from '../api';
 import { useAuth } from '../context/AuthContext';
+import {
+  filterAvailableModels,
+  modelSupportsImageUpload,
+  toChatCompletionMessage,
+} from '../utils/chatModels';
 import { readChatResponse } from '../utils/chatResponse';
 
 const DB_NAME = 'api-route-web-chat';
 const STORE_NAME = 'conversations';
+const MAX_IMAGE_SIZE_MB = 3;
+const MAX_IMAGE_SIZE = MAX_IMAGE_SIZE_MB * 1024 * 1024;
+const SUPPORTED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 let databasePromise;
 
 function openDatabase() {
@@ -73,6 +92,17 @@ function getApiKey(token) {
   return key.startsWith('sk-') ? key : `sk-${key}`;
 }
 
+function readImage(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => (
+      typeof reader.result === 'string' ? resolve(reader.result) : reject(new Error('read failed'))
+    );
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
+
 export default function WebChat({ tokens = [], onOpenLocalSetup }) {
   const { t } = useTranslation();
   const { user } = useAuth();
@@ -82,17 +112,20 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
   const [models, setModels] = useState([]);
   const [selectedModel, setSelectedModel] = useState('');
   const [input, setInput] = useState('');
+  const [attachment, setAttachment] = useState(null);
   const [loadingModels, setLoadingModels] = useState(false);
   const [loadingHistory, setLoadingHistory] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [mobileHistoryOpen, setMobileHistoryOpen] = useState(false);
   const abortControllerRef = useRef(null);
+  const imageInputRef = useRef(null);
   const messagesContainerRef = useRef(null);
 
   const enabledTokens = useMemo(
     () => tokens.filter((token) => token.status === 1 && token.key),
     [tokens],
   );
+  const canUploadImage = modelSupportsImageUpload(selectedModel);
 
   useEffect(() => {
     if (!user?.id) return;
@@ -126,32 +159,32 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
 
     let cancelled = false;
     setLoadingModels(true);
-    Promise.all(enabledTokens.map(async (token) => {
-      try {
-        const response = await getTokenSupportedModels(token.id);
-        return (response.data.data?.models || []).map((name) => ({
-          name,
-          tokenId: token.id,
-        }));
-      } catch {
-        return [];
-      }
-    })).then((groups) => {
-      if (cancelled) return;
-      const uniqueModels = [];
-      const seen = new Set();
-      groups.flat().forEach((model) => {
-        if (!seen.has(model.name)) {
-          seen.add(model.name);
-          uniqueModels.push(model);
+    Promise.all([
+      getSiteModels(),
+      ...enabledTokens.map(async (token) => {
+        try {
+          const response = await getTokenSupportedModels(token.id);
+          return (response.data.data?.models || []).map((name) => ({
+            name,
+            tokenId: token.id,
+          }));
+        } catch {
+          return [];
         }
-      });
+      }),
+    ]).then(([siteResponse, ...groups]) => {
+      if (cancelled) return;
+      const uniqueModels = filterAvailableModels(groups, siteResponse.data.data || []);
       setModels(uniqueModels);
       setSelectedModel((current) => (
         uniqueModels.some((model) => model.name === current)
           ? current
           : uniqueModels[0]?.name || ''
       ));
+    }).catch(() => {
+      if (cancelled) return;
+      setModels([]);
+      setSelectedModel('');
     }).finally(() => {
       if (!cancelled) setLoadingModels(false);
     });
@@ -182,6 +215,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
     setActiveConversation(null);
     setMessages([]);
     setInput('');
+    setAttachment(null);
   };
 
   const openConversation = (conversation) => {
@@ -189,6 +223,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
     setMobileHistoryOpen(false);
     setActiveConversation(conversation);
     setMessages(conversation.messages || []);
+    setAttachment(null);
     if (models.some((model) => model.name === conversation.model)) {
       setSelectedModel(conversation.model);
     }
@@ -204,6 +239,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
       if (activeConversation?.id === conversation.id) {
         setActiveConversation(remaining[0] || null);
         setMessages(remaining[0]?.messages || []);
+        setAttachment(null);
         if (remaining[0]?.model) setSelectedModel(remaining[0].model);
       }
     } catch {
@@ -214,6 +250,10 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
   const changeModel = async (event) => {
     const model = event.target.value;
     setSelectedModel(model);
+    if (attachment && !modelSupportsImageUpload(model)) {
+      setAttachment(null);
+      toast.error(t('chat.attachmentsUnsupported'));
+    }
     if (!activeConversation) return;
     try {
       await persistConversation({
@@ -226,13 +266,51 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
     }
   };
 
+  const selectImage = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    if (!canUploadImage) {
+      toast.error(t('chat.attachmentsUnsupported'));
+      return;
+    }
+    if (!SUPPORTED_IMAGE_TYPES.has(file.type)) {
+      toast.error(t('chat.imageTypeUnsupported'));
+      return;
+    }
+    if (file.size > MAX_IMAGE_SIZE) {
+      toast.error(t('chat.imageTooLarge', { size: MAX_IMAGE_SIZE_MB }));
+      return;
+    }
+    try {
+      setAttachment({
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        dataUrl: await readImage(file),
+      });
+    } catch {
+      toast.error(t('chat.imageReadFailed'));
+    }
+  };
+
   const sendMessage = async () => {
-    const content = input.trim();
+    const content = input.trim() || (attachment ? t('chat.describeImagePrompt') : '');
     const modelOption = models.find((model) => model.name === selectedModel);
     const token = enabledTokens.find((item) => item.id === modelOption?.tokenId);
     if (!content || generating || !selectedModel || !token) return;
+    if (attachment && !canUploadImage) {
+      setAttachment(null);
+      toast.error(t('chat.attachmentsUnsupported'));
+      return;
+    }
 
-    const userMessage = { id: createId(), role: 'user', content };
+    const userMessage = {
+      id: createId(),
+      role: 'user',
+      content,
+      ...(attachment ? { attachment } : {}),
+    };
     const assistantMessage = { id: createId(), role: 'assistant', content: '' };
     const requestMessages = [...messages, userMessage];
     const now = Date.now();
@@ -244,6 +322,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
     };
 
     setInput('');
+    setAttachment(null);
     setMessages([...requestMessages, assistantMessage]);
     setGenerating(true);
     const controller = new AbortController();
@@ -259,10 +338,9 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
         },
         body: JSON.stringify({
           model: selectedModel,
-          messages: requestMessages.map(({ role, content: messageContent }) => ({
-            role,
-            content: messageContent,
-          })),
+          messages: requestMessages.map((message) => (
+            toChatCompletionMessage(message, canUploadImage)
+          )),
           stream: true,
         }),
         signal: controller.signal,
@@ -461,6 +539,13 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
                           ? 'bg-page-link px-4 py-2.5 text-white'
                           : 'px-1 py-2 text-page sm:border sm:border-page-divider sm:bg-page-surface'
                       }`}>
+                        {message.attachment?.dataUrl && (
+                          <img
+                            src={message.attachment.dataUrl}
+                            alt={message.attachment.name || t('chat.attachImage')}
+                            className="mb-2 max-h-72 max-w-full rounded-xl object-contain"
+                          />
+                        )}
                         {message.content || (generating ? '…' : '')}
                       </div>
                       {message.role === 'user' && (
@@ -475,32 +560,85 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
             </div>
 
             <div className="border-t border-page-divider p-3 sm:p-5">
-              <div className="mx-auto flex max-w-3xl items-end gap-2 rounded-2xl border border-page-divider bg-page-surface p-2 focus-within:border-page-link/60">
-                <textarea
-                  value={input}
-                  onChange={(event) => setInput(event.target.value)}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter' && !event.shiftKey) {
-                      event.preventDefault();
-                      sendMessage();
-                    }
-                  }}
-                  rows={1}
-                  disabled={generating || !selectedModel}
-                  placeholder={t('chat.placeholder')}
-                  className="max-h-40 min-h-12 flex-1 resize-none bg-transparent px-3 py-2 text-sm leading-6 text-page outline-none placeholder:text-page-muted"
-                />
-                <button
-                  type="button"
-                  onClick={generating ? () => abortControllerRef.current?.abort() : sendMessage}
-                  disabled={!generating && (!input.trim() || !selectedModel)}
-                  className="btn-primary flex h-10 w-10 shrink-0 items-center justify-center !p-0"
-                  title={generating ? t('chat.stop') : t('chat.send')}
-                  aria-label={generating ? t('chat.stop') : t('chat.send')}
-                >
-                  {generating ? <Square size={15} /> : <Send size={17} />}
-                </button>
+              <div className="mx-auto max-w-3xl rounded-2xl border border-page-divider bg-page-surface p-2 focus-within:border-page-link/60">
+                {attachment && (
+                  <div className="mb-2 flex items-center gap-3 rounded-xl bg-page-inset p-2">
+                    <img
+                      src={attachment.dataUrl}
+                      alt={attachment.name}
+                      className="h-12 w-12 rounded-lg object-cover"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-xs font-medium text-page">{attachment.name}</p>
+                      <p className="text-[11px] text-page-muted">
+                        {Math.max(1, Math.round(attachment.size / 1024))} KB
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setAttachment(null)}
+                      disabled={generating}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg text-page-muted hover:bg-page-surface-hover hover:text-page"
+                      title={t('chat.removeImage')}
+                      aria-label={t('chat.removeImage')}
+                    >
+                      <X size={15} />
+                    </button>
+                  </div>
+                )}
+                <div className="flex items-end gap-2">
+                  <input
+                    ref={imageInputRef}
+                    type="file"
+                    accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                    onChange={selectImage}
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => imageInputRef.current?.click()}
+                    disabled={generating || !selectedModel || !canUploadImage}
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
+                      canUploadImage
+                        ? 'text-page-secondary hover:bg-page-surface-hover hover:text-page'
+                        : 'cursor-not-allowed bg-page-inset/60 text-page-muted opacity-50'
+                    }`}
+                    title={canUploadImage ? t('chat.attachImage') : t('chat.attachmentsUnsupported')}
+                    aria-label={canUploadImage ? t('chat.attachImage') : t('chat.attachmentsUnsupported')}
+                  >
+                    <Paperclip size={18} />
+                  </button>
+                  <textarea
+                    value={input}
+                    onChange={(event) => setInput(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' && !event.shiftKey) {
+                        event.preventDefault();
+                        sendMessage();
+                      }
+                    }}
+                    rows={1}
+                    disabled={generating || !selectedModel}
+                    placeholder={t('chat.placeholder')}
+                    className="max-h-40 min-h-12 flex-1 resize-none bg-transparent px-3 py-2 text-sm leading-6 text-page outline-none placeholder:text-page-muted"
+                  />
+                  <button
+                    type="button"
+                    onClick={generating ? () => abortControllerRef.current?.abort() : sendMessage}
+                    disabled={!generating && ((!input.trim() && !attachment) || !selectedModel)}
+                    className="btn-primary flex h-10 w-10 shrink-0 items-center justify-center !p-0"
+                    title={generating ? t('chat.stop') : t('chat.send')}
+                    aria-label={generating ? t('chat.stop') : t('chat.send')}
+                  >
+                    {generating ? <Square size={15} /> : <Send size={17} />}
+                  </button>
+                </div>
               </div>
+              {selectedModel && !canUploadImage && (
+                <p className="mt-2 text-center text-xs text-page-muted">
+                  {t('chat.attachmentsUnsupported')}
+                </p>
+              )}
               <p className="mt-2 hidden text-center text-[11px] text-page-muted sm:block">{t('chat.disclaimer')}</p>
             </div>
           </>
