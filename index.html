@@ -110,8 +110,9 @@
     <script>
       // Restore theme and system color scheme before React mounts to prevent flash.
       try {
-        var tc = localStorage.getItem('dist-theme-class');
-        if (tc) document.body.className = tc + ' antialiased';
+        var tc = 'theme-light theme-claude';
+        document.body.className = tc + ' antialiased';
+        localStorage.setItem('dist-theme-class', tc);
         var previewScheme = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
           ? new URLSearchParams(location.search).get('preview_color_scheme')
           : '';

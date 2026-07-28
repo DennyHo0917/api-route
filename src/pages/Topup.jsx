@@ -768,11 +768,11 @@ export default function Topup() {
                         : undefined}
                       className={`flex min-h-12 items-center justify-center gap-2 rounded-xl px-2 text-sm font-semibold transition-all sm:min-h-14 sm:px-3 ${
                         selectedPaymentMethod === method.type
-                          ? 'border border-brand-500 bg-brand-500/10 text-page shadow-sm'
+                          ? 'topup-payment-method--selected border text-page shadow-sm'
                           : 'glass-sm text-page-label hover:bg-page-surface-hover hover:text-page'
                       }`}
                     >
-                      <WalletCards size={18} className={selectedPaymentMethod === method.type ? 'text-brand-500' : 'text-page-secondary'} />
+                      <WalletCards size={18} className={selectedPaymentMethod === method.type ? 'topup-payment-method-icon--selected' : 'text-page-secondary'} />
                       <span className="truncate">{method.name}</span>
                     </button>
                   );

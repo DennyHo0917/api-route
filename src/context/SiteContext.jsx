@@ -91,30 +91,11 @@ function formatCurrencyNumber(value, decimals) {
   });
 }
 
-// Map theme template name → CSS class(es) to apply on <body>
-const themeClassMap = {
-  starter: 'theme-light theme-starter',
-  default: 'theme-light theme-starter',
-  dark: 'theme-dark',
-  minimal: 'theme-minimal',
-  clean: 'theme-light',
-  corporate: 'theme-light',
-  claude: 'theme-light theme-claude',
-  aurora: 'theme-light theme-aurora',
-  terminal: 'theme-terminal',
-  market: 'theme-light theme-market',
-  maoqiu: 'theme-light theme-maoqiu',
-};
+const CLAUDE_THEME_CLASS = 'theme-light theme-claude';
 
-function applyThemeClass(themeName) {
-  const cls = themeClassMap[themeName] || '';
-  document.body.className = cls + (cls ? ' ' : '') + 'antialiased';
-  try { localStorage.setItem('dist-theme-class', cls); } catch(e) {}
-}
-
-function getDevPreviewTheme() {
-  if (!import.meta.env.DEV || typeof window === 'undefined') return '';
-  return new URLSearchParams(window.location.search).get('preview_theme') || '';
+function applyThemeClass() {
+  document.body.className = `${CLAUDE_THEME_CLASS} antialiased`;
+  try { localStorage.setItem('dist-theme-class', CLAUDE_THEME_CLASS); } catch(e) {}
 }
 
 function getDevPreviewColorScheme() {
@@ -232,34 +213,12 @@ export function SiteProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    const previewTheme = getDevPreviewTheme();
-    if (previewTheme) {
-      const previewSite = {
-        name: 'SubRouter Preview',
-        theme_template: previewTheme,
-        enable_topup: true,
-        allow_sub_dist: true,
-        currency: {
-          code: 'CNY',
-          symbol: '¥',
-          exchange_rate: 7,
-          usd_exchange_rate: 7,
-        },
-      };
-      setSite(previewSite);
-      applyThemeClass(previewTheme);
-      applySiteDocumentMeta({ ...previewSite, name: `${previewSite.name} · ${previewTheme}` });
-      setLoading(false);
-      return;
-    }
-
     getSiteInfo()
       .then((res) => {
         if (res.data.success) {
           setSite(res.data.data);
           storeSite(res.data.data);
-          // Apply theme class to body immediately
-          applyThemeClass(res.data.data?.theme_template);
+          applyThemeClass();
           applySiteDocumentMeta(res.data.data);
         }
       })
