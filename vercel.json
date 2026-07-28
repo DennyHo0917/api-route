@@ -267,6 +267,14 @@
       "destination": "/"
     },
     {
+      "source": "/oauth/:provider",
+      "destination": "/"
+    },
+    {
+      "source": "/:lang/oauth/:provider",
+      "destination": "/"
+    },
+    {
       "source": "/register",
       "destination": "/"
     },

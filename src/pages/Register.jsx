@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { useSite } from '../context/SiteContext';
 import { getAuthReturnTo } from '../utils/authReturn';
 import { trackEvent } from '../utils/analytics';
+import OAuthButtons from '../components/OAuthButtons';
 import toast from 'react-hot-toast';
 
 export default function Register() {
@@ -89,7 +90,7 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-[70vh] flex items-center justify-center px-6">
+    <div className="flex flex-1 items-center justify-center px-6">
       <div className="w-full max-w-md">
         <div className="glass rounded-2xl p-8">
           <div className="text-center mb-8">
@@ -163,6 +164,8 @@ export default function Register() {
               {loading ? t('register.creating') : t('register.createAccountBtn')}
             </button>
           </form>
+
+          <OAuthButtons disabled={loading} />
 
           <div className="mt-6 text-center">
             <p className="text-sm text-page-secondary">

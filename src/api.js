@@ -141,6 +141,11 @@ export const getSubDistributorInfo = () => api.get('/api/dist/site/sub-distribut
 export const register = (data) => api.post('/api/dist/user/register', data);
 export const login = (data, config) => api.post('/api/dist/user/login', data, config);
 export const logout = () => api.post('/api/dist/user/logout');
+export const completeOAuth = (provider, params) =>
+  api.get(`/api/dist/oauth/${encodeURIComponent(provider)}/callback`, {
+    params,
+    skipErrorHandler: true,
+  });
 
 // ===== User =====
 export const getUserSelf = (config) => api.get('/api/dist/user/self', config);

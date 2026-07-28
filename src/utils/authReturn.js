@@ -1,5 +1,6 @@
 const AUTH_RETURN_TO_KEY = 'dist_auth_return_to';
 const AUTH_PATHS = new Set(['/login', '/register']);
+const isAuthPath = (pathname) => AUTH_PATHS.has(pathname) || pathname.startsWith('/oauth/');
 
 const toPath = (value) => {
   if (!value) return '';
@@ -10,7 +11,7 @@ const toPath = (value) => {
 const cleanReturnTo = (path) => {
   if (!path || !path.startsWith('/') || path.startsWith('//')) return '/dashboard';
   const pathname = path.split(/[?#]/)[0];
-  return AUTH_PATHS.has(pathname) ? '/dashboard' : path;
+  return isAuthPath(pathname) ? '/dashboard' : path;
 };
 
 const sameOriginReferrerPath = () => {
@@ -19,7 +20,7 @@ const sameOriginReferrerPath = () => {
     const url = new URL(document.referrer);
     if (url.origin !== window.location.origin) return '';
     const path = `${url.pathname}${url.search}${url.hash}`;
-    return AUTH_PATHS.has(url.pathname) ? '' : path;
+    return isAuthPath(url.pathname) ? '' : path;
   } catch {
     return '';
   }
@@ -28,7 +29,7 @@ const sameOriginReferrerPath = () => {
 export const rememberAuthReturnTo = (location) => {
   const rawPath = toPath(location);
   const pathname = rawPath.split(/[?#]/)[0];
-  if (AUTH_PATHS.has(pathname)) return;
+  if (isAuthPath(pathname)) return;
   const path = cleanReturnTo(rawPath);
   try {
     sessionStorage.setItem(AUTH_RETURN_TO_KEY, path);

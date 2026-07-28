@@ -9,6 +9,7 @@ import { useAuth } from './context/AuthContext';
 import { rememberAuthReturnTo } from './utils/authReturn';
 
 const Login = lazy(() => import('./pages/Login'));
+const OAuthCallback = lazy(() => import('./pages/OAuthCallback'));
 const Register = lazy(() => import('./pages/Register'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const QuickStart = lazy(() => import('./pages/QuickStart'));
@@ -139,6 +140,7 @@ function ThemedRoutes() {
           <Route path="/privacy-policy" element={<Legal type="privacy" />} />
           <Route path="/terms-of-service" element={<Legal type="terms" />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/oauth/:provider" element={<OAuthCallback />} />
           <Route path="/register" element={<Register />} />
 
           {/* Protected pages */}
