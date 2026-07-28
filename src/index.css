@@ -59,6 +59,7 @@
 
   ::view-transition-new(root) {
     z-index: 1;
+    will-change: clip-path;
   }
 
   ::-webkit-scrollbar {
