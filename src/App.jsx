@@ -5,7 +5,6 @@ import AuthGuard from './components/AuthGuard';
 import NotificationBell from './components/NotificationBell';
 import SeoManager from './components/SeoManager';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
-import { useAuth } from './context/AuthContext';
 import { rememberAuthReturnTo } from './utils/authReturn';
 
 const Login = lazy(() => import('./pages/Login'));
@@ -57,34 +56,15 @@ function AuthReturnTracker() {
   return null;
 }
 
-function MergedPageLayout({ labelKey, tabs, showWelcome = false }) {
+function MergedPageLayout({ labelKey, tabs }) {
   const { t } = useTranslation();
-  const { user } = useAuth();
-  const location = useLocation();
-  const welcomeVisible = showWelcome && location.pathname === tabs[0].to;
 
   return (
     <>
-      <div
-        className={`mx-auto max-w-7xl px-6 pt-8 ${
-          welcomeVisible
-            ? 'grid gap-5 md:grid-cols-[1fr_auto_1fr] md:items-center'
-            : 'flex justify-center'
-        }`}
-      >
-        {welcomeVisible && (
-          <div className="text-left">
-            <h1 className="mb-1 text-2xl font-heading font-bold text-page">
-              {t('dashboard.welcome')} {user?.display_name || user?.username || 'User'}
-            </h1>
-            <p className="text-sm text-page-secondary">{t('dashboard.manageDesc')}</p>
-          </div>
-        )}
+      <div className="mx-auto flex max-w-7xl justify-center px-6 pt-8">
         <nav
           aria-label={t(labelKey)}
-          className={`inline-flex max-w-full gap-1 overflow-x-auto rounded-full border border-page-divider bg-page-surface p-1.5 shadow-sm ${
-            welcomeVisible ? 'justify-self-start md:col-start-2 md:justify-self-center' : ''
-          }`}
+          className="inline-flex max-w-full gap-1 overflow-x-auto rounded-full border border-page-divider bg-page-surface p-1.5 shadow-sm"
         >
           {tabs.map((tab) => (
             <NavLink
@@ -147,7 +127,7 @@ function ThemedRoutes() {
           <Route element={<AuthGuard />}>
             <Route
               path="/dashboard"
-              element={<MergedPageLayout labelKey="nav.dashboard" tabs={DASHBOARD_TABS} showWelcome />}
+              element={<MergedPageLayout labelKey="nav.dashboard" tabs={DASHBOARD_TABS} />}
             >
               <Route index element={<Dashboard />} />
               <Route path="logs" element={<Logs />} />

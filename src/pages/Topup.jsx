@@ -642,7 +642,7 @@ export default function Topup() {
   }
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-col px-4 py-6 sm:px-5 sm:py-10 md:px-8 md:py-14">
+    <div className="mx-auto flex w-full max-w-6xl flex-col px-4 py-6 sm:px-5 sm:py-10 md:px-8 md:py-14">
       <div className="order-1 mb-6 sm:mb-8">
         <p className="route-kicker">{t('topup.eyebrow')}</p>
         <h1 className="mt-2 text-2xl font-bold tracking-[-0.035em] text-page sm:text-3xl md:text-4xl">{t('topup.title')}</h1>
