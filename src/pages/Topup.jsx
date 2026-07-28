@@ -14,6 +14,7 @@ import {
   Q,
 } from '../api';
 import { useCurrency } from '../context/SiteContext';
+import { trackEvent } from '../utils/analytics';
 import CountUp from '../components/bits/CountUp';
 import toast from 'react-hot-toast';
 
@@ -95,6 +96,16 @@ function closePendingPaymentWindow(paymentWindow) {
   if (paymentWindow && !paymentWindow.closed) {
     paymentWindow.close();
   }
+}
+
+function getTopupAnalyticsItem(value) {
+  return {
+    item_id: 'balance_topup',
+    item_name: 'Balance top-up',
+    item_category: 'balance_topup',
+    price: value,
+    quantity: 1,
+  };
 }
 
 export default function Topup() {
@@ -280,6 +291,13 @@ export default function Topup() {
     try {
       const returnUrl = window.location.origin + '/topup?payment=return';
       const data = { amount: payAmount, payment_method: method, return_url: returnUrl };
+      const analyticsValue = Number((payAmount * rate).toFixed(decimals));
+      trackEvent('begin_checkout', {
+        currency: code || 'CNY',
+        value: analyticsValue,
+        payment_method: method,
+        items: [getTopupAnalyticsItem(analyticsValue)],
+      });
 
       if (isCreemPayment(method)) {
         const res = await createCreemOrder({
@@ -371,8 +389,15 @@ export default function Topup() {
         token: selectedToken,
       });
       if (res.data.message === 'success' && res.data.data) {
+        const analyticsValue = Number((payAmountVal * rate).toFixed(decimals));
+        trackEvent('begin_checkout', {
+          currency: code || 'CNY',
+          value: analyticsValue,
+          payment_method: 'crypto',
+          items: [getTopupAnalyticsItem(analyticsValue)],
+        });
         setCryptoOrder(res.data.data);
-        startCryptoPolling(res.data.data.trade_no);
+        startCryptoPolling(res.data.data.trade_no, analyticsValue);
       } else if (res.data.message !== 'success') {
         const errMsg = typeof res.data.data === 'string' ? res.data.data : res.data.message;
         toast.error(errMsg || t('common.requestFailed'));
@@ -382,12 +407,20 @@ export default function Topup() {
     setPayingMethod('');
   };
 
-  const startCryptoPolling = (tradeNo) => {
+  const startCryptoPolling = (tradeNo, analyticsValue) => {
     setCryptoPolling(true);
     const interval = setInterval(async () => {
       try {
         const res = await getCryptoOrderStatus(tradeNo);
         if (res.data.data?.status === 'success') {
+          trackEvent('purchase', {
+            transaction_id: String(tradeNo || `crypto_topup_${Date.now()}`),
+            affiliation: 'API-Route balance top-up',
+            currency: code || 'CNY',
+            value: analyticsValue,
+            payment_method: 'crypto',
+            items: [getTopupAnalyticsItem(analyticsValue)],
+          });
           clearInterval(interval);
           setCryptoPolling(false);
           setCryptoOrder(null);

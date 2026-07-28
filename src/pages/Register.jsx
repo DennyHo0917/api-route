@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { useSite } from '../context/SiteContext';
 import { getAuthReturnTo } from '../utils/authReturn';
+import { trackEvent } from '../utils/analytics';
 import toast from 'react-hot-toast';
 
 export default function Register() {
@@ -59,6 +60,7 @@ export default function Register() {
         aff_code: affCode || undefined,
       });
       if (result.success) {
+        trackEvent('sign_up', { method: affCode ? 'affiliate' : 'email' });
         const loginNames = [username, email].filter((value, index, values) => values.indexOf(value) === index);
         for (const delay of [0, 500]) {
           if (delay) await new Promise((resolve) => setTimeout(resolve, delay));

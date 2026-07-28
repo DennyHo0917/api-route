@@ -6,13 +6,13 @@ import { DIST_SITE_LANGUAGES, getLocalizedPath, normalizeAppLanguage } from '../
 import { FAQ_COPY } from '../content/faqCopy';
 import { SEO_COPY } from '../content/seoCopy';
 import { getLegalCopy } from '../content/legalCopy';
+import { trackPageView } from '../utils/analytics';
 
 const DEFAULT_SITE_URL = 'https://www.api-route.com';
 const DEFAULT_LOGO_URL = 'https://img.api-route.com/3.png';
 const DEFAULT_OG_IMAGE_PATH = '/og-image.png';
 const DEFAULT_OG_IMAGE_WIDTH = '1200';
 const DEFAULT_OG_IMAGE_HEIGHT = '630';
-const GA_MEASUREMENT_ID = 'G-GZT5KLBKJ8';
 const STRUCTURED_DATA_TOPICS = [
   'AI API Gateway',
   'OpenAI-compatible API',
@@ -151,15 +151,6 @@ function getPageCopy(pathname, copy, languageKey) {
   if (pathname === '/ai-api-reseller-platform') return copy.subSite;
   if (pathname === '/faq') return getFaqSeoPage(languageKey);
   return copy.private;
-}
-
-function trackPageView(pageTitle) {
-  if (typeof window === 'undefined' || typeof window.gtag !== 'function') return;
-  window.gtag('config', GA_MEASUREMENT_ID, {
-    page_title: pageTitle,
-    page_path: `${window.location.pathname}${window.location.search}`,
-    page_location: window.location.href,
-  });
 }
 
 function setStructuredData({

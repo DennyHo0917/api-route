@@ -19,6 +19,7 @@ import {
 } from '../api';
 import { calcOfficialEquivList } from '../utils/officialEquiv';
 import { localizePackage } from '../utils/packageLocalization';
+import { trackEvent } from '../utils/analytics';
 import toast from 'react-hot-toast';
 
 const resetLabelKeys = {
@@ -48,6 +49,17 @@ function getPackageQuota(pkg) {
         ? Math.floor(pkg.duration / 30)
         : 1;
   return singleQuotaDollars * Math.max(1, resetCount);
+}
+
+function getPackageAnalyticsItem(pkg) {
+  const price = Number(pkg?.price || 0);
+  return {
+    item_id: String(pkg?.id || ''),
+    item_name: pkg?.name || 'API package',
+    item_category: 'api_package',
+    price,
+    quantity: 1,
+  };
 }
 
 export default function Packages() {
@@ -97,6 +109,13 @@ export default function Packages() {
     || visiblePackages[1]?.id;
 
   const handleSubscribe = (pkg) => {
+    const item = getPackageAnalyticsItem(pkg);
+    trackEvent('begin_checkout', {
+      currency: 'CNY',
+      value: item.price,
+      login_state: user ? 'logged_in' : 'anonymous',
+      items: [item],
+    });
     if (!user) {
       navigate('/register');
       return;
@@ -111,6 +130,14 @@ export default function Packages() {
     try {
       const res = await subscribePackage(pkgId);
       if (res.data.success) {
+        const item = getPackageAnalyticsItem(confirmPkg);
+        trackEvent('purchase', {
+          transaction_id: String(res.data.data?.id || res.data.data?.subscription_id || `package_${pkgId}_${Date.now()}`),
+          affiliation: 'API-Route package',
+          currency: 'CNY',
+          value: item.price,
+          items: [item],
+        });
         toast.success(t('packages.subscribedSuccess'));
         setConfirmPkg(null);
         await refreshUser({ skipErrorHandler: true }).catch(() => null);

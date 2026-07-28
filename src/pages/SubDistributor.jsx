@@ -22,6 +22,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCurrency } from '../context/SiteContext';
 import { getLocalizedPath, normalizeAppLanguage } from '../i18n/languageUtils';
 import { getDiscountPrice } from '../utils/discountPrice';
+import { trackEvent } from '../utils/analytics';
 import FadeContent from '../components/bits/FadeContent';
 import SnapSection, { SnapDeck } from '../components/bits/SnapSection';
 
@@ -65,6 +66,7 @@ function submitEpayForm(resData) {
 const AUDIENCE_ICONS = [Sparkles, Braces, Layers3, ShieldCheck];
 const REVENUE_ICONS = [Tags, TicketCheck, WalletCards, Sparkles, Layers3];
 const INCLUDED_ICONS = [ShieldCheck, Sparkles, KeyRound, Tags, TicketCheck, WalletCards, Layers3];
+const SUB_DISTRIBUTOR_ITEM_ID = 'sub_distributor_setup';
 const INBOUND_ROUTE = {
   id: 'app',
   d: 'M70 160 C140 160 220 160 302 160',
@@ -580,6 +582,24 @@ export default function SubDistributor() {
       if (cancelled) return;
 
       if (refreshed?.has_distributor) {
+        const value = Number((Number(subInfo?.price || 0) * cnyRate).toFixed(2));
+        const trackingKey = `sub_dist_purchase_tracked_${refreshed.id || user.id || 'user'}`;
+        if (!sessionStorage.getItem(trackingKey)) {
+          trackEvent('purchase', {
+            transaction_id: `sub_distributor_${refreshed.id || user.id || Date.now()}`,
+            affiliation: 'API-Route reseller platform',
+            currency: 'CNY',
+            ...(value > 0 ? { value } : {}),
+            items: [{
+              item_id: SUB_DISTRIBUTOR_ITEM_ID,
+              item_name: 'AI API reseller platform setup',
+              item_category: 'sub_distributor',
+              ...(value > 0 ? { price: value } : {}),
+              quantity: 1,
+            }],
+          });
+          sessionStorage.setItem(trackingKey, '1');
+        }
         toast.success(t('subDist.openedSuccess'), { id: toastId });
       } else {
         toast(t('subDist.paymentPending'), { id: toastId });
@@ -621,6 +641,19 @@ export default function SubDistributor() {
         payload.chain = form.chain;
         payload.token = form.token;
       }
+      const value = Number((Number(subInfo?.price || 0) * cnyRate).toFixed(2));
+      trackEvent('begin_checkout', {
+        currency: 'CNY',
+        ...(value > 0 ? { value } : {}),
+        payment_method: form.payment_method,
+        items: [{
+          item_id: SUB_DISTRIBUTOR_ITEM_ID,
+          item_name: 'AI API reseller platform setup',
+          item_category: 'sub_distributor',
+          ...(value > 0 ? { price: value } : {}),
+          quantity: 1,
+        }],
+      });
       const res = await createSubDistributorOrder(payload);
       if (res.data.message === 'success') {
         if (res.data.payment_type === 'stripe' && res.data.data?.pay_link) {
