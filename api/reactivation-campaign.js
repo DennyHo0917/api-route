@@ -2,23 +2,14 @@ import { timingSafeEqual } from 'node:crypto';
 import { Resend } from 'resend';
 
 const DEFAULT_API_BASE_URL = 'https://subrouter.ai';
-const DEFAULT_INACTIVE_DAYS = 30;
 const MAX_PAGES = 1000;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const SEGMENT_PREFIX = 'API-Route dormant';
+const SEGMENT_PREFIX = 'API-Route zero balance zero usage';
 
 const safeEqual = (left, right) => {
   const leftBuffer = Buffer.from(String(left || ''));
   const rightBuffer = Buffer.from(String(right || ''));
   return leftBuffer.length === rightBuffer.length && timingSafeEqual(leftBuffer, rightBuffer);
-};
-
-const toUnixSeconds = (value) => {
-  if (value === null || value === undefined || value === '') return 0;
-  const number = Number(value);
-  if (Number.isFinite(number)) return number > 1e12 ? Math.floor(number / 1000) : Math.floor(number);
-  const parsed = Date.parse(String(value));
-  return Number.isNaN(parsed) ? 0 : Math.floor(parsed / 1000);
 };
 
 const firstValue = (record, keys) => {
@@ -28,65 +19,27 @@ const firstValue = (record, keys) => {
   return null;
 };
 
-const identityKeys = (record, includeOwnId = false) => {
-  const keys = new Set();
-  const id = firstValue(record, includeOwnId
-    ? ['user_id', 'userId', 'uid', 'id']
-    : ['user_id', 'userId', 'uid']);
-  const username = firstValue(record, ['username', 'user_name', 'userName']);
-  const email = String(firstValue(record, ['email', 'user_email']) || '').trim().toLowerCase();
-
-  if (id !== null) keys.add(`id:${id}`);
-  if (username !== null) keys.add(`username:${String(username).trim().toLowerCase()}`);
-  if (EMAIL_PATTERN.test(email)) keys.add(`email:${email}`);
-  return [...keys];
-};
-
 const isDisabled = (customer) => {
   if (customer?.enabled === false || customer?.is_active === false || customer?.isActive === false) return true;
   const status = String(customer?.status ?? '').trim().toLowerCase();
   return ['0', 'disabled', 'banned', 'deleted'].includes(status);
 };
 
-const getCreatedAt = (customer) => toUnixSeconds(firstValue(customer, [
-  'created_at',
-  'createdAt',
-  'create_time',
-  'registered_at',
-  'registration_time',
-]));
+const toNumber = (value) => {
+  if (value === null || value === undefined || value === '') return null;
+  const number = Number(String(value).replaceAll(',', ''));
+  return Number.isFinite(number) ? number : null;
+};
 
-const getLogCreatedAt = (log) => toUnixSeconds(firstValue(log, [
-  'created_at',
-  'createdAt',
-  'create_time',
-  'timestamp',
-]));
-
-export function selectDormantCustomers(customers, logs, inactiveDays, nowSeconds = Math.floor(Date.now() / 1000)) {
-  const cutoff = nowSeconds - inactiveDays * 86400;
-  const activeKeys = new Set();
-  let logsWithoutIdentity = 0;
-
-  for (const log of logs) {
-    const createdAt = getLogCreatedAt(log);
-    if (createdAt && createdAt < cutoff) continue;
-    const keys = identityKeys(log);
-    if (!keys.length) {
-      logsWithoutIdentity += 1;
-      continue;
-    }
-    keys.forEach((key) => activeKeys.add(key));
-  }
-
+export function selectDormantCustomers(customers) {
   const dormantByEmail = new Map();
   const skipped = {
     invalid_email: 0,
     disabled: 0,
-    missing_created_at: 0,
-    too_new: 0,
-    missing_identity: 0,
-    recently_active: 0,
+    missing_balance: 0,
+    missing_usage: 0,
+    non_zero_balance: 0,
+    non_zero_usage: 0,
   };
 
   for (const customer of customers) {
@@ -100,23 +53,33 @@ export function selectDormantCustomers(customers, logs, inactiveDays, nowSeconds
       continue;
     }
 
-    const createdAt = getCreatedAt(customer);
-    if (!createdAt) {
-      skipped.missing_created_at += 1;
+    const balance = toNumber(firstValue(customer, [
+      'quota',
+      'balance',
+      'remaining_quota',
+      'remainingQuota',
+    ]));
+    const usage = toNumber(firstValue(customer, [
+      'used_quota',
+      'usedQuota',
+      'consumed_quota',
+      'consumedQuota',
+      'usage',
+    ]));
+    if (balance === null) {
+      skipped.missing_balance += 1;
       continue;
     }
-    if (createdAt > cutoff) {
-      skipped.too_new += 1;
+    if (usage === null) {
+      skipped.missing_usage += 1;
       continue;
     }
-
-    const keys = identityKeys(customer, true);
-    if (!keys.length) {
-      skipped.missing_identity += 1;
+    if (balance !== 0) {
+      skipped.non_zero_balance += 1;
       continue;
     }
-    if (keys.some((key) => activeKeys.has(key))) {
-      skipped.recently_active += 1;
+    if (usage !== 0) {
+      skipped.non_zero_usage += 1;
       continue;
     }
 
@@ -125,8 +88,6 @@ export function selectDormantCustomers(customers, logs, inactiveDays, nowSeconds
 
   return {
     dormant: [...dormantByEmail.values()],
-    activeKeyCount: activeKeys.size,
-    logsWithoutIdentity,
     skipped,
   };
 }
@@ -138,7 +99,6 @@ const extractItems = (payload) => {
     payload?.data?.data,
     payload?.items,
     payload?.customers,
-    payload?.logs,
   ];
   return candidates.find(Array.isArray) || null;
 };
@@ -150,27 +110,32 @@ const extractTotal = (payload) => Number(
   ?? 0,
 );
 
+async function fetchPage(baseUrl, path, credentials, params, page, pageSize) {
+  const url = new URL(path, baseUrl);
+  Object.entries({ ...params, page, p: page, page_size: pageSize }).forEach(([key, value]) => {
+    url.searchParams.set(key, String(value));
+  });
+
+  const upstream = await fetch(url, {
+    headers: buildDistributorHeaders(credentials),
+    signal: AbortSignal.timeout(15000),
+  });
+  const payload = await upstream.json();
+  if (!upstream.ok || payload?.success === false) {
+    throw new Error(payload?.message || `${path} returned ${upstream.status}`);
+  }
+
+  const items = extractItems(payload);
+  if (!items) throw new Error(`${path} returned an unsupported response shape`);
+  return { items, total: extractTotal(payload) };
+}
+
 async function fetchAll(baseUrl, path, credentials, params, pageSize) {
   const records = [];
   for (let page = 1; page <= MAX_PAGES; page += 1) {
-    const url = new URL(path, baseUrl);
-    Object.entries({ ...params, page, p: page, page_size: pageSize }).forEach(([key, value]) => {
-      url.searchParams.set(key, String(value));
-    });
-
-    const upstream = await fetch(url, {
-      headers: buildDistributorHeaders(credentials),
-    });
-    const payload = await upstream.json();
-    if (!upstream.ok || payload?.success === false) {
-      throw new Error(payload?.message || `${path} returned ${upstream.status}`);
-    }
-
-    const items = extractItems(payload);
-    if (!items) throw new Error(`${path} returned an unsupported response shape`);
+    const { items, total } = await fetchPage(baseUrl, path, credentials, params, page, pageSize);
     records.push(...items);
 
-    const total = extractTotal(payload);
     if (!items.length || (total > 0 && records.length >= total) || (!total && items.length < pageSize)) {
       return records;
     }
@@ -279,40 +244,37 @@ export default async function handler(request, response) {
     return response.status(503).json({ success: false, message: 'Distributor API credentials are not configured' });
   }
 
-  const requestedDays = Number(request.method === 'GET'
-    ? request.query?.inactive_days
-    : request.body?.inactive_days);
-  const inactiveDays = Number.isInteger(requestedDays) && requestedDays >= 7 && requestedDays <= 365
-    ? requestedDays
-    : DEFAULT_INACTIVE_DAYS;
-  const nowSeconds = Math.floor(Date.now() / 1000);
-  const cutoff = nowSeconds - inactiveDays * 86400;
   const baseUrl = (process.env.DISTRIBUTOR_API_BASE_URL || DEFAULT_API_BASE_URL).replace(/\/+$/, '');
 
   try {
-    const [customers, logs] = await Promise.all([
-      fetchAll(baseUrl, '/api/distributor/customers', credentials, {}, 100),
-      fetchAll(baseUrl, '/api/distributor/logs', credentials, {
-        type: 2,
-        start_timestamp: cutoff,
-        end_timestamp: nowSeconds,
-      }, 1000),
-    ]);
-    const selection = selectDormantCustomers(customers, logs, inactiveDays, nowSeconds);
+    if (request.method === 'GET' && request.query?.inspect === '1') {
+      const customerPage = await fetchPage(baseUrl, '/api/distributor/customers', credentials, {}, 1, 1);
+      return response.status(200).json({
+        success: true,
+        data: {
+          customers: {
+            page_count: customerPage.items.length,
+            total: customerPage.total,
+            fields: Object.keys(customerPage.items[0] || {}).sort(),
+          },
+        },
+      });
+    }
+
+    const customers = await fetchAll(baseUrl, '/api/distributor/customers', credentials, {}, 100);
+    const selection = selectDormantCustomers(customers);
     const preview = {
-      inactive_days: inactiveDays,
+      rule: 'balance = 0 and usage = 0',
       customer_count: customers.length,
-      recent_log_count: logs.length,
       dormant_count: selection.dormant.length,
       sample: selection.dormant.slice(0, 10).map(({ email }) => maskEmail(email)),
       skipped: selection.skipped,
-      logs_without_identity: selection.logsWithoutIdentity,
     };
 
     if (request.method === 'GET') {
       if (request.query?.format === 'csv') {
         response.setHeader('Content-Type', 'text/csv; charset=utf-8');
-        response.setHeader('Content-Disposition', `attachment; filename="dormant-users-${inactiveDays}d.csv"`);
+        response.setHeader('Content-Disposition', 'attachment; filename="zero-balance-zero-usage-users.csv"');
         return response.status(200).send(`email\n${selection.dormant.map(({ email }) => csvCell(email)).join('\n')}`);
       }
       return response.status(200).json({ success: true, data: preview });
@@ -324,13 +286,6 @@ export default async function handler(request, response) {
         data: preview,
       });
     }
-    if (!logs.length && request.body?.allow_empty_activity !== true) {
-      return response.status(409).json({
-        success: false,
-        message: 'No recent logs were returned; preparation stopped to avoid targeting every customer',
-        data: preview,
-      });
-    }
     if (!selection.dormant.length) {
       return response.status(200).json({ success: true, data: { ...preview, prepared: false } });
     }
@@ -339,9 +294,9 @@ export default async function handler(request, response) {
     }
 
     const resend = new Resend(process.env.RESEND_API_KEY);
-    const date = new Date(nowSeconds * 1000).toISOString().slice(0, 10);
-    const segmentName = `${SEGMENT_PREFIX} ${inactiveDays}d ${date}`;
-    const draftName = `API-Route reactivation ${inactiveDays}d ${date}`;
+    const date = new Date().toISOString().slice(0, 10);
+    const segmentName = `${SEGMENT_PREFIX} ${date}`;
+    const draftName = `API-Route reactivation zero usage ${date}`;
     const segment = await findOrCreateSegment(resend, segmentName);
     const csv = `email\n${selection.dormant.map(({ email }) => csvCell(email)).join('\n')}`;
     const imported = await resend.contacts.imports.create({

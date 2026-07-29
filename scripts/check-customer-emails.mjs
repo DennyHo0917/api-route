@@ -13,21 +13,16 @@ assert.equal(result.customerCount, 4);
 assert.equal(result.customersWithEmail, 3);
 console.log('customer email pagination check passed');
 
-const now = 2_000_000_000;
-const day = 86400;
 const selection = selectDormantCustomers([
-  { id: 1, email: 'active@example.com', created_at: now - 60 * day },
-  { id: 2, email: 'dormant@example.com', created_at: now - 60 * day },
-  { id: 3, email: 'new@example.com', created_at: now - 3 * day },
-  { id: 4, email: 'disabled@example.com', created_at: now - 60 * day, status: 0 },
-], [
-  { user_id: 1, created_at: now - day },
-  { user_id: 2, created_at: now - 40 * day },
-], 30, now);
+  { email: 'dormant@example.com', quota: 0, used_quota: 0 },
+  { email: 'funded@example.com', quota: 100, used_quota: 0 },
+  { email: 'used@example.com', quota: 0, used_quota: 50 },
+  { email: 'disabled@example.com', quota: 0, used_quota: 0, status: 0 },
+]);
 
 assert.deepEqual(selection.dormant, [{ email: 'dormant@example.com' }]);
-assert.equal(selection.skipped.recently_active, 1);
-assert.equal(selection.skipped.too_new, 1);
+assert.equal(selection.skipped.non_zero_balance, 1);
+assert.equal(selection.skipped.non_zero_usage, 1);
 assert.equal(selection.skipped.disabled, 1);
 console.log('reactivation customer selection check passed');
 
