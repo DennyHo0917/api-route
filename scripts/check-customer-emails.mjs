@@ -26,6 +26,17 @@ assert.equal(selection.skipped.non_zero_usage, 1);
 assert.equal(selection.skipped.disabled, 1);
 console.log('reactivation customer selection check passed');
 
+const fundedUnused = selectDormantCustomers([
+  { email: 'funded@example.com', quota: 100, used_quota: 0 },
+  { email: 'empty@example.com', quota: 0, used_quota: 0 },
+  { email: 'used@example.com', quota: 100, used_quota: 50 },
+], 'funded_unused');
+
+assert.deepEqual(fundedUnused.dormant, [{ email: 'funded@example.com' }]);
+assert.equal(fundedUnused.skipped.non_positive_balance, 1);
+assert.equal(fundedUnused.skipped.non_zero_usage, 1);
+console.log('funded unused customer selection check passed');
+
 assert.deepEqual(
   buildDistributorHeaders({ sessionCookie: 'cookie-value', userId: 4870 }),
   { Cookie: 'session=cookie-value', 'New-Api-User': '4870' },

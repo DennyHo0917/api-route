@@ -4,7 +4,7 @@ import { Resend } from 'resend';
 const DEFAULT_API_BASE_URL = 'https://subrouter.ai';
 const MAX_PAGES = 1000;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const SEGMENT_PREFIX = 'API-Route zero balance zero usage';
+const SEGMENT_PREFIX = 'API-Route reactivation';
 
 const safeEqual = (left, right) => {
   const leftBuffer = Buffer.from(String(left || ''));
@@ -31,13 +31,15 @@ const toNumber = (value) => {
   return Number.isFinite(number) ? number : null;
 };
 
-export function selectDormantCustomers(customers) {
+export function selectDormantCustomers(customers, audience = 'zero_balance_unused') {
+  const fundedUnused = audience === 'funded_unused';
   const dormantByEmail = new Map();
   const skipped = {
     invalid_email: 0,
     disabled: 0,
     missing_balance: 0,
     missing_usage: 0,
+    non_positive_balance: 0,
     non_zero_balance: 0,
     non_zero_usage: 0,
   };
@@ -74,7 +76,11 @@ export function selectDormantCustomers(customers) {
       skipped.missing_usage += 1;
       continue;
     }
-    if (balance !== 0) {
+    if (fundedUnused && balance <= 0) {
+      skipped.non_positive_balance += 1;
+      continue;
+    }
+    if (!fundedUnused && balance !== 0) {
       skipped.non_zero_balance += 1;
       continue;
     }
@@ -327,8 +333,16 @@ export default async function handler(request, response) {
       });
     }
 
+    const requestedAudience = String(request.method === 'GET'
+      ? request.query?.audience || ''
+      : request.body?.audience || '').trim();
+    const audience = requestedAudience || 'zero_balance_unused';
+    if (!['zero_balance_unused', 'funded_unused'].includes(audience)) {
+      return response.status(400).json({ success: false, message: 'audience is invalid' });
+    }
+
     const customers = await fetchAll(baseUrl, '/api/distributor/customers', credentials, {}, 100);
-    const selection = selectDormantCustomers(customers);
+    const selection = selectDormantCustomers(customers, audience);
     const additionalEmail = request.method === 'POST'
       ? String(request.body?.additional_email || '').trim().toLowerCase()
       : '';
@@ -339,7 +353,8 @@ export default async function handler(request, response) {
     if (additionalEmail) recipients.set(additionalEmail, { email: additionalEmail });
     const recipientList = [...recipients.values()];
     const preview = {
-      rule: 'balance = 0 and usage = 0',
+      audience,
+      rule: audience === 'funded_unused' ? 'balance > 0 and usage = 0' : 'balance = 0 and usage = 0',
       customer_count: customers.length,
       dormant_count: selection.dormant.length,
       recipient_count: recipientList.length,
@@ -350,7 +365,7 @@ export default async function handler(request, response) {
     if (request.method === 'GET') {
       if (request.query?.format === 'csv') {
         response.setHeader('Content-Type', 'text/csv; charset=utf-8');
-        response.setHeader('Content-Disposition', 'attachment; filename="zero-balance-zero-usage-users.csv"');
+        response.setHeader('Content-Disposition', `attachment; filename="${audience}-users.csv"`);
         return response.status(200).send(`email\n${selection.dormant.map(({ email }) => csvCell(email)).join('\n')}`);
       }
       return response.status(200).json({ success: true, data: preview });
@@ -371,8 +386,8 @@ export default async function handler(request, response) {
 
     const resend = new Resend(process.env.RESEND_API_KEY);
     const date = new Date().toISOString().slice(0, 10);
-    const segmentName = `${SEGMENT_PREFIX} ${date}`;
-    const draftName = `API-Route reactivation web chat ${date}`;
+    const segmentName = `${SEGMENT_PREFIX} ${audience} ${date}`;
+    const draftName = `API-Route reactivation web chat ${audience} ${date}`;
     const segment = await findOrCreateSegment(resend, segmentName);
     const csv = `email\n${recipientList.map(({ email }) => csvCell(email)).join('\n')}`;
     const imported = await resend.contacts.imports.create({
