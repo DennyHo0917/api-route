@@ -283,10 +283,6 @@
     "subDist.openedSuccess": "独立平台已开通成功",
     "subDist.alreadyOpenTitle": "您已开通独立平台",
     "subDist.alreadyOpenDesc": "独立平台 {{name}} 已完成开通，请使用同一账号进入主站控制台继续配置。",
-    "subDist.activityTitle": "分站开通动态",
-    "subDist.activityLive": "实时",
-    "subDist.activityAction": "开通了分站",
-
     "tokens.title": "API 密钥",
     "tokens.subtitle": "管理您的 API 访问令牌",
     "quickstart.badge": "快速开始",

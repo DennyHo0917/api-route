@@ -9,6 +9,7 @@ export default function SnapSection({
   activeOverride = null,
   deckHeight = null,
   threshold = 0.48,
+  snap = true,
 }) {
   const ref = useRef(null);
   const [active, setActive] = useState(false);
@@ -34,12 +35,12 @@ export default function SnapSection({
     <section
       ref={ref}
       data-snap-section="true"
-      className={`flex min-h-0 items-center lg:min-h-[calc(100vh-72px)] lg:snap-start lg:snap-always ${className}`}
+      className={`flex min-h-0 items-center ${snap ? 'lg:min-h-[calc(100vh-72px)] lg:snap-start lg:snap-always' : ''} ${className}`}
       style={deckHeight ? { height: deckHeight } : undefined}
     >
       <SnapSectionContext.Provider value={isActive}>
         <div
-          className={contentClassName}
+          className={`min-w-0 ${contentClassName}`}
           style={{
             opacity: isActive ? 1 : 0,
             transition: 'opacity 520ms ease-out',
@@ -53,7 +54,7 @@ export default function SnapSection({
   );
 }
 
-export function SnapDeck({ children, className = '' }) {
+export function SnapDeck({ children, className = '', enabled = true }) {
   const ref = useRef(null);
   const wheelLock = useRef(false);
   const touchStartY = useRef(null);
@@ -61,7 +62,7 @@ export function SnapDeck({ children, className = '' }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [height, setHeight] = useState(0);
   const [snapEnabled, setSnapEnabled] = useState(() => (
-    typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches
+    enabled && typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches
   ));
   const allChildren = Children.toArray(children);
   const slides = allChildren.filter((child) => child?.type === SnapSection);
@@ -69,11 +70,11 @@ export function SnapDeck({ children, className = '' }) {
 
   useEffect(() => {
     const media = window.matchMedia('(min-width: 1024px)');
-    const update = () => setSnapEnabled(media.matches);
+    const update = () => setSnapEnabled(enabled && media.matches);
     update();
     media.addEventListener('change', update);
     return () => media.removeEventListener('change', update);
-  }, []);
+  }, [enabled]);
 
   useEffect(() => {
     const el = ref.current;
@@ -179,6 +180,7 @@ export function SnapDeck({ children, className = '' }) {
         {slides.map((child, index) => cloneElement(child, {
           activeOverride: snapEnabled ? index === activeIndex : true,
           deckHeight: snapEnabled ? height || undefined : null,
+          snap: snapEnabled,
         }))}
       </div>
       {overlays}

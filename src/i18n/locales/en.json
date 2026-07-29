@@ -283,10 +283,6 @@
     "subDist.openedSuccess": "Platform activated successfully",
     "subDist.alreadyOpenTitle": "Your platform is already active",
     "subDist.alreadyOpenDesc": "Platform {{name}} has been activated. Use the same account in the main console to continue setup.",
-    "subDist.activityTitle": "Recent platform launches",
-    "subDist.activityLive": "Live",
-    "subDist.activityAction": "launched a reseller site",
-
     "tokens.title": "API Keys",
     "tokens.subtitle": "Manage your API access tokens",
     "quickstart.badge": "Quickstart",

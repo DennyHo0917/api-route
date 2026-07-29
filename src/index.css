@@ -1229,23 +1229,6 @@ html[data-color-scheme='dark'] .theme-claude .sub-dist-router-map__model-logo {
   }
 }
 
-.sub-dist-launch-feed {
-  animation: sub-dist-launch-scroll 28s linear infinite;
-}
-
-.sub-dist-launch-feed:hover {
-  animation-play-state: paused;
-}
-
-@keyframes sub-dist-launch-scroll {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(-50%);
-  }
-}
-
 .dashboard-loading-text {
   color: rgb(var(--page-text-secondary));
   background: linear-gradient(

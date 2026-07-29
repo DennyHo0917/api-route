@@ -1,30 +1,26 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import {
   AppWindow,
   ArrowRight,
-  Braces,
   CheckCircle2,
-  KeyRound,
-  Layers3,
-  ShieldCheck,
   Sparkles,
   Store,
-  Tags,
-  TicketCheck,
-  WalletCards,
   Zap,
 } from 'lucide-react';
 import { createSubDistributorOrder, getSubDistributorInfo } from '../api';
 import { useAuth } from '../context/AuthContext';
 import { useCurrency } from '../context/SiteContext';
 import { getLocalizedPath, normalizeAppLanguage } from '../i18n/languageUtils';
-import { getDiscountPrice } from '../utils/discountPrice';
 import { trackEvent } from '../utils/analytics';
 import FadeContent from '../components/bits/FadeContent';
 import SnapSection, { SnapDeck } from '../components/bits/SnapSection';
+import providerMarketScreenshot from '../../images/上游商家市场，提供73个上游商家.png';
+import providerManagementScreenshot from '../../images/上游商家管理界面.png';
+import customerManagementScreenshot from '../../images/后台用户管理界面.png';
+import usageLogsScreenshot from '../../images/调用日志.png';
 
 function formatPaymentMethodName(value) {
   return String(value || '').trim().replace(/支付宝|alipay/gi, 'alipay');
@@ -63,10 +59,13 @@ function submitEpayForm(resData) {
   return true;
 }
 
-const AUDIENCE_ICONS = [Sparkles, Braces, Layers3, ShieldCheck];
-const REVENUE_ICONS = [Tags, TicketCheck, WalletCards, Sparkles, Layers3];
-const INCLUDED_ICONS = [ShieldCheck, Sparkles, KeyRound, Tags, TicketCheck, WalletCards, Layers3];
 const SUB_DISTRIBUTOR_ITEM_ID = 'sub_distributor_setup';
+const SHOWCASE_IMAGES = [
+  { src: providerMarketScreenshot, width: 1845, height: 3197 },
+  { src: providerManagementScreenshot, width: 1560, height: 1058 },
+  { src: customerManagementScreenshot, width: 1565, height: 1295 },
+  { src: usageLogsScreenshot, width: 1559, height: 1253 },
+];
 const INBOUND_ROUTE = {
   id: 'app',
   d: 'M70 160 C140 160 220 160 302 160',
@@ -97,70 +96,48 @@ const ROUTER_MAP_COPY = {
   ja: { customer: 'あなたの顧客', site: 'あなたのサイト', relay: 'AI API サイト', label: '顧客があなたの AI API サイトに接続し、サイトが各モデルへ中継します' },
   ko: { customer: '고객', site: '내 사이트', relay: 'AI API 사이트', label: '고객이 내 AI API 사이트에 연결되고, 사이트가 각 모델로 중계합니다' },
 };
-const FOUR_HOURS_MS = 4 * 60 * 60 * 1000;
-const ACTIVITY_NAME_POOLS = [
-  { given: ['Wei', 'Ming', 'Rui', 'Yue', 'Jun'], family: ['Chen', 'Lin', 'Zhao', 'Wang', 'Liu'], familyFirst: true },
-  { given: ['Noah', 'Ava', 'Liam', 'Mia', 'Ethan'], family: ['Reed', 'Miller', 'Hayes', 'Brooks', 'Carter'] },
-  { given: ['Haruto', 'Yui', 'Ren', 'Aoi', 'Sora'], family: ['Sato', 'Tanaka', 'Suzuki', 'Nakamura', 'Ito'] },
-  { given: ['Minjun', 'Seojun', 'Harin', 'Jisoo', 'Yuna'], family: ['Kim', 'Park', 'Lee', 'Choi', 'Jung'] },
-  { given: ['Arjun', 'Priya', 'Rohan', 'Anika', 'Ishan'], family: ['Rao', 'Mehta', 'Kapoor', 'Nair', 'Shah'] },
-  { given: ['Mateo', 'Sofia', 'Lucas', 'Luna', 'Diego'], family: ['Garcia', 'Silva', 'Rossi', 'Costa', 'Martin'] },
-];
-const ACTIVITY_NICK_PREFIXES = ['Byte', 'Prompt', 'Token', 'Model', 'Turbo', 'Pixel', 'Cache', 'Latency', 'Vector', 'Neon', 'Quantum', 'Noodle', 'Mochi', 'Zero'];
-const ACTIVITY_NICK_SUFFIXES = ['Boss', 'Pilot', 'Runner', 'Maker', 'Chef', 'Captain', 'Hero', 'Nomad', 'Master', 'Stack', 'Mode', 'Lab', 'Flow', 'Ops'];
-
-function getLaunchBatchKey() {
-  return Math.floor(Date.now() / FOUR_HOURS_MS);
-}
-
-function getMsUntilNextLaunchBatch() {
-  return FOUR_HOURS_MS - (Date.now() % FOUR_HOURS_MS);
-}
-
-function createSeededRandom(seed) {
-  let value = seed || 1;
-  return () => {
-    value = (value * 1664525 + 1013904223) >>> 0;
-    return value / 4294967296;
-  };
-}
-
-function pickRandom(list, random) {
-  return list[Math.floor(random() * list.length)];
-}
-
-function formatMinuteTime(date) {
-  const pad = (value) => String(value).padStart(2, '0');
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
-}
-
-function maybeAddDigits(base, random, index) {
-  return index % 4 === 0 || random() < 0.25 ? `${base}${10 + Math.floor(random() * 90)}` : base;
-}
-
-function buildHumanUsername(random, index) {
-  const pool = ACTIVITY_NAME_POOLS[index % ACTIVITY_NAME_POOLS.length];
-  const given = pickRandom(pool.given, random);
-  const family = pickRandom(pool.family, random);
-  const base = pool.familyFirst ? `${family}${given}` : `${given}${family}`;
-  return maybeAddDigits(base, random, index);
-}
-
-function buildNickUsername(random, index) {
-  const base = `${pickRandom(ACTIVITY_NICK_PREFIXES, random)}${pickRandom(ACTIVITY_NICK_SUFFIXES, random)}`;
-  return maybeAddDigits(base, random, index);
-}
-
-function buildLaunchEvents(batchKey, generatedAt = Date.now()) {
-  const random = createSeededRandom(batchKey + 20260621);
-  const weekMinutes = 7 * 24 * 60;
-  return Array.from({ length: 18 }, (_, index) => {
-    const name = random() < 0.55 ? buildHumanUsername(random, index) : buildNickUsername(random, index);
-    const minutesAgo = 8 + Math.floor(random() * weekMinutes);
-    return { name, time: formatMinuteTime(new Date(generatedAt - minutesAgo * 60 * 1000)) };
-  }).sort((a, b) => (a.time < b.time ? 1 : -1));
-}
-
+const SHOWCASE_COPY = {
+  zh: {
+    title: '真实后台，一套管理完整业务',
+    description: '供应商、模型、客户和调用记录都在同一个后台完成管理。',
+    items: [
+      ['接入 70+ 上游供应商', '从供应商市场选择可用渠道，并按稳定性、评分和支持能力灵活搭配。'],
+      ['按实际情况随时上下架', '根据价格、稳定性和业务需要，随时启用或停用供应商及其模型。'],
+      ['管理客户账户', '查看客户余额、消耗、返佣和账号状态，日常运营更清楚。'],
+      ['核对每次调用', '按用户、模型、密钥和费用追踪调用记录与实际消耗。'],
+    ],
+  },
+  en: {
+    title: 'One real dashboard for the whole operation',
+    description: 'Manage providers, models, customers, and usage records from one place.',
+    items: [
+      ['Connect to 70+ upstream providers', 'Choose and combine providers based on stability, ratings, and supported capacity.'],
+      ['List or unlist providers anytime', 'Enable or disable providers and their models as pricing, stability, and demand change.'],
+      ['Manage customer accounts', 'Review balances, usage, commissions, and account status in one view.'],
+      ['Audit every API call', 'Trace usage by customer, model, key, cost, and response time.'],
+    ],
+  },
+  ja: {
+    title: '実際の管理画面で運営を一元化',
+    description: 'プロバイダー、モデル、顧客、利用履歴を一つの管理画面で扱えます。',
+    items: [
+      ['70 社以上の上流プロバイダーに対応', '安定性、評価、対応能力を比較し、必要なプロバイダーを組み合わせられます。'],
+      ['状況に応じていつでも公開・停止', '価格、安定性、需要に合わせてプロバイダーとモデルをいつでも有効化・停止できます。'],
+      ['顧客アカウントを管理', '残高、利用量、紹介料率、アカウント状態をまとめて確認できます。'],
+      ['API 利用履歴を確認', '顧客、モデル、キー、費用、応答時間ごとに呼び出しを追跡できます。'],
+    ],
+  },
+  ko: {
+    title: '실제 관리 화면에서 운영을 한 번에',
+    description: '공급자, 모델, 고객, 사용 기록을 하나의 관리자 화면에서 관리합니다.',
+    items: [
+      ['70곳 이상의 상위 공급자 연동', '안정성, 평가, 지원 용량을 비교해 필요한 공급자를 조합할 수 있습니다.'],
+      ['상황에 따라 언제든 노출 전환', '가격, 안정성, 수요 변화에 맞춰 공급자와 모델을 즉시 활성화하거나 중지할 수 있습니다.'],
+      ['고객 계정 관리', '잔액, 사용량, 커미션, 계정 상태를 한 화면에서 확인할 수 있습니다.'],
+      ['모든 API 호출 확인', '고객, 모델, 키, 비용, 응답 시간별로 사용 기록을 추적할 수 있습니다.'],
+    ],
+  },
+};
 function ModelRouteAnimation({ language }) {
   const copy = ROUTER_MAP_COPY[language] || ROUTER_MAP_COPY.en;
   const routes = [INBOUND_ROUTE, ...MODEL_ROUTES];
@@ -225,23 +202,34 @@ function ModelRouteAnimation({ language }) {
 const MARKETING_COPY = {
   zh: {
     eyebrow: 'AI API 分站转售平台',
-    heroTitle: '开通 AI API 分站，销售自己的 API 套餐赚钱',
-    heroDesc: '把 API-Route 的多模型能力包装成你的白标 AI API 平台：自定义品牌、域名、模型售价、充值和套餐。上游接入、VPS 部署、支付和管理后台都已准备好，你可以直接做 AI API 代理平台，把用户带到自己的分站里消费。',
+    heroTitle: '搭建和运营自己的 AI API 平台',
+    heroDesc: '把 API-Route 的多模型能力包装成你的白标 AI API 平台：自定义品牌、域名、模型售价、充值和套餐。上游接入、VPS 部署、支付和管理后台都已准备好，你可以用自己的入口服务现有客户。',
     primaryCta: '开通我的 AI API 分站',
     secondaryCta: '先看适合谁',
     proof: ['白标分站', 'OpenAI 兼容 API', '可转售 API 套餐'],
-    audienceTitle: '谁适合开 AI API 分站赚钱',
+      audienceTitle: '谁适合运营 AI API 分站',
     audienceDesc: '适合已经有用户、社群、客户或模型渠道，希望把 AI API 能力包装成自己品牌服务的人。',
+    notForTitle: '不适合谁',
+    notForDesc: '不适合没有现成用户或获客渠道、期待被动收入的人。平台提供模型接入、计费、支付和客户管理能力，但不提供客户，也不承诺任何收入或利润。你仍需负责获客、定价、客户支持和日常运营。',
     audience: [
       ['AI 工具社群运营者', '给社群成员提供统一 API、套餐和客户端接入，降低反复答疑和手动开通成本。'],
       ['开发者和 SaaS 团队', '为内部工具、客户项目或自动化流程提供统一模型入口，并用清晰价格控制成本。'],
       ['模型渠道和 API 代理', '把多模型能力做成自己的 AI API 转售平台，配置售价、套餐、充值方式和推广入口。'],
-      ['想做 AI API 副业的人', '不用从零开发用户、支付、计费和日志系统，先验证 AI API 代理业务是否有复购。'],
+      ['已有客户渠道的技术服务商', '不用从零开发用户、支付、计费和日志系统，把现有客户迁移到统一的平台中管理。'],
     ],
-    revenueTitle: '如何通过 AI API 分站赚钱',
-    revenueDesc: '你不是只拿到一个后台账号，而是得到一套可销售、可定价、可复购的 AI API 生意入口。',
+    revenueTitle: '利润从哪里来？',
+    revenueDesc: '你以平台成本价获得上游模型，再按自己的价格转售给用户，售价与成本之间的差额就是利润。用户可以充值余额，按实际 API 用量扣费；你也可以把额度做成套餐，价格、周期和额度都由你决定。',
+    operationsTitle: '平台运维由谁负责？',
+    operationsDesc: '日常部署、监控和故障处理由我们的专业运维团队负责，你无需自己维护服务器。上游商家发生故障时，系统会自动把请求切换到其他正常商家，运维团队也会持续跟进处理；如果 OpenAI、Anthropic 等官方服务本身发生故障，则超出我们的控制范围，恢复时间取决于官方。',
+    calculatorTitle: '模拟利润计算器',
+    calculatorDesc: '输入预计每月销售额度和平均加价比例，快速估算毛利润。',
+    calculatorSales: '预计每月销售额度',
+    calculatorMarkup: '平均加价比例',
+    calculatorMonthly: '预计月利润',
+    calculatorYearly: '预计年利润',
+    calculatorNote: '仅为毛利润估算，未计支付手续费、退款及其他运营成本，实际收益以结算为准。',
     revenue: [
-      ['赚取模型调用差价', '按模型、渠道或套餐设置售价，用清晰费率覆盖成本并保留利润空间。'],
+      ['设置模型销售价格', '按模型、渠道或套餐设置售价，用清晰费率覆盖服务成本。'],
       ['销售 AI API 套餐', '按天、周、月或额度售卖套餐，并支持用户持续充值余额。'],
       ['余额充值带来复购', '用户通过余额调用 API，适合长期使用和多模型混合消耗。'],
       ['推广自己的分站入口', '把入口放到社群、教程、工具文档或客户项目里，形成持续转化。'],
@@ -277,7 +265,7 @@ const MARKETING_COPY = {
     ],
     faqTitle: '开通前常见问题',
     faq: [
-      ['如何通过 AI API 分站赚钱？', '你可以设置模型售价、销售套餐、让用户充值余额，并通过调用差价、套餐收入和持续复购获得收益。'],
+      ['平台的收入模式是什么？', '你可以为现有客户设置模型售价和套餐，收入取决于客户的实际充值与使用情况；平台不提供客户，也不承诺收入或利润。'],
       ['可以作为 AI API 代理平台使用吗？', '可以。它适合想用自己品牌销售 AI API 套餐、统一管理用户、余额、API Key 和调用记录的人。'],
       ['可以销售自己的 AI API 套餐吗？', '可以。你可以按天、周、月或额度包装套餐，并根据自己的渠道和客户设置销售策略。'],
       ['开通后多久能使用？', '支付确认后系统会自动授予管理权限，并引导你继续完成站点初始化。'],
@@ -290,27 +278,39 @@ const MARKETING_COPY = {
       ['适合没有技术背景的人吗？', '适合有明确用户或渠道的人；技术配置会被尽量收敛到站点初始化和后台管理。'],
     ],
     panelTitle: '开通你的平台',
-    panelDesc: '填写名称和标识，支付一笔建站费用后自动获得管理权限。',
+    panelPriceNote: '1 年订阅费 · 次年起续费价格接近基础服务成本',
+    panelDesc: '填写名称和标识，支付首年订阅费后自动获得管理权限。',
   },
   en: {
     eyebrow: 'AI API Reseller Platform',
-    heroTitle: 'Start an AI API reseller business with your own white-label platform',
-    heroDesc: 'Turn API-Route into a branded AI API platform for your users. Upstream model access, VPS hosting, payments, balance top-ups, plans, and admin basics are already handled, so you can resell AI API access, set your own pricing, and sell AI API plans under your own brand.',
+    heroTitle: 'Build and operate your own AI API reseller platform',
+    heroDesc: 'Give your existing customers a branded AI API platform powered by API-Route. Upstream model access, VPS hosting, payments, balance top-ups, plans, and core administration are already handled.',
     primaryCta: 'Launch My AI API Reseller Platform',
     secondaryCta: 'See Who It Fits',
     proof: ['White-label brand', 'OpenAI-compatible API', 'Sell AI API plans'],
-    audienceTitle: 'Who Can Use This AI API Reseller Platform',
+      audienceTitle: 'Who Should Operate an AI API Platform',
     audienceDesc: 'Built for AI API resellers, communities, SaaS teams, and model channels that already have users and want to package AI API access as their own business.',
+    notForTitle: 'Who This Is Not For',
+    notForDesc: 'This is not a passive-income product and it is not designed for people without an existing audience or customer-acquisition channel. The platform provides model access, billing, payments, and customer management, but it does not provide customers or guarantee revenue. You remain responsible for sales, pricing, support, and day-to-day operations.',
     audience: [
       ['AI tool community operators', 'Offer one API, plans, and client setup to members while reducing manual onboarding.'],
       ['Developers and SaaS teams', 'Give internal tools, customer projects, and automation workflows one model endpoint with clear pricing.'],
       ['AI API resellers and model channels', 'Turn multi-model access into a white-label platform where you can sell AI API access with pricing, packages, payments, and promotion.'],
-      ['AI API business builders', 'Start an AI API business without rebuilding accounts, payments, billing, logs, and model routing from scratch.'],
+      ['Technology providers with existing customers', 'Move existing customers onto one managed platform without rebuilding accounts, payments, billing, logs, and model routing.'],
     ],
-    revenueTitle: 'How AI API Resellers Make Money',
-    revenueDesc: 'This is not just an admin account. It gives you a sellable AI API service with pricing, plans, top-ups, and repeat usage under your own brand.',
+    revenueTitle: 'Where Your Margin Comes From',
+    revenueDesc: 'You get upstream model access at the platform cost, set your own customer prices, and keep the difference. Customers can top up a balance and pay as they use the API, or buy plans with quotas, billing periods, and prices that you define.',
+    operationsTitle: 'Who Keeps the Platform Running?',
+    operationsDesc: 'Deployment, monitoring, and incident response are handled by our operations team, so you do not need to maintain servers yourself. If an upstream supplier has an outage, requests are automatically routed to another healthy supplier while our team follows up on the fault. If the official service itself, such as OpenAI or Anthropic, is down, recovery is outside our control and depends on the provider.',
+    calculatorTitle: 'Profit Estimator',
+    calculatorDesc: 'Enter your expected monthly sales and average markup to estimate gross profit.',
+    calculatorSales: 'Expected monthly sales',
+    calculatorMarkup: 'Average markup',
+    calculatorMonthly: 'Estimated monthly profit',
+    calculatorYearly: 'Estimated annual profit',
+    calculatorNote: 'Gross-profit estimate only. Payment fees, refunds, and other operating costs are not included. Actual earnings depend on settlement.',
     revenue: [
-      ['Set model price margins', 'Configure prices by model, channel, or plan so usage can cover cost and leave margin.'],
+      ['Set customer-facing model prices', 'Configure prices by model, channel, or plan with clear rates that cover service costs.'],
       ['Sell AI API plans', 'Package model access into day, week, month, or quota-based plans, plus balance top-ups.'],
       ['Drive repeat top-ups', 'Users consume balance through API calls, which fits ongoing multi-model usage.'],
       ['Promote a branded entry point', 'Place the link in communities, tutorials, docs, and customer projects to keep converting users.'],
@@ -346,7 +346,7 @@ const MARKETING_COPY = {
     ],
     faqTitle: 'Questions Before Launch',
     faq: [
-      ['How do I make money with an AI API reseller platform?', 'You can set model margins, sell AI API plans, let users top up balance, and earn from usage spread, package sales, and repeat API consumption.'],
+      ['How does the platform generate revenue?', 'You can set model prices and plans for your existing customers. Revenue depends on actual customer top-ups and usage; the platform does not provide customers or guarantee revenue.'],
       ['Can I start an AI API business without building infrastructure?', 'Yes. Upstream access, hosting, payments, user accounts, API keys, balance, and usage logs are already packaged so you can focus on branding, pricing, and customers.'],
       ['Can I sell my own AI API plans?', 'Yes. You can package access by day, week, month, or quota and sell plans under your own brand.'],
       ['How soon can I use it?', 'After payment is confirmed, the system grants management access and guides initialization.'],
@@ -360,27 +360,39 @@ const MARKETING_COPY = {
       ['Is it suitable without a technical background?', 'Yes if you have clear users or channels; technical setup is narrowed to initialization and admin settings.'],
     ],
     panelTitle: 'Launch Your Platform',
-    panelDesc: 'Fill in the name and slug. Pay one setup fee and management access is enabled automatically.',
+    panelPriceNote: 'One-year subscription · Renewals are priced close to the basic service cost',
+    panelDesc: 'Fill in the name and slug. Management access is enabled automatically after the first-year subscription is paid.',
   },
   ja: {
     eyebrow: 'AI API リセラープラットフォーム',
-    heroTitle: 'ホワイトラベルの AI API プラットフォームで API 販売を始める',
-    heroDesc: 'API-Route の複数モデルアクセスを、自分のブランドで販売できる AI API リセラープラットフォームとして提供できます。上流接続、VPS、デプロイ、決済、残高チャージ、プラン管理は用意済みです。',
+    heroTitle: '自社ブランドの AI API プラットフォームを構築・運営',
+    heroDesc: '既存の顧客に、自社ブランドの AI API プラットフォームを提供できます。上流接続、VPS、デプロイ、決済、残高チャージ、プラン管理は API-Route 側で用意されています。',
     primaryCta: 'AI API リセラープラットフォームを開設',
     secondaryCta: '対象ユーザーを見る',
     proof: ['ホワイトラベル入口', 'OpenAI 互換 API', 'API プラン販売'],
-    audienceTitle: 'AI API 販売に向いている人',
+      audienceTitle: 'AI API プラットフォームの運営に向いている人',
     audienceDesc: 'ユーザー、コミュニティ、顧客、モデル供給を持ち、AI API アクセスを自分のサービスとして提供したい方向けです。',
+    notForTitle: 'このサービスが向いていない方',
+    notForDesc: '既存のユーザーや集客経路がなく、不労所得を期待する方には向いていません。モデル接続、課金、決済、顧客管理の基盤は提供しますが、顧客の獲得や収益を保証するものではありません。営業、価格設定、サポート、日々の運営はご自身で行う必要があります。',
     audience: [
       ['AI ツールコミュニティ運営者', 'メンバー向けに API、プラン、クライアント設定をまとめて提供できます。'],
       ['開発者・SaaS チーム', '社内ツール、顧客案件、自動化に統一モデル入口と明確な価格を提供します。'],
       ['モデルチャネル・API リセラー', '複数モデルのアクセスを自分のブランド、価格、決済、販売導線で展開できます。'],
-      ['AI API ビジネスを検証したい人', 'アカウント、決済、課金、ログをゼロから作らず需要を検証できます。'],
+      ['既存顧客を持つ IT サービス事業者', 'アカウント、決済、課金、ログをゼロから作らず、既存顧客を一つの基盤で管理できます。'],
     ],
-    revenueTitle: 'AI API リセラーとして収益化する方法',
-    revenueDesc: '単なる管理アカウントではなく、販売価格、プラン、残高チャージ、継続利用を持つ AI API サービスとして運営できます。',
+    revenueTitle: '利益はどこから生まれるのか',
+    revenueDesc: '上流プロバイダーのモデルをプラットフォームの原価で仕入れ、販売価格を自分で決めます。原価と販売価格の差額が利益です。利用者は残高をチャージして API の利用分だけ支払うことも、容量・期間・価格を独自に設定したプランを購入することもできます。',
+    operationsTitle: '運用・保守は誰が担当するのか',
+    operationsDesc: '日々のデプロイ、監視、障害対応は専門の運用チームが担当するため、サーバーを自分で管理する必要はありません。上流事業者で障害が起きた場合は、リクエストを正常な別事業者へ自動で切り替え、運用チームも対応を続けます。一方、OpenAI や Anthropic など公式サービス自体の障害は当社では制御できず、復旧時期は各社の対応に左右されます。',
+    calculatorTitle: '利益シミュレーター',
+    calculatorDesc: '月間の販売額と平均上乗せ率を入力すると、粗利益の目安を確認できます。',
+    calculatorSales: '月間販売額（見込み）',
+    calculatorMarkup: '平均上乗せ率',
+    calculatorMonthly: '月間利益（見込み）',
+    calculatorYearly: '年間利益（見込み）',
+    calculatorNote: '粗利益の概算です。決済手数料、返金、その他の運営費用は含まれていません。実際の収益は精算結果をご確認ください。',
     revenue: [
-      ['モデル価格の差益', 'モデルやチャネルごとに販売価格を設定し、原価をカバーしながら利益を残せます。'],
+      ['モデルの販売価格を設定', 'モデルやチャネルごとに、サービス原価を踏まえた価格を設定できます。'],
       ['AI API プラン販売', '日、週、月、容量単位で販売でき、コミュニティやチーム利用に向いています。'],
       ['残高チャージで継続利用', 'ユーザーは残高で API を呼び出し、継続利用と複数モデル消費につながります。'],
       ['ブランド入口で集客', 'コミュニティ、チュートリアル、ドキュメント、顧客案件から導線を作れます。'],
@@ -416,7 +428,7 @@ const MARKETING_COPY = {
     ],
     faqTitle: '開設前のよくある質問',
     faq: [
-      ['AI API リセラーとしてどう収益化できますか？', 'モデル価格の差益、AI API プラン販売、残高チャージ、継続利用から収益を作れます。'],
+      ['収益の仕組みはどうなっていますか？', '既存顧客向けにモデル価格やプランを設定できます。収益は実際のチャージと利用状況によって決まり、顧客獲得や収益を保証するものではありません。'],
       ['インフラを作らず AI API ビジネスを始められますか？', 'はい。上流接続、ホスティング、決済、アカウント、API キー、残高、利用ログの基盤が用意されています。'],
       ['自分の AI API プランを販売できますか？', 'はい。日、週、月、容量単位でプランを作り、自分のブランドで販売できます。'],
       ['いつ使い始められますか？', '支払い確認後、管理権限が付与され初期化へ進めます。'],
@@ -429,27 +441,39 @@ const MARKETING_COPY = {
       ['技術に詳しくなくても使えますか？', '明確なユーザーや販売チャネルがあれば使いやすいよう、初期化と管理画面に集約しています。'],
     ],
     panelTitle: 'プラットフォームを開設',
-    panelDesc: '名称と slug を入力し、構築費用を支払うと管理権限が自動で有効になります。',
+    panelPriceNote: '1 年間の利用料 · 2 年目以降は基本サービス費用に近い更新料金',
+    panelDesc: '名称と slug を入力し、初年度の利用料を支払うと管理権限が自動で有効になります。',
   },
   ko: {
     eyebrow: 'AI API 리셀러 플랫폼',
-    heroTitle: '화이트라벨 AI API 플랫폼으로 내 API 판매 사업을 시작하세요',
-    heroDesc: 'API-Route의 멀티 모델 접근을 내 브랜드로 판매하는 AI API 리셀러 플랫폼으로 운영할 수 있습니다. 상위 모델 연동, VPS, 배포, 결제, 잔액 충전, 플랜 관리는 이미 준비되어 있습니다.',
+    heroTitle: '자체 브랜드의 AI API 플랫폼을 구축하고 운영하세요',
+    heroDesc: '기존 고객에게 자체 브랜드의 AI API 플랫폼을 제공할 수 있습니다. 상위 모델 연동, VPS, 배포, 결제, 잔액 충전, 플랜 관리는 API-Route에서 제공합니다.',
     primaryCta: '내 AI API 리셀러 플랫폼 구축',
     secondaryCta: '대상 확인하기',
     proof: ['화이트라벨 진입점', 'OpenAI 호환 API', 'API 플랜 판매'],
-    audienceTitle: 'AI API 판매에 적합한 사람',
+      audienceTitle: 'AI API 플랫폼 운영에 적합한 사람',
     audienceDesc: '사용자, 커뮤니티, 고객, 모델 공급을 가지고 AI API 접근을 자신의 서비스로 제공하려는 사람에게 적합합니다.',
+    notForTitle: '이런 경우에는 적합하지 않습니다',
+    notForDesc: '기존 사용자나 고객 확보 채널이 없거나 수동적인 부수입을 기대한다면 적합하지 않습니다. 플랫폼은 모델 연동, 과금, 결제, 고객 관리 기능을 제공하지만 고객이나 수익을 보장하지 않습니다. 영업, 가격 책정, 고객 지원, 일상 운영은 직접 담당해야 합니다.',
     audience: [
       ['AI 도구 커뮤니티 운영자', '회원에게 API, 플랜, 클라이언트 설정을 한 번에 제공하고 수동 안내를 줄입니다.'],
       ['개발자와 SaaS 팀', '내부 도구, 고객 프로젝트, 자동화에 하나의 모델 엔드포인트와 명확한 가격을 제공합니다.'],
       ['모델 채널과 API 리셀러', '멀티 모델 접근을 자신의 브랜드, 가격, 결제, 홍보 동선으로 판매합니다.'],
-      ['AI API 사업 준비자', '계정, 결제, 과금, 로그를 처음부터 만들지 않고 수요를 검증합니다.'],
+      ['기존 고객을 보유한 IT 서비스 사업자', '계정, 결제, 과금, 로그를 처음부터 만들지 않고 기존 고객을 하나의 플랫폼에서 관리합니다.'],
     ],
-    revenueTitle: 'AI API 리셀러가 수익을 만드는 방식',
-    revenueDesc: '단순한 관리자 계정이 아니라 가격, 플랜, 충전, 반복 사용을 가진 AI API 판매 서비스를 운영하는 형태입니다.',
+    revenueTitle: '수익은 어디에서 생기나요?',
+    revenueDesc: '플랫폼 원가로 상위 공급사의 모델을 확보한 뒤 판매 가격을 직접 정합니다. 원가와 판매가의 차이가 수익이 됩니다. 사용자는 잔액을 충전해 API 사용량만큼 결제할 수 있고, 운영자는 용량·기간·가격을 정한 자체 요금제를 판매할 수도 있습니다.',
+    operationsTitle: '플랫폼 운영은 누가 맡나요?',
+    operationsDesc: '배포, 모니터링, 장애 대응은 전문 운영팀이 맡으므로 서버를 직접 관리할 필요가 없습니다. 상위 공급사에 장애가 발생하면 요청을 정상적인 다른 공급사로 자동 전환하고 운영팀도 계속 대응합니다. 반면 OpenAI, Anthropic 등 공식 서비스 자체에 장애가 발생한 경우는 당사가 통제할 수 없으며 복구 시점은 해당 업체에 달려 있습니다.',
+    calculatorTitle: '수익 시뮬레이터',
+    calculatorDesc: '예상 월 판매액과 평균 가격 인상률을 입력하면 대략적인 매출총이익을 확인할 수 있습니다.',
+    calculatorSales: '예상 월 판매액',
+    calculatorMarkup: '평균 가격 인상률',
+    calculatorMonthly: '예상 월 수익',
+    calculatorYearly: '예상 연간 수익',
+    calculatorNote: '매출총이익 추정치이며 결제 수수료, 환불 및 기타 운영비는 포함되지 않습니다. 실제 수익은 정산 결과를 기준으로 합니다.',
     revenue: [
-      ['모델 가격 마진 설정', '모델이나 채널별 판매가를 설정해 비용을 덮고 마진을 남깁니다.'],
+      ['모델 판매 가격 설정', '모델이나 채널별로 서비스 비용을 반영한 가격을 설정합니다.'],
       ['AI API 플랜 판매', '일, 주, 월, 용량 기준 판매가 가능해 커뮤니티와 팀에 적합합니다.'],
       ['지속적인 충전 유도', '사용자는 잔액으로 API를 호출하고 멀티 모델 사용이 반복됩니다.'],
       ['브랜드 진입점 홍보', '커뮤니티, 튜토리얼, 문서, 고객 프로젝트에 링크를 배치해 전환을 만듭니다.'],
@@ -485,7 +509,7 @@ const MARKETING_COPY = {
     ],
     faqTitle: '구축 전 자주 묻는 질문',
     faq: [
-      ['AI API 리셀러는 어떻게 수익을 만들 수 있나요?', '모델 가격 마진, AI API 플랜 판매, 잔액 충전, 반복 사용을 통해 수익을 만들 수 있습니다.'],
+      ['수익 구조는 어떻게 되나요?', '기존 고객을 대상으로 모델 가격과 플랜을 설정할 수 있습니다. 수익은 실제 충전과 사용량에 따라 달라지며, 플랫폼은 고객이나 수익을 보장하지 않습니다.'],
       ['인프라를 만들지 않고 AI API 사업을 시작할 수 있나요?', '네. 상위 연동, 호스팅, 결제, 계정, API 키, 잔액, 사용 로그 기반이 이미 패키지로 제공됩니다.'],
       ['내 AI API 플랜을 판매할 수 있나요?', '네. 일, 주, 월, 용량 기준 플랜을 만들고 자신의 브랜드로 판매할 수 있습니다.'],
       ['언제부터 사용할 수 있나요?', '결제 확인 후 관리 권한이 부여되고 초기화로 안내됩니다.'],
@@ -498,21 +522,21 @@ const MARKETING_COPY = {
       ['기술 배경이 없어도 적합한가요?', '명확한 사용자나 채널이 있다면 초기화와 관리 화면 중심으로 운영할 수 있습니다.'],
     ],
     panelTitle: '플랫폼 구축',
-    panelDesc: '이름과 slug를 입력하고 구축 비용을 지불하면 관리 권한이 자동으로 활성화됩니다.',
+    panelPriceNote: '1년 구독료 · 다음 해부터는 기본 서비스 비용에 가까운 갱신 요금',
+    panelDesc: '이름과 slug를 입력하고 첫해 구독료를 결제하면 관리 권한이 자동으로 활성화됩니다.',
   },
 };
 
 export default function SubDistributor() {
   const { t, i18n } = useTranslation();
   const { user, refreshUser, loading: authLoading } = useAuth();
-  const { fmtCNY, cnyRate } = useCurrency();
+  const { fmtCNY, cnyRate, code: currencyCode } = useCurrency();
   const location = useLocation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [subInfo, setSubInfo] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [cryptoOrder, setCryptoOrder] = useState(null);
-  const [launchBatch, setLaunchBatch] = useState(() => ({ key: getLaunchBatchKey(), generatedAt: Date.now() }));
   const [form, setForm] = useState({
     name: '',
     slug: '',
@@ -520,6 +544,13 @@ export default function SubDistributor() {
     chain: 'tron',
     token: 'usdt',
   });
+  const [profitInputs, setProfitInputs] = useState({
+    sales: '0',
+    markup: '0',
+  });
+  const pricingPanelRef = useRef(null);
+  const pricingTrackedRef = useRef(false);
+  const formStartedRef = useRef(false);
 
   useEffect(() => {
     getSubDistributorInfo()
@@ -548,21 +579,46 @@ export default function SubDistributor() {
   );
   const language = normalizeAppLanguage(i18n.resolvedLanguage || i18n.language);
   const copy = MARKETING_COPY[language] || MARKETING_COPY.en;
-  const discountPrice = getDiscountPrice(Number(subInfo?.price || 0) * cnyRate);
-  const launchEvents = useMemo(
-    () => buildLaunchEvents(launchBatch.key, launchBatch.generatedAt),
-    [launchBatch.key, launchBatch.generatedAt]
-  );
+  const showcaseCopy = SHOWCASE_COPY[language] || SHOWCASE_COPY.en;
+  const parsedSales = Number(profitInputs.sales);
+  const parsedMarkup = Number(profitInputs.markup);
+  const salesAmount = Number.isFinite(parsedSales) ? Math.max(0, parsedSales) : 0;
+  const markupPercent = Number.isFinite(parsedMarkup) ? Math.max(0, parsedMarkup) : 0;
+  const estimatedMonthlyProfit = salesAmount * markupPercent / (100 + markupPercent);
+  const estimatedYearlyProfit = estimatedMonthlyProfit * 12;
 
   useEffect(() => {
-    let timer;
-    const refresh = () => {
-      setLaunchBatch({ key: getLaunchBatchKey(), generatedAt: Date.now() });
-      timer = window.setTimeout(refresh, getMsUntilNextLaunchBatch() + 500);
+    if (loading || authLoading || pricingTrackedRef.current || !pricingPanelRef.current) return undefined;
+
+    const panel = pricingPanelRef.current;
+    const trackPricingView = () => {
+      if (pricingTrackedRef.current) return;
+      pricingTrackedRef.current = true;
+      const value = Number((Number(subInfo?.price || 0) * cnyRate).toFixed(2));
+      trackEvent('reseller_pricing_view', {
+        currency: 'CNY',
+        ...(value > 0 ? { value } : {}),
+        available: Boolean(subInfo?.enabled),
+        logged_in: Boolean(user),
+      });
+      if (!user) {
+        trackEvent('reseller_login_required', { source: 'pricing_view' });
+      }
     };
-    timer = window.setTimeout(refresh, getMsUntilNextLaunchBatch() + 500);
-    return () => window.clearTimeout(timer);
-  }, []);
+
+    if (typeof IntersectionObserver === 'undefined') {
+      trackPricingView();
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      trackPricingView();
+      observer.disconnect();
+    }, { threshold: 0.25 });
+    observer.observe(panel);
+    return () => observer.disconnect();
+  }, [authLoading, cnyRate, loading, subInfo?.enabled, subInfo?.price, user]);
 
   useEffect(() => {
     if (!paymentReturned || authLoading) return;
@@ -613,17 +669,37 @@ export default function SubDistributor() {
     };
   }, [authLoading, navigate, paymentReturned, refreshUser, t, user]);
 
+  const trackFormStart = () => {
+    if (formStartedRef.current) return;
+    formStartedRef.current = true;
+    trackEvent('reseller_form_start', {
+      payment_method: form.payment_method || 'unset',
+    });
+  };
+
+  const trackCheckoutError = (reason, stage) => {
+    trackEvent('reseller_checkout_error', {
+      error_reason: reason,
+      error_stage: stage,
+      payment_method: form.payment_method || 'unset',
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user) {
+      trackEvent('reseller_login_required', { source: 'checkout_submit' });
+      trackCheckoutError('login_required', 'validation');
       toast.error(t('subDist.loginRequired'));
       return;
     }
     if (!form.name.trim() || !form.slug.trim()) {
+      trackCheckoutError('missing_required_fields', 'validation');
       toast.error(t('subDist.fillRequired'));
       return;
     }
     if (!form.payment_method) {
+      trackCheckoutError('missing_payment_method', 'validation');
       toast.error(t('subDist.selectPayment'));
       return;
     }
@@ -661,6 +737,7 @@ export default function SubDistributor() {
           if (opened) {
             toast.success(t('subDist.paymentPageOpened'));
           } else {
+            trackCheckoutError('popup_blocked', 'payment_redirect');
             toast.error(t('subDist.popupBlocked'));
           }
         } else if (res.data.payment_type === 'crypto') {
@@ -670,15 +747,19 @@ export default function SubDistributor() {
           if (submitEpayForm(res.data)) {
             toast.success(t('subDist.paymentPageOpened'));
           } else {
+            trackCheckoutError('payment_page_failed', 'payment_redirect');
             toast.error(t('subDist.paymentPageFailed'));
           }
         }
       } else if (res.data.data) {
+        trackCheckoutError('create_order_rejected', 'create_order');
         toast.error(typeof res.data.data === 'string' ? res.data.data : t('subDist.createFailed'));
       } else {
+        trackCheckoutError('create_order_failed', 'create_order');
         toast.error(t('subDist.createFailed'));
       }
     } catch (e) {
+      trackCheckoutError('create_order_exception', 'create_order');
       // handled by interceptor
     }
     setSubmitting(false);
@@ -693,8 +774,20 @@ export default function SubDistributor() {
     <div className="space-y-4 rounded-2xl border border-page-divider bg-page-surface p-5">
       <p className="text-sm leading-6 text-page-secondary">{t('subDist.loginHint')}</p>
       <div className="flex flex-wrap gap-3">
-        <Link to="/login" className="btn-primary">{t('subDist.goLogin')}</Link>
-        <Link to="/register" className="btn-secondary">{t('subDist.goRegister')}</Link>
+        <Link
+          to="/login"
+          className="btn-primary"
+          onClick={() => trackEvent('reseller_cta_click', { placement: 'pricing_login' })}
+        >
+          {t('subDist.goLogin')}
+        </Link>
+        <Link
+          to="/register"
+          className="btn-secondary"
+          onClick={() => trackEvent('reseller_cta_click', { placement: 'pricing_register' })}
+        >
+          {t('subDist.goRegister')}
+        </Link>
       </div>
     </div>
   ) : user?.has_distributor ? (
@@ -707,7 +800,7 @@ export default function SubDistributor() {
       </p>
     </div>
   ) : (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} onFocusCapture={trackFormStart} className="space-y-4">
       <div>
         <label className="mb-1.5 block text-sm font-medium text-page-label">{t('subDist.siteName')}</label>
         <input
@@ -798,7 +891,7 @@ export default function SubDistributor() {
   }
 
   return (
-    <SnapDeck>
+    <SnapDeck enabled={false}>
       <SnapSection
         contentClassName="mx-auto grid w-full max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_390px] lg:items-stretch"
         direction="up"
@@ -818,11 +911,19 @@ export default function SubDistributor() {
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
-              <a href="#open-platform" className="btn-primary inline-flex items-center justify-center gap-2">
+              <a
+                href="#open-platform"
+                className="btn-primary inline-flex items-center justify-center gap-2"
+                onClick={() => trackEvent('reseller_cta_click', { placement: 'hero_primary' })}
+              >
                 {copy.primaryCta}
                 <ArrowRight className="h-4 w-4" />
               </a>
-              <a href="#audience" className="btn-secondary inline-flex items-center justify-center gap-2">
+              <a
+                href="#audience"
+                className="btn-secondary inline-flex items-center justify-center gap-2"
+                onClick={() => trackEvent('reseller_cta_click', { placement: 'hero_audience' })}
+              >
                 {copy.secondaryCta}
               </a>
             </div>
@@ -839,56 +940,15 @@ export default function SubDistributor() {
         </FadeContent>
 
         <FadeContent direction="right" distance={38} duration={780} delay={120} className="lg:self-stretch">
-          <aside id="open-platform" className="h-full scroll-mt-24">
+          <aside ref={pricingPanelRef} id="open-platform" className="h-full scroll-mt-24">
             <div className="glass h-full rounded-3xl p-5 shadow-sm">
             <div className="mb-4">
               <p className="text-sm font-semibold text-page-link">{copy.panelTitle}</p>
               <div className="mt-2 flex flex-wrap items-baseline gap-2">
-                {discountPrice && (
-                  <span className="text-sm text-page-muted line-through">
-                    {fmtCNY(discountPrice.original / cnyRate)}
-                  </span>
-                )}
                 <h2 className="text-2xl font-bold text-page">{fmtCNY(subInfo?.price || 0)}</h2>
-                {discountPrice && (
-                  <span className="rounded-full bg-page-link/10 px-2 py-0.5 text-xs font-semibold text-page-link">
-                    -{discountPrice.discountPercent}%
-                  </span>
-                )}
               </div>
+              <p className="mt-1.5 text-xs font-medium text-page-link">{copy.panelPriceNote}</p>
               <p className="mt-2 text-sm leading-6 text-page-secondary">{copy.panelDesc}</p>
-            </div>
-            <div className="mb-4 overflow-hidden rounded-2xl border border-page-divider bg-page-surface">
-              <div className="flex items-center justify-between gap-3 border-b border-page-divider px-3.5 py-2.5">
-                <div className="flex items-center gap-2">
-                  <span className="relative flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-page-success opacity-50" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-page-success" />
-                  </span>
-                  <p className="text-sm font-semibold text-page">{t('subDist.activityTitle')}</p>
-                </div>
-                <span className="rounded-full bg-green-500/10 px-2.5 py-1 text-[11px] font-medium text-page-success">{t('subDist.activityLive')}</span>
-              </div>
-              <div className="relative h-[176px] overflow-hidden bg-page-surface px-3">
-                <div className="sub-dist-launch-feed">
-                  {[...launchEvents, ...launchEvents].map((event, index) => (
-                    <div
-                      key={`${event.name}-${event.time}-${index}`}
-                      className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-page-divider py-2"
-                    >
-                      <div className="flex min-w-0 items-center gap-2">
-                        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-page-success" />
-                        <p className="min-w-0 truncate text-xs font-medium text-page">
-                          {event.name} <span className="text-page-muted">{t('subDist.activityAction')}</span>
-                        </p>
-                      </div>
-                      <p className="shrink-0 text-right font-mono text-[11px] text-page-muted">{event.time}</p>
-                    </div>
-                  ))}
-                </div>
-                <div className="pointer-events-none absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-page-surface to-transparent" />
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t from-page-surface to-transparent" />
-              </div>
             </div>
             {orderPanel}
             {cryptoOrder && (
@@ -912,28 +972,47 @@ export default function SubDistributor() {
         contentClassName="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6"
         direction="left"
       >
-        <section id="audience" className="space-y-5 scroll-mt-24">
+        <section className="space-y-6">
           <FadeContent direction="left" distance={36} duration={760} className="max-w-3xl">
-            <h2 className="text-2xl font-semibold tracking-tight text-page">{copy.audienceTitle}</h2>
-            <p className="mt-2 text-sm leading-7 text-page-secondary">{copy.audienceDesc}</p>
+            <h2 className="text-2xl font-semibold tracking-tight text-page">{showcaseCopy.title}</h2>
+            <p className="mt-2 text-sm leading-7 text-page-secondary">{showcaseCopy.description}</p>
           </FadeContent>
-          <div className="grid gap-4 md:grid-cols-2">
-            {copy.audience.map(([title, description], index) => {
-              const Icon = AUDIENCE_ICONS[index] || Sparkles;
+          <div className="grid gap-5 lg:grid-cols-2">
+            {SHOWCASE_IMAGES.map((image, index) => {
+              const [title, description] = showcaseCopy.items[index];
               return (
                 <FadeContent
-                  key={title}
+                  key={image.src}
                   direction={index % 2 === 0 ? 'left' : 'right'}
-                  distance={34}
-                  duration={760}
-                  delay={index * 70}
+                  distance={32}
+                  duration={720}
+                  delay={(index % 2) * 80}
                 >
-                  <article className="rounded-2xl border border-page-divider bg-page-surface p-5 shadow-sm">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-500/10 text-page-link">
-                      <Icon className="h-5 w-5" />
-                    </span>
-                    <h3 className="mt-4 text-base font-semibold text-page">{title}</h3>
-                    <p className="mt-2 text-sm leading-6 text-page-secondary">{description}</p>
+                  <article className="overflow-hidden rounded-3xl border border-page-divider bg-page-surface shadow-sm">
+                    <a
+                      href={image.src}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="block overflow-hidden bg-white"
+                      onClick={() => trackEvent('reseller_demo_click', {
+                        demo_index: index + 1,
+                        demo_name: title,
+                      })}
+                    >
+                      <img
+                        src={image.src}
+                        width={image.width}
+                        height={image.height}
+                        alt={`${title}：${description}`}
+                        loading="lazy"
+                        decoding="async"
+                        className="h-72 w-full object-cover object-top transition-transform duration-300 hover:scale-[1.01] sm:h-80"
+                      />
+                    </a>
+                    <div className="p-5">
+                      <h3 className="text-base font-semibold text-page">{title}</h3>
+                      <p className="mt-1.5 text-sm leading-6 text-page-secondary">{description}</p>
+                    </div>
                   </article>
                 </FadeContent>
               );
@@ -947,38 +1026,27 @@ export default function SubDistributor() {
         contentClassName="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6"
         direction="right"
       >
-      <section className="space-y-5">
-        <FadeContent direction="left" distance={36} duration={760} className="max-w-3xl">
-          <h2 className="text-2xl font-semibold tracking-tight text-page">{copy.revenueTitle}</h2>
-          <p className="mt-2 text-sm leading-7 text-page-secondary">{copy.revenueDesc}</p>
-        </FadeContent>
-        <div className="grid gap-4 md:grid-cols-2">
-          {copy.revenue.map(([title, description], index) => {
-            const Icon = REVENUE_ICONS[index] || Sparkles;
-            return (
-              <FadeContent
-                key={title}
-                direction={index % 2 === 0 ? 'left' : 'right'}
-                distance={34}
-                duration={760}
-                delay={(index % 4) * 70}
-              >
-                <article className="rounded-2xl border border-page-divider bg-page-surface p-5 shadow-sm">
-                  <div className="flex items-start gap-3">
-                    <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-brand-500/10 text-page-link">
-                      <Icon className="h-4 w-4" />
-                    </span>
-                    <div>
-                      <h3 className="text-sm font-semibold text-page">{title}</h3>
-                      <p className="mt-1.5 text-sm leading-6 text-page-secondary">{description}</p>
-                    </div>
-                  </div>
-                </article>
-              </FadeContent>
-            );
-          })}
-        </div>
-      </section>
+        <section id="audience" className="grid gap-8 scroll-mt-24 border-b border-page-divider pb-10 lg:grid-cols-2">
+          <FadeContent direction="left" distance={34} duration={720}>
+            <div>
+              <h2 className="text-2xl font-semibold tracking-tight text-page">{copy.audienceTitle}</h2>
+              <p className="mt-2 text-sm leading-7 text-page-secondary">{copy.audienceDesc}</p>
+              <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
+                {[0, 1, 3].map((index) => (
+                  <span key={copy.audience[index][0]} className="rounded-full bg-page-inset px-3 py-2 text-sm font-medium text-page">
+                    {copy.audience[index][0]}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </FadeContent>
+          <FadeContent direction="right" distance={34} duration={720} delay={80}>
+            <aside>
+              <h3 className="text-lg font-semibold text-page">{copy.notForTitle}</h3>
+              <p className="mt-2 text-sm leading-7 text-page-secondary">{copy.notForDesc}</p>
+            </aside>
+          </FadeContent>
+        </section>
       </SnapSection>
 
       <SnapSection
@@ -986,10 +1054,10 @@ export default function SubDistributor() {
         contentClassName="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6"
         direction="left"
       >
-        <section className="rounded-3xl border border-page-divider bg-page-surface p-5 shadow-sm sm:p-6">
+        <section className="border-b border-page-divider pb-10">
           <div className="mb-5">
             <h2 className="text-2xl font-semibold tracking-tight text-page">{copy.savingsTitle}</h2>
-            <p className="mt-2 max-w-3xl text-sm leading-7 text-page-secondary">{copy.savingsDesc}</p>
+            <p className="mt-2 text-sm leading-7 text-page-secondary">{copy.savingsDesc}</p>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[680px] text-sm">
@@ -1001,7 +1069,7 @@ export default function SubDistributor() {
                 </tr>
               </thead>
               <tbody>
-                {copy.comparison.map(([capability, selfBuild, apiRoute]) => (
+                {copy.comparison.slice(0, 4).map(([capability, selfBuild, apiRoute]) => (
                   <tr key={capability} className="border-b border-page-divider last:border-0">
                     <td className="px-4 py-4 font-semibold text-page">{capability}</td>
                     <td className="px-4 py-4 text-page-secondary">{selfBuild}</td>
@@ -1016,51 +1084,80 @@ export default function SubDistributor() {
 
       <SnapSection
         className="bg-[var(--page-bg)]"
-        contentClassName="mx-auto grid w-full max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[1fr_0.9fr]"
-        direction="right"
+        contentClassName="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6"
+        direction="up"
       >
-        <FadeContent direction="left" distance={36} duration={760}>
-          <h2 className="text-2xl font-semibold tracking-tight text-page">{copy.includedTitle}</h2>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            {copy.included.map((item, index) => {
-              const Icon = INCLUDED_ICONS[index] || CheckCircle2;
-              return (
-                <FadeContent
-                  key={item}
-                  direction={index % 2 === 0 ? 'left' : 'right'}
-                  distance={26}
-                  duration={680}
-                  delay={(index % 4) * 45}
-                >
-                  <div className="flex min-h-16 items-start gap-3 rounded-2xl border border-page-divider bg-page-surface p-4">
-                    <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-page-link/10 text-page-link">
-                      <Icon className="h-4 w-4" />
-                    </span>
-                    <span className="text-sm leading-6 text-page">{item}</span>
-                  </div>
-                </FadeContent>
-              );
-            })}
+        <section className="pb-10">
+          <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
+            <FadeContent direction="left" distance={28} duration={700}>
+              <div>
+                <h2 className="text-2xl font-semibold tracking-tight text-page">{copy.revenueTitle}</h2>
+                <p className="mt-3 text-sm leading-7 text-page-secondary">{copy.revenueDesc}</p>
+              </div>
+            </FadeContent>
+            <FadeContent direction="right" distance={28} duration={700} delay={80}>
+              <div>
+                <h2 className="text-2xl font-semibold tracking-tight text-page">{copy.operationsTitle}</h2>
+                <p className="mt-3 text-sm leading-7 text-page-secondary">{copy.operationsDesc}</p>
+              </div>
+            </FadeContent>
           </div>
-        </FadeContent>
-        <FadeContent direction="right" distance={36} duration={760} delay={100}>
-          <h2 className="text-2xl font-semibold tracking-tight text-page">{copy.flowTitle}</h2>
-          <div className="mt-5 space-y-4">
-            {copy.flow.map(([title, description], index) => (
-              <FadeContent key={title} direction="right" distance={28} duration={680} delay={index * 70}>
-                <div className="flex gap-4 rounded-2xl border border-page-divider bg-page-surface p-4">
-                  <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-brand-500 text-sm font-bold text-white">
-                    {index + 1}
+
+          <FadeContent direction="up" distance={24} duration={680} className="mt-10 border-t border-page-divider pt-10">
+            <div>
+              <div>
+                <h2 className="text-2xl font-semibold tracking-tight text-page">{copy.calculatorTitle}</h2>
+                <p className="mt-3 text-sm leading-7 text-page-secondary">{copy.calculatorDesc}</p>
+              </div>
+              <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                <label className="block">
+                  <span className="mb-2 block text-sm font-medium text-page-label">
+                    {copy.calculatorSales} ({currencyCode})
                   </span>
-                  <div>
-                    <h3 className="text-sm font-semibold text-page">{title}</h3>
-                    <p className="mt-1 text-sm leading-6 text-page-secondary">{description}</p>
-                  </div>
-                </div>
-              </FadeContent>
-            ))}
-          </div>
-        </FadeContent>
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    inputMode="decimal"
+                    value={profitInputs.sales}
+                    onChange={(event) => setProfitInputs((current) => ({ ...current, sales: event.target.value }))}
+                    className="input"
+                  />
+                </label>
+                <label className="block">
+                  <span className="mb-2 block text-sm font-medium text-page-label">{copy.calculatorMarkup}</span>
+                  <span className="relative block">
+                    <input
+                      type="number"
+                      min="0"
+                      step="1"
+                      inputMode="decimal"
+                      value={profitInputs.markup}
+                      onChange={(event) => setProfitInputs((current) => ({ ...current, markup: event.target.value }))}
+                      className="input pr-12"
+                    />
+                    <span className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-sm text-page-muted">%</span>
+                  </span>
+                </label>
+              </div>
+            </div>
+            <div className="mt-7 grid border-y border-page-divider sm:grid-cols-2 sm:divide-x sm:divide-page-divider">
+              <div className="py-5 sm:pr-8">
+                <p className="text-sm text-page-secondary">{copy.calculatorMonthly}</p>
+                <p className="mt-2 text-3xl font-bold tracking-tight text-page">
+                  {fmtCNY(estimatedMonthlyProfit / (cnyRate || 1), 2)}
+                </p>
+              </div>
+              <div className="border-t border-page-divider py-5 sm:border-t-0 sm:pl-8">
+                <p className="text-sm text-page-secondary">{copy.calculatorYearly}</p>
+                <p className="mt-2 text-3xl font-bold tracking-tight text-page">
+                  {fmtCNY(estimatedYearlyProfit / (cnyRate || 1), 2)}
+                </p>
+              </div>
+            </div>
+            <p className="mt-3 text-xs leading-6 text-page-muted">{copy.calculatorNote}</p>
+          </FadeContent>
+        </section>
       </SnapSection>
 
       <SnapSection
@@ -1074,7 +1171,7 @@ export default function SubDistributor() {
           <h2 className="text-2xl font-semibold tracking-tight text-page">{copy.faqTitle}</h2>
         </FadeContent>
         <div className="grid gap-3 lg:grid-cols-2">
-          {copy.faq.map(([question, answer], index) => (
+          {copy.faq.slice(0, 4).map(([question, answer], index) => (
             <FadeContent
               key={question}
               direction={index % 2 === 0 ? 'left' : 'right'}
@@ -1086,7 +1183,14 @@ export default function SubDistributor() {
                 className="group rounded-2xl border border-page-divider bg-page-surface px-5 py-4 shadow-sm open:bg-page-inset"
                 open={index === 0}
               >
-                <summary className="flex cursor-pointer list-none items-start justify-between gap-4 text-left">
+                <summary
+                  className="flex cursor-pointer list-none items-start justify-between gap-4 text-left"
+                  onClick={(event) => {
+                    if (!event.currentTarget.parentElement?.open) {
+                      trackEvent('reseller_faq_open', { faq_index: index + 1 });
+                    }
+                  }}
+                >
                   <span className="text-sm font-semibold leading-6 text-page">{question}</span>
                   <ArrowRight className="mt-0.5 h-4 w-4 flex-shrink-0 text-page-muted transition-transform group-open:rotate-90" />
                 </summary>
@@ -1094,6 +1198,16 @@ export default function SubDistributor() {
               </details>
             </FadeContent>
           ))}
+        </div>
+        <div className="mt-8 flex justify-center">
+          <a
+            href="#open-platform"
+            className="btn-primary inline-flex items-center justify-center gap-2"
+            onClick={() => trackEvent('reseller_cta_click', { placement: 'faq_primary' })}
+          >
+            {copy.primaryCta}
+            <ArrowRight className="h-4 w-4" />
+          </a>
         </div>
       </section>
       </SnapSection>

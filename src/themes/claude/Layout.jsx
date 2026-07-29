@@ -69,7 +69,7 @@ export default function ClaudeLayout() {
     normalizeAppLanguage(i18n.resolvedLanguage || i18n.language),
     'privacy',
   ).labels;
-  const isSnapDeckPage = location.pathname === '/' || location.pathname === '/ai-api-reseller-platform';
+  const isSnapDeckPage = location.pathname === '/';
 
   useEffect(() => {
     setMobileMenuOpen(false);
