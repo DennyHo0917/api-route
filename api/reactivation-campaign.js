@@ -168,7 +168,7 @@ const campaignCopy = {
   html: `
     <div style="max-width:640px;margin:auto;padding:32px 24px;font-family:Arial,'PingFang SC','Microsoft YaHei',sans-serif;line-height:1.75;color:#332b25">
       <a href="https://www.api-route.com" style="display:inline-block;margin-bottom:24px">
-        <img src="https://img.api-route.com/3.png" width="132" alt="API-Route" style="display:block;width:132px;max-width:100%;height:auto;border:0">
+        <img src="https://img.api-route.com/3.png" width="56" alt="API-Route" style="display:block;width:56px;max-width:100%;height:auto;border:0">
       </a>
       <h1 style="margin:0 0 22px;font-size:25px;line-height:1.35">API-Route 网页版聊天已上线</h1>
       <p>你好，</p>
