@@ -159,10 +159,7 @@ async function fetchAll(baseUrl, path, credentials, params, pageSize) {
     });
 
     const upstream = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${credentials.accessToken}`,
-        'New-Api-User': credentials.userId,
-      },
+      headers: buildDistributorHeaders(credentials),
     });
     const payload = await upstream.json();
     if (!upstream.ok || payload?.success === false) {
@@ -179,6 +176,18 @@ async function fetchAll(baseUrl, path, credentials, params, pageSize) {
     }
   }
   throw new Error(`${path} pagination exceeded ${MAX_PAGES} pages`);
+}
+
+export function buildDistributorHeaders({ accessToken, sessionCookie, userId }) {
+  const headers = { 'New-Api-User': String(userId) };
+  if (sessionCookie) {
+    headers.Cookie = String(sessionCookie).trim().startsWith('session=')
+      ? String(sessionCookie).trim()
+      : `session=${String(sessionCookie).trim()}`;
+  } else if (accessToken) {
+    headers.Authorization = `Bearer ${accessToken}`;
+  }
+  return headers;
 }
 
 const maskEmail = (email) => {
@@ -263,9 +272,10 @@ export default async function handler(request, response) {
 
   const credentials = {
     accessToken: process.env.DISTRIBUTOR_ACCESS_TOKEN,
+    sessionCookie: process.env.DISTRIBUTOR_SESSION_COOKIE,
     userId: process.env.DISTRIBUTOR_USER_ID,
   };
-  if (!credentials.accessToken || !credentials.userId) {
+  if ((!credentials.accessToken && !credentials.sessionCookie) || !credentials.userId) {
     return response.status(503).json({ success: false, message: 'Distributor API credentials are not configured' });
   }
 

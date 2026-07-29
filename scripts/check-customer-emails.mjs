@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { collectCustomerEmails } from '../api/customer-emails.js';
-import { selectDormantCustomers } from '../api/reactivation-campaign.js';
+import { buildDistributorHeaders, selectDormantCustomers } from '../api/reactivation-campaign.js';
 
 const pages = [
   { total: 4, customers: [{ email: 'A@example.com' }, { email: '-' }] },
@@ -30,3 +30,13 @@ assert.equal(selection.skipped.recently_active, 1);
 assert.equal(selection.skipped.too_new, 1);
 assert.equal(selection.skipped.disabled, 1);
 console.log('reactivation customer selection check passed');
+
+assert.deepEqual(
+  buildDistributorHeaders({ sessionCookie: 'cookie-value', userId: 4870 }),
+  { Cookie: 'session=cookie-value', 'New-Api-User': '4870' },
+);
+assert.deepEqual(
+  buildDistributorHeaders({ accessToken: 'token-value', userId: 4870 }),
+  { Authorization: 'Bearer token-value', 'New-Api-User': '4870' },
+);
+console.log('distributor authentication header check passed');
