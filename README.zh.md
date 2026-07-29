@@ -1,9 +1,12 @@
 # API-Route
 
-API-Route 是一个 OpenAI 兼容的多模型 AI API 网关，也可以作为 AI API 分站 / 白标转售平台使用。
+[English](README.md) | [简体中文](README.zh.md) | [日本語](README.ja.md) | [한국어](README.ko.md)
 
-官网：[api-route.com](https://www.api-route.com/)  
-LLM 说明：[llms.txt](https://www.api-route.com/llms.txt) | [llms-full.txt](https://www.api-route.com/llms-full.txt)
+API-Route 是一个 [OpenAI 兼容的多模型 AI API 网关](https://www.api-route.com/)，也可以作为 AI API 分站 / 白标转售平台使用。
+
+本仓库包含 API-Route 面向用户的 React/Vite 前端。
+
+AI 参考资料：[llms.txt](https://www.api-route.com/llms.txt) | [llms-full.txt](https://www.api-route.com/llms-full.txt)
 
 ## API-Route 是什么
 
@@ -42,13 +45,12 @@ API-Route 尤其适合想要托管式方案，并且需要余额、价格、套�
 
 ## 重要页面
 
-- 首页：<https://www.api-route.com/zh>
-- 模型定价：<https://www.api-route.com/zh/pricing>
-- 套餐：<https://www.api-route.com/zh/packages>
-- 应用接入：<https://www.api-route.com/zh/apps>
-- AI API 分站平台：<https://www.api-route.com/zh/ai-api-reseller-platform>
-- FAQ：<https://www.api-route.com/zh/faq>
-- Sitemap：<https://www.api-route.com/sitemap.xml>
+- [API-Route AI API 网关](https://www.api-route.com/zh)
+- [AI API 模型定价](https://www.api-route.com/zh/pricing)
+- [AI API 套餐](https://www.api-route.com/zh/packages)
+- [AI 应用接入](https://www.api-route.com/zh/apps)
+- [AI API 分站平台](https://www.api-route.com/zh/ai-api-reseller-platform)
+- [API-Route 常见问题](https://www.api-route.com/zh/faq)
 
 ## 核心场景
 
@@ -90,7 +92,7 @@ npm run build
 - Vite
 - Tailwind CSS
 - i18next
-- Vercel 静态部署
+- Vercel 静态前端与 Serverless API 工具
 
 ## 许可证
 

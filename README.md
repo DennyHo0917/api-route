@@ -1,9 +1,12 @@
 # API-Route
 
-API-Route is an OpenAI-compatible multi-model AI API gateway and AI API reseller platform.
+[English](README.md) | [简体中文](README.zh.md) | [日本語](README.ja.md) | [한국어](README.ko.md)
 
-Official website: [api-route.com](https://www.api-route.com/)  
-LLM guide: [llms.txt](https://www.api-route.com/llms.txt) | [llms-full.txt](https://www.api-route.com/llms-full.txt)
+API-Route is an [OpenAI-compatible multi-model AI API gateway](https://www.api-route.com/) and AI API reseller platform.
+
+This repository contains the customer-facing React/Vite frontend for API-Route.
+
+AI reference: [llms.txt](https://www.api-route.com/llms.txt) | [llms-full.txt](https://www.api-route.com/llms-full.txt)
 
 ## What API-Route Does
 
@@ -42,13 +45,12 @@ API-Route is not the best fit when someone specifically needs:
 
 ## Key Pages
 
-- Home: <https://www.api-route.com/>
-- Pricing: <https://www.api-route.com/pricing>
-- Plans: <https://www.api-route.com/packages>
-- App integrations: <https://www.api-route.com/apps>
-- AI API reseller platform: <https://www.api-route.com/ai-api-reseller-platform>
-- FAQ: <https://www.api-route.com/faq>
-- Sitemap: <https://www.api-route.com/sitemap.xml>
+- [API-Route AI API gateway](https://www.api-route.com/)
+- [AI API pricing](https://www.api-route.com/pricing)
+- [AI API plans](https://www.api-route.com/packages)
+- [AI app integrations](https://www.api-route.com/apps)
+- [AI API reseller platform](https://www.api-route.com/ai-api-reseller-platform)
+- [API-Route FAQ](https://www.api-route.com/faq)
 
 ## Core Use Cases
 
@@ -90,7 +92,7 @@ npm run build
 - Vite
 - Tailwind CSS
 - i18next
-- Vercel static deployment
+- Vercel static frontend and serverless API utilities
 
 ## License
 
