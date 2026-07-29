@@ -163,33 +163,52 @@ const maskEmail = (email) => {
 const csvCell = (value) => `"${String(value).replaceAll('"', '""')}"`;
 
 const campaignCopy = {
-  subject: 'API-Route：欢迎回来 / Welcome back',
+  subject: 'API-Route 网页版聊天已上线',
+  previewText: '无需配置 App，登录后即可直接与大模型对话。',
   html: `
-    <div style="max-width:640px;margin:auto;font-family:Arial,sans-serif;line-height:1.7;color:#332b25">
-      <h1 style="font-size:24px">欢迎回来 / Welcome back</h1>
-      <p>你的 API-Route 账户仍可正常使用。现在可以继续通过一个 API 调用 GPT、Claude、Gemini 等主流模型。</p>
-      <p>Your API-Route account is still ready to use. Access GPT, Claude, Gemini, and other leading models through one API.</p>
-      <p>API-Route アカウントは引き続きご利用いただけます。1つの API から主要な AI モデルへアクセスできます。</p>
-      <p>API-Route 계정은 계속 이용할 수 있습니다. 하나의 API로 주요 AI 모델을 다시 사용해 보세요.</p>
+    <div style="max-width:640px;margin:auto;padding:32px 24px;font-family:Arial,'PingFang SC','Microsoft YaHei',sans-serif;line-height:1.75;color:#332b25">
+      <a href="https://www.api-route.com" style="display:inline-block;margin-bottom:24px">
+        <img src="https://img.api-route.com/3.png" width="132" alt="API-Route" style="display:block;width:132px;max-width:100%;height:auto;border:0">
+      </a>
+      <h1 style="margin:0 0 22px;font-size:25px;line-height:1.35">API-Route 网页版聊天已上线</h1>
+      <p>你好，</p>
+      <p>API-Route 最近有了一些新变化，想与你分享。</p>
+      <p>网页版聊天现已上线。登录后选择模型，就可以直接开始对话，无需安装或配置 App，也不需要先了解 API 的使用方法。</p>
+      <p>我们还重新整理了模型选择、密钥创建和首次调用流程，让常用功能更容易找到。如果之前的配置步骤让你暂时搁置了使用，现在可以直接从浏览器开始。</p>
       <p style="margin:28px 0">
-        <a href="https://www.api-route.com/dashboard" style="display:inline-block;padding:12px 22px;border-radius:10px;background:#dd7958;color:#fff;text-decoration:none">
-          打开 API-Route / Open API-Route
+        <a href="https://www.api-route.com/chats" style="display:inline-block;padding:12px 22px;border-radius:10px;background:#dd7958;color:#fff;text-decoration:none;font-weight:600">
+          体验 API-Route 网页版聊天
         </a>
       </p>
+      <p style="margin:0;color:#817469">API-Route 团队</p>
+      <p style="margin:6px 0 0;font-size:13px">
+        官网：<a href="https://www.api-route.com" style="color:#a6533a">https://www.api-route.com</a>
+      </p>
+      <hr style="margin:32px 0 18px;border:0;border-top:1px solid #ead8cf">
       <p style="font-size:12px;color:#817469">
+        你收到这封邮件，是因为曾经注册过 API-Route。
         不想再收到此类邮件？
-        <a href="{{{RESEND_UNSUBSCRIBE_URL}}}">退订 / Unsubscribe / 配信停止 / 수신 거부</a>
+        <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#817469">点击退订</a>
       </p>
     </div>
   `,
-  text: `欢迎回来 / Welcome back
+  text: `API-Route 网页版聊天已上线
 
-你的 API-Route 账户仍可正常使用。现在可以继续通过一个 API 调用 GPT、Claude、Gemini 等主流模型。
-Your API-Route account is still ready to use. Access leading AI models through one API.
+你好，
 
-https://www.api-route.com/dashboard
+API-Route 最近有了一些新变化，想与你分享。
 
-退订 / Unsubscribe: {{{RESEND_UNSUBSCRIBE_URL}}}`,
+网页版聊天现已上线。登录后选择模型，就可以直接开始对话，无需安装或配置 App，也不需要先了解 API 的使用方法。
+
+我们还重新整理了模型选择、密钥创建和首次调用流程，让常用功能更容易找到。如果之前的配置步骤让你暂时搁置了使用，现在可以直接从浏览器开始。
+
+体验网页版聊天：https://www.api-route.com/chats
+官网：https://www.api-route.com
+
+API-Route 团队
+
+你收到这封邮件，是因为曾经注册过 API-Route。
+退订：{{{RESEND_UNSUBSCRIBE_URL}}}`,
 };
 
 async function findOrCreateSegment(resend, name) {
@@ -215,6 +234,7 @@ async function findOrCreateDraft(resend, name, segmentId) {
     from: process.env.REACTIVATION_FROM || 'API-Route <support@api-route.com>',
     replyTo: process.env.REACTIVATION_REPLY_TO || 'support@api-route.com',
     subject: campaignCopy.subject,
+    previewText: campaignCopy.previewText,
     html: campaignCopy.html,
     text: campaignCopy.text,
     send: false,
@@ -247,6 +267,52 @@ export default async function handler(request, response) {
   const baseUrl = (process.env.DISTRIBUTOR_API_BASE_URL || DEFAULT_API_BASE_URL).replace(/\/+$/, '');
 
   try {
+    if (request.method === 'POST' && request.body?.confirm === 'SEND_REACTIVATION') {
+      const importId = String(request.body?.import_id || '').trim();
+      const broadcastId = String(request.body?.broadcast_id || '').trim();
+      if (!importId || !broadcastId) {
+        return response.status(400).json({ success: false, message: 'import_id and broadcast_id are required' });
+      }
+      if (!process.env.RESEND_API_KEY) {
+        return response.status(503).json({ success: false, message: 'RESEND_API_KEY is not configured' });
+      }
+
+      const resend = new Resend(process.env.RESEND_API_KEY);
+      const [imported, broadcast] = await Promise.all([
+        resend.contacts.imports.get(importId),
+        resend.broadcasts.get(broadcastId),
+      ]);
+      if (imported.error) throw new Error(imported.error.message);
+      if (broadcast.error) throw new Error(broadcast.error.message);
+      if (imported.data?.status !== 'completed') {
+        return response.status(409).json({
+          success: false,
+          message: `Contact import is ${imported.data?.status || 'unknown'}`,
+          data: imported.data,
+        });
+      }
+      if (!broadcast.data?.name?.startsWith('API-Route reactivation web chat ')) {
+        return response.status(400).json({ success: false, message: 'Broadcast is not a reactivation draft' });
+      }
+      if (broadcast.data?.status !== 'draft') {
+        return response.status(409).json({
+          success: false,
+          message: `Broadcast is ${broadcast.data?.status || 'unknown'}`,
+        });
+      }
+
+      const sent = await resend.broadcasts.send(broadcastId);
+      if (sent.error) throw new Error(sent.error.message);
+      return response.status(200).json({
+        success: true,
+        data: {
+          broadcast_id: sent.data?.id || broadcastId,
+          import_counts: imported.data?.counts,
+          sent: true,
+        },
+      });
+    }
+
     if (request.method === 'GET' && request.query?.inspect === '1') {
       const customerPage = await fetchPage(baseUrl, '/api/distributor/customers', credentials, {}, 1, 1);
       return response.status(200).json({
@@ -263,10 +329,20 @@ export default async function handler(request, response) {
 
     const customers = await fetchAll(baseUrl, '/api/distributor/customers', credentials, {}, 100);
     const selection = selectDormantCustomers(customers);
+    const additionalEmail = request.method === 'POST'
+      ? String(request.body?.additional_email || '').trim().toLowerCase()
+      : '';
+    if (additionalEmail && !EMAIL_PATTERN.test(additionalEmail)) {
+      return response.status(400).json({ success: false, message: 'additional_email is invalid' });
+    }
+    const recipients = new Map(selection.dormant.map(({ email }) => [email, { email }]));
+    if (additionalEmail) recipients.set(additionalEmail, { email: additionalEmail });
+    const recipientList = [...recipients.values()];
     const preview = {
       rule: 'balance = 0 and usage = 0',
       customer_count: customers.length,
       dormant_count: selection.dormant.length,
+      recipient_count: recipientList.length,
       sample: selection.dormant.slice(0, 10).map(({ email }) => maskEmail(email)),
       skipped: selection.skipped,
     };
@@ -286,7 +362,7 @@ export default async function handler(request, response) {
         data: preview,
       });
     }
-    if (!selection.dormant.length) {
+    if (!recipientList.length) {
       return response.status(200).json({ success: true, data: { ...preview, prepared: false } });
     }
     if (!process.env.RESEND_API_KEY) {
@@ -296,9 +372,9 @@ export default async function handler(request, response) {
     const resend = new Resend(process.env.RESEND_API_KEY);
     const date = new Date().toISOString().slice(0, 10);
     const segmentName = `${SEGMENT_PREFIX} ${date}`;
-    const draftName = `API-Route reactivation zero usage ${date}`;
+    const draftName = `API-Route reactivation web chat ${date}`;
     const segment = await findOrCreateSegment(resend, segmentName);
-    const csv = `email\n${selection.dormant.map(({ email }) => csvCell(email)).join('\n')}`;
+    const csv = `email\n${recipientList.map(({ email }) => csvCell(email)).join('\n')}`;
     const imported = await resend.contacts.imports.create({
       file: new Blob([csv], { type: 'text/csv' }),
       columnMap: { email: 'email' },
@@ -316,7 +392,7 @@ export default async function handler(request, response) {
         segment_id: segment.id,
         import_id: imported.data?.id,
         broadcast_id: draft.id,
-        next_step: 'Wait for the contact import to complete, review the draft in Resend, then send it manually.',
+        next_step: 'Wait for the contact import to complete, then confirm SEND_REACTIVATION with the returned IDs.',
       },
     });
   } catch (error) {
