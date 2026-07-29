@@ -5,6 +5,9 @@ const DEFAULT_API_BASE_URL = 'https://subrouter.ai';
 const MAX_PAGES = 1000;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const SEGMENT_PREFIX = 'API-Route reactivation';
+const QUOTA_PER_USD = 500000;
+const CNY_PER_USD = 6.8;
+const HIGH_VALUE_USAGE_QUOTA = (100 / CNY_PER_USD) * QUOTA_PER_USD;
 
 const safeEqual = (left, right) => {
   const leftBuffer = Buffer.from(String(left || ''));
@@ -33,6 +36,7 @@ const toNumber = (value) => {
 
 export function selectDormantCustomers(customers, audience = 'zero_balance_unused') {
   const fundedUnused = audience === 'funded_unused';
+  const exhaustedHighValue = audience === 'spent_over_100_exhausted';
   const dormantByEmail = new Map();
   const skipped = {
     invalid_email: 0,
@@ -40,8 +44,10 @@ export function selectDormantCustomers(customers, audience = 'zero_balance_unuse
     missing_balance: 0,
     missing_usage: 0,
     non_positive_balance: 0,
+    positive_balance: 0,
     non_zero_balance: 0,
     non_zero_usage: 0,
+    usage_not_over_100_cny: 0,
   };
 
   for (const customer of customers) {
@@ -76,15 +82,23 @@ export function selectDormantCustomers(customers, audience = 'zero_balance_unuse
       skipped.missing_usage += 1;
       continue;
     }
+    if (exhaustedHighValue && balance > 0) {
+      skipped.positive_balance += 1;
+      continue;
+    }
+    if (exhaustedHighValue && usage <= HIGH_VALUE_USAGE_QUOTA) {
+      skipped.usage_not_over_100_cny += 1;
+      continue;
+    }
     if (fundedUnused && balance <= 0) {
       skipped.non_positive_balance += 1;
       continue;
     }
-    if (!fundedUnused && balance !== 0) {
+    if (!fundedUnused && !exhaustedHighValue && balance !== 0) {
       skipped.non_zero_balance += 1;
       continue;
     }
-    if (usage !== 0) {
+    if (!exhaustedHighValue && usage !== 0) {
       skipped.non_zero_usage += 1;
       continue;
     }
@@ -337,7 +351,7 @@ export default async function handler(request, response) {
       ? request.query?.audience || ''
       : request.body?.audience || '').trim();
     const audience = requestedAudience || 'zero_balance_unused';
-    if (!['zero_balance_unused', 'funded_unused'].includes(audience)) {
+    if (!['zero_balance_unused', 'funded_unused', 'spent_over_100_exhausted'].includes(audience)) {
       return response.status(400).json({ success: false, message: 'audience is invalid' });
     }
 
@@ -354,7 +368,11 @@ export default async function handler(request, response) {
     const recipientList = [...recipients.values()];
     const preview = {
       audience,
-      rule: audience === 'funded_unused' ? 'balance > 0 and usage = 0' : 'balance = 0 and usage = 0',
+      rule: audience === 'funded_unused'
+        ? 'balance > 0 and usage = 0'
+        : audience === 'spent_over_100_exhausted'
+          ? 'balance <= 0 and usage > CNY 100'
+          : 'balance = 0 and usage = 0',
       customer_count: customers.length,
       dormant_count: selection.dormant.length,
       recipient_count: recipientList.length,

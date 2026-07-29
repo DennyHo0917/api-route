@@ -37,6 +37,17 @@ assert.equal(fundedUnused.skipped.non_positive_balance, 1);
 assert.equal(fundedUnused.skipped.non_zero_usage, 1);
 console.log('funded unused customer selection check passed');
 
+const spentOver100Exhausted = selectDormantCustomers([
+  { email: 'high-value@example.com', quota: 0, used_quota: 7500000 },
+  { email: 'funded@example.com', quota: 1, used_quota: 7500000 },
+  { email: 'low-value@example.com', quota: 0, used_quota: 7000000 },
+], 'spent_over_100_exhausted');
+
+assert.deepEqual(spentOver100Exhausted.dormant, [{ email: 'high-value@example.com' }]);
+assert.equal(spentOver100Exhausted.skipped.positive_balance, 1);
+assert.equal(spentOver100Exhausted.skipped.usage_not_over_100_cny, 1);
+console.log('spent over CNY 100 exhausted customer selection check passed');
+
 assert.deepEqual(
   buildDistributorHeaders({ sessionCookie: 'cookie-value', userId: 4870 }),
   { Cookie: 'session=cookie-value', 'New-Api-User': '4870' },
