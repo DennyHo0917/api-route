@@ -231,13 +231,31 @@ API-Route 团队
 退订：{{{RESEND_UNSUBSCRIBE_URL}}}`,
 };
 
-async function findOrCreateSegment(resend, name) {
+async function findOrCreateSegment(resend, name, recycleOldest = false) {
   const listed = await resend.segments.list({ limit: 100 });
   if (listed.error) throw new Error(listed.error.message);
   const existing = listed.data?.data?.find((segment) => segment.name === name);
   if (existing) return existing;
 
-  const created = await resend.segments.create({ name });
+  let created = await resend.segments.create({ name });
+  if (created.error && recycleOldest && /plan includes \d+ segments/i.test(created.error.message)) {
+    const broadcasts = await resend.broadcasts.list({ limit: 100 });
+    if (broadcasts.error) throw new Error(broadcasts.error.message);
+    const activeSegmentIds = new Set(
+      broadcasts.data?.data
+        ?.filter((broadcast) => broadcast.status !== 'sent')
+        .map((broadcast) => broadcast.segment_id),
+    );
+    const oldest = listed.data?.data
+      ?.filter((segment) => segment.name.startsWith(SEGMENT_PREFIX) && !activeSegmentIds.has(segment.id))
+      .sort((left, right) => new Date(left.created_at) - new Date(right.created_at))[0];
+    if (!oldest) throw new Error(created.error.message);
+
+    const removed = await resend.segments.remove(oldest.id);
+    if (removed.error) throw new Error(removed.error.message);
+    created = await resend.segments.create({ name });
+    if (!created.error) created.data.recycled_segment = oldest.name;
+  }
   if (created.error) throw new Error(created.error.message);
   return created.data;
 }
@@ -406,7 +424,11 @@ export default async function handler(request, response) {
     const date = new Date().toISOString().slice(0, 10);
     const segmentName = `${SEGMENT_PREFIX} ${audience} ${date}`;
     const draftName = `API-Route reactivation web chat ${audience} ${date}`;
-    const segment = await findOrCreateSegment(resend, segmentName);
+    const segment = await findOrCreateSegment(
+      resend,
+      segmentName,
+      request.body?.recycle_oldest_segment === true,
+    );
     const csv = `email\n${recipientList.map(({ email }) => csvCell(email)).join('\n')}`;
     const imported = await resend.contacts.imports.create({
       file: new Blob([csv], { type: 'text/csv' }),
@@ -422,6 +444,7 @@ export default async function handler(request, response) {
       data: {
         ...preview,
         prepared: true,
+        recycled_segment: segment.recycled_segment || null,
         segment_id: segment.id,
         import_id: imported.data?.id,
         broadcast_id: draft.id,
