@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { useSite } from '../context/SiteContext';
@@ -15,6 +16,7 @@ import {
 } from '../api';
 import { useCurrency } from '../context/SiteContext';
 import { trackEvent } from '../utils/analytics';
+import { consumePendingChatTopup } from '../utils/pendingChat';
 import CountUp from '../components/bits/CountUp';
 import toast from 'react-hot-toast';
 
@@ -154,6 +156,7 @@ function trackTopupPurchaseOnce(item, currency, exchangeRate, precision) {
 export default function Topup() {
   const { t } = useTranslation();
   const { user, refreshUser } = useAuth();
+  const navigate = useNavigate();
   const { site } = useSite();
   const { symbol, rate, code, decimals } = useCurrency();
 
@@ -193,6 +196,12 @@ export default function Topup() {
   const enableStripe = topupInfo?.enable_stripe_topup;
   const enableCreem = topupInfo?.enable_creem_topup;
   const enableCrypto = topupInfo?.enable_crypto_topup;
+  const resumePendingChat = useCallback(() => {
+    if (!consumePendingChatTopup(user?.id)) return false;
+    navigate('/chats', { replace: true });
+    return true;
+  }, [navigate, user?.id]);
+
   const loadData = useCallback(async () => {
     let historyItems = [];
     if (site?.enable_topup) setHistoryLoading(true);
@@ -242,12 +251,15 @@ export default function Topup() {
         ))
         .sort((a, b) => Number(b.create_time || 0) - Number(a.create_time || 0))[0];
 
-      if (!cancelled && trackTopupPurchaseOnce(latestSuccess, code || 'CNY', rate, decimals)) {
+      if (!cancelled && latestSuccess) {
+        trackTopupPurchaseOnce(latestSuccess, code || 'CNY', rate, decimals);
         try {
           localStorage.removeItem(PENDING_TOPUP_ANALYTICS_KEY);
         } catch {
           // Best-effort cleanup only.
         }
+        await refreshUser({ skipErrorHandler: true });
+        if (!cancelled) resumePendingChat();
         return;
       }
       if (!cancelled && attempts < 5) {
@@ -260,7 +272,7 @@ export default function Topup() {
       cancelled = true;
       if (timeoutId) window.clearTimeout(timeoutId);
     };
-  }, [code, decimals, loadData, rate, site?.enable_topup]);
+  }, [code, decimals, loadData, rate, refreshUser, resumePendingChat, site?.enable_topup]);
 
   const quota = usage?.quota ?? user?.quota ?? 0;
   const usedQuota = usage?.used_quota ?? user?.used_quota ?? 0;
@@ -308,6 +320,7 @@ export default function Topup() {
           refreshUser({ skipErrorHandler: true }),
         ]);
         toast.success(t('topup.balanceRedeemed'));
+        resumePendingChat();
       }
     } catch (err) { /* interceptor */ }
     setRedeeming(false);
@@ -527,6 +540,7 @@ export default function Topup() {
           setCryptoOrder(null);
           toast.success(t('topup.paymentSuccess'));
           await Promise.all([loadData(), refreshUser()]);
+          resumePendingChat();
         } else if (res.data.data?.status === 'expired') {
           clearInterval(interval);
           setCryptoPolling(false);

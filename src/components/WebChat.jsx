@@ -21,6 +21,7 @@ import {
   toChatCompletionMessage,
 } from '../utils/chatModels';
 import { readChatResponse } from '../utils/chatResponse';
+import { hasNoBalance, rememberPendingChatTopup } from '../utils/pendingChat';
 
 const DB_NAME = 'api-route-web-chat';
 const STORE_NAME = 'conversations';
@@ -104,15 +105,16 @@ function readImage(file) {
   });
 }
 
-export default function WebChat({ tokens = [], onOpenLocalSetup }) {
+export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const [conversations, setConversations] = useState([]);
   const [activeConversation, setActiveConversation] = useState(null);
   const [messages, setMessages] = useState([]);
   const [models, setModels] = useState([]);
   const [selectedModel, setSelectedModel] = useState(DEFAULT_MODEL);
   const [pendingModel, setPendingModel] = useState('');
+  const [balancePromptOpen, setBalancePromptOpen] = useState(false);
   const [input, setInput] = useState('');
   const [attachment, setAttachment] = useState(null);
   const [loadingModels, setLoadingModels] = useState(false);
@@ -141,6 +143,8 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
           setActiveConversation(items[0]);
           setMessages(items[0].messages || []);
           setSelectedModel(items[0].model || '');
+          setInput(items[0].pendingMessage?.input || '');
+          setAttachment(items[0].pendingMessage?.attachment || null);
         }
       })
       .catch(() => toast.error(t('chat.storageError')))
@@ -230,7 +234,8 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
     setMobileHistoryOpen(false);
     setActiveConversation(conversation);
     setMessages(conversation.messages || []);
-    setAttachment(null);
+    setInput(conversation.pendingMessage?.input || '');
+    setAttachment(conversation.pendingMessage?.attachment || null);
     if (models.some((model) => model.name === conversation.model)) {
       setSelectedModel(conversation.model);
     }
@@ -246,7 +251,8 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
       if (activeConversation?.id === conversation.id) {
         setActiveConversation(remaining[0] || null);
         setMessages(remaining[0]?.messages || []);
-        setAttachment(null);
+        setInput(remaining[0]?.pendingMessage?.input || '');
+        setAttachment(remaining[0]?.pendingMessage?.attachment || null);
         if (remaining[0]?.model) setSelectedModel(remaining[0].model);
       }
     } catch {
@@ -331,6 +337,25 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
       title: content.replace(/\s+/g, ' ').slice(0, 32),
     };
 
+    if (hasNoBalance(user)) {
+      try {
+        await persistConversation({
+          ...conversation,
+          model: selectedModel,
+          messages,
+          pendingMessage: {
+            input,
+            ...(attachment ? { attachment } : {}),
+          },
+          updatedAt: now,
+        });
+        setBalancePromptOpen(true);
+      } catch {
+        toast.error(t('chat.storageError'));
+      }
+      return;
+    }
+
     setInput('');
     setAttachment(null);
     setMessages([...requestMessages, assistantMessage]);
@@ -379,8 +404,10 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
           ...conversation,
           model: selectedModel,
           messages: finalMessages,
+          pendingMessage: null,
           updatedAt: Date.now(),
         });
+        if (assistantContent) refreshUser({ skipErrorHandler: true });
       } catch {
         toast.error(t('chat.storageError'));
       }
@@ -576,6 +603,11 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
             </div>
 
             <div className="border-t border-page-divider p-3 sm:p-5">
+              {activeConversation?.pendingMessage && (
+                <p className="mx-auto mb-3 max-w-3xl rounded-xl border border-page-link/20 bg-page-link/10 px-4 py-2.5 text-sm text-page-secondary">
+                  {t('chat.pendingRestored')}
+                </p>
+              )}
               <div className="mx-auto max-w-3xl rounded-2xl border border-page-divider bg-page-surface p-2 focus-within:border-page-link/60">
                 {attachment && (
                   <div className="mb-2 flex items-center gap-3 rounded-xl bg-page-inset p-2">
@@ -681,6 +713,40 @@ export default function WebChat({ tokens = [], onOpenLocalSetup }) {
               </button>
               <button type="button" onClick={() => applyModelChange(pendingModel)} className="btn-primary">
                 {t('chat.switchModelConfirm')}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
+      {balancePromptOpen && (
+        <div className="modal-overlay fixed inset-0 z-[100] flex items-center justify-center bg-black/55 px-4 py-6 backdrop-blur-sm">
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="chat-balance-title"
+            className="glass w-full max-w-md rounded-3xl p-6 shadow-2xl"
+          >
+            <h2 id="chat-balance-title" className="text-xl font-bold text-page">
+              {t('chat.balanceRequiredTitle')}
+            </h2>
+            <p className="mt-3 text-sm leading-7 text-page-secondary">
+              {t('chat.balanceRequiredDesc')}
+            </p>
+            <div className="mt-6 grid grid-cols-2 gap-3">
+              <button type="button" onClick={() => setBalancePromptOpen(false)} className="btn-secondary">
+                {t('tokens.cancel')}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  rememberPendingChatTopup(user?.id);
+                  setBalancePromptOpen(false);
+                  onTopUp();
+                }}
+                className="btn-primary"
+                autoFocus
+              >
+                {t('chat.topUpAndContinue')}
               </button>
             </div>
           </section>

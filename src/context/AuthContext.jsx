@@ -1,18 +1,38 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import {
   completeOAuth as completeOAuthApi,
+  createToken,
+  getTokens,
   getUserSelf,
   login as loginApi,
   register as registerApi,
   logout as logoutApi,
 } from '../api';
+import { hasUserApiKey } from '../utils/tokenForm';
 import toast from 'react-hot-toast';
 
 const AuthContext = createContext(null);
+const DEFAULT_API_KEY_NAME = 'Default API Key';
 const BOOTSTRAP_REQUEST_CONFIG = {
   skipErrorHandler: true,
   ...(import.meta.env.DEV ? { timeout: 8000 } : {}),
 };
+
+async function ensureUserApiKey() {
+  try {
+    const tokensRes = await getTokens(BOOTSTRAP_REQUEST_CONFIG);
+    if (!tokensRes.data.success || hasUserApiKey(tokensRes.data.data)) return;
+    const createRes = await createToken(
+      { name: DEFAULT_API_KEY_NAME },
+      BOOTSTRAP_REQUEST_CONFIG,
+    );
+    if (createRes.data.success) {
+      window.dispatchEvent(new Event('tokens:changed'));
+    }
+  } catch {
+    // Automatic key creation must never block login.
+  }
+}
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -60,6 +80,10 @@ export function AuthProvider({ children }) {
     window.addEventListener('auth:logout', handleForceLogout);
     return () => window.removeEventListener('auth:logout', handleForceLogout);
   }, []);
+
+  useEffect(() => {
+    if (user?.id) ensureUserApiKey();
+  }, [user?.id]);
 
   const login = useCallback(async (username, password, config) => {
     const res = await loginApi({ username, password }, config);
