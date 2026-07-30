@@ -10,9 +10,7 @@ import {
   Layers3,
   Mail,
   ShieldCheck,
-  ShoppingBag,
   Sparkles,
-  TicketCheck,
   WalletCards,
   Zap,
 } from 'lucide-react';
@@ -184,26 +182,6 @@ export default function ClaudeHome() {
     setSubscribing(null);
   };
 
-  const workflowSteps = [
-    {
-      icon: ShoppingBag,
-      number: '01',
-      title: t('home.stepBuy'),
-      description: t('home.stepBuyDesc'),
-    },
-    {
-      icon: TicketCheck,
-      number: '02',
-      title: t('home.stepRedeem'),
-      description: t('home.stepRedeemDesc'),
-    },
-    {
-      icon: KeyRound,
-      number: '03',
-      title: t('home.stepCreateKey'),
-      description: t('home.stepCreateKeyDesc'),
-    },
-  ];
   const audienceCards = [
     {
       icon: Braces,
@@ -246,50 +224,44 @@ export default function ClaudeHome() {
     <SnapDeck>
       <SnapSection
         className="route-hero relative border-b border-[#E8DDD0]"
-        contentClassName="relative mx-auto grid w-full max-w-7xl items-center gap-12 px-5 py-12 md:px-8 lg:grid-cols-[1.05fr_0.95fr]"
+        contentClassName="relative mx-auto flex w-full max-w-7xl items-center px-5 py-16 md:px-8"
         direction="up"
       >
         <div className="route-grid-bg absolute inset-0 opacity-60" />
-          <FadeContent direction="left" distance={36} duration={780} delay={80}>
+          <FadeContent direction="up" distance={30} duration={780} delay={80} className="mx-auto w-full max-w-5xl text-center">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#E6D6C8] bg-white/75 px-3.5 py-2 text-xs font-semibold text-[#B75F43] shadow-sm">
               <Sparkles size={14} />
               {t('home.heroBadge')}
             </div>
-            <h1 className="max-w-3xl text-4xl font-bold leading-[1.08] tracking-[-0.04em] text-[#382B21] sm:text-5xl lg:text-[58px]">
+            <h1 className="mx-auto max-w-4xl text-4xl font-bold leading-[1.08] tracking-[-0.04em] text-[#382B21] sm:text-5xl lg:text-[64px]">
               <span className="block">{t('home.heroTitleLead')}</span>
               <span className="block">{t('home.heroTitleRest')}</span>
             </h1>
-            <p className="mt-6 max-w-2xl text-base leading-8 text-[#756454] md:text-lg">
+            <p className="mx-auto mt-6 max-w-3xl text-base leading-8 text-[#756454] md:text-lg">
               {heroSubtitle}
             </p>
 
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
               <Link
-                to={user ? '/topup' : '/register'}
-                state={user ? undefined : { from: '/topup' }}
+                to={user ? '/chats' : '/register'}
+                state={user ? undefined : { from: '/chats' }}
                 className="route-motion-button route-motion-primary inline-flex items-center justify-center gap-2 rounded-full bg-[#D97757] px-6 py-3.5 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(217,119,87,0.24)] transition-all hover:-translate-y-0.5 hover:bg-[#C4613F]"
               >
-                <ShoppingBag size={17} />
-                {t('home.buyVoucher')}
+                <Sparkles size={17} />
+                {t('home.openAiChat')}
                 <ArrowRight size={16} className="route-motion-arrow" />
               </Link>
               <Link
-                to="/packages"
+                to={user ? '/api-keys' : '/register'}
+                state={user ? undefined : { from: '/api-keys' }}
                 className="route-motion-button inline-flex items-center justify-center gap-2 rounded-full border border-[#DCCBBD] bg-white/75 px-6 py-3.5 text-sm font-semibold text-[#59483A] transition-all hover:border-[#CBAE98] hover:bg-white"
               >
-                <TicketCheck size={17} />
-                {t('home.viewPackages')}
-              </Link>
-              <Link
-                to="/ai-api-reseller-platform"
-                className="route-motion-button inline-flex items-center justify-center gap-2 rounded-full border border-[#DCCBBD] bg-[#FFF7F0] px-6 py-3.5 text-sm font-semibold text-[#8F4C35] transition-all hover:border-[#CBAE98] hover:bg-white"
-              >
-                <ShieldCheck size={17} />
-                {t('home.deployGateway')}
+                <KeyRound size={17} />
+                {t('home.viewApiAccess')}
               </Link>
             </div>
 
-            <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm text-[#756454]">
+            <div className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm text-[#756454]">
               {[t('home.openaiCompatible'), t('home.allModelsIncluded'), t('home.instantActivation')].map((item) => (
                 <span key={item} className="flex items-center gap-2">
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#D97757]/10 text-[#D97757]">
@@ -298,86 +270,6 @@ export default function ClaudeHome() {
                   {item}
                 </span>
               ))}
-            </div>
-          </FadeContent>
-
-          <FadeContent direction="right" distance={36} duration={820} delay={180} className="relative">
-            <div className="absolute -left-10 top-8 h-32 w-32 rounded-full bg-[#E9B8A4]/35 blur-3xl" />
-            <div className="absolute -right-10 bottom-4 h-40 w-40 rounded-full bg-[#E8D7B7]/50 blur-3xl" />
-            <div className="relative rounded-[28px] border border-[#DCC8B8] bg-white/80 p-3 shadow-[0_28px_80px_rgba(96,69,48,0.13)]">
-              <div className="rounded-[22px] border border-[#E7D7CA] bg-[#FFF9F4] p-6 sm:p-8">
-                <div className="flex items-center justify-between border-b border-[#EADCD0] pb-5">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#C56547]">
-                      {t('home.workflowEyebrow')}
-                    </p>
-                    <h2 className="mt-2 text-xl font-semibold text-[#3D3024]">{t('home.workflowTitle')}</h2>
-                  </div>
-                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#D97757] text-white">
-                    <Zap size={20} />
-                  </div>
-                </div>
-
-                <div className="mt-3">
-                  {workflowSteps.map((step, index) => {
-                    const Icon = step.icon;
-                    return (
-                      <div key={step.number} className={`route-workflow-step route-workflow-step--${index + 1} relative flex gap-4 py-5`}>
-                        {index < workflowSteps.length - 1 && (
-                          <span className={`route-workflow-line route-workflow-line--${index + 1} absolute left-[21px] top-[64px] bottom-[-20px] w-px bg-[#E2CFC0]`} />
-                        )}
-                        <div className="route-workflow-icon flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[#E6D4C6] bg-[#F8EAE0] text-[#C56547]">
-                          <Icon size={19} />
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="route-workflow-number text-[10px] font-bold tracking-[0.18em] text-[#B68D75]">{step.number}</span>
-                            <h3 className="text-sm font-semibold text-[#49382C]">{step.title}</h3>
-                          </div>
-                          <p className="mt-1.5 text-sm leading-6 text-[#806D5D]">{step.description}</p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <div className="mt-2 border-t border-[#EADCD0] pt-5">
-                  <div className="flex items-start gap-3">
-                    <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#D97757]/10 text-[#C56547]">
-                      <ShieldCheck size={18} />
-                    </span>
-                    <div>
-                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#B68D75]">
-                        {t('home.platformEyebrow')}
-                      </p>
-                      <h3 className="mt-1 text-sm font-semibold text-[#49382C]">{t('home.platformTitle')}</h3>
-                      <p className="mt-1.5 text-sm leading-6 text-[#806D5D]">{t('home.platformDesc')}</p>
-                      <Link
-                        to="/ai-api-reseller-platform"
-                        className="route-motion-link mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-[#C56547] hover:text-[#A84F34]"
-                      >
-                        {t('home.platformAction')}
-                        <ArrowRight size={14} className="route-motion-arrow" />
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-3 grid grid-cols-3 gap-2 rounded-2xl border border-[#EADCD0] bg-[#F6EADF] p-3 text-center">
-                  <div>
-                    <p className="text-lg font-bold text-[#3D3024]">{enabledModels.length || '--'}+</p>
-                    <p className="text-[10px] text-[#8C7867]">{t('home.aiModels')}</p>
-                  </div>
-                  <div className="border-x border-[#DDC9B9]">
-                    <p className="text-lg font-bold text-[#3D3024]">{enabledPackages.length || '--'}</p>
-                    <p className="text-[10px] text-[#8C7867]">{t('home.packageChoices')}</p>
-                  </div>
-                  <div>
-                    <p className="text-lg font-bold text-[#3D3024]">1 API</p>
-                    <p className="text-[10px] text-[#8C7867]">{t('home.unifiedAccess')}</p>
-                  </div>
-                </div>
-              </div>
             </div>
           </FadeContent>
       </SnapSection>
@@ -576,6 +468,69 @@ export default function ClaudeHome() {
           </div>
         </SnapSection>
       )}
+
+      <SnapSection
+        className="relative overflow-hidden border-b border-[#E8DDD0] bg-[#FFF9F4]"
+        contentClassName="relative mx-auto grid w-full max-w-7xl items-center gap-10 px-5 py-14 md:px-8 lg:grid-cols-[1.08fr_0.92fr]"
+      >
+        <div className="absolute -left-20 top-1/4 h-64 w-64 rounded-full bg-[#E9B8A4]/30 blur-3xl" />
+        <div className="absolute -right-20 bottom-1/4 h-72 w-72 rounded-full bg-[#E8D7B7]/45 blur-3xl" />
+
+        <FadeContent direction="left" distance={36} duration={780}>
+          <p className="route-kicker">{t('home.platformEyebrow')}</p>
+          <h2 className="route-section-title max-w-3xl">
+            {t('home.platformTitle')}
+          </h2>
+          <p className="mt-6 max-w-2xl text-lg font-semibold leading-8 text-[#59483A] md:text-xl">
+            {t('home.platformLead')}
+          </p>
+          <p className="mt-3 max-w-2xl text-base leading-8 text-[#756454] md:text-lg">
+            {t('home.platformDesc')}
+          </p>
+          <Link
+            to="/ai-api-reseller-platform"
+            className="route-motion-button route-motion-primary mt-8 inline-flex items-center justify-center gap-2 rounded-full bg-[#D97757] px-6 py-3.5 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(217,119,87,0.24)] transition-all hover:-translate-y-0.5 hover:bg-[#C4613F]"
+          >
+            {t('home.platformAction')}
+            <ArrowRight size={16} className="route-motion-arrow" />
+          </Link>
+        </FadeContent>
+
+        <FadeContent direction="right" distance={36} duration={820} delay={120}>
+          <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
+            {[
+              {
+                icon: WalletCards,
+                title: t('home.platformPricingTitle'),
+                description: t('home.platformPricingDesc'),
+              },
+              {
+                icon: Layers3,
+                title: t('home.platformUpstreamTitle'),
+                description: t('home.platformUpstreamDesc'),
+              },
+              {
+                icon: ShieldCheck,
+                title: t('home.platformManagedTitle'),
+                description: t('home.platformManagedDesc'),
+              },
+            ].map(({ icon: Icon, title, description }) => (
+              <div
+                key={title}
+                className="flex items-center gap-4 rounded-2xl border border-[#E4D2C4] bg-white/75 p-5 shadow-[0_16px_40px_rgba(96,69,48,0.08)]"
+              >
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#D97757]/10 text-[#C56547]">
+                  <Icon size={21} />
+                </span>
+                <span>
+                  <span className="block text-base font-semibold text-[#49382C]">{title}</span>
+                  <span className="mt-1 block text-sm leading-6 text-[#806D5D]">{description}</span>
+                </span>
+              </div>
+            ))}
+          </div>
+        </FadeContent>
+      </SnapSection>
 
       <SnapSection
         className="bg-[#FAF6F1]"
