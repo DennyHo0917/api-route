@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Calculator, ChevronDown, ChevronRight, ExternalLink, Gauge, Layers, WalletCards } from 'lucide-react';
+import { Calculator, ChevronDown, ChevronRight, ExternalLink, Layers, WalletCards } from 'lucide-react';
 import { getSiteModels } from '../api';
 import { useCurrency } from '../context/SiteContext';
 import { normalizeAppLanguage } from '../i18n/languageUtils';
@@ -29,8 +29,6 @@ const PARAM_NAME_SET = new Set([
   'duration_seconds',
 ]);
 const NUMBER_PATTERN = '[+-]?(?:\\d+\\.?\\d*|\\.\\d+)(?:[eE][+-]?\\d+)?';
-const PRICE_GUIDE_ICONS = [WalletCards, Calculator, Layers];
-
 const PRICING_GUIDE_COPY = {
   zh: {
     cards: [
@@ -663,52 +661,12 @@ export default function Pricing() {
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-10">
-      <div className="text-center mb-10">
+      <div className="mb-8 text-center">
         <h1 className="text-3xl font-heading font-bold text-page mb-3">{t('pricing.title')}</h1>
         <p className="text-page-secondary max-w-xl mx-auto">
           {t('pricing.subtitle')}
         </p>
       </div>
-
-      <section className="mb-8 grid gap-4 lg:grid-cols-3">
-        {guideCopy.cards.map((card, index) => {
-          const Icon = PRICE_GUIDE_ICONS[index] || WalletCards;
-          return (
-            <article key={card.title} className="rounded-xl border border-page-divider bg-page-surface p-5 shadow-sm">
-              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-500/10 text-page-link">
-                <Icon className="h-5 w-5" />
-              </span>
-              <h2 className="mt-4 text-base font-semibold text-page">{card.title}</h2>
-              <p className="mt-2 text-sm leading-6 text-page-secondary">{card.body}</p>
-            </article>
-          );
-        })}
-      </section>
-
-      <section className="mb-8 grid gap-4 lg:grid-cols-2">
-        <div className="rounded-xl border border-page-divider bg-page-surface p-5 shadow-sm">
-          <div className="mb-3 flex items-center gap-2">
-            <Calculator className="h-5 w-5 text-page-link" />
-            <h2 className="text-lg font-semibold text-page">{guideCopy.estimateTitle}</h2>
-          </div>
-          <p className="text-sm leading-7 text-page-secondary">{guideCopy.estimateBody}</p>
-        </div>
-
-        <div className="rounded-xl border border-page-divider bg-page-surface p-5 shadow-sm">
-          <div className="mb-3 flex items-center gap-2">
-            <Gauge className="h-5 w-5 text-page-link" />
-            <h2 className="text-lg font-semibold text-page">{guideCopy.chooseTitle}</h2>
-          </div>
-          <ul className="space-y-2 text-sm leading-6 text-page-secondary">
-            {guideCopy.choose.map((item) => (
-              <li key={item} className="flex gap-2">
-                <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-page-link" />
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
 
       {/* Vendor Filter */}
       {availableVendors.length > 0 && (
@@ -777,18 +735,20 @@ export default function Pricing() {
           {search || vendor || modelType ? t('pricing.noMatch') : t('pricing.noModels')}
         </div>
       ) : (
-        <div className="glass-sm rounded-xl overflow-x-auto">
+        <div className="glass-sm mx-auto max-w-6xl overflow-x-auto rounded-xl">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-page-divider">
-                <th className="text-left px-5 py-3.5 font-medium text-page-secondary">{t('pricing.model')}</th>
-                <th className="text-right px-5 py-3.5 font-medium text-page-secondary">{t('pricing.inputPrice')}</th>
-                <th className="text-right px-5 py-3.5 font-medium text-page-secondary">{t('pricing.outputPrice')}</th>
-                <th className="text-right px-5 py-3.5 font-medium text-page-secondary">{t('pricing.cacheReadPrice')}</th>
-                <th className="text-right px-5 py-3.5 font-medium text-page-secondary">{t('pricing.cacheCreationPrice')}</th>
-                <th className="text-right px-5 py-3.5 font-medium text-page-secondary whitespace-nowrap">{t('pricing.officialPrice')}</th>
-                <th className="text-right px-5 py-3.5 font-medium text-page-secondary whitespace-nowrap">{t('pricing.savings')}</th>
-                <th className="text-center px-5 py-3.5 font-medium text-page-secondary">{t('pricing.status')}</th>
+                <th className="px-4 py-3 text-left font-medium text-page-secondary">{t('pricing.model')}</th>
+                <th className="px-4 py-3 text-left font-medium text-page-secondary">
+                  API-Route · {t('pricing.inputPriceShort')} / {t('pricing.outputPriceShort')}
+                </th>
+                <th className="px-4 py-3 text-left font-medium text-page-secondary">
+                  {t('pricing.cacheReadShort')} / {t('pricing.cacheCreationShort')}
+                </th>
+                <th className="px-4 py-3 text-right font-medium text-page-secondary">
+                  {t('pricing.officialPrice')} · {t('pricing.savings')}
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -803,8 +763,8 @@ export default function Pricing() {
                 return (
                   <React.Fragment key={modelKey}>
                     <tr className="border-b border-page-divider last:border-0 hover:bg-page-surface transition-colors">
-                      <td className="px-5 py-3.5">
-                        <div className="flex min-w-[220px] items-center gap-2">
+                      <td className="px-4 py-3">
+                        <div className="flex min-w-[260px] items-center gap-2">
                           <button
                             type="button"
                             onClick={() => canExpand && toggleModel(modelKey)}
@@ -818,61 +778,55 @@ export default function Pricing() {
                           >
                             {expanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                           </button>
-                          <div className="min-w-0">
-                            <span className="block truncate font-mono text-page">{m.display_name || m.model_name}</span>
+                          <div className="flex min-w-0 flex-wrap items-center gap-1.5">
+                            <span
+                              className={`h-1.5 w-1.5 flex-shrink-0 rounded-full ${
+                                m.status === 'healthy' ? 'bg-green-500' : 'bg-neutral-500'
+                              }`}
+                              role="img"
+                              aria-label={m.status === 'healthy' ? t('pricing.online') : t('pricing.unknown')}
+                              title={m.status === 'healthy' ? t('pricing.online') : t('pricing.unknown')}
+                            />
+                            <span className="truncate font-mono text-page">{m.display_name || m.model_name}</span>
+                            <span className="inline-flex rounded-full bg-orange-500/10 px-2 py-0.5 text-[11px] font-medium text-orange-600">
+                              {t(`pricing.type.${normalizeModelType(m)}`)}
+                            </span>
                             {canExpand && (
-                              <span className="mt-1 inline-flex rounded-full bg-page-surface px-2 py-0.5 text-[11px] font-medium text-page-secondary">
+                              <span className="inline-flex rounded-full bg-page-surface px-2 py-0.5 text-[11px] font-medium text-page-secondary">
                                 {t('pricing.channelCount', { count: channels.length })}
                               </span>
                             )}
-                            <span className="mt-1 inline-flex rounded-full bg-brand-500/10 px-2 py-0.5 text-[11px] font-medium text-brand-600">
-                              {t(`pricing.type.${normalizeModelType(m)}`)}
-                            </span>
                           </div>
                         </div>
                       </td>
-                      <td className="px-5 py-3.5 text-right font-mono text-page-label">
-                        {renderPrimaryPrice(m)}
+                      <td className="px-4 py-3">
+                        <div className="grid min-w-[170px] grid-cols-[auto_1fr] gap-x-4 gap-y-1">
+                          <span className="text-xs text-page-muted">{t('pricing.inputPriceShort')}</span>
+                          <div className="text-right font-mono text-page-label">{renderPrimaryPrice(m)}</div>
+                          <span className="text-xs text-page-muted">{t('pricing.outputPriceShort')}</span>
+                          <div className="text-right font-mono text-page-label">{renderSecondaryPrice(m, 'output')}</div>
+                        </div>
                       </td>
-                      <td className="px-5 py-3.5 text-right font-mono text-page-label">
-                        {renderSecondaryPrice(m, 'output')}
+                      <td className="px-4 py-3">
+                        <div className="grid min-w-[210px] grid-cols-[auto_1fr] gap-x-4 gap-y-1">
+                          <span className="text-xs text-page-muted">{t('pricing.cacheReadShort')}</span>
+                          <div className="text-right font-mono text-page-label">{renderSecondaryPrice(m, 'cache_read')}</div>
+                          <span className="text-xs text-page-muted">{t('pricing.cacheCreationShort')}</span>
+                          <div className="whitespace-nowrap text-right font-mono text-page-label">{renderSecondaryPrice(m, 'cache_creation')}</div>
+                        </div>
                       </td>
-                      <td className="px-5 py-3.5 text-right font-mono text-page-label">
-                        {renderSecondaryPrice(m, 'cache_read')}
-                      </td>
-                      <td className="px-5 py-3.5 text-right font-mono text-page-label whitespace-nowrap">
-                        {renderSecondaryPrice(m, 'cache_creation')}
-                      </td>
-                      <td className="px-5 py-3.5 text-right font-mono text-page-label whitespace-nowrap">
-                        {formatOfficialPrice(official)}
-                      </td>
-                      <td className="px-5 py-3.5 text-right">
+                      <td className="px-4 py-3 text-right">
+                        <div className="whitespace-nowrap font-mono text-page-label">{formatOfficialPrice(official)}</div>
                         {savings ? (
-                          <span className={`inline-flex justify-end rounded-full px-2 py-0.5 font-mono text-xs font-semibold ${
-                            savings.startsWith('-')
-                              ? 'bg-green-500/10 text-page-success'
-                              : 'bg-amber-500/10 text-amber-600'
-                          }`}>
-                            {savings}
+                          <span className="mt-1 inline-flex rounded-full bg-green-500/10 px-2 py-0.5 font-mono text-xs font-semibold text-page-success">
+                            {t('pricing.savings')} {savings}
                           </span>
-                        ) : (
-                          <span className="font-mono text-page-muted">-</span>
-                        )}
-                      </td>
-                      <td className="px-5 py-3.5 text-center">
-                        <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs border ${
-                          m.status === 'healthy'
-                            ? 'bg-green-500/10 text-page-success border-green-500/20'
-                            : 'bg-page-surface text-page-secondary border-page-divider'
-                        }`}>
-                          <span className={`w-1.5 h-1.5 rounded-full ${m.status === 'healthy' ? 'bg-green-500' : 'bg-neutral-500'}`} />
-                          {m.status === 'healthy' ? t('pricing.online') : t('pricing.unknown')}
-                        </span>
+                        ) : null}
                       </td>
                     </tr>
                     {expanded && canExpand && (
                       <tr className="border-b border-page-divider bg-page-surface">
-                        <td colSpan={8} className="px-5 py-4">
+                        <td colSpan={4} className="px-4 py-4">
                           <div className="overflow-hidden rounded-lg border border-page-divider bg-page-inset">
                             <table className="w-full text-xs">
                               <thead>
@@ -955,19 +909,19 @@ export default function Pricing() {
         </div>
       )}
 
-      <section className="mt-10 grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+      <section className="mt-12 grid gap-10 border-t border-page-divider pt-8 lg:grid-cols-[0.9fr_1.1fr]">
         <div>
           <div className="mb-4 flex items-center gap-2">
             <Layers className="h-5 w-5 text-page-link" />
             <h2 className="text-lg font-semibold text-page">{guideCopy.compareTitle}</h2>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <ul className="divide-y divide-page-divider border-y border-page-divider">
             {guideCopy.compareItems.map((item) => (
-              <div key={item} className="rounded-xl border border-page-divider bg-page-inset p-4 text-sm leading-6 text-page-secondary">
+              <li key={item} className="py-3 text-sm leading-6 text-page-secondary">
                 {item}
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
 
         <div>
@@ -975,28 +929,31 @@ export default function Pricing() {
             <WalletCards className="h-5 w-5 text-page-link" />
             <h2 className="text-lg font-semibold text-page">{guideCopy.explainTitle}</h2>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <dl className="divide-y divide-page-divider border-y border-page-divider">
             {guideCopy.explain.map(([title, body]) => (
-              <div key={title} className="rounded-xl border border-page-divider bg-page-inset p-4">
-                <h3 className="text-sm font-semibold text-page">{title}</h3>
-                <p className="mt-1.5 text-sm leading-6 text-page-secondary">{body}</p>
+              <div key={title} className="py-3">
+                <dt className="text-sm font-semibold text-page">{title}</dt>
+                <dd className="mt-1 text-sm leading-6 text-page-secondary">{body}</dd>
               </div>
             ))}
-          </div>
+          </dl>
         </div>
       </section>
 
-      <section className="mt-10">
+      <section className="mt-10 border-t border-page-divider pt-8">
         <div className="mb-4 flex items-center gap-2">
           <Calculator className="h-5 w-5 text-page-link" />
           <h2 className="text-lg font-semibold text-page">{guideCopy.faqTitle}</h2>
         </div>
-        <div className="grid gap-3 lg:grid-cols-3">
+        <div className="divide-y divide-page-divider border-y border-page-divider">
           {guideCopy.faq.map(([question, answer]) => (
-            <article key={question} className="rounded-xl border border-page-divider bg-page-surface p-5 shadow-sm">
-              <h3 className="text-sm font-semibold leading-6 text-page">{question}</h3>
-              <p className="mt-2 text-sm leading-6 text-page-secondary">{answer}</p>
-            </article>
+            <details key={question} className="group py-4">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-semibold leading-6 text-page">
+                {question}
+                <ChevronDown className="h-4 w-4 flex-shrink-0 text-page-muted transition-transform group-open:rotate-180" />
+              </summary>
+              <p className="mt-2 max-w-4xl text-sm leading-6 text-page-secondary">{answer}</p>
+            </details>
           ))}
         </div>
       </section>

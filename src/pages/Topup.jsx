@@ -769,6 +769,16 @@ export default function Topup() {
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
                 {paymentOptions.map((method) => {
                   const minForMethod = Number(method.min_topup) || 0;
+                  const methodIdentity = `${method.type} ${method.name}`.toLowerCase();
+                  const logos = methodIdentity.includes('alipay')
+                    ? ['/payment-logos/alipay.svg']
+                    : methodIdentity.includes('stripe')
+                      ? ['/payment-logos/stripe.svg']
+                      : methodIdentity.includes('creem')
+                        ? ['/payment-logos/creem.svg']
+                        : method.type === 'crypto'
+                          ? ['/payment-logos/usdt.svg', '/payment-logos/usdc.svg']
+                          : [];
                   return (
                     <button
                       key={method.type}
@@ -784,9 +794,22 @@ export default function Topup() {
                         selectedPaymentMethod === method.type
                           ? 'topup-payment-method--selected border text-page shadow-sm'
                           : 'glass-sm text-page-label hover:bg-page-surface-hover hover:text-page'
-                      }`}
-                    >
-                      <WalletCards size={18} className={selectedPaymentMethod === method.type ? 'topup-payment-method-icon--selected' : 'text-page-secondary'} />
+                        }`}
+                      >
+                      {logos.length > 0 ? (
+                        <span className="flex items-center gap-1">
+                          {logos.map((logo) => (
+                            <img
+                              key={logo}
+                              src={logo}
+                              alt=""
+                              className={`h-5 w-5 object-contain ${method.type === 'creem' ? 'rounded bg-white p-0.5' : ''}`}
+                            />
+                          ))}
+                        </span>
+                      ) : (
+                        <WalletCards size={18} className={selectedPaymentMethod === method.type ? 'topup-payment-method-icon--selected' : 'text-page-secondary'} />
+                      )}
                       <span className="truncate">{method.name}</span>
                     </button>
                   );
