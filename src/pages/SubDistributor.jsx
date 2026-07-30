@@ -10,7 +10,7 @@ import {
   Store,
   Zap,
 } from 'lucide-react';
-import { createSubDistributorOrder, getSubDistributorInfo } from '../api';
+import { createSubDistributorOrder, getSiteModels, getSubDistributorInfo } from '../api';
 import { useAuth } from '../context/AuthContext';
 import { useCurrency } from '../context/SiteContext';
 import { getLocalizedPath, normalizeAppLanguage } from '../i18n/languageUtils';
@@ -101,7 +101,7 @@ const SHOWCASE_COPY = {
     title: '真实后台，一套管理完整业务',
     description: '供应商、模型、客户和调用记录都在同一个后台完成管理。',
     items: [
-      ['接入 70+ 上游供应商', '从供应商市场选择可用渠道，并按稳定性、评分和支持能力灵活搭配。'],
+      ['可选模型实时更新', '平台已完成模型与上游接入，可按业务需要选择已上架模型。'],
       ['按实际情况随时上下架', '根据价格、稳定性和业务需要，随时启用或停用供应商及其模型。'],
       ['管理客户账户', '查看客户余额、消耗、返佣和账号状态，日常运营更清楚。'],
       ['核对每次调用', '按用户、模型、密钥和费用追踪调用记录与实际消耗。'],
@@ -111,7 +111,7 @@ const SHOWCASE_COPY = {
     title: 'One real dashboard for the whole operation',
     description: 'Manage providers, models, customers, and usage records from one place.',
     items: [
-      ['Connect to 70+ upstream providers', 'Choose and combine providers based on stability, ratings, and supported capacity.'],
+      ['Available models update automatically', 'The platform handles model and upstream integration so you can choose from currently listed models.'],
       ['List or unlist providers anytime', 'Enable or disable providers and their models as pricing, stability, and demand change.'],
       ['Manage customer accounts', 'Review balances, usage, commissions, and account status in one view.'],
       ['Audit every API call', 'Trace usage by customer, model, key, cost, and response time.'],
@@ -121,7 +121,7 @@ const SHOWCASE_COPY = {
     title: '実際の管理画面で運営を一元化',
     description: 'プロバイダー、モデル、顧客、利用履歴を一つの管理画面で扱えます。',
     items: [
-      ['70 社以上の上流プロバイダーに対応', '安定性、評価、対応能力を比較し、必要なプロバイダーを組み合わせられます。'],
+      ['利用可能なモデル数を自動更新', 'モデルと上流プロバイダーの接続はプラットフォームが担当し、公開中のモデルから選択できます。'],
       ['状況に応じていつでも公開・停止', '価格、安定性、需要に合わせてプロバイダーとモデルをいつでも有効化・停止できます。'],
       ['顧客アカウントを管理', '残高、利用量、紹介料率、アカウント状態をまとめて確認できます。'],
       ['API 利用履歴を確認', '顧客、モデル、キー、費用、応答時間ごとに呼び出しを追跡できます。'],
@@ -131,12 +131,18 @@ const SHOWCASE_COPY = {
     title: '실제 관리 화면에서 운영을 한 번에',
     description: '공급자, 모델, 고객, 사용 기록을 하나의 관리자 화면에서 관리합니다.',
     items: [
-      ['70곳 이상의 상위 공급자 연동', '안정성, 평가, 지원 용량을 비교해 필요한 공급자를 조합할 수 있습니다.'],
+      ['사용 가능한 모델 수 자동 업데이트', '모델과 상위 공급자 연동은 플랫폼이 처리하며 현재 등록된 모델 중에서 선택할 수 있습니다.'],
       ['상황에 따라 언제든 노출 전환', '가격, 안정성, 수요 변화에 맞춰 공급자와 모델을 즉시 활성화하거나 중지할 수 있습니다.'],
       ['고객 계정 관리', '잔액, 사용량, 커미션, 계정 상태를 한 화면에서 확인할 수 있습니다.'],
       ['모든 API 호출 확인', '고객, 모델, 키, 비용, 응답 시간별로 사용 기록을 추적할 수 있습니다.'],
     ],
   },
+};
+const MODEL_COUNT_LABEL = {
+  zh: (count) => `${count} 个模型可选`,
+  en: (count) => `${count} models available`,
+  ja: (count) => `${count} モデルから選択`,
+  ko: (count) => `${count}개 모델 선택`,
 };
 function ModelRouteAnimation({ language }) {
   const copy = ROUTER_MAP_COPY[language] || ROUTER_MAP_COPY.en;
@@ -535,6 +541,7 @@ export default function SubDistributor() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [subInfo, setSubInfo] = useState(null);
+  const [modelCount, setModelCount] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [cryptoOrder, setCryptoOrder] = useState(null);
   const [form, setForm] = useState({
@@ -565,6 +572,17 @@ export default function SubDistributor() {
       })
       .catch(() => {})
       .finally(() => setLoading(false));
+    getSiteModels()
+      .then((res) => {
+        if (!res.data.success) return;
+        setModelCount(new Set(
+          (res.data.data || [])
+            .filter((model) => model.enabled !== false)
+            .map((model) => model.model_name)
+            .filter(Boolean),
+        ).size);
+      })
+      .catch(() => {});
   }, []);
 
   const paymentMethods = subInfo?.pay_methods || [];
@@ -580,6 +598,13 @@ export default function SubDistributor() {
   const language = normalizeAppLanguage(i18n.resolvedLanguage || i18n.language);
   const copy = MARKETING_COPY[language] || MARKETING_COPY.en;
   const showcaseCopy = SHOWCASE_COPY[language] || SHOWCASE_COPY.en;
+  const showcaseItems = useMemo(() => {
+    if (modelCount <= 0) return showcaseCopy.items;
+    return [
+      [MODEL_COUNT_LABEL[language]?.(modelCount) || MODEL_COUNT_LABEL.en(modelCount), showcaseCopy.items[0][1]],
+      ...showcaseCopy.items.slice(1),
+    ];
+  }, [language, modelCount, showcaseCopy]);
   const parsedSales = Number(profitInputs.sales);
   const parsedMarkup = Number(profitInputs.markup);
   const salesAmount = Number.isFinite(parsedSales) ? Math.max(0, parsedSales) : 0;
@@ -979,7 +1004,7 @@ export default function SubDistributor() {
           </FadeContent>
           <div className="grid gap-5 lg:grid-cols-2">
             {SHOWCASE_IMAGES.map((image, index) => {
-              const [title, description] = showcaseCopy.items[index];
+              const [title, description] = showcaseItems[index];
               return (
                 <FadeContent
                   key={image.src}

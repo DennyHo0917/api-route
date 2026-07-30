@@ -37,7 +37,6 @@ async function ensureUserApiKey() {
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [loginNoticeOpen, setLoginNoticeOpen] = useState(false);
 
   // Refresh user data — used after login, redeem, subscribe, etc.
   const refreshUser = useCallback(async (config = {}) => {
@@ -101,7 +100,6 @@ export function AuthProvider({ children }) {
       } else {
         setUser(userData); // fallback to login response data
       }
-      setLoginNoticeOpen(true);
       return { success: true };
     }
     // success:false is already toasted by the response interceptor
@@ -129,14 +127,12 @@ export function AuthProvider({ children }) {
     }
     const fullUser = await refreshUser({ skipErrorHandler: true });
     if (!fullUser && userData) setUser(userData);
-    setLoginNoticeOpen(true);
     return { success: true };
   }, [refreshUser]);
 
   const logout = useCallback(async () => {
     try { await logoutApi(); } catch (e) { /* ok */ }
     localStorage.removeItem('dist_user_id');
-    setLoginNoticeOpen(false);
     setUser(null);
   }, []);
 
@@ -149,8 +145,6 @@ export function AuthProvider({ children }) {
       completeOAuth,
       logout,
       refreshUser,
-      loginNoticeOpen,
-      dismissLoginNotice: () => setLoginNoticeOpen(false),
     }}>
       {children}
     </AuthContext.Provider>

@@ -137,6 +137,10 @@ export default function ClaudeHome() {
     () => models.filter((model) => model.enabled !== false),
     [models],
   );
+  const modelCount = useMemo(
+    () => new Set(enabledModels.map((model) => model.model_name).filter(Boolean)).size,
+    [enabledModels],
+  );
   const modelProviders = useMemo(() => {
     return DISPLAY_PROVIDER_KEYS.map((key) => PROVIDER_CATALOG[key]);
   }, []);
@@ -201,15 +205,15 @@ export default function ClaudeHome() {
       icon: KeyRound,
       title: t('home.audienceCodingToolsTitle'),
       description: t('home.audienceCodingToolsDesc'),
-      to: '/faq',
-      linkLabel: t('home.audienceSetupLink'),
+      to: '/api-keys',
+      linkLabel: t('quickstart.badge'),
     },
     {
       icon: Sparkles,
       title: t('home.audienceCreatorsTitle'),
       description: t('home.audienceCreatorsDesc'),
-      to: '/faq',
-      linkLabel: t('home.audienceSetupLink'),
+      to: '/api-keys',
+      linkLabel: t('quickstart.badge'),
     },
     {
       icon: ShieldCheck,
@@ -482,7 +486,9 @@ export default function ClaudeHome() {
             {t('home.platformTitle')}
           </h2>
           <p className="mt-6 max-w-2xl text-lg font-semibold leading-8 text-[#59483A] md:text-xl">
-            {t('home.platformLead')}
+            {modelCount > 0
+              ? t('home.platformLead', { count: modelCount })
+              : t('home.platformLeadFallback')}
           </p>
           <p className="mt-3 max-w-2xl text-base leading-8 text-[#756454] md:text-lg">
             {t('home.platformDesc')}
@@ -506,7 +512,9 @@ export default function ClaudeHome() {
               },
               {
                 icon: Layers3,
-                title: t('home.platformUpstreamTitle'),
+                title: modelCount > 0
+                  ? t('home.platformUpstreamTitle', { count: modelCount })
+                  : t('home.platformUpstreamTitleFallback'),
                 description: t('home.platformUpstreamDesc'),
               },
               {

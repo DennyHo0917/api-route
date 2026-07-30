@@ -184,6 +184,13 @@ export default function Dashboard() {
     loadData();
   }, [loadData]);
 
+  useEffect(() => {
+    if (!affLink || window.location.hash !== '#referral') return;
+    window.requestAnimationFrame(() => {
+      document.getElementById('referral')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }, [affLink]);
+
   const analyticsBounds = useMemo(() => getRangeBounds(analyticsRange), [analyticsRange]);
   const analyticsRangeIndex = Math.max(0, DASHBOARD_RANGES.findIndex((item) => item.key === analyticsRange));
   const chartAnimationKey = `${analyticsRange}-${analyticsAnimationKey}`;
@@ -615,7 +622,7 @@ export default function Dashboard() {
       </div>
 
       {affLink && (
-        <div className="glass rounded-2xl p-6 mt-6">
+        <div id="referral" className="glass scroll-mt-24 rounded-2xl p-6 mt-6">
           <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <h2 className="text-lg font-semibold text-page mb-1">{t('topup.inviteTitle')}</h2>

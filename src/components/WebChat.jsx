@@ -1,10 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Bot,
+  Copy,
+  Gift,
   Menu,
   MessageSquarePlus,
   Paperclip,
   Send,
+  Share2,
   Settings2,
   Square,
   Trash2,
@@ -13,7 +16,7 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
-import { getSiteModels, getTokenSupportedModels } from '../api';
+import { getAffCode, getSiteModels, getTokenSupportedModels } from '../api';
 import { useAuth } from '../context/AuthContext';
 import {
   filterAvailableModels,
@@ -121,7 +124,10 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
   const [loadingHistory, setLoadingHistory] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [mobileHistoryOpen, setMobileHistoryOpen] = useState(false);
+  const [referralCardOpen, setReferralCardOpen] = useState(false);
+  const [referralLink, setReferralLink] = useState('');
   const abortControllerRef = useRef(null);
+  const referralPromptRequestedRef = useRef(false);
   const imageInputRef = useRef(null);
   const messagesContainerRef = useRef(null);
 
@@ -130,6 +136,9 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
     [tokens],
   );
   const canUploadImage = modelSupportsImageUpload(selectedModel);
+  const commissionPercent = Number((
+    Number(user?.commission_rate ?? user?.default_commission_rate ?? 0.05) * 100
+  ).toFixed(1));
 
   useEffect(() => {
     if (!user?.id) return;
@@ -204,9 +213,48 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
   useEffect(() => {
     const container = messagesContainerRef.current;
     if (container) container.scrollTop = container.scrollHeight;
-  }, [messages, generating]);
+  }, [messages, generating, referralCardOpen]);
 
   useEffect(() => () => abortControllerRef.current?.abort(), []);
+
+  const revealReferralCard = async () => {
+    if (!user?.id || referralPromptRequestedRef.current) return;
+    const storageKey = `api-route-referral-prompt-seen-${user.id}`;
+    try {
+      if (window.localStorage.getItem(storageKey)) return;
+    } catch {
+      // A blocked storage API should not prevent the referral prompt.
+    }
+
+    referralPromptRequestedRef.current = true;
+    try {
+      const res = await getAffCode();
+      if (!res.data.success || !res.data.data) return;
+      setReferralLink(`${window.location.origin}/register?aff=${res.data.data}`);
+      setReferralCardOpen(true);
+      try {
+        window.localStorage.setItem(storageKey, '1');
+      } catch {
+        // The card remains usable for this session.
+      }
+    } catch {
+      referralPromptRequestedRef.current = false;
+    }
+  };
+
+  const copyReferralLink = async () => {
+    try {
+      await navigator.clipboard.writeText(referralLink);
+      toast.success(t('topup.copied'));
+    } catch {
+      toast.error(t('referral.copyFailed'));
+    }
+  };
+
+  const shareReferralLink = () => {
+    const text = t('loginNotice.xPost', { link: referralLink });
+    window.open(`https://x.com/intent/post?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
+  };
 
   const persistConversation = async (conversation) => {
     await saveConversation(conversation);
@@ -407,7 +455,10 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
           pendingMessage: null,
           updatedAt: Date.now(),
         });
-        if (assistantContent) refreshUser({ skipErrorHandler: true });
+        if (assistantContent) {
+          refreshUser({ skipErrorHandler: true });
+          revealReferralCard();
+        }
       } catch {
         toast.error(t('chat.storageError'));
       }
@@ -598,6 +649,39 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
                       )}
                     </div>
                   ))}
+                  {referralCardOpen && referralLink && (
+                    <div className="relative rounded-2xl border border-page-link/20 bg-page-link/5 p-4 sm:p-5">
+                      <button
+                        type="button"
+                        onClick={() => setReferralCardOpen(false)}
+                        className="absolute right-3 top-3 rounded-lg p-1.5 text-page-muted hover:bg-page-surface-hover hover:text-page"
+                        aria-label={t('topup.close')}
+                      >
+                        <X size={15} />
+                      </button>
+                      <div className="flex gap-3 pr-8">
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-page-link/10 text-page-link">
+                          <Gift size={18} />
+                        </span>
+                        <div>
+                          <h3 className="font-semibold text-page">{t('referral.cardTitle')}</h3>
+                          <p className="mt-1 text-sm leading-6 text-page-secondary">
+                            {t('referral.cardDesc', { rate: commissionPercent })}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+                        <button type="button" onClick={copyReferralLink} className="btn-primary flex items-center justify-center gap-2 text-sm">
+                          <Copy size={15} />
+                          {t('referral.copyLink')}
+                        </button>
+                        <button type="button" onClick={shareReferralLink} className="btn-secondary flex items-center justify-center gap-2 text-sm">
+                          <Share2 size={15} />
+                          {t('loginNotice.shareToX')}
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

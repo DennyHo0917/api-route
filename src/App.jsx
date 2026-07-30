@@ -2,7 +2,6 @@ import React, { lazy, Suspense, useEffect } from 'react';
 import { Navigate, NavLink, Outlet, Routes, Route, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import AuthGuard from './components/AuthGuard';
-import LoginNotice from './components/LoginNotice';
 import NotificationBell from './components/NotificationBell';
 import SeoManager from './components/SeoManager';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
@@ -154,7 +153,6 @@ function ThemedRoutes() {
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
-      <LoginNotice />
       <NotificationBell />
     </Suspense>
   );

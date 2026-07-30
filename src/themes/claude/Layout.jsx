@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ChevronDown, Headset, KeyRound, LogOut, Menu, Moon, Sun, UserRound, X } from 'lucide-react';
+import { ChevronDown, Gift, Headset, KeyRound, LogOut, Menu, Moon, Sun, UserRound, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { COLOR_SCHEME_STORAGE_KEY, useCurrency, useSite } from '../../context/SiteContext';
 import { Q } from '../../api';
@@ -62,6 +62,9 @@ export default function ClaudeLayout() {
   };
   const supportLink = getSupportLink(site);
   const balance = ((Number(user?.quota) || 0) / Q * rate).toFixed(2);
+  const commissionPercent = Number((
+    Number(user?.commission_rate ?? user?.default_commission_rate ?? 0.05) * 100
+  ).toFixed(1));
   const supportLabel = supportLink?.isTelegram
     ? t('nav.telegramSupport')
     : t('nav.contactSupport');
@@ -277,6 +280,15 @@ export default function ClaudeLayout() {
                     >
                       <KeyRound size={16} />
                       {t('nav.apiAccess')}
+                    </Link>
+                    <Link
+                      to="/dashboard#referral"
+                      role="menuitem"
+                      onClick={() => setUserMenuOpen(false)}
+                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-[#5E4E40] transition-colors hover:bg-[#FAF6F1] hover:text-[#3D3024]"
+                    >
+                      <Gift size={16} />
+                      {t('referral.menuLabel', { rate: commissionPercent })}
                     </Link>
                     <div className="my-1 border-t border-[#E8DDD0]" />
                     <button
