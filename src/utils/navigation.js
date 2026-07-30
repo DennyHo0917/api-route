@@ -5,7 +5,7 @@ export function getSiteNavItems({ t, site }) {
     ...(site?.allow_sub_dist
       ? [{ to: '/ai-api-reseller-platform', label: t('subDist.nav'), auth: false }]
       : []),
-    { to: '/chats', label: t('quickstart.badge'), auth: true },
+    { to: '/chats', label: t('nav.aiChat'), auth: true },
     { to: '/api-keys', label: t('nav.apiAccess'), auth: true },
     ...(site?.enable_topup
       ? [{ to: '/topup', label: t('nav.topup'), auth: true }]

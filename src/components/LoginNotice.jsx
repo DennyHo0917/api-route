@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Copy, Share2 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+import { Trans, useTranslation } from 'react-i18next';
 import { getAffCode } from '../api';
 import { useAuth } from '../context/AuthContext';
 
@@ -74,7 +75,20 @@ export default function LoginNotice() {
 
         <div className="mt-5 space-y-3 text-base leading-8 text-page-secondary">
           <p>{t('loginNotice.thanks')}</p>
-          <p>{t('loginNotice.update')}</p>
+          <p>
+            <Trans
+              i18nKey="loginNotice.update"
+              components={{
+                aiChat: (
+                  <Link
+                    to="/chats"
+                    onClick={dismissLoginNotice}
+                    className="font-semibold text-page-link underline decoration-page-link/40 underline-offset-4 hover:decoration-page-link"
+                  />
+                ),
+              }}
+            />
+          </p>
         </div>
 
         <div className="mt-6 rounded-2xl border border-page-divider bg-page-inset/60 p-4">
