@@ -8,6 +8,7 @@ import {
   CCSWITCH_PRIMARY_DOWNLOAD,
   CCSWITCH_REPO_URL,
 } from '../constants/downloads';
+import { trackEvent } from '../utils/analytics';
 
 const TOOLS = [
   { id: 'codex', name: 'Codex', path: '~/.codex/config.toml' },
@@ -742,6 +743,11 @@ print(message.content[0].text)`;
     const deeplink = generateCCSwitchLink();
     if (!deeplink) return;
     await copyToClipboard(deeplink);
+    trackEvent('ccswitch_import_link_copy', {
+      app: selectedCCSwitchApp,
+      model: selectedModel,
+      endpoint: selectedEndpointId,
+    });
     toast.success(t('config.importLinkCopied'));
   };
 
@@ -763,6 +769,11 @@ print(message.content[0].text)`;
     const deeplink = generateCCSwitchLink();
     if (!deeplink) return;
 
+    trackEvent('ccswitch_import_click', {
+      app: selectedCCSwitchApp,
+      model: selectedModel,
+      endpoint: selectedEndpointId,
+    });
     setShowCCSwitchDownload(false);
     setLaunchingCCSwitch(true);
 
@@ -783,6 +794,7 @@ print(message.content[0].text)`;
       dismissed = true;
       cleanup();
       setLaunchingCCSwitch(false);
+      trackEvent('ccswitch_launch_detected', { app: selectedCCSwitchApp });
     };
 
     const handleBlur = () => {
@@ -808,6 +820,7 @@ print(message.content[0].text)`;
       cleanup();
       setLaunchingCCSwitch(false);
       setShowCCSwitchDownload(true);
+      trackEvent('ccswitch_install_prompt_view', { app: selectedCCSwitchApp });
     }, ccSwitchLaunchFallbackMs);
 
     window.location.href = deeplink;
@@ -1210,6 +1223,10 @@ print(message.content[0].text)`;
                 href={CCSWITCH_PRIMARY_DOWNLOAD}
                 target="_blank"
                 rel="noreferrer"
+                onClick={() => trackEvent('ccswitch_download_click', {
+                  source: 'import_fallback',
+                  platform: 'primary',
+                })}
                 className="btn-primary w-full text-center block"
               >
                 {t('config.downloadCCSwitch')}
@@ -1218,6 +1235,10 @@ print(message.content[0].text)`;
                 href={CCSWITCH_REPO_URL}
                 target="_blank"
                 rel="noreferrer"
+                onClick={() => trackEvent('ccswitch_download_click', {
+                  source: 'import_fallback',
+                  platform: 'github',
+                })}
                 className="btn-secondary w-full text-center block"
               >
                 {t('config.openCCSwitchRepo')}

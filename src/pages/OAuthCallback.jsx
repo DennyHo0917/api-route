@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { getAuthReturnTo } from '../utils/authReturn';
+import { trackEvent } from '../utils/analytics';
 
 const SUPPORTED_OAUTH_PROVIDERS = new Set(['google', 'github', 'x']);
 
@@ -33,6 +34,8 @@ export default function OAuthCallback() {
           setError(result.message || t('login.oauthFailed'));
           return;
         }
+        trackEvent('login', { method: normalizedProvider });
+        trackEvent('auth_complete', { method: normalizedProvider, return_to: returnTo });
         navigate(returnTo, { replace: true });
       })
       .catch((err) => {

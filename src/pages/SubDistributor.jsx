@@ -558,6 +558,13 @@ export default function SubDistributor() {
   const pricingPanelRef = useRef(null);
   const pricingTrackedRef = useRef(false);
   const formStartedRef = useRef(false);
+  const funnelViewTrackedRef = useRef(false);
+
+  useEffect(() => {
+    if (authLoading || funnelViewTrackedRef.current) return;
+    funnelViewTrackedRef.current = true;
+    trackEvent('reseller_funnel_view', { logged_in: Boolean(user) });
+  }, [authLoading, user]);
 
   useEffect(() => {
     getSubDistributorInfo()

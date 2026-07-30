@@ -20,6 +20,7 @@ import { getSiteModels, getSitePackages, subscribePackage, Q } from '../../api';
 import { calcOfficialEquivList } from '../../utils/officialEquiv';
 import { localizePackage } from '../../utils/packageLocalization';
 import { getHomeContent } from '../../utils/siteContent';
+import { trackEvent } from '../../utils/analytics';
 import FadeContent from '../../components/bits/FadeContent';
 import SnapSection, { SnapDeck } from '../../components/bits/SnapSection';
 import toast from 'react-hot-toast';
@@ -249,6 +250,7 @@ export default function ClaudeHome() {
               <Link
                 to={user ? '/chats' : '/register'}
                 state={user ? undefined : { from: '/chats' }}
+                onClick={() => trackEvent('funnel_select', { funnel: 'chat', placement: 'home_hero' })}
                 className="route-motion-button route-motion-primary inline-flex items-center justify-center gap-2 rounded-full bg-[#D97757] px-6 py-3.5 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(217,119,87,0.24)] transition-all hover:-translate-y-0.5 hover:bg-[#C4613F]"
               >
                 <Sparkles size={17} />
@@ -258,6 +260,7 @@ export default function ClaudeHome() {
               <Link
                 to={user ? '/api-keys' : '/register'}
                 state={user ? undefined : { from: '/api-keys' }}
+                onClick={() => trackEvent('funnel_select', { funnel: 'api', placement: 'home_hero' })}
                 className="route-motion-button inline-flex items-center justify-center gap-2 rounded-full border border-[#DCCBBD] bg-white/75 px-6 py-3.5 text-sm font-semibold text-[#59483A] transition-all hover:border-[#CBAE98] hover:bg-white"
               >
                 <KeyRound size={17} />
@@ -311,6 +314,10 @@ export default function ClaudeHome() {
             >
               <Link
                 to={to}
+                onClick={() => trackEvent('funnel_select', {
+                  funnel: to === '/ai-api-reseller-platform' ? 'reseller' : 'api',
+                  placement: 'home_audience',
+                })}
                 className="route-motion-card group flex h-full min-h-[210px] flex-col rounded-[22px] border border-[#E5D7CB] bg-white/65 p-5 shadow-[0_14px_40px_rgba(82,61,43,0.04)] transition-all hover:-translate-y-0.5 hover:border-[#D8BBA7] hover:bg-white"
               >
                 <span className="route-motion-icon flex h-11 w-11 items-center justify-center rounded-2xl bg-[#D97757]/10 text-[#C56547]">
@@ -495,6 +502,7 @@ export default function ClaudeHome() {
           </p>
           <Link
             to="/ai-api-reseller-platform"
+            onClick={() => trackEvent('funnel_select', { funnel: 'reseller', placement: 'home_reseller' })}
             className="route-motion-button route-motion-primary mt-8 inline-flex items-center justify-center gap-2 rounded-full bg-[#D97757] px-6 py-3.5 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(217,119,87,0.24)] transition-all hover:-translate-y-0.5 hover:bg-[#C4613F]"
           >
             {t('home.platformAction')}

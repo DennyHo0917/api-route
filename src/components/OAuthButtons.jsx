@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSite } from '../context/SiteContext';
+import { trackEvent } from '../utils/analytics';
 
 const SUPPORTED_PROVIDERS = new Set(['google', 'github', 'x']);
 
@@ -41,6 +42,7 @@ export default function OAuthButtons({ disabled = false }) {
 
   const startOAuth = (provider) => {
     setLoading(provider);
+    trackEvent('oauth_start', { method: provider });
     const url = new URL(
       `/api/dist/oauth/${encodeURIComponent(provider)}/start`,
       site?.oauth_origin || window.location.origin,

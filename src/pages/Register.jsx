@@ -73,6 +73,7 @@ export default function Register() {
               loginResult = null;
             }
             if (loginResult?.success) {
+              trackEvent('auth_complete', { method: 'email_registration', return_to: returnTo });
               navigate(returnTo, { replace: true });
               return;
             }

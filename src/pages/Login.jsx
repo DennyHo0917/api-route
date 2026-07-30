@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { useSite } from '../context/SiteContext';
 import { getAuthReturnTo } from '../utils/authReturn';
+import { trackEvent } from '../utils/analytics';
 import OAuthButtons from '../components/OAuthButtons';
 import toast from 'react-hot-toast';
 
@@ -33,6 +34,8 @@ export default function Login() {
     try {
       const result = await login(username, form.password);
       if (result.success) {
+        trackEvent('login', { method: 'email' });
+        trackEvent('auth_complete', { method: 'email', return_to: returnTo });
         navigate(returnTo, { replace: true });
         return; // component may unmount — skip setLoading
       }

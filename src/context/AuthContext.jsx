@@ -9,6 +9,7 @@ import {
   logout as logoutApi,
 } from '../api';
 import { hasUserApiKey } from '../utils/tokenForm';
+import { trackEvent } from '../utils/analytics';
 import toast from 'react-hot-toast';
 
 const AuthContext = createContext(null);
@@ -27,6 +28,7 @@ async function ensureUserApiKey() {
       BOOTSTRAP_REQUEST_CONFIG,
     );
     if (createRes.data.success) {
+      trackEvent('api_key_auto_created');
       window.dispatchEvent(new Event('tokens:changed'));
     }
   } catch {

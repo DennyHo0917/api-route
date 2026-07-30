@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Download, ShieldCheck } from 'lucide-react';
 import { DOWNLOAD_TOOLS } from '../constants/downloads';
+import { trackEvent } from '../utils/analytics';
 
 export default function DownloadCatalog({ embedded = false, mode = 'all' }) {
   const { t, i18n } = useTranslation();
@@ -68,6 +69,14 @@ export default function DownloadCatalog({ embedded = false, mode = 'all' }) {
                           href={link.href}
                           target="_blank"
                           rel="noreferrer"
+                          onClick={() => trackEvent(
+                            tool.id === 'cc-switch' ? 'ccswitch_download_click' : 'client_download_click',
+                            {
+                              tool: tool.id,
+                              platform: link.label,
+                              source: embedded ? 'api_access' : 'downloads',
+                            },
+                          )}
                           className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
                             link.recommended
                               ? 'border-page-link/30 bg-page-link/10 text-page-link hover:bg-page-link/15'

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Bot,
   Copy,
+  FileText,
   Gift,
   Menu,
   MessageSquarePlus,
@@ -11,12 +12,16 @@ import {
   Square,
   Trash2,
   UserRound,
+  WalletCards,
   X,
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
-import { getAffCode, getSiteModels, getTokenSupportedModels } from '../api';
+import { getAffCode, getSiteModels, getTokenSupportedModels, Q } from '../api';
 import { useAuth } from '../context/AuthContext';
+import { useCurrency } from '../context/SiteContext';
+import { trackEvent, trackEventOnce } from '../utils/analytics';
 import {
   filterAvailableModels,
   modelSupportsImageUpload,
@@ -110,6 +115,7 @@ function readImage(file) {
 export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
   const { t } = useTranslation();
   const { user, refreshUser } = useAuth();
+  const { symbol, rate } = useCurrency();
   const [conversations, setConversations] = useState([]);
   const [activeConversation, setActiveConversation] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -129,12 +135,15 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
   const referralPromptRequestedRef = useRef(false);
   const imageInputRef = useRef(null);
   const messagesContainerRef = useRef(null);
+  const funnelViewTrackedRef = useRef(false);
 
   const enabledTokens = useMemo(
     () => tokens.filter((token) => token.status === 1 && token.key),
     [tokens],
   );
   const canUploadImage = modelSupportsImageUpload(selectedModel);
+  const balanceValue = Math.max(0, Number(user?.quota || 0) / Q * rate);
+  const balanceEmpty = hasNoBalance(user);
   const commissionPercent = Number((
     Number(user?.commission_rate ?? user?.default_commission_rate ?? 0.05) * 100
   ).toFixed(1));
@@ -216,6 +225,19 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
 
   useEffect(() => () => abortControllerRef.current?.abort(), []);
 
+  useEffect(() => {
+    if (!user?.id || funnelViewTrackedRef.current) return;
+    funnelViewTrackedRef.current = true;
+    trackEvent('chat_funnel_view', {
+      balance_status: balanceEmpty ? 'empty' : 'available',
+    });
+  }, [balanceEmpty, user?.id]);
+
+  const openTopup = (placement) => {
+    trackEvent('chat_topup_click', { placement });
+    onTopUp();
+  };
+
   const revealReferralCard = async () => {
     if (!user?.id || referralPromptRequestedRef.current) return;
     const storageKey = `api-route-referral-prompt-seen-${user.id}`;
@@ -231,6 +253,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
       if (!res.data.success || !res.data.data) return;
       setReferralLink(`${window.location.origin}/register?aff=${res.data.data}`);
       setReferralCardOpen(true);
+      trackEvent('referral_prompt_view', { source: 'first_chat_success' });
       try {
         window.localStorage.setItem(storageKey, '1');
       } catch {
@@ -244,6 +267,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
   const copyReferralLink = async () => {
     try {
       await navigator.clipboard.writeText(referralLink);
+      trackEvent('referral_link_copy', { source: 'chat_success_card' });
       toast.success(t('topup.copied'));
     } catch {
       toast.error(t('referral.copyFailed'));
@@ -252,6 +276,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
 
   const shareReferralLink = () => {
     const text = t('loginNotice.xPost', { link: referralLink });
+    trackEvent('referral_share', { method: 'x', source: 'chat_success_card' });
     window.open(`https://x.com/intent/post?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
   };
 
@@ -383,8 +408,17 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
       createdAt: now,
       title: content.replace(/\s+/g, ' ').slice(0, 32),
     };
+    trackEventOnce(
+      `ga_chat_first_message_attempt_${user.id}`,
+      'chat_first_message_attempt',
+      {
+        balance_status: balanceEmpty ? 'empty' : 'available',
+        model: selectedModel,
+        has_image: Boolean(attachment),
+      },
+    );
 
-    if (hasNoBalance(user)) {
+    if (balanceEmpty) {
       try {
         await persistConversation({
           ...conversation,
@@ -396,6 +430,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
           },
           updatedAt: now,
         });
+        trackEvent('chat_balance_gate', { model: selectedModel });
         setBalancePromptOpen(true);
       } catch {
         toast.error(t('chat.storageError'));
@@ -455,6 +490,11 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
           updatedAt: Date.now(),
         });
         if (assistantContent) {
+          trackEventOnce(
+            `ga_first_chat_success_${user.id}`,
+            'first_chat_success',
+            { model: selectedModel, has_image: Boolean(userMessage.attachment) },
+          );
           refreshUser({ skipErrorHandler: true });
           revealReferralCard();
         }
@@ -541,7 +581,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
       </aside>
 
       <section className="flex min-h-0 min-w-0 flex-col">
-        <header className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 border-b border-page-divider px-3 py-2.5 sm:px-5 sm:py-3">
+        <header className="flex items-end gap-2 border-b border-page-divider px-3 py-2.5 sm:px-5 sm:py-3">
           <button
             type="button"
             onClick={() => setMobileHistoryOpen(true)}
@@ -550,25 +590,51 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
           >
             <Menu size={20} />
           </button>
-          <div className="min-w-0">
-            <p className="hidden text-xs text-page-muted sm:block">{t('chat.model')}</p>
-            <select
-              value={selectedModel}
-              onChange={changeModel}
-              disabled={loadingModels || models.length === 0 || generating}
-              className="w-full min-w-0 truncate rounded-xl border border-page-divider bg-page-surface px-3 py-2 text-sm font-semibold text-page focus:border-page-link focus:outline-none sm:mt-1 sm:max-w-[320px]"
+          <div className="flex min-w-0 flex-1 flex-wrap items-end gap-2">
+            <label className="min-w-[180px] flex-1 sm:max-w-[320px]">
+              <span className="mb-1 block text-xs text-page-muted">{t('chat.model')}</span>
+              <select
+                value={selectedModel}
+                onChange={changeModel}
+                disabled={loadingModels || models.length === 0 || generating}
+                className="h-10 w-full min-w-0 truncate rounded-xl border border-page-divider bg-page-surface px-3 text-sm font-semibold text-page focus:border-page-link focus:outline-none"
+              >
+                {models.length === 0 && (
+                  <option value="">
+                    {loadingModels ? t('config.loadingModels') : t('tokens.noSupportedModels')}
+                  </option>
+                )}
+                {models.map((model) => (
+                  <option key={model.name} value={model.name}>{model.name.split('/').pop()}</option>
+                ))}
+              </select>
+            </label>
+            <div className="shrink-0">
+              <button
+                type="button"
+                onClick={() => openTopup('chat_header')}
+                className={`flex h-10 items-center gap-1.5 rounded-xl border px-3 text-xs font-semibold tabular-nums transition-colors ${
+                  balanceEmpty
+                    ? 'border-red-500/25 bg-red-500/10 text-red-600 hover:bg-red-500/15'
+                    : 'border-emerald-500/20 bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/15'
+                }`}
+                title={`${t('dashboard.balance')}: ${symbol}${balanceValue.toFixed(2)}`}
+              >
+                <WalletCards size={15} />
+                <span>{t('dashboard.balance')} {symbol}{balanceValue.toFixed(2)}</span>
+                {balanceEmpty && <span>{t('quickstart.topupBalance')}</span>}
+              </button>
+            </div>
+            <Link
+              to="/dashboard/logs"
+              onClick={() => trackEvent('chat_logs_click')}
+              className="flex h-10 shrink-0 items-center gap-1.5 rounded-xl border border-page-divider bg-page-surface px-3 text-xs font-semibold text-page-secondary transition-colors hover:border-page-link/40 hover:text-page-link"
             >
-              {models.length === 0 && (
-                <option value="">
-                  {loadingModels ? t('config.loadingModels') : t('tokens.noSupportedModels')}
-                </option>
-              )}
-              {models.map((model) => (
-                <option key={model.name} value={model.name}>{model.name.split('/').pop()}</option>
-              ))}
-            </select>
+              <FileText size={15} />
+              <span>{t('chat.viewDetailedLogs')}</span>
+            </Link>
           </div>
-          <div className="flex items-center justify-end gap-2">
+          <div className="flex items-center justify-end">
             <button
               type="button"
               onClick={startNewConversation}
@@ -811,7 +877,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
                 onClick={() => {
                   rememberPendingChatTopup(user?.id);
                   setBalancePromptOpen(false);
-                  onTopUp();
+                  openTopup('balance_modal');
                 }}
                 className="btn-primary"
                 autoFocus

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { useSite } from '../context/SiteContext';
@@ -16,6 +16,7 @@ import {
 } from '../api';
 import { useCurrency } from '../context/SiteContext';
 import { trackEvent } from '../utils/analytics';
+import { getDefaultTopupAmount } from '../utils/funnel';
 import { consumePendingChatTopup } from '../utils/pendingChat';
 import CountUp from '../components/bits/CountUp';
 import toast from 'react-hot-toast';
@@ -121,7 +122,7 @@ function getTopupHistoryTransactionId(item) {
   );
 }
 
-function trackTopupPurchaseOnce(item, currency, exchangeRate, precision) {
+function trackTopupPurchaseOnce(item, currency, exchangeRate, precision, sourceFunnel) {
   if (!item || item.status !== 'success' || !item.payment_method) return false;
   const transactionId = getTopupHistoryTransactionId(item);
   const storageKey = `ga_purchase_topup_${transactionId}`;
@@ -140,6 +141,7 @@ function trackTopupPurchaseOnce(item, currency, exchangeRate, precision) {
     currency,
     value,
     payment_method: item.payment_method,
+    source_funnel: sourceFunnel || 'direct',
     items: [getTopupAnalyticsItem(value)],
   });
 
@@ -156,6 +158,7 @@ function trackTopupPurchaseOnce(item, currency, exchangeRate, precision) {
 export default function Topup() {
   const { t } = useTranslation();
   const { user, refreshUser } = useAuth();
+  const location = useLocation();
   const navigate = useNavigate();
   const { site } = useSite();
   const { symbol, rate, code, decimals } = useCurrency();
@@ -177,6 +180,7 @@ export default function Topup() {
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [payingMethod, setPayingMethod] = useState('');
   const initializedAmount = useRef(false);
+  const viewTracked = useRef(false);
   const returnPurchaseCheckStarted = useRef(false);
 
   // Crypto modal
@@ -196,11 +200,22 @@ export default function Topup() {
   const enableStripe = topupInfo?.enable_stripe_topup;
   const enableCreem = topupInfo?.enable_creem_topup;
   const enableCrypto = topupInfo?.enable_crypto_topup;
-  const resumePendingChat = useCallback(() => {
-    if (!consumePendingChatTopup(user?.id)) return false;
-    navigate('/chats', { replace: true });
-    return true;
-  }, [navigate, user?.id]);
+  const sourceFunnel = ['chat', 'api'].includes(location.state?.sourceFunnel)
+    ? location.state.sourceFunnel
+    : 'direct';
+  const suggestedAmount = location.state?.suggestedAmount;
+  const resumePendingFunnel = useCallback((source = sourceFunnel) => {
+    const hasPendingChat = consumePendingChatTopup(user?.id);
+    if (hasPendingChat || source === 'chat') {
+      navigate('/chats', { replace: true });
+      return true;
+    }
+    if (source === 'api') {
+      navigate('/api-keys', { replace: true });
+      return true;
+    }
+    return false;
+  }, [navigate, sourceFunnel, user?.id]);
 
   const loadData = useCallback(async () => {
     let historyItems = [];
@@ -252,14 +267,15 @@ export default function Topup() {
         .sort((a, b) => Number(b.create_time || 0) - Number(a.create_time || 0))[0];
 
       if (!cancelled && latestSuccess) {
-        trackTopupPurchaseOnce(latestSuccess, code || 'CNY', rate, decimals);
+        const purchaseSource = pendingTopup?.source_funnel || sourceFunnel;
+        trackTopupPurchaseOnce(latestSuccess, code || 'CNY', rate, decimals, purchaseSource);
         try {
           localStorage.removeItem(PENDING_TOPUP_ANALYTICS_KEY);
         } catch {
           // Best-effort cleanup only.
         }
         await refreshUser({ skipErrorHandler: true });
-        if (!cancelled) resumePendingChat();
+        if (!cancelled) resumePendingFunnel(purchaseSource);
         return;
       }
       if (!cancelled && attempts < 5) {
@@ -272,7 +288,7 @@ export default function Topup() {
       cancelled = true;
       if (timeoutId) window.clearTimeout(timeoutId);
     };
-  }, [code, decimals, loadData, rate, refreshUser, resumePendingChat, site?.enable_topup]);
+  }, [code, decimals, loadData, rate, refreshUser, resumePendingFunnel, site?.enable_topup, sourceFunnel]);
 
   const quota = usage?.quota ?? user?.quota ?? 0;
   const usedQuota = usage?.used_quota ?? user?.used_quota ?? 0;
@@ -299,11 +315,19 @@ export default function Topup() {
   useEffect(() => {
     if (initializedAmount.current || !topupInfo || presetAmounts.length === 0) return;
     initializedAmount.current = true;
-    const defaultAmount = 10;
+    const defaultAmount = getDefaultTopupAmount(presetAmounts, suggestedAmount);
     setSelectedPreset(defaultAmount);
     setAmount(String(defaultAmount));
     setDisplayAmount(toDisplayAmount(defaultAmount));
-  }, [topupInfo, presetAmounts, toDisplayAmount]);
+    if (!viewTracked.current) {
+      viewTracked.current = true;
+      trackEvent('topup_view', {
+        source_funnel: sourceFunnel,
+        selected_amount: Number((defaultAmount * rate).toFixed(decimals)),
+        currency: code || 'CNY',
+      });
+    }
+  }, [code, decimals, presetAmounts, rate, sourceFunnel, suggestedAmount, topupInfo, toDisplayAmount]);
 
   const handleRedeem = async (e) => {
     e.preventDefault();
@@ -320,7 +344,7 @@ export default function Topup() {
           refreshUser({ skipErrorHandler: true }),
         ]);
         toast.success(t('topup.balanceRedeemed'));
-        resumePendingChat();
+        resumePendingFunnel();
       }
     } catch (err) { /* interceptor */ }
     setRedeeming(false);
@@ -402,12 +426,14 @@ export default function Topup() {
         currency: code || 'CNY',
         value: analyticsValue,
         payment_method: method,
+        source_funnel: sourceFunnel,
         items: [getTopupAnalyticsItem(analyticsValue)],
       });
       try {
         localStorage.setItem(PENDING_TOPUP_ANALYTICS_KEY, JSON.stringify({
           amount: payAmount,
           started_at: Math.floor(Date.now() / 1000) - 60,
+          source_funnel: sourceFunnel,
         }));
       } catch {
         // Purchase tracking can still fall back to latest successful top-up.
@@ -508,6 +534,7 @@ export default function Topup() {
           currency: code || 'CNY',
           value: analyticsValue,
           payment_method: 'crypto',
+          source_funnel: sourceFunnel,
           items: [getTopupAnalyticsItem(analyticsValue)],
         });
         setCryptoOrder(res.data.data);
@@ -533,6 +560,7 @@ export default function Topup() {
             currency: code || 'CNY',
             value: analyticsValue,
             payment_method: 'crypto',
+            source_funnel: sourceFunnel,
             items: [getTopupAnalyticsItem(analyticsValue)],
           });
           clearInterval(interval);
@@ -540,7 +568,7 @@ export default function Topup() {
           setCryptoOrder(null);
           toast.success(t('topup.paymentSuccess'));
           await Promise.all([loadData(), refreshUser()]);
-          resumePendingChat();
+          resumePendingFunnel();
         } else if (res.data.data?.status === 'expired') {
           clearInterval(interval);
           setCryptoPolling(false);
