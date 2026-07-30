@@ -266,6 +266,7 @@ export default function ClaudeHome() {
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Link
                 to={user ? '/topup' : '/register'}
+                state={user ? undefined : { from: '/topup' }}
                 className="route-motion-button route-motion-primary inline-flex items-center justify-center gap-2 rounded-full bg-[#D97757] px-6 py-3.5 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(217,119,87,0.24)] transition-all hover:-translate-y-0.5 hover:bg-[#C4613F]"
               >
                 <ShoppingBag size={17} />

@@ -8,6 +8,11 @@ const toPath = (value) => {
   return `${value.pathname || ''}${value.search || ''}${value.hash || ''}`;
 };
 
+const getDirectReturnTo = (location) => {
+  const params = new URLSearchParams(location?.search || '');
+  return params.get('redirect') || params.get('next') || toPath(location?.state?.from);
+};
+
 const cleanReturnTo = (path) => {
   if (!path || !path.startsWith('/') || path.startsWith('//')) return '/dashboard';
   const pathname = path.split(/[?#]/)[0];
@@ -27,9 +32,11 @@ const sameOriginReferrerPath = () => {
 };
 
 export const rememberAuthReturnTo = (location) => {
-  const rawPath = toPath(location);
-  const pathname = rawPath.split(/[?#]/)[0];
-  if (isAuthPath(pathname)) return;
+  const currentPath = toPath(location);
+  const direct = getDirectReturnTo(location);
+  const pathname = currentPath.split(/[?#]/)[0];
+  if (isAuthPath(pathname) && !direct) return;
+  const rawPath = direct || currentPath;
   const path = cleanReturnTo(rawPath);
   try {
     sessionStorage.setItem(AUTH_RETURN_TO_KEY, path);
@@ -39,8 +46,7 @@ export const rememberAuthReturnTo = (location) => {
 };
 
 export const getAuthReturnTo = (location) => {
-  const params = new URLSearchParams(location.search || '');
-  const direct = params.get('redirect') || params.get('next') || toPath(location.state?.from);
+  const direct = getDirectReturnTo(location);
   if (direct) return cleanReturnTo(direct);
   try {
     const stored = sessionStorage.getItem(AUTH_RETURN_TO_KEY);

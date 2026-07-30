@@ -9,6 +9,7 @@
     "dev": "vite",
     "build": "vite build && node scripts/prerender.mjs",
     "preview": "vite preview",
+    "check:auth-return": "node scripts/check-auth-return.mjs",
     "check:customer-emails": "node scripts/check-customer-emails.mjs"
   },
   "dependencies": {
