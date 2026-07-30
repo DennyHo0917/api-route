@@ -1109,7 +1109,7 @@ print(message.content[0].text)`;
           </div>
         </div>
 
-        <div className="border-t border-page-divider">
+        <div className="hidden border-t border-page-divider">
           <div className="flex items-center justify-between px-4 py-2.5 bg-page-inset/70">
             <div className="flex items-center gap-2 min-w-0">
               <div className="flex gap-1.5">

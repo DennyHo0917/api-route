@@ -610,7 +610,7 @@ export default function Tokens() {
             description={t('quickstart.step2Desc')}
             open={visibleTokens.length > 0}
           >
-            <DownloadCatalog embedded />
+            <DownloadCatalog embedded mode="cc-switch" />
           </QuickStartStep>
 
           <QuickStartStep
@@ -652,6 +652,16 @@ export default function Tokens() {
               </div>
             </div>
           </QuickStartStep>
+
+          <section className="rounded-2xl border border-dashed border-page-divider bg-page-surface/50 p-5 md:p-6">
+            <h2 className="text-lg font-bold text-page">{t('quickstart.optionalClientsTitle')}</h2>
+            <p className="mt-1 text-sm leading-6 text-page-secondary">
+              {t('quickstart.optionalClientsDesc')}
+            </p>
+            <div className="mt-5">
+              <DownloadCatalog embedded mode="clients" />
+            </div>
+          </section>
         </div>
       </section>
     </div>

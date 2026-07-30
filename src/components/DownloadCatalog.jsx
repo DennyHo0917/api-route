@@ -1,20 +1,14 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Code, Download, MonitorDown, PackageCheck, ShieldCheck, Sparkles, SquareTerminal } from 'lucide-react';
+import { Download, ShieldCheck } from 'lucide-react';
 import { DOWNLOAD_TOOLS } from '../constants/downloads';
 
-const iconMap = {
-  'cc-switch': Sparkles,
-  codex: MonitorDown,
-  'claude-code': SquareTerminal,
-  vscode: Code,
-  'cherry-studio': PackageCheck,
-  nodejs: Download,
-};
-
-export default function DownloadCatalog({ embedded = false }) {
+export default function DownloadCatalog({ embedded = false, mode = 'all' }) {
   const { t, i18n } = useTranslation();
   const isZh = i18n.resolvedLanguage?.startsWith('zh');
+  const tools = mode === 'cc-switch'
+    ? DOWNLOAD_TOOLS.filter((tool) => tool.id === 'cc-switch')
+    : DOWNLOAD_TOOLS.filter((tool) => mode !== 'clients' || tool.id !== 'cc-switch');
 
   return (
     <section className={embedded ? '' : 'space-y-6'}>
@@ -31,15 +25,20 @@ export default function DownloadCatalog({ embedded = false }) {
         </p>
       </div>}
 
-      <div className="grid w-full min-w-0 gap-4 lg:grid-cols-2">
-        {DOWNLOAD_TOOLS.map((tool) => {
-          const Icon = iconMap[tool.id] || Download;
-
-          return (
-            <article key={tool.id} className="glass min-w-0 rounded-xl p-5">
+      <div className={mode === 'cc-switch' ? 'w-full min-w-0' : 'grid w-full min-w-0 gap-4 lg:grid-cols-2'}>
+        {tools.map((tool) => (
+            <article
+              key={tool.id}
+              className={mode === 'cc-switch' ? 'min-w-0' : 'glass min-w-0 rounded-xl p-5'}
+            >
               <div className="flex items-start gap-3">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-page-link/10 text-page-link">
-                  <Icon className="h-5 w-5" />
+                  <img
+                    src={tool.logo}
+                    alt=""
+                    className="h-7 w-7 object-contain"
+                    loading="lazy"
+                  />
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
@@ -91,8 +90,7 @@ export default function DownloadCatalog({ embedded = false }) {
                 ))}
               </div>
             </article>
-          );
-        })}
+        ))}
       </div>
     </section>
   );
