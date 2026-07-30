@@ -136,8 +136,8 @@
     "loginNotice.shareToX": "Share to X",
     "loginNotice.xPost": "I'm using API-Route to access GPT, Claude, Gemini, and other leading models through a single API—for 90% less than official pricing. If you use AI APIs regularly, the savings really add up. Give it a try: {{link}}",
     "referral.menuLabel": "Earn {{rate}}% referral rewards",
-    "referral.cardTitle": "Your answer is ready—invite a friend",
-    "referral.cardDesc": "Earn {{rate}}% commission when your friend tops up.",
+    "referral.cardTitle": "Congratulations—your request succeeded!",
+    "referral.cardDesc": "Enjoying it? Invite a friend and earn {{rate}}% commission when they top up.",
     "referral.copyLink": "Copy referral link",
     "referral.copyFailed": "Could not copy the link. Please try again.",
 

@@ -136,8 +136,8 @@
     "loginNotice.shareToX": "分享到 X",
     "loginNotice.xPost": "我正在使用 API-Route，一个 API 即可调用 GPT、Claude、Gemini 等主流模型。价格比官方低 90%，对经常调用 API 的人来说，能省下一大笔。邀请你一起来体验：{{link}}",
     "referral.menuLabel": "邀请返佣 {{rate}}%",
-    "referral.cardTitle": "回答成功，邀请好友一起使用",
-    "referral.cardDesc": "好友充值后，你可获得 {{rate}}% 返佣。",
+    "referral.cardTitle": "恭喜，调用成功！",
+    "referral.cardDesc": "觉得好用？邀请好友一起使用，好友充值后你可获得 {{rate}}% 返佣。",
     "referral.copyLink": "复制邀请链接",
     "referral.copyFailed": "复制失败，请重试",
 
