@@ -3,14 +3,13 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import {
-  AppWindow,
   ArrowRight,
   CheckCircle2,
   Sparkles,
-  Store,
+  X,
   Zap,
 } from 'lucide-react';
-import { createSubDistributorOrder, getSiteModels, getSubDistributorInfo } from '../api';
+import { createSubDistributorOrder, getSubDistributorInfo } from '../api';
 import { useAuth } from '../context/AuthContext';
 import { useCurrency } from '../context/SiteContext';
 import { getLocalizedPath, normalizeAppLanguage } from '../i18n/languageUtils';
@@ -66,42 +65,12 @@ const SHOWCASE_IMAGES = [
   { src: customerManagementScreenshot, width: 1565, height: 1295 },
   { src: usageLogsScreenshot, width: 1559, height: 1253 },
 ];
-const INBOUND_ROUTE = {
-  id: 'app',
-  d: 'M70 160 C140 160 220 160 302 160',
-  color: '#2F855A',
-  duration: '4.2s',
-  begin: '-1.8s',
-  secondBegin: '-3.7s',
-};
-const MODEL_ROUTES = [
-  { id: 'openai', d: 'M302 160 C418 150 468 52 646 48', color: '#2F855A', duration: '5.8s', begin: '-1.1s', secondBegin: '-4.0s' },
-  { id: 'claude', d: 'M302 160 C420 150 485 104 646 98', color: '#D97757', duration: '5.2s', begin: '-2.4s', secondBegin: '-4.8s' },
-  { id: 'gemini', d: 'M302 160 C430 158 500 160 646 160', color: '#D6A23F', duration: '4.8s', begin: '-0.4s', secondBegin: '-2.9s' },
-  { id: 'deepseek', d: 'M302 160 C424 174 488 220 646 226', color: '#2F855A', duration: '5.5s', begin: '-3.1s', secondBegin: '-5.4s' },
-  { id: 'grok', d: 'M302 160 C412 184 458 274 646 282', color: '#D97757', duration: '6.1s', begin: '-1.7s', secondBegin: '-4.6s' },
-];
-const providerLogo = (slug) => `https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/${slug}.svg`;
-const grokLogo = 'https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@latest/icons/grok.svg';
-const MODEL_NODES = [
-  { id: 'openai', mark: 'O', label: 'OpenAI', logo: providerLogo('openai'), top: '15%' },
-  { id: 'claude', mark: 'C', label: 'Claude', logo: providerLogo('claude'), top: '31%' },
-  { id: 'gemini', mark: 'G', label: 'Gemini', logo: providerLogo('googlegemini'), top: '50%' },
-  { id: 'deepseek', mark: 'D', label: 'DeepSeek', logo: providerLogo('deepseek'), top: '69%' },
-  { id: 'grok', mark: 'X', label: 'Grok', logo: grokLogo, top: '85%' },
-];
-const ROUTER_MAP_COPY = {
-  en: { customer: 'Your customers', site: 'Your site', relay: 'AI API site', label: 'Customers connect to your AI API site, then your site routes to model providers' },
-  zh: { customer: '你的客户', site: '你的站点', relay: 'AI API 分站', label: '客户连接你的 AI API 分站，再由分站连接各个大模型' },
-  ja: { customer: 'あなたの顧客', site: 'あなたのサイト', relay: 'AI API サイト', label: '顧客があなたの AI API サイトに接続し、サイトが各モデルへ中継します' },
-  ko: { customer: '고객', site: '내 사이트', relay: 'AI API 사이트', label: '고객이 내 AI API 사이트에 연결되고, 사이트가 각 모델로 중계합니다' },
-};
 const SHOWCASE_COPY = {
   zh: {
     title: '真实后台，一套管理完整业务',
     description: '供应商、模型、客户和调用记录都在同一个后台完成管理。',
     items: [
-      ['可选模型实时更新', '平台已完成模型与上游接入，可按业务需要选择已上架模型。'],
+      ['70+ 个上游供应商接入', '平台已完成上游供应商接入，可按业务需要选择和订阅供应商。'],
       ['按实际情况随时上下架', '根据价格、稳定性和业务需要，随时启用或停用供应商及其模型。'],
       ['管理客户账户', '查看客户余额、消耗、返佣和账号状态，日常运营更清楚。'],
       ['核对每次调用', '按用户、模型、密钥和费用追踪调用记录与实际消耗。'],
@@ -111,7 +80,7 @@ const SHOWCASE_COPY = {
     title: 'One real dashboard for the whole operation',
     description: 'Manage providers, models, customers, and usage records from one place.',
     items: [
-      ['Available models update automatically', 'The platform handles model and upstream integration so you can choose from currently listed models.'],
+      ['70+ upstream providers connected', 'The platform handles upstream integration so you can choose and subscribe to providers for your business.'],
       ['List or unlist providers anytime', 'Enable or disable providers and their models as pricing, stability, and demand change.'],
       ['Manage customer accounts', 'Review balances, usage, commissions, and account status in one view.'],
       ['Audit every API call', 'Trace usage by customer, model, key, cost, and response time.'],
@@ -121,7 +90,7 @@ const SHOWCASE_COPY = {
     title: '実際の管理画面で運営を一元化',
     description: 'プロバイダー、モデル、顧客、利用履歴を一つの管理画面で扱えます。',
     items: [
-      ['利用可能なモデル数を自動更新', 'モデルと上流プロバイダーの接続はプラットフォームが担当し、公開中のモデルから選択できます。'],
+      ['70社以上の上流プロバイダーに接続', '上流プロバイダーとの接続はプラットフォームが担当し、事業に合わせて選択・購読できます。'],
       ['状況に応じていつでも公開・停止', '価格、安定性、需要に合わせてプロバイダーとモデルをいつでも有効化・停止できます。'],
       ['顧客アカウントを管理', '残高、利用量、紹介料率、アカウント状態をまとめて確認できます。'],
       ['API 利用履歴を確認', '顧客、モデル、キー、費用、応答時間ごとに呼び出しを追跡できます。'],
@@ -131,80 +100,63 @@ const SHOWCASE_COPY = {
     title: '실제 관리 화면에서 운영을 한 번에',
     description: '공급자, 모델, 고객, 사용 기록을 하나의 관리자 화면에서 관리합니다.',
     items: [
-      ['사용 가능한 모델 수 자동 업데이트', '모델과 상위 공급자 연동은 플랫폼이 처리하며 현재 등록된 모델 중에서 선택할 수 있습니다.'],
+      ['70개 이상의 상위 공급자 연동', '상위 공급자 연동은 플랫폼이 처리하며 비즈니스에 맞는 공급자를 선택하고 구독할 수 있습니다.'],
       ['상황에 따라 언제든 노출 전환', '가격, 안정성, 수요 변화에 맞춰 공급자와 모델을 즉시 활성화하거나 중지할 수 있습니다.'],
       ['고객 계정 관리', '잔액, 사용량, 커미션, 계정 상태를 한 화면에서 확인할 수 있습니다.'],
       ['모든 API 호출 확인', '고객, 모델, 키, 비용, 응답 시간별로 사용 기록을 추적할 수 있습니다.'],
     ],
   },
 };
-const MODEL_COUNT_LABEL = {
-  zh: (count) => `${count} 个模型可选`,
-  en: (count) => `${count} models available`,
-  ja: (count) => `${count} モデルから選択`,
-  ko: (count) => `${count}개 모델 선택`,
+const TOUR_COPY = {
+  zh: {
+    cta: '查看真实后台',
+    eyebrow: '真实后台流程',
+    progress: (current, total) => `第 ${current} / ${total} 步`,
+    previous: '上一步',
+    next: '下一步',
+    open: '了解后开通',
+    close: '关闭后台导览',
+    original: '查看原图',
+    responsibility: '平台负责上游接入、部署和日常维护；你负责品牌、定价、获客和客户支持。',
+    disclaimer: '界面截图用于展示操作流程，不代表实时数据。模型、供应商、价格和可用状态以后端实际结果为准。',
+  },
+  en: {
+    cta: 'View the real dashboard',
+    eyebrow: 'Real dashboard workflow',
+    progress: (current, total) => `Step ${current} of ${total}`,
+    previous: 'Previous',
+    next: 'Next',
+    open: 'Launch after the tour',
+    close: 'Close dashboard tour',
+    original: 'View full image',
+    responsibility: 'The platform handles upstream integration, deployment, and maintenance. You handle branding, pricing, customer acquisition, and support.',
+    disclaimer: 'Screenshots demonstrate the workflow, not live data. Models, providers, prices, and availability depend on the actual backend response.',
+  },
+  ja: {
+    cta: '実際の管理画面を見る',
+    eyebrow: '実際の管理フロー',
+    progress: (current, total) => `${current} / ${total} ステップ`,
+    previous: '戻る',
+    next: '次へ',
+    open: '確認して開設する',
+    close: '管理画面ツアーを閉じる',
+    original: '原寸で見る',
+    responsibility: '上流接続、デプロイ、日常保守はプラットフォームが担当します。ブランド、価格設定、顧客獲得、顧客対応はあなたの担当です。',
+    disclaimer: 'スクリーンショットは操作フローの説明用で、リアルタイムデータではありません。モデル、プロバイダー、価格、稼働状況は実際のバックエンド結果に従います。',
+  },
+  ko: {
+    cta: '실제 관리자 화면 보기',
+    eyebrow: '실제 관리자 운영 흐름',
+    progress: (current, total) => `${current} / ${total} 단계`,
+    previous: '이전',
+    next: '다음',
+    open: '확인 후 개설하기',
+    close: '관리자 화면 둘러보기 닫기',
+    original: '원본 이미지 보기',
+    responsibility: '상위 연동, 배포, 일상 유지보수는 플랫폼이 담당합니다. 브랜딩, 가격 설정, 고객 확보와 고객 지원은 직접 담당합니다.',
+    disclaimer: '스크린샷은 운영 흐름을 설명하기 위한 것이며 실시간 데이터가 아닙니다. 모델, 공급자, 가격, 사용 가능 여부는 실제 백엔드 응답을 따릅니다.',
+  },
 };
-function ModelRouteAnimation({ language }) {
-  const copy = ROUTER_MAP_COPY[language] || ROUTER_MAP_COPY.en;
-  const routes = [INBOUND_ROUTE, ...MODEL_ROUTES];
-
-  return (
-    <div className="sub-dist-router-map hidden lg:block" aria-label={copy.label}>
-      <svg className="sub-dist-router-map__lines" viewBox="0 0 760 320" preserveAspectRatio="none" aria-hidden="true">
-        <path className="sub-dist-router-map__route sub-dist-router-map__route--in" d={INBOUND_ROUTE.d} stroke={INBOUND_ROUTE.color} />
-        {MODEL_ROUTES.map((route) => (
-          <path key={route.id} className="sub-dist-router-map__route" d={route.d} stroke={route.color} />
-        ))}
-        {routes.map((route) => (
-          [route.begin, route.secondBegin].map((begin) => (
-            <circle key={`${route.id}-${begin}`} className="sub-dist-router-map__dot" r="5" fill={route.color}>
-              <animateMotion dur={route.duration} begin={begin} repeatCount="indefinite" path={route.d} />
-            </circle>
-          ))
-        ))}
-      </svg>
-
-      <span className="sub-dist-router-map__ring" />
-      <span className="sub-dist-router-map__ring sub-dist-router-map__ring--slow" />
-
-      <div className="sub-dist-router-map__node sub-dist-router-map__node--app">
-        <span className="sub-dist-router-map__node-icon">
-          <AppWindow className="h-4 w-4" />
-        </span>
-        <span>{copy.customer}</span>
-      </div>
-
-      <div className="sub-dist-router-map__node sub-dist-router-map__node--center">
-        <span className="sub-dist-router-map__center-icon">
-          <Store className="h-6 w-6" />
-        </span>
-        <strong>{copy.site}</strong>
-        <span>{copy.relay}</span>
-      </div>
-
-      {MODEL_NODES.map((node) => (
-        <div key={node.id} className="sub-dist-router-map__node sub-dist-router-map__node--model" style={{ top: node.top }}>
-          <span className="sub-dist-router-map__model-mark">
-            <img
-              src={node.logo}
-              alt=""
-              loading="lazy"
-              decoding="async"
-              className="sub-dist-router-map__model-logo"
-              onError={(event) => {
-                event.currentTarget.classList.add('hidden');
-                event.currentTarget.nextElementSibling?.classList.remove('hidden');
-              }}
-            />
-            <span className="hidden">{node.mark}</span>
-          </span>
-          <span>{node.label}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 const MARKETING_COPY = {
   zh: {
     eyebrow: 'AI API 分站转售平台',
@@ -541,7 +493,6 @@ export default function SubDistributor() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [subInfo, setSubInfo] = useState(null);
-  const [modelCount, setModelCount] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [cryptoOrder, setCryptoOrder] = useState(null);
   const [form, setForm] = useState({
@@ -555,6 +506,7 @@ export default function SubDistributor() {
     sales: '0',
     markup: '0',
   });
+  const [tourStep, setTourStep] = useState(null);
   const pricingPanelRef = useRef(null);
   const pricingTrackedRef = useRef(false);
   const formStartedRef = useRef(false);
@@ -579,17 +531,6 @@ export default function SubDistributor() {
       })
       .catch(() => {})
       .finally(() => setLoading(false));
-    getSiteModels()
-      .then((res) => {
-        if (!res.data.success) return;
-        setModelCount(new Set(
-          (res.data.data || [])
-            .filter((model) => model.enabled !== false)
-            .map((model) => model.model_name)
-            .filter(Boolean),
-        ).size);
-      })
-      .catch(() => {});
   }, []);
 
   const paymentMethods = subInfo?.pay_methods || [];
@@ -605,19 +546,42 @@ export default function SubDistributor() {
   const language = normalizeAppLanguage(i18n.resolvedLanguage || i18n.language);
   const copy = MARKETING_COPY[language] || MARKETING_COPY.en;
   const showcaseCopy = SHOWCASE_COPY[language] || SHOWCASE_COPY.en;
-  const showcaseItems = useMemo(() => {
-    if (modelCount <= 0) return showcaseCopy.items;
-    return [
-      [MODEL_COUNT_LABEL[language]?.(modelCount) || MODEL_COUNT_LABEL.en(modelCount), showcaseCopy.items[0][1]],
-      ...showcaseCopy.items.slice(1),
-    ];
-  }, [language, modelCount, showcaseCopy]);
+  const tourCopy = TOUR_COPY[language] || TOUR_COPY.en;
+  const showcaseItems = showcaseCopy.items;
   const parsedSales = Number(profitInputs.sales);
   const parsedMarkup = Number(profitInputs.markup);
   const salesAmount = Number.isFinite(parsedSales) ? Math.max(0, parsedSales) : 0;
   const markupPercent = Number.isFinite(parsedMarkup) ? Math.max(0, parsedMarkup) : 0;
   const estimatedMonthlyProfit = salesAmount * markupPercent / (100 + markupPercent);
   const estimatedYearlyProfit = estimatedMonthlyProfit * 12;
+  const activeTourStep = tourStep ?? 0;
+  const activeTourImage = SHOWCASE_IMAGES[activeTourStep];
+  const [activeTourTitle, activeTourDescription] = showcaseItems[activeTourStep] || showcaseItems[0];
+
+  useEffect(() => {
+    if (tourStep === null) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setTourStep(null);
+    };
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [tourStep]);
+
+  const openTour = (step = 0, source = 'hero') => {
+    setTourStep(step);
+    trackEvent('reseller_tour_open', { source, step: step + 1 });
+  };
+
+  const changeTourStep = (step) => {
+    setTourStep(step);
+    trackEvent('reseller_tour_step', { step: step + 1 });
+  };
 
   useEffect(() => {
     if (loading || authLoading || pricingTrackedRef.current || !pricingPanelRef.current) return undefined;
@@ -943,14 +907,14 @@ export default function SubDistributor() {
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
-              <a
-                href="#open-platform"
+              <button
+                type="button"
                 className="btn-primary inline-flex items-center justify-center gap-2"
-                onClick={() => trackEvent('reseller_cta_click', { placement: 'hero_primary' })}
+                onClick={() => openTour()}
               >
-                {copy.primaryCta}
+                {tourCopy.cta}
                 <ArrowRight className="h-4 w-4" />
-              </a>
+              </button>
               <a
                 href="#audience"
                 className="btn-secondary inline-flex items-center justify-center gap-2"
@@ -968,7 +932,17 @@ export default function SubDistributor() {
               ))}
             </div>
           </div>
-          <ModelRouteAnimation language={language} />
+          <video
+            className="aspect-video w-full rounded-3xl border border-page-divider bg-black shadow-sm"
+            aria-label={copy.heroTitle}
+            autoPlay
+            controls
+            loop
+            muted
+            playsInline
+            preload="auto"
+            src="/videos/api-route-explainer.mp4"
+          />
         </FadeContent>
 
         <FadeContent direction="right" distance={38} duration={780} delay={120} className="lg:self-stretch">
@@ -1021,15 +995,10 @@ export default function SubDistributor() {
                   delay={(index % 2) * 80}
                 >
                   <article className="overflow-hidden rounded-3xl border border-page-divider bg-page-surface shadow-sm">
-                    <a
-                      href={image.src}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="block overflow-hidden bg-white"
-                      onClick={() => trackEvent('reseller_demo_click', {
-                        demo_index: index + 1,
-                        demo_name: title,
-                      })}
+                    <button
+                      type="button"
+                      className="block w-full overflow-hidden bg-white text-left"
+                      onClick={() => openTour(index, 'showcase')}
                     >
                       <img
                         src={image.src}
@@ -1040,7 +1009,7 @@ export default function SubDistributor() {
                         decoding="async"
                         className="h-72 w-full object-cover object-top transition-transform duration-300 hover:scale-[1.01] sm:h-80"
                       />
-                    </a>
+                    </button>
                     <div className="p-5">
                       <h3 className="text-base font-semibold text-page">{title}</h3>
                       <p className="mt-1.5 text-sm leading-6 text-page-secondary">{description}</p>
@@ -1243,6 +1212,121 @@ export default function SubDistributor() {
         </div>
       </section>
       </SnapSection>
+
+      {tourStep !== null && (
+        <div
+          className="modal-overlay fixed inset-0 z-[100] flex items-center justify-center bg-black/65 p-3 backdrop-blur-sm sm:p-6"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) setTourStep(null);
+          }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="reseller-tour-title"
+            className="glass flex max-h-[calc(100dvh-1.5rem)] w-full max-w-6xl flex-col overflow-hidden rounded-3xl border border-page-divider shadow-2xl sm:max-h-[calc(100dvh-3rem)]"
+          >
+            <div className="flex items-center justify-between gap-4 border-b border-page-divider px-4 py-3 sm:px-6">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-page-link">{tourCopy.eyebrow}</p>
+                <p className="mt-1 text-sm text-page-secondary">
+                  {tourCopy.progress(activeTourStep + 1, SHOWCASE_IMAGES.length)}
+                </p>
+              </div>
+              <button
+                type="button"
+                autoFocus
+                aria-label={tourCopy.close}
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-page-divider text-page-secondary transition-colors hover:bg-page-surface-hover hover:text-page"
+                onClick={() => setTourStep(null)}
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="min-h-0 overflow-y-auto">
+              <div className="grid lg:grid-cols-[minmax(0,1.45fr)_minmax(300px,0.55fr)]">
+                <a
+                  href={activeTourImage.src}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group relative block overflow-hidden bg-white"
+                  onClick={() => trackEvent('reseller_demo_click', {
+                    demo_index: activeTourStep + 1,
+                    demo_name: activeTourTitle,
+                  })}
+                >
+                  <img
+                    src={activeTourImage.src}
+                    width={activeTourImage.width}
+                    height={activeTourImage.height}
+                    alt={`${activeTourTitle}：${activeTourDescription}`}
+                    decoding="async"
+                    className="aspect-[16/10] w-full object-cover object-top lg:min-h-[560px]"
+                  />
+                  <span className="absolute bottom-3 right-3 rounded-full bg-black/70 px-3 py-1.5 text-xs font-medium text-white opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
+                    {tourCopy.original}
+                  </span>
+                </a>
+
+                <div className="flex flex-col p-5 sm:p-7">
+                  <div className="flex gap-2" aria-hidden="true">
+                    {SHOWCASE_IMAGES.map((image, index) => (
+                      <span
+                        key={image.src}
+                        className={`h-1.5 flex-1 rounded-full ${index <= activeTourStep ? 'bg-page-link' : 'bg-page-inset'}`}
+                      />
+                    ))}
+                  </div>
+                  <h2 id="reseller-tour-title" className="mt-6 text-2xl font-semibold tracking-tight text-page">
+                    {activeTourTitle}
+                  </h2>
+                  <p className="mt-3 text-sm leading-7 text-page-secondary">{activeTourDescription}</p>
+                  <p className="mt-6 rounded-2xl border border-page-link/20 bg-page-link/5 p-4 text-sm leading-6 text-page">
+                    {tourCopy.responsibility}
+                  </p>
+                  <p className="mt-3 rounded-2xl bg-page-inset p-4 text-xs leading-6 text-page-muted">
+                    {tourCopy.disclaimer}
+                  </p>
+
+                  <div className="mt-auto flex flex-col-reverse gap-3 pt-8 sm:flex-row sm:justify-between">
+                    <button
+                      type="button"
+                      disabled={activeTourStep === 0}
+                      className="btn-secondary disabled:cursor-not-allowed disabled:opacity-40"
+                      onClick={() => changeTourStep(activeTourStep - 1)}
+                    >
+                      {tourCopy.previous}
+                    </button>
+                    {activeTourStep < SHOWCASE_IMAGES.length - 1 ? (
+                      <button
+                        type="button"
+                        className="btn-primary inline-flex items-center justify-center gap-2"
+                        onClick={() => changeTourStep(activeTourStep + 1)}
+                      >
+                        {tourCopy.next}
+                        <ArrowRight className="h-4 w-4" />
+                      </button>
+                    ) : (
+                      <a
+                        href="#open-platform"
+                        className="btn-primary inline-flex items-center justify-center gap-2"
+                        onClick={() => {
+                          setTourStep(null);
+                          trackEvent('reseller_tour_complete');
+                        }}
+                      >
+                        {tourCopy.open}
+                        <ArrowRight className="h-4 w-4" />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </SnapDeck>
   );
 }
