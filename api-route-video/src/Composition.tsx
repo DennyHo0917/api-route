@@ -270,14 +270,24 @@ const CoreNode: React.FC<{
     >
       {website ? "W" : "A"}
     </div>
-    <div style={{ marginTop: 14, fontSize: 30, fontWeight: 900 }}>{label}</div>
     <div
       style={{
-        marginTop: 5,
-        fontSize: 18,
+        marginTop: website ? 10 : 14,
+        fontSize: website ? 28 : 30,
+        lineHeight: 1,
+        fontWeight: 900,
+      }}
+    >
+      {label}
+    </div>
+    <div
+      style={{
+        marginTop: website ? 4 : 5,
+        fontSize: website ? 15 : 18,
+        lineHeight: 1,
         fontWeight: 700,
         color: COLORS.muted,
-        letterSpacing: "0.08em",
+        letterSpacing: website ? "0.05em" : "0.08em",
       }}
     >
       {sublabel}
@@ -511,10 +521,10 @@ const ProviderRing: React.FC<{
       <div
         style={{
           position: "absolute",
-          left: center.x - 172,
-          top: center.y + radius + 8,
-          width: 344,
-          textAlign: "center",
+          left: label === "CHOOSE YOUR PROVIDERS" ? center.x - radius - 174 : center.x - 172,
+          top: label === "CHOOSE YOUR PROVIDERS" ? center.y + radius + 70 : center.y + radius + 8,
+          width: label === "CHOOSE YOUR PROVIDERS" ? 220 : 344,
+          textAlign: label === "CHOOSE YOUR PROVIDERS" ? "right" : "center",
           opacity,
           color: COLORS.orangeDark,
           fontSize: 25,
@@ -573,6 +583,9 @@ const NetworkScene: React.FC = () => {
   const alternateRoute = fade(frame, 500, 22);
   const websiteOpacity = fade(frame, 650, 28);
   const copiedOpacity = fade(frame, 900, 20);
+  const unstableProvider = frame >= 925;
+  const removedProviderOpacity = interpolate(frame, [950, 990], [1, 0], clamp);
+  const removedProviderOffset = interpolate(frame, [950, 990], [0, 90], clamp);
   const handProgress = interpolate(frame, [760, 900], [0, 1], {
     ...clamp,
     easing: Easing.bezier(0.45, 0, 0.2, 1),
@@ -591,35 +604,35 @@ const NetworkScene: React.FC = () => {
         start={0}
         end={175}
         title="One API. Every connection."
-        subtitle="Users connect once. API-Route handles the routing."
+        subtitle="Connect once. We handle the routing."
       />
       <Headline
         frame={frame}
         start={175}
         end={330}
         title="70+ upstream providers."
-        subtitle="New providers connect to one resilient routing layer."
+        subtitle="One reliable routing layer connects them all."
       />
       <Headline
         frame={frame}
         start={330}
         end={630}
         title="Built-in auto-failover."
-        subtitle="When one route drops, traffic moves to a healthy route."
+        subtitle="If one route fails, traffic switches automatically."
       />
       <Headline
         frame={frame}
         start={630}
         end={810}
         title="Launch under your own brand."
-        subtitle="Your customers enter through your website."
+        subtitle="Customers access AI through your website."
       />
       <Headline
         frame={frame}
         start={810}
-        end={1035}
-        title="The same routing power. Your website."
-        subtitle="The infrastructure is copied. Your brand stays in front."
+        end={1000}
+        title="Build your own provider mix."
+        subtitle="Choose from 70+ providers. Remove unstable ones anytime."
       />
 
       <svg
@@ -733,7 +746,13 @@ const NetworkScene: React.FC = () => {
         opacity={providerRingOpacity * 0.74}
         center={providerCenter}
         radius={226}
-        label={frame >= 315 && frame < 625 ? "AUTO-FAILOVER" : undefined}
+        label={
+          frame >= 810
+            ? "CHOOSE YOUR PROVIDERS"
+            : frame >= 315 && frame < 625
+              ? "AUTO-FAILOVER"
+              : undefined
+        }
       />
       {PROVIDERS.map((provider, index) => (
         <ProviderNode
@@ -741,7 +760,10 @@ const NetworkScene: React.FC = () => {
           x={provider.x}
           y={provider.y}
           label={provider.label}
-          opacity={fade(frame, 98 + index * 16, 22)}
+          opacity={
+            fade(frame, 98 + index * 16, 22) *
+            (frame >= 810 && index % 2 === 1 ? 0.18 : 1)
+          }
           scale={interpolate(frame, [98 + index * 16, 124 + index * 16], [0.5, 1], clamp)}
           failed={index === 2 && failed}
         />
@@ -905,18 +927,21 @@ const NetworkScene: React.FC = () => {
           opacity: copiedOpacity,
         }}
       />
-      {PROVIDERS.slice(0, 5).map((provider, index) => {
-        const angle = (-120 + index * 60) * (Math.PI / 180);
-        const x = copiedCenter.x + Math.cos(angle) * 112;
-        const y = copiedCenter.y + Math.sin(angle) * 112;
+      {["P01", "P03", "P05"].map((label, index) => {
+        const angle = (-150 + index * 120) * (Math.PI / 180);
+        const isUnstable = label === "P03" && unstableProvider;
+        const removalOpacity = label === "P03" ? removedProviderOpacity : 1;
+        const x = copiedCenter.x + Math.cos(angle) * 112 + (isUnstable ? removedProviderOffset : 0);
+        const y = copiedCenter.y + Math.sin(angle) * 112 + (isUnstable ? removedProviderOffset * 0.55 : 0);
         return (
           <ProviderNode
-            key={`copied-${provider.label}`}
+            key={`copied-${label}`}
             x={x}
             y={y}
-            label={provider.label}
-            opacity={copiedOpacity}
+            label={label}
+            opacity={copiedOpacity * removalOpacity}
             scale={interpolate(frame, [900 + index * 8, 928 + index * 8], [0.55, 1], clamp)}
+            failed={isUnstable}
             small
           />
         );
@@ -932,8 +957,8 @@ const NetworkScene: React.FC = () => {
           opacity: copiedOpacity,
         }}
       >
-        <div style={{ fontSize: 27, fontWeight: 900 }}>ROUTING LAYER</div>
-        <div style={{ marginTop: 6, fontSize: 19, fontWeight: 700 }}>READY TO RELAY</div>
+        <div style={{ fontSize: 27, fontWeight: 900 }}>PROVIDER MIX</div>
+        <div style={{ marginTop: 6, fontSize: 19, fontWeight: 700 }}>READY TO ROUTE</div>
       </div>
 
       <div
@@ -960,7 +985,7 @@ const NetworkScene: React.FC = () => {
         }}
       >
         <div style={{ maxWidth: "100%", fontSize: 24, lineHeight: 1.08, fontWeight: 900 }}>
-          MODEL NETWORK
+          AI MODELS
         </div>
         <div
           style={{
@@ -1041,7 +1066,29 @@ const NetworkScene: React.FC = () => {
           opacity: handOpacity,
         }}
       >
-        COPY INFRASTRUCTURE
+        SELECT PROVIDERS
+      </div>
+
+      <div
+        style={{
+          position: "absolute",
+          left: copiedCenter.x - 175,
+          top: 988,
+          width: 350,
+          padding: "10px 14px",
+          borderRadius: 18,
+          background: COLORS.redSoft,
+          border: `2px solid ${COLORS.red}`,
+          color: COLORS.red,
+          fontSize: 18,
+          fontWeight: 900,
+          letterSpacing: "0.05em",
+          textAlign: "center",
+          opacity: fadeWindow(frame, 925, 1000, 12),
+          boxSizing: "border-box",
+        }}
+      >
+        UNSTABLE PROVIDER REMOVED
       </div>
 
       {[0, 1, 2].map((offset) => (
@@ -1257,15 +1304,17 @@ const ResponsibilityScene: React.FC = () => {
           opacity: customerOpacity,
         }}
       >
-        <div style={{ fontSize: 102, lineHeight: 1.02, fontWeight: 900, letterSpacing: "-0.05em" }}>
-          You bring
+        <div style={{ fontSize: 90, lineHeight: 1.02, fontWeight: 900, letterSpacing: "-0.05em" }}>
+          You focus on
           <br />
-          the customers.
+          growing your
+          <br />
+          customer base.
         </div>
         <div style={{ marginTop: 36, fontSize: 40, lineHeight: 1.35, color: COLORS.muted, fontWeight: 600 }}>
           Your audience, community,
           <br />
-          and client relationships are yours.
+          and client relationships stay yours.
         </div>
       </div>
     </AbsoluteFill>
@@ -1305,11 +1354,13 @@ const FinalScene: React.FC = () => {
         >
           api-route.com
         </div>
-        <div style={{ fontSize: 118, lineHeight: 1, fontWeight: 900, letterSpacing: "-0.055em" }}>
-          Your brand. Our infrastructure.
+        <div style={{ fontSize: 92, lineHeight: 1, fontWeight: 900, letterSpacing: "-0.055em" }}>
+          Your brand. Your provider mix.
+          <br />
+          Our infrastructure.
         </div>
         <div style={{ marginTop: 34, fontSize: 45, color: COLORS.muted, fontWeight: 600 }}>
-          You grow the customer base. We keep the platform running.
+          Build your AI business on API-Route.
         </div>
         <div
           style={{
