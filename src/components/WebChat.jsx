@@ -8,7 +8,6 @@ import {
   Paperclip,
   Send,
   Share2,
-  Settings2,
   Square,
   Trash2,
   UserRound,
@@ -570,19 +569,6 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
             </select>
           </div>
           <div className="flex items-center justify-end gap-2">
-            <span className="hidden items-center gap-1.5 text-xs text-page-muted sm:inline-flex">
-              <span className="h-1.5 w-1.5 rounded-full bg-page-success" />
-              {t('chat.savedLocally')}
-            </span>
-            <button
-              type="button"
-              onClick={onOpenLocalSetup}
-              disabled={generating}
-              className="btn-secondary hidden items-center gap-2 lg:flex"
-            >
-              <Settings2 size={15} />
-              {t('quickstart.localApps')}
-            </button>
             <button
               type="button"
               onClick={startNewConversation}
