@@ -506,7 +506,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
 
   return (
     <>
-      <div className="relative grid h-[calc(100dvh-72px)] overflow-hidden border-y border-page-divider bg-page-surface lg:grid-cols-[280px_minmax(0,1fr)]">
+      <div className="relative grid h-[calc(100dvh-72px)] overflow-hidden border-y border-page-divider bg-page-surface lg:grid-cols-[minmax(0,1fr)_280px]">
       {mobileHistoryOpen && (
         <button
           type="button"
@@ -515,7 +515,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
           aria-label={t('topup.close')}
         />
       )}
-      <aside className={`${mobileHistoryOpen ? 'fixed inset-y-0 left-0 z-[60] flex w-[85vw] max-w-80' : 'hidden'} flex-col border-r border-page-divider bg-page-surface p-3 shadow-2xl lg:static lg:z-auto lg:flex lg:w-auto lg:max-w-none lg:bg-page-inset/35 lg:shadow-none`}>
+      <aside className={`${mobileHistoryOpen ? 'fixed inset-y-0 right-0 z-[60] flex w-[85vw] max-w-80' : 'hidden'} flex-col border-l border-page-divider bg-page-surface p-3 shadow-2xl lg:order-2 lg:static lg:z-auto lg:flex lg:w-auto lg:max-w-none lg:bg-page-inset/35 lg:shadow-none`}>
         <div className="flex items-center gap-2">
           <button
             type="button"
@@ -580,7 +580,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
         </div>
       </aside>
 
-      <section className="flex min-h-0 min-w-0 flex-col">
+      <section className="flex min-h-0 min-w-0 flex-col lg:order-1">
         <header className="flex items-end gap-2 border-b border-page-divider px-3 py-2.5 sm:px-5 sm:py-3">
           <button
             type="button"

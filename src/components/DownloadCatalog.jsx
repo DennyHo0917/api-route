@@ -18,7 +18,7 @@ export default function DownloadCatalog({ embedded = false, mode = 'all' }) {
           <ShieldCheck className="h-3.5 w-3.5" />
           {t('downloads.badge')}
         </div>
-        <h2 className="text-2xl font-black tracking-tight text-page md:text-3xl">
+        <h2 className="text-2xl font-black text-page md:text-3xl">
           {t('downloads.title')}
         </h2>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-page-secondary">
@@ -30,7 +30,7 @@ export default function DownloadCatalog({ embedded = false, mode = 'all' }) {
         {tools.map((tool) => (
             <article
               key={tool.id}
-              className={mode === 'cc-switch' ? 'min-w-0' : 'glass min-w-0 rounded-xl p-5'}
+              className={mode === 'cc-switch' ? 'glass-sm min-w-0 p-4' : 'glass min-w-0 rounded-xl p-5'}
             >
               <div className="flex items-start gap-3">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-page-link/10 text-page-link">
@@ -44,6 +44,11 @@ export default function DownloadCatalog({ embedded = false, mode = 'all' }) {
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <h3 className="text-lg font-bold text-page">{tool.title}</h3>
+                    {tool.recommended && (
+                      <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+                        {t('downloads.recommended')}
+                      </span>
+                    )}
                     {tool.version && (
                       <span className="rounded-full bg-page-inset/70 px-2 py-0.5 text-xs text-page-muted">
                         {tool.version}
@@ -59,7 +64,7 @@ export default function DownloadCatalog({ embedded = false, mode = 'all' }) {
               <div className="mt-4 space-y-3">
                 {tool.groups.map((group) => (
                   <div key={group.title} className="flex min-w-0 items-center gap-3 overflow-x-auto">
-                    <p className="shrink-0 text-xs font-semibold uppercase tracking-wide text-page-muted">
+                    <p className="shrink-0 text-xs font-semibold uppercase text-page-muted">
                       {group.title === 'Download' ? t('downloads.download') : group.title}
                     </p>
                     <div className="flex shrink-0 gap-2">

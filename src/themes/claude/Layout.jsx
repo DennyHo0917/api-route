@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ChevronDown, Gift, Headset, KeyRound, LogOut, Menu, Moon, Sun, UserRound, X } from 'lucide-react';
+import { BarChart3, ChevronDown, CircleDollarSign, Gift, Headset, KeyRound, LogOut, Menu, Moon, Sun, UserRound, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { COLOR_SCHEME_STORAGE_KEY, useCurrency, useSite } from '../../context/SiteContext';
 import { Q } from '../../api';
@@ -46,6 +46,7 @@ export default function ClaudeLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [snapDeckAtEnd, setSnapDeckAtEnd] = useState(false);
+  const [activeHomeSection, setActiveHomeSection] = useState('');
   const userMenuRef = useRef(null);
   const [colorScheme, setColorScheme] = useState(() => (
     document.documentElement.dataset.colorScheme === 'dark' ? 'dark' : 'light'
@@ -55,11 +56,9 @@ export default function ClaudeLayout() {
   const siteName = rawSiteName.toLowerCase() === 'api-route' ? 'API-Route' : rawSiteName;
   const visibleNavItems = getVisibleNavItems(getSiteNavItems({ t, site }), user);
   const primaryNavItems = visibleNavItems;
-  const isNavActive = (to) => isSiteNavActive(location.pathname, to);
-  const getNavLabel = (item) => {
-    if (item.to === '/ai-api-reseller-platform') return t('subDist.navShort');
-    return item.label;
-  };
+  const isNavActive = (item) => item.sectionId
+    ? location.pathname === '/' && activeHomeSection === item.sectionId
+    : isSiteNavActive(location.pathname, item.to);
   const supportLink = getSupportLink(site);
   const balance = ((Number(user?.quota) || 0) / Q * rate).toFixed(2);
   const commissionPercent = Number((
@@ -96,10 +95,12 @@ export default function ClaudeLayout() {
 
   useEffect(() => {
     setSnapDeckAtEnd(false);
+    setActiveHomeSection('');
     if (!isSnapDeckPage) return undefined;
 
     const onSnapDeckState = (event) => {
       setSnapDeckAtEnd(Boolean(event.detail?.atEnd));
+      setActiveHomeSection(event.detail?.activeId || '');
     };
 
     window.addEventListener('api-route:snap-deck-state', onSnapDeckState);
@@ -161,6 +162,17 @@ export default function ClaudeLayout() {
     navigate('/');
   };
 
+  const handlePrimaryNavClick = (event, item) => {
+    setMobileMenuOpen(false);
+    if (!item.sectionId || location.pathname !== '/') return;
+
+    event.preventDefault();
+    window.history.replaceState(null, '', `#${item.sectionId}`);
+    window.dispatchEvent(new CustomEvent('api-route:snap-deck-go', {
+      detail: { id: item.sectionId },
+    }));
+  };
+
   const footerClassName = isSnapDeckPage
     ? `relative mt-auto border-t border-[#E8DDD0] bg-[#F1E8DE] shadow-[0_-18px_48px_rgba(84,57,36,0.08)] lg:fixed lg:inset-x-0 lg:bottom-0 lg:z-40 lg:transition-all lg:duration-500 lg:ease-out ${
       snapDeckAtEnd ? 'lg:translate-y-0 lg:opacity-100' : 'lg:pointer-events-none lg:translate-y-full lg:opacity-0'
@@ -194,30 +206,19 @@ export default function ClaudeLayout() {
               <Link
                 key={item.to}
                 to={item.to}
+                onClick={(event) => handlePrimaryNavClick(event, item)}
                 className={`whitespace-nowrap rounded-full px-3 py-2 text-sm transition-all ${
-                  isNavActive(item.to)
+                  isNavActive(item)
                     ? 'bg-white text-[#3D3024] shadow-sm ring-1 ring-[#E8DDD0] font-semibold'
                     : 'text-[#766657] hover:bg-white/60 hover:text-[#3D3024]'
                 }`}
               >
-                {getNavLabel(item)}
+                {item.label}
               </Link>
             ))}
           </nav>
 
           <div className="flex shrink-0 items-center justify-self-end gap-1.5">
-            {supportLink && (
-              <a
-                href={supportLink.href}
-                target={supportLink.isTelegram ? '_blank' : undefined}
-                rel={supportLink.isTelegram ? 'noopener noreferrer' : undefined}
-                className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#E5D4C6] bg-white/65 text-[#8F5D48] transition-colors hover:border-[#D8BBA7] hover:bg-[#FFF9F4] hover:text-[#C4613F] lg:inline-flex"
-                title={supportLabel}
-                aria-label={supportLabel}
-              >
-                <Headset size={17} />
-              </a>
-            )}
             <div className="hidden sm:block">
               <LanguageSwitch
                 iconOnly
@@ -265,6 +266,24 @@ export default function ClaudeLayout() {
                     role="menu"
                     className="absolute right-0 top-[calc(100%+10px)] z-[60] w-48 overflow-hidden rounded-2xl border border-[#E8DDD0] bg-white p-1.5 shadow-xl shadow-[#6B4B35]/10"
                   >
+                    <Link
+                      to="/dashboard"
+                      role="menuitem"
+                      onClick={() => setUserMenuOpen(false)}
+                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-[#5E4E40] transition-colors hover:bg-[#FAF6F1] hover:text-[#3D3024]"
+                    >
+                      <BarChart3 size={16} />
+                      {t('nav.dashboard')}
+                    </Link>
+                    <Link
+                      to="/topup"
+                      role="menuitem"
+                      onClick={() => setUserMenuOpen(false)}
+                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-[#5E4E40] transition-colors hover:bg-[#FAF6F1] hover:text-[#3D3024]"
+                    >
+                      <CircleDollarSign size={16} />
+                      {t('nav.topup')}
+                    </Link>
                     <Link
                       to="/account"
                       role="menuitem"
@@ -337,8 +356,9 @@ export default function ClaudeLayout() {
                 <Link
                   key={item.to}
                   to={item.to}
+                  onClick={(event) => handlePrimaryNavClick(event, item)}
                   className={`rounded-xl px-4 py-3 text-sm transition-colors ${
-                    isNavActive(item.to)
+                    isNavActive(item)
                       ? 'bg-white font-semibold text-[#D97757] shadow-sm'
                       : 'text-[#6B5D4F] hover:bg-white/70 hover:text-[#3D3024]'
                   }`}

@@ -14,6 +14,7 @@ export const DOWNLOAD_TOOLS = [
     title: 'CC Switch',
     logo: 'https://ccswitch.io/favicon.png',
     version: 'v3.18.0',
+    recommended: true,
     descZh: '统一管理 Claude Code、Codex、Gemini CLI、OpenCode、OpenClaw、Hermes 等客户端，支持一键导入 Provider。',
     descEn: 'Manage Claude Code, Codex, Gemini CLI, OpenCode, OpenClaw, Hermes and more in one place, with one-click provider import.',
     groups: [

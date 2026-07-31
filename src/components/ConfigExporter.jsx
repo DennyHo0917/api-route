@@ -34,7 +34,7 @@ const CCSWITCH_APPS = [
   { id: 'hermes', name: 'Hermes', endpointType: 'hermes' },
 ];
 
-const API_ENDPOINTS = [
+export const API_ENDPOINTS = [
   {
     id: 'overseas-direct',
     url: 'https://test1122.up.railway.app/',
@@ -48,6 +48,12 @@ const API_ENDPOINTS = [
     descKey: 'config.apiEndpointOverseasCdnDesc',
   },
 ];
+
+function getTokenApiKey(token) {
+  const value = String(token?.key || '');
+  if (!value) return '';
+  return value.startsWith('sk-') ? value : `sk-${value}`;
+}
 
 function ThemedSelect({
   value,
@@ -221,7 +227,7 @@ function ThemedSelect({
   );
 }
 
-const ConfigExporter = ({ tokens = [] }) => {
+const ConfigExporter = ({ tokens = [], embedded = false }) => {
   const { t } = useTranslation();
   const { site } = useSite();
   const [selectedTokenId, setSelectedTokenId] = useState(null);
@@ -230,6 +236,7 @@ const ConfigExporter = ({ tokens = [] }) => {
   const [selectedTool, setSelectedTool] = useState('codex');
   const [selectedCCSwitchApp, setSelectedCCSwitchApp] = useState('codex');
   const [selectedEndpointId, setSelectedEndpointId] = useState('overseas-direct');
+  const [connectMode, setConnectMode] = useState('ccswitch');
   const [loadingModels, setLoadingModels] = useState(false);
   const [modelsError, setModelsError] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -246,9 +253,13 @@ const ConfigExporter = ({ tokens = [] }) => {
   );
   const apiServerAddress = selectedEndpoint.url.replace(/\/+$/, '');
 
+  const activeTokens = useMemo(
+    () => tokens.filter((token) => Number(token.status) === 1),
+    [tokens],
+  );
   const selectedToken = useMemo(
-    () => tokens.find((token) => token.id === selectedTokenId) || null,
-    [tokens, selectedTokenId],
+    () => activeTokens.find((token) => token.id === selectedTokenId) || null,
+    [activeTokens, selectedTokenId],
   );
 
   const selectedToolMeta = useMemo(
@@ -257,12 +268,12 @@ const ConfigExporter = ({ tokens = [] }) => {
   );
   const tokenOptions = useMemo(
     () =>
-      tokens.map((token) => ({
+      activeTokens.map((token) => ({
         value: token.id,
-        label: `${token.name} (sk-${token.key.substring(0, 16)}...)`,
+        label: `${token.name} (${getTokenApiKey(token).slice(0, 18)}...)`,
         token,
       })),
-    [tokens],
+    [activeTokens],
   );
   const modelOptions = useMemo(
     () =>
@@ -274,19 +285,19 @@ const ConfigExporter = ({ tokens = [] }) => {
   );
 
   useEffect(() => {
-    if (tokens.length === 0) {
+    if (activeTokens.length === 0) {
       setSelectedTokenId(null);
       setAvailableModels([]);
       setSelectedModel('');
       return;
     }
 
-    const stillExists = tokens.some((token) => token.id === selectedTokenId);
+    const stillExists = activeTokens.some((token) => token.id === selectedTokenId);
     if (stillExists) return;
 
-    const preferred = tokens.find((token) => token.status === 1) || tokens[0];
+    const preferred = activeTokens[0];
     setSelectedTokenId(preferred.id);
-  }, [tokens, selectedTokenId]);
+  }, [activeTokens, selectedTokenId]);
 
   useEffect(() => {
     if (!selectedToken?.id) {
@@ -487,7 +498,7 @@ requires_openai_auth = true
   const generateCCSwitchLink = () => {
     if (!selectedToken || !selectedModel) return '';
     const providerName = site?.name || window.location.hostname;
-    const apiKey = `sk-${selectedToken.key}`;
+    const apiKey = getTokenApiKey(selectedToken);
     const endpoint = getCCSwitchEndpoint();
     const configPayload = buildCCSwitchConfigPayload({
       appId: selectedCCSwitchApp,
@@ -517,7 +528,7 @@ requires_openai_auth = true
   const generateConfig = () => {
     if (!selectedToken || !selectedModel) return '';
 
-    const apiKey = `sk-${selectedToken.key}`;
+    const apiKey = getTokenApiKey(selectedToken);
 
     switch (selectedTool) {
       case 'claudecode':
@@ -829,9 +840,9 @@ print(message.content[0].text)`;
   const config = generateConfig();
   const ccSwitchLink = generateCCSwitchLink();
 
-  if (tokens.length === 0) {
+  if (activeTokens.length === 0) {
     return (
-      <div className="glass rounded-2xl p-6 text-center">
+      <div className={`${embedded ? '' : 'glass rounded-2xl'} p-6 text-center`}>
         <svg
           className="w-8 h-8 mx-auto mb-3 text-page-muted"
           fill="none"
@@ -855,32 +866,24 @@ print(message.content[0].text)`;
 
   return (
     <>
-      <div className="glass w-full min-w-0 overflow-hidden rounded-2xl">
-        <div className="px-5 py-4 border-b border-page-divider">
-          <h4 className="font-semibold text-sm text-page flex items-center gap-2">
-            <svg
-              className="w-4 h-4 text-page-link"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
-            {t('config.title')}
-          </h4>
-          <p className="text-xs text-page-muted mt-1">{t('config.subtitle')}</p>
-        </div>
+      <div className={`${embedded ? '' : 'glass rounded-2xl'} w-full min-w-0 overflow-visible`}>
+        {!embedded && (
+          <div className="border-b border-page-divider px-5 py-4">
+            <h4 className="flex items-center gap-2 text-sm font-semibold text-page">
+              <svg className="h-4 w-4 text-page-link" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              {t('config.title')}
+            </h4>
+            <p className="mt-1 text-xs text-page-muted">{t('config.subtitle')}</p>
+          </div>
+        )}
 
-        <div className="p-5 space-y-4">
+        <div className="space-y-4 p-5 sm:p-6">
           <div>
-            <label className="flex items-center gap-2 text-xs font-medium text-page-label mb-2">
+            <label className="mb-2 flex items-center gap-2 text-xs font-medium text-page-label">
               <svg
-                className="w-3 h-3"
+                className="h-3 w-3"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -904,9 +907,9 @@ print(message.content[0].text)`;
           </div>
 
           <div>
-            <label className="flex items-center gap-2 text-xs font-medium text-page-label mb-2">
+            <label className="mb-2 flex items-center gap-2 text-xs font-medium text-page-label">
               <svg
-                className="w-3 h-3"
+                className="h-3 w-3"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -942,9 +945,9 @@ print(message.content[0].text)`;
           </div>
 
           <div>
-            <label className="flex items-center gap-2 text-xs font-medium text-page-label mb-2">
+            <label className="mb-2 flex items-center gap-2 text-xs font-medium text-page-label">
               <svg
-                className="w-3 h-3"
+                className="h-3 w-3"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -984,7 +987,7 @@ print(message.content[0].text)`;
             </div>
           </div>
 
-          <div className="rounded-xl border border-page-divider bg-page-surface/50 px-4 py-4 space-y-3">
+          <div className="rounded-xl border border-page-divider bg-page-surface/50 px-4 py-4">
             <div className="flex items-start justify-between gap-3 flex-wrap">
               <div>
                 <p className="text-sm font-semibold text-page">
@@ -995,6 +998,7 @@ print(message.content[0].text)`;
                 </p>
               </div>
               <button
+                type="button"
                 onClick={() =>
                   handleCopyValue(
                     getSelectedToolBaseUrl(),
@@ -1054,168 +1058,149 @@ print(message.content[0].text)`;
           </div>
 
           <div>
-            <label className="text-xs font-medium text-page-label mb-2 block">
-              {t('config.selectTool')}
-            </label>
-            <ThemedSelect
-              value={selectedTool}
-              onChange={setSelectedTool}
-              options={TOOLS.map((tool) => ({
-                value: tool.id,
-                label: tool.name,
-              }))}
-              placeholder={t('config.selectTool')}
-            />
-          </div>
-
-          <div className="rounded-xl border border-page-link/20 bg-page-link/5 px-4 py-4 space-y-4">
-            <div className="flex items-start justify-between gap-3 flex-wrap">
-              <div>
-                <p className="text-sm font-semibold text-page">
-                  {t('config.ccswitchTitle')}
-                </p>
-                <p className="text-xs text-page-muted mt-1">
-                  {t('config.ccswitchHint')}
-                </p>
-              </div>
-              <span className="px-2.5 py-1 rounded-full text-[11px] font-medium bg-page-link/15 text-page-link">
+            <p className="mb-2 text-xs font-medium text-page-label">
+              {t('apiAccess.connectMode', { defaultValue: '选择接入方式' })}
+            </p>
+            <div className="grid rounded-xl border border-page-divider bg-page-surface p-1 sm:grid-cols-2">
+              <button
+                type="button"
+                onClick={() => setConnectMode('ccswitch')}
+                className={`rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
+                  connectMode === 'ccswitch'
+                    ? 'bg-page-link text-white shadow-sm'
+                    : 'text-page-secondary hover:bg-page-surface-hover hover:text-page'
+                }`}
+              >
                 CC Switch
-              </span>
-            </div>
-
-            <div>
-              <p className="text-xs font-medium text-page-label mb-2">
-                {t('config.selectCCSwitchApp')}
-              </p>
-              <ThemedSelect
-                value={selectedCCSwitchApp}
-                onChange={setSelectedCCSwitchApp}
-                options={CCSWITCH_APPS.map((app) => ({
-                  value: app.id,
-                  label: app.name,
-                }))}
-                placeholder={t('config.selectCCSwitchApp')}
-              />
-            </div>
-
-            <div className="flex flex-wrap gap-2">
-              <button
-                onClick={handleImportCCSwitch}
-                disabled={!ccSwitchLink || launchingCCSwitch}
-                className="btn-primary flex-1 min-w-[220px]"
-                title={t('config.importToCCSwitch')}
-              >
-                {launchingCCSwitch
-                  ? t('config.launchingCCSwitch')
-                  : t('config.importToCCSwitch')}
               </button>
               <button
-                onClick={handleCopyCCSwitchLink}
-                disabled={!ccSwitchLink}
-                className="btn-secondary px-4 py-2.5"
-                title={t('config.copyImportLink')}
+                type="button"
+                onClick={() => setConnectMode('manual')}
+                className={`rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
+                  connectMode === 'manual'
+                    ? 'bg-page-link text-white shadow-sm'
+                    : 'text-page-secondary hover:bg-page-surface-hover hover:text-page'
+                }`}
               >
-                {t('config.copyImportLink')}
+                {t('apiAccess.manualConfig', { defaultValue: '手动配置' })}
               </button>
             </div>
-
           </div>
-        </div>
 
-        <div className="hidden border-t border-page-divider">
-          <div className="flex items-center justify-between px-4 py-2.5 bg-page-inset/70">
-            <div className="flex items-center gap-2 min-w-0">
-              <div className="flex gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-400" />
-                <span className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
-                <span className="w-2.5 h-2.5 rounded-full bg-green-400" />
+          {connectMode === 'ccswitch' ? (
+            <div className="space-y-4 rounded-xl border border-page-link/20 bg-page-link/5 px-4 py-4">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-semibold text-page">
+                    {t('config.ccswitchTitle')}
+                  </p>
+                  <p className="mt-1 text-xs leading-5 text-page-muted">
+                    {t('config.ccswitchHint')}
+                  </p>
+                </div>
+                <span className="rounded-full bg-page-link/15 px-2.5 py-1 text-[11px] font-medium text-page-link">
+                  CC Switch
+                </span>
               </div>
-              <span className="text-xs text-page-muted ml-1 truncate">
-                {selectedToolMeta.path}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handleCopy}
-                disabled={!config}
-                className="p-1.5 rounded-md hover:bg-page-surface-hover transition-colors text-page-muted hover:text-page disabled:opacity-50 disabled:cursor-not-allowed"
-                title={t(
-                  selectedTool === 'ccswitch'
-                    ? 'config.copyImportLink'
-                    : 'config.copy',
-                )}
-              >
-                {copied ? (
-                  <svg
-                    className="w-3.5 h-3.5 text-green-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    className="w-3.5 h-3.5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                    />
-                  </svg>
-                )}
-              </button>
-              <button
-                onClick={handleDownload}
-                disabled={!config}
-                className="p-1.5 rounded-md hover:bg-page-surface-hover transition-colors text-page-muted hover:text-page disabled:opacity-50 disabled:cursor-not-allowed"
-                title={t('config.download')}
-              >
-                <svg
-                  className="w-3.5 h-3.5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+
+              <div>
+                <p className="mb-2 text-xs font-medium text-page-label">
+                  {t('config.selectCCSwitchApp')}
+                </p>
+                <ThemedSelect
+                  value={selectedCCSwitchApp}
+                  onChange={setSelectedCCSwitchApp}
+                  options={CCSWITCH_APPS.map((app) => ({
+                    value: app.id,
+                    label: app.name,
+                  }))}
+                  placeholder={t('config.selectCCSwitchApp')}
+                />
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={handleImportCCSwitch}
+                  disabled={!ccSwitchLink || launchingCCSwitch}
+                  className="btn-primary min-w-[220px] flex-1"
+                  title={t('config.importToCCSwitch')}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  />
-                </svg>
-              </button>
+                  {launchingCCSwitch
+                    ? t('config.launchingCCSwitch')
+                    : t('config.importToCCSwitch')}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCopyCCSwitchLink}
+                  disabled={!ccSwitchLink}
+                  className="btn-secondary px-4 py-2.5"
+                  title={t('config.copyImportLink')}
+                >
+                  {t('config.copyImportLink')}
+                </button>
+              </div>
             </div>
-          </div>
-          <pre className="p-4 text-xs leading-relaxed overflow-x-auto max-h-72 font-mono text-page whitespace-pre-wrap break-all">
-            <code>{config || t('tokens.noSupportedModels')}</code>
-          </pre>
+          ) : (
+            <div className="overflow-hidden rounded-xl border border-page-divider">
+              <div className="space-y-4 border-b border-page-divider bg-page-surface/45 p-4">
+                <div>
+                  <label className="mb-2 block text-xs font-medium text-page-label">
+                    {t('config.selectTool')}
+                  </label>
+                  <ThemedSelect
+                    value={selectedTool}
+                    onChange={setSelectedTool}
+                    options={TOOLS.map((tool) => ({
+                      value: tool.id,
+                      label: tool.name,
+                    }))}
+                    placeholder={t('config.selectTool')}
+                  />
+                </div>
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <span className="truncate font-mono text-xs text-page-muted">{selectedToolMeta.path}</span>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={handleCopy}
+                      disabled={!config}
+                      className="btn-secondary inline-flex items-center gap-2 px-4 py-2 text-xs"
+                    >
+                      {copied ? t('tokens.copied') : t('config.copy')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleDownload}
+                      disabled={!config}
+                      className="btn-primary inline-flex items-center gap-2 px-4 py-2 text-xs"
+                    >
+                      {t('config.download')}
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <pre className="max-h-80 overflow-auto p-4 font-mono text-xs leading-relaxed text-page whitespace-pre-wrap break-all">
+                <code>{config || t('tokens.noSupportedModels')}</code>
+              </pre>
+            </div>
+          )}
         </div>
       </div>
 
       {showCCSwitchDownload && (
         <div
-          className="modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          className="modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
           onClick={() => setShowCCSwitchDownload(false)}
         >
           <div
-            className="glass rounded-2xl p-6 w-full max-w-md"
+            className="glass w-full max-w-md rounded-2xl p-6"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-lg font-semibold text-page mb-2">
+            <h3 className="mb-2 text-lg font-semibold text-page">
               {t('config.ccswitchNotInstalledTitle')}
             </h3>
-            <p className="text-sm text-page-secondary mb-5">
+            <p className="mb-5 text-sm text-page-secondary">
               {t('config.ccswitchNotInstalledDesc')}
             </p>
             <div className="space-y-3">
@@ -1227,7 +1212,7 @@ print(message.content[0].text)`;
                   source: 'import_fallback',
                   platform: 'primary',
                 })}
-                className="btn-primary w-full text-center block"
+                className="btn-primary block w-full text-center"
               >
                 {t('config.downloadCCSwitch')}
               </a>
@@ -1239,13 +1224,14 @@ print(message.content[0].text)`;
                   source: 'import_fallback',
                   platform: 'github',
                 })}
-                className="btn-secondary w-full text-center block"
+                className="btn-secondary block w-full text-center"
               >
                 {t('config.openCCSwitchRepo')}
               </a>
             </div>
-            <div className="flex justify-end mt-5">
+            <div className="mt-5 flex justify-end">
               <button
+                type="button"
                 onClick={() => setShowCCSwitchDownload(false)}
                 className="btn-secondary"
               >

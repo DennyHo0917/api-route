@@ -3,6 +3,7 @@ import { Navigate, NavLink, Outlet, Routes, Route, useLocation } from 'react-rou
 import { useTranslation } from 'react-i18next';
 import AuthGuard from './components/AuthGuard';
 import NotificationBell from './components/NotificationBell';
+import ConsoleLayout from './components/ConsoleLayout';
 import SeoManager from './components/SeoManager';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { rememberAuthReturnTo } from './utils/authReturn';
@@ -13,6 +14,8 @@ const Register = lazy(() => import('./pages/Register'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const QuickStart = lazy(() => import('./pages/QuickStart'));
 const Tokens = lazy(() => import('./pages/Tokens'));
+const ApiConnect = lazy(() => import('./pages/ApiConnect'));
+const Clients = lazy(() => import('./pages/Clients'));
 const Packages = lazy(() => import('./pages/Packages'));
 const Pricing = lazy(() => import('./pages/Pricing'));
 const AppMarket = lazy(() => import('./pages/AppMarket'));
@@ -123,29 +126,36 @@ function ThemedRoutes() {
           <Route path="/oauth/:provider" element={<OAuthCallback />} />
           <Route path="/register" element={<Register />} />
 
-          {/* Protected pages */}
-          <Route element={<AuthGuard />}>
-            <Route
-              path="/dashboard"
-              element={<MergedPageLayout labelKey="nav.dashboard" tabs={DASHBOARD_TABS} />}
-            >
-              <Route index element={<Dashboard />} />
-              <Route path="logs" element={<Logs />} />
-              <Route path="tasks" element={<Tasks />} />
+        </Route>
+
+        {/* Signed-in workspace */}
+        <Route element={<AuthGuard />}>
+          <Route element={<Layout />}>
+            <Route element={<ConsoleLayout />}>
+              <Route
+                path="/dashboard"
+                element={<MergedPageLayout labelKey="nav.dashboard" tabs={DASHBOARD_TABS} />}
+              >
+                <Route index element={<Dashboard />} />
+                <Route path="logs" element={<Logs />} />
+                <Route path="tasks" element={<Tasks />} />
+              </Route>
+              <Route path="/api-keys" element={<Tokens />} />
+              <Route path="/chats" element={<QuickStart />} />
+              <Route
+                path="/topup"
+                element={<MergedPageLayout labelKey="nav.topup" tabs={TOPUP_TABS} />}
+              >
+                <Route index element={<Topup />} />
+                <Route path="packages" element={<Packages />} />
+              </Route>
+              <Route path="/api-connect" element={<ApiConnect />} />
+              <Route path="/clients" element={<Clients />} />
+              <Route path="/logs" element={<Navigate to="/dashboard/logs" replace />} />
+              <Route path="/tasks" element={<Navigate to="/dashboard/tasks" replace />} />
+              <Route path="/account" element={<Account />} />
             </Route>
-            <Route path="/chats" element={<QuickStart />} />
             <Route path="/tokens" element={<Navigate to="/chats" replace />} />
-            <Route path="/api-keys" element={<Tokens />} />
-            <Route path="/logs" element={<Navigate to="/dashboard/logs" replace />} />
-            <Route path="/tasks" element={<Navigate to="/dashboard/tasks" replace />} />
-            <Route
-              path="/topup"
-              element={<MergedPageLayout labelKey="nav.topup" tabs={TOPUP_TABS} />}
-            >
-              <Route index element={<Topup />} />
-              <Route path="packages" element={<Packages />} />
-            </Route>
-            <Route path="/account" element={<Account />} />
           </Route>
         </Route>
 

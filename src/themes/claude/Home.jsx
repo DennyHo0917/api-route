@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowRight,
-  Braces,
   Check,
   Headset,
   KeyRound,
@@ -187,47 +186,10 @@ export default function ClaudeHome() {
     setSubscribing(null);
   };
 
-  const audienceCards = [
-    {
-      icon: Braces,
-      title: t('home.audienceDevelopersTitle'),
-      description: t('home.audienceDevelopersDesc'),
-      to: '/pricing',
-      linkLabel: t('home.audiencePricingLink'),
-    },
-    {
-      icon: Layers3,
-      title: t('home.audienceSaasTitle'),
-      description: t('home.audienceSaasDesc'),
-      to: '/pricing',
-      linkLabel: t('home.audiencePricingLink'),
-    },
-    {
-      icon: KeyRound,
-      title: t('home.audienceCodingToolsTitle'),
-      description: t('home.audienceCodingToolsDesc'),
-      to: '/api-keys',
-      linkLabel: t('quickstart.badge'),
-    },
-    {
-      icon: Sparkles,
-      title: t('home.audienceCreatorsTitle'),
-      description: t('home.audienceCreatorsDesc'),
-      to: '/api-keys',
-      linkLabel: t('quickstart.badge'),
-    },
-    {
-      icon: ShieldCheck,
-      title: t('home.audienceRelayTitle'),
-      description: t('home.audienceRelayDesc'),
-      to: '/ai-api-reseller-platform',
-      linkLabel: t('home.audienceRelayLink'),
-    },
-  ];
-
   return (
     <SnapDeck>
       <SnapSection
+        id="hero"
         className="route-hero relative border-b border-[#E8DDD0]"
         contentClassName="relative mx-auto flex w-full max-w-7xl items-center px-5 py-16 md:px-8"
         direction="up"
@@ -282,60 +244,75 @@ export default function ClaudeHome() {
       </SnapSection>
 
       <SnapSection
+        id="features"
         className="bg-[#FAF6F1]"
-        contentClassName="mx-auto w-full max-w-7xl px-5 py-12 md:px-8"
+        contentClassName="mx-auto w-full max-w-7xl px-5 py-10 md:px-8"
         direction="left"
       >
-        <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <FadeContent direction="left" distance={36} duration={750}>
-            <p className="route-kicker">{t('home.audienceEyebrow')}</p>
-            <h2 className="route-section-title">{t('home.audienceTitle')}</h2>
+        <div className="grid gap-x-10 gap-y-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(460px,1.1fr)] lg:items-end">
+          <FadeContent direction="left" distance={36} duration={750} className="lg:col-start-1 lg:row-start-1">
+            <p className="route-kicker">{t('nav.audience')}</p>
+            <h2 className="route-section-title">{t('home.featuresTitle')}</h2>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-[#7D6B5B] md:text-base">
-              {t('home.audienceSubtitle')}
+              {t('home.featuresSubtitle')}
             </p>
-          </FadeContent>
-          <FadeContent direction="right" distance={36} duration={750} delay={80}>
-            <Link to="/faq" className="route-motion-link inline-flex items-center gap-2 text-sm font-semibold text-[#C56547] hover:text-[#A84F34]">
-              {t('nav.faq')}
-              <ArrowRight size={15} className="route-motion-arrow" />
-            </Link>
-          </FadeContent>
-        </div>
 
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-          {audienceCards.map(({ icon: Icon, title, description, to, linkLabel }, index) => (
-            <FadeContent
-              key={title}
-              direction={index % 2 === 0 ? 'left' : 'right'}
-              distance={34}
-              duration={760}
-              delay={index * 70}
-              className="h-full"
-            >
+            <div className="mt-6 space-y-3">
+              {[
+                { icon: KeyRound, title: t('home.featuresUnifiedTitle'), description: t('home.featuresUnifiedDesc') },
+                { icon: Layers3, title: t('home.featuresSwitchTitle'), description: t('home.featuresSwitchDesc') },
+                { icon: ShieldCheck, title: t('home.featuresFailoverTitle'), description: t('home.featuresFailoverDesc') },
+              ].map(({ icon: Icon, title, description }) => (
+                <div key={title} className="flex items-start gap-3 rounded-lg border border-[#E5D7CB] bg-white/65 p-3.5">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#D97757]/10 text-[#C56547]">
+                    <Icon size={18} />
+                  </span>
+                  <span>
+                    <span className="block text-sm font-semibold text-[#3D3024]">{title}</span>
+                    <span className="mt-1 block text-sm leading-6 text-[#7D6B5B]">{description}</span>
+                  </span>
+                </div>
+              ))}
+            </div>
+
+          </FadeContent>
+          <FadeContent direction="up" distance={24} duration={700} delay={100} className="lg:col-start-1 lg:row-start-2">
+            <div className="flex flex-col gap-3 sm:flex-row">
               <Link
-                to={to}
-                onClick={() => trackEvent('funnel_select', {
-                  funnel: to === '/ai-api-reseller-platform' ? 'reseller' : 'api',
-                  placement: 'home_audience',
-                })}
-                className="route-motion-card group flex h-full min-h-[210px] flex-col rounded-[22px] border border-[#E5D7CB] bg-white/65 p-5 shadow-[0_14px_40px_rgba(82,61,43,0.04)] transition-all hover:-translate-y-0.5 hover:border-[#D8BBA7] hover:bg-white"
+                to={user ? '/api-keys' : '/register'}
+                state={user ? undefined : { from: '/api-keys' }}
+                onClick={() => trackEvent('funnel_select', { funnel: 'api', placement: 'home_features' })}
+                className="route-motion-button route-motion-primary inline-flex items-center justify-center gap-2 rounded-full bg-[#D97757] px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(217,119,87,0.20)] transition-all hover:-translate-y-0.5 hover:bg-[#C4613F]"
               >
-                <span className="route-motion-icon flex h-11 w-11 items-center justify-center rounded-2xl bg-[#D97757]/10 text-[#C56547]">
-                  <Icon size={20} />
-                </span>
-                <h3 className="mt-5 text-base font-semibold leading-6 text-[#3D3024]">{title}</h3>
-                <p className="mt-2 flex-1 text-sm leading-6 text-[#7D6B5B]">{description}</p>
-                <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-[#C56547] group-hover:text-[#A84F34]">
-                  {linkLabel}
-                  <ArrowRight size={14} className="route-motion-arrow" />
-                </span>
+                {t('home.featuresPrimaryAction')}
+                <ArrowRight size={15} className="route-motion-arrow" />
               </Link>
-            </FadeContent>
-          ))}
+              <Link
+                to="/pricing"
+                className="route-motion-button inline-flex items-center justify-center gap-2 rounded-full border border-[#DCCBBD] bg-white/75 px-5 py-3 text-sm font-semibold text-[#59483A] transition-colors hover:bg-white"
+              >
+                {t('nav.modelMarketplace')}
+              </Link>
+            </div>
+          </FadeContent>
+          <FadeContent direction="right" distance={36} duration={750} delay={80} className="lg:col-start-2 lg:row-start-1 lg:self-end">
+            <video
+              className="aspect-video w-full rounded-lg border border-[#E5D7CB] bg-black shadow-[0_16px_40px_rgba(82,61,43,0.10)]"
+              aria-label={t('home.audienceTitle')}
+              autoPlay
+              controls
+              loop
+              muted
+              playsInline
+              preload="metadata"
+              src="/videos/api-route-twitter-ad-15s.mp4"
+            />
+          </FadeContent>
         </div>
       </SnapSection>
 
       <SnapSection
+        id="ecosystem"
         className="border-y border-[#E8DDD0] bg-[#F1E8DE]"
         contentClassName="mx-auto flex w-full max-w-7xl flex-col justify-center px-5 py-10 md:px-8"
         direction="left"
@@ -376,6 +353,7 @@ export default function ClaudeHome() {
 
       {previewPackages.length > 0 && (
         <SnapSection
+          id="packages"
           className="bg-[#FAF6F1]"
           contentClassName="mx-auto w-full max-w-7xl px-5 py-8 md:px-8"
           direction="right"
@@ -481,6 +459,7 @@ export default function ClaudeHome() {
       )}
 
       <SnapSection
+        id="platform"
         className="relative overflow-hidden border-b border-[#E8DDD0] bg-[#FFF9F4]"
         contentClassName="relative mx-auto grid w-full max-w-7xl items-center gap-10 px-5 py-14 md:px-8 lg:grid-cols-[1.08fr_0.92fr]"
       >
@@ -549,6 +528,7 @@ export default function ClaudeHome() {
       </SnapSection>
 
       <SnapSection
+        id="contact"
         className="bg-[#FAF6F1]"
         contentClassName="mx-auto w-full max-w-7xl px-5 py-8 md:px-8"
         direction="right"

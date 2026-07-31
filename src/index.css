@@ -956,16 +956,41 @@ html[data-color-scheme='dark'] .theme-claude .route-motion-card:hover {
 .bg-page-inset {
   background: var(--page-inset);
 }
+.bg-page-inset\/35,
+.bg-page-inset\/40,
+.bg-page-inset\/60,
+.bg-page-inset\/70 {
+  background: var(--page-inset);
+}
 .divide-page > * + * {
+  border-color: var(--page-divider);
+}
+.divide-page-divider > :not([hidden]) ~ :not([hidden]) {
   border-color: var(--page-divider);
 }
 .border-page-divider {
   border-color: var(--page-divider);
 }
+.bg-page-card-bg {
+  background: var(--page-card-bg);
+}
+.bg-page-bg {
+  background: var(--page-bg);
+}
 .bg-page-surface {
   background: var(--page-surface);
 }
+.bg-page-surface\/35,
+.bg-page-surface\/40,
+.bg-page-surface\/45,
+.bg-page-surface\/50,
+.bg-page-surface\/70 {
+  background: var(--page-surface);
+}
 .bg-page-surface-hover {
+  background: var(--page-surface-hover);
+}
+.bg-page-surface-hover\/60 {
   background: var(--page-surface-hover);
 }
 .hover\:bg-page-surface:hover {

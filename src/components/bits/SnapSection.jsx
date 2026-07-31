@@ -3,6 +3,7 @@ import { Children, cloneElement, createContext, useEffect, useRef, useState } fr
 export const SnapSectionContext = createContext(null);
 
 export default function SnapSection({
+  id,
   children,
   className = '',
   contentClassName = '',
@@ -33,9 +34,10 @@ export default function SnapSection({
 
   return (
     <section
+      id={id}
       ref={ref}
       data-snap-section="true"
-      className={`flex min-h-0 items-center ${snap ? 'lg:min-h-[calc(100vh-72px)] lg:snap-start lg:snap-always' : ''} ${className}`}
+      className={`flex min-h-0 scroll-mt-[72px] items-center ${snap ? 'lg:min-h-[calc(100vh-72px)] lg:snap-start lg:snap-always' : ''} ${className}`}
       style={deckHeight ? { height: deckHeight } : undefined}
     >
       <SnapSectionContext.Provider value={isActive}>
@@ -92,6 +94,7 @@ export function SnapDeck({ children, className = '', enabled = true }) {
     window.dispatchEvent(new CustomEvent('api-route:snap-deck-state', {
       detail: {
         activeIndex,
+        activeId: slides[activeIndex]?.props.id || '',
         total: slides.length,
         atEnd: activeIndex === slides.length - 1,
       },
@@ -114,6 +117,29 @@ export function SnapDeck({ children, className = '', enabled = true }) {
     goTo(next);
     return true;
   };
+
+  const goToSection = (id) => {
+    const target = id ? document.getElementById(id) : null;
+    const section = target?.closest?.('[data-snap-section="true"]');
+    if (!section || !ref.current?.contains(section)) return false;
+
+    const next = Array.from(ref.current.querySelectorAll('[data-snap-section="true"]')).indexOf(section);
+    if (next < 0) return false;
+
+    if (snapEnabled) goTo(next);
+    else section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return true;
+  };
+
+  useEffect(() => {
+    const onGoToSection = (event) => goToSection(event.detail?.id);
+    window.addEventListener('api-route:snap-deck-go', onGoToSection);
+
+    const initialId = window.location.hash.slice(1);
+    if (initialId) window.requestAnimationFrame(() => goToSection(initialId));
+
+    return () => window.removeEventListener('api-route:snap-deck-go', onGoToSection);
+  }, [slides.length, snapEnabled]);
 
   const onWheel = (event) => {
     if (event.target.closest?.('.modal-overlay')) return;
@@ -149,15 +175,9 @@ export function SnapDeck({ children, className = '', enabled = true }) {
     if (!link) return;
 
     const id = link.getAttribute('href')?.slice(1);
-    const target = id ? document.getElementById(id) : null;
-    const section = target?.closest?.('[data-snap-section="true"]');
-    if (!section || !ref.current?.contains(section)) return;
-
-    const next = Array.from(ref.current.querySelectorAll('[data-snap-section="true"]')).indexOf(section);
-    if (next < 0) return;
+    if (!goToSection(id)) return;
 
     event.preventDefault();
-    goTo(next);
     window.history.replaceState(null, '', `#${id}`);
   };
 

@@ -48,13 +48,5 @@ export const rememberAuthReturnTo = (location) => {
 export const getAuthReturnTo = (location) => {
   const direct = getDirectReturnTo(location);
   if (direct) return cleanReturnTo(direct);
-  try {
-    const stored = sessionStorage.getItem(AUTH_RETURN_TO_KEY);
-    if (stored) return cleanReturnTo(stored);
-  } catch {
-    // sessionStorage can be unavailable in restricted browser contexts.
-  }
-  const referrer = sameOriginReferrerPath();
-  if (referrer) return cleanReturnTo(referrer);
   return '/dashboard';
 };
