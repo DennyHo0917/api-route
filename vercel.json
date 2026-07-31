@@ -177,6 +177,78 @@
       ]
     },
     {
+      "source": "/api-connect",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/:lang/api-connect",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/clients",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/:lang/clients",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/dashboard/:path*",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/:lang/dashboard/:path*",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/topup/:path*",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/:lang/topup/:path*",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
       "source": "/logs",
       "headers": [
         {
@@ -312,6 +384,38 @@
     },
     {
       "source": "/:lang/api-keys",
+      "destination": "/"
+    },
+    {
+      "source": "/api-connect",
+      "destination": "/"
+    },
+    {
+      "source": "/:lang/api-connect",
+      "destination": "/"
+    },
+    {
+      "source": "/clients",
+      "destination": "/"
+    },
+    {
+      "source": "/:lang/clients",
+      "destination": "/"
+    },
+    {
+      "source": "/dashboard/:path*",
+      "destination": "/"
+    },
+    {
+      "source": "/:lang/dashboard/:path*",
+      "destination": "/"
+    },
+    {
+      "source": "/topup/:path*",
+      "destination": "/"
+    },
+    {
+      "source": "/:lang/topup/:path*",
       "destination": "/"
     },
     {
