@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
   BarChart3,
   Coins,
@@ -34,7 +34,9 @@ export default function ConsoleLayout() {
   const { t } = useTranslation();
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const isChatRoute = location.pathname === '/chats';
 
   const handleLogout = async () => {
     await logout();
@@ -95,7 +97,11 @@ export default function ConsoleLayout() {
         {sidebar}
       </aside>
 
-      <div className="min-h-[calc(100dvh-72px)] lg:mx-60">
+      <div className={`min-h-[calc(100dvh-72px)] transition-[margin] duration-200 ${
+        isChatRoute
+          ? (collapsed ? 'lg:ml-16' : 'lg:ml-60')
+          : 'lg:mx-60'
+      }`}>
         <main className="min-w-0"><Outlet /></main>
       </div>
     </div>
