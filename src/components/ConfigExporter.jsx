@@ -435,6 +435,7 @@ name = "${providerId}"
 base_url = "${endpoint}"
 wire_api = "responses"
 requires_openai_auth = true
+supports_websockets = false
 `,
         };
       }
@@ -637,6 +638,7 @@ name = "API Route"
 base_url = "${apiServerAddress}/v1"
 wire_api = "responses"
 requires_openai_auth = true
+supports_websockets = false
 
 # ~/.codex/auth.json
 {
