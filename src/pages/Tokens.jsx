@@ -16,6 +16,7 @@ import {
 } from '../api';
 import ConfigExporter from '../components/ConfigExporter';
 import DownloadCatalog from '../components/DownloadCatalog';
+import DateTimePicker from '../components/DateTimePicker';
 import { useAuth } from '../context/AuthContext';
 import { useCurrency } from '../context/SiteContext';
 import {
@@ -934,11 +935,11 @@ function TokenModal({
                   <label className="mb-1.5 block text-sm font-medium text-page-label">
                     {t('tokens.expirationTime')}
                   </label>
-                  <input
-                    type="datetime-local"
+                  <DateTimePicker
                     value={form.expired_time}
-                    onChange={(event) => setField('expired_time', event.target.value)}
-                    className="input"
+                    onChange={(value) => setField('expired_time', value)}
+                    placeholder={t('tokens.expirationTime')}
+                    ariaLabel={t('tokens.expirationTime')}
                   />
                   <div className="mt-2 flex flex-wrap gap-2">
                     <button type="button" className="rounded-lg border border-page-divider px-2.5 py-1 text-xs text-page-secondary hover:bg-page-surface-hover" onClick={() => setExpiration(0)}>
