@@ -90,7 +90,7 @@ export default function DateTimePicker({ value, onChange, placeholder, ariaLabel
   };
 
   return (
-    <div ref={rootRef} className="relative">
+    <div ref={rootRef} className="relative min-w-0">
       <button
         type="button"
         className={`input input-solid flex h-[42px] items-center justify-between gap-3 text-left ${selected ? '' : 'text-page-muted'}`}
@@ -105,7 +105,7 @@ export default function DateTimePicker({ value, onChange, placeholder, ariaLabel
       </button>
 
       {open && (
-        <div className="select-panel absolute left-0 top-full z-50 mt-2 w-[min(22rem,calc(100vw-2rem))] rounded-2xl p-3 text-sm text-page">
+        <div className="select-panel absolute left-0 top-full z-50 mt-2 w-full max-w-[22rem] min-w-0 overflow-hidden rounded-2xl p-3 text-sm text-page">
           <div className="mb-3 flex items-center justify-between gap-2">
             <button type="button" className="btn-secondary px-3 py-1.5" onClick={() => setViewDate(addMonths(viewDate, -1))}>
               {'<'}
@@ -146,14 +146,14 @@ export default function DateTimePicker({ value, onChange, placeholder, ariaLabel
 
           <div className="mt-3 grid grid-cols-2 gap-2">
             <select
-              className="input input-solid"
+              className="input input-solid min-w-0"
               value={selected?.getHours() ?? new Date().getHours()}
               onChange={(event) => updateTime('hour', event.target.value)}
             >
               {Array.from({ length: 24 }, (_, hour) => <option key={hour} value={hour}>{pad(hour)}</option>)}
             </select>
             <select
-              className="input input-solid"
+              className="input input-solid min-w-0"
               value={selected?.getMinutes() ?? new Date().getMinutes()}
               onChange={(event) => updateTime('minute', event.target.value)}
             >
