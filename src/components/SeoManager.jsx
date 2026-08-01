@@ -19,7 +19,7 @@ const STRUCTURED_DATA_TOPICS = [
   'AI API reseller platform',
 ];
 const INDEXABLE_PATHS = new Set(['/', '/pricing', '/packages', '/apps', '/ai-api-reseller-platform', '/faq', '/privacy-policy', '/terms-of-service']);
-const PRIVATE_PATHS = new Set(['/login', '/register', '/dashboard', '/dashboard/logs', '/dashboard/tasks', '/chats', '/tokens', '/api-keys', '/logs', '/tasks', '/topup', '/topup/packages', '/account']);
+const PRIVATE_PATHS = new Set(['/login', '/register', '/dashboard', '/dashboard/logs', '/dashboard/tasks', '/chats', '/tokens', '/api-keys', '/api-connect', '/clients', '/logs', '/tasks', '/topup', '/topup/packages', '/account']);
 const LANGUAGE_HREFLANGS = {
   zh: 'zh-CN',
   en: 'en',
@@ -295,7 +295,12 @@ export default function SeoManager() {
     const indexable = INDEXABLE_PATHS.has(pathname);
     const metaTitle = page.metaTitle || page.title;
     const metaDescription = page.metaDescription || page.description;
-    const pageTitle = `${metaTitle} | ${siteName}`;
+    const privatePageTitle = pathname === '/api-connect'
+      ? i18n.t('nav.apiAccess')
+      : pathname === '/clients'
+        ? i18n.t('nav.clients')
+        : metaTitle;
+    const pageTitle = `${privatePageTitle} | ${siteName}`;
     const logoSource = site?.logo || site?.favicon || DEFAULT_LOGO_URL;
     const logoUrl = resolveUrl(logoSource, siteUrl);
     const ogImageUrl = resolveUrl(DEFAULT_OG_IMAGE_PATH, siteUrl);

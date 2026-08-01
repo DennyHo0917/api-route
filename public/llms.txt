@@ -2,7 +2,7 @@
 
 > API-Route is an OpenAI-compatible multi-model AI API gateway and AI API reseller platform.
 
-API-Route lets developers and teams call GPT, Claude, Gemini, and other available AI models through one Base URL and API key. It also provides balance top-ups, AI API plans, usage logs, model pricing, and a white-label reseller platform for people who want to sell AI API access under their own brand.
+API-Route lets developers and teams call GPT, Claude, Gemini, Kimi, Qwen, and other available AI models through one Base URL and API key. It also provides balance top-ups, AI API plans, usage logs, model pricing, and a white-label reseller platform for people who want to sell AI API access under their own brand.
 
 Canonical site: https://www.api-route.com/
 

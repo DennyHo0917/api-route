@@ -2,10 +2,10 @@ export const SEO_COPY = {
   zh: {
     home: {
       title: '一个 API，连接全球主流 AI 模型',
-      description: 'API-Route 是一个 OpenAI 兼容的多模型 AI API 网关，通过同一个 Base URL 和 API Key 调用 GPT、Claude、Gemini 等主流模型。',
+      description: 'API-Route 是一个 OpenAI 兼容的多模型 AI API 网关，通过同一个 Base URL 和 API Key 调用 GPT、Claude、Gemini、Kimi、千问等主流模型。',
       questions: [
         ['API-Route 是什么？', 'API-Route 是一个兼容 OpenAI 格式的多模型 AI API 网关，可用统一 Base URL 和 API Key 调用多个主流模型。'],
-        ['可以用一个 API 调用 GPT、Claude 和 Gemini 吗？', '可以。你可以通过 API-Route 的 OpenAI 兼容接口接入 GPT、Claude、Gemini 等模型，并统一管理价格、余额、套餐和调用记录。'],
+        ['可以用一个 API 调用 GPT、Claude、Gemini、Kimi 和千问吗？', '可以。你可以通过 API-Route 的 OpenAI 兼容接口接入 GPT、Claude、Gemini、Kimi、千问等模型，并统一管理价格、余额、套餐和调用记录。'],
         ['适合哪些场景？', '适合 AI 产品开发、SaaS 集成、Claude Code、VSCode、LibreChat、自动化工作流，以及需要多模型统一路由的团队。'],
       ],
     },
@@ -19,8 +19,8 @@ export const SEO_COPY = {
       ],
     },
     packages: {
-      title: 'AI API 套餐与余额充值',
-      description: '先充值账户余额，再按需订阅天卡、周卡、月卡等 AI API 套餐；查看套餐额度、有效期与适用场景。',
+      title: '套餐与余额充值',
+      description: '先充值账户余额，再按需购买天卡、周卡、月卡等 AI API 套餐；查看套餐额度、有效期与适用场景。',
     },
     apps: {
       title: 'OpenAI 兼容客户端与 AI 应用接入',
@@ -59,16 +59,16 @@ export const SEO_COPY = {
   en: {
     home: {
       title: "One API for the World's Leading AI Models",
-      description: 'API-Route is an OpenAI-compatible multi-model AI API gateway. Use one Base URL and API key to call GPT, Claude, Gemini, and other leading models.',
+      description: 'API-Route is an OpenAI-compatible multi-model AI API gateway. Use one Base URL and API key to call GPT, Claude, Gemini, Kimi, Qwen, and other leading models.',
       questions: [
         ['What is API-Route?', 'API-Route is an OpenAI-compatible multi-model AI API gateway that lets you call multiple leading models with one Base URL and API key.'],
-        ['Can I call GPT, Claude, and Gemini with one API?', 'Yes. API-Route provides an OpenAI-compatible API for GPT, Claude, Gemini, and other models with unified pricing, balance, plans, and usage logs.'],
+        ['Can I call GPT, Claude, Gemini, Kimi, and Qwen with one API?', 'Yes. API-Route provides an OpenAI-compatible API for GPT, Claude, Gemini, Kimi, Qwen, and other models with unified pricing, balance, plans, and usage logs.'],
         ['What is it for?', 'It fits AI product development, SaaS integrations, Claude Code, VS Code, LibreChat, automation workflows, and teams that need unified multi-model routing.'],
       ],
     },
     pricing: {
       title: 'AI API Pricing Comparison and Token Cost',
-      description: 'Compare GPT, Claude, Gemini, and other model rates on API-Route across input tokens, output tokens, cache reads, cache creation, per-call pricing, and official references to estimate AI API token cost.',
+      description: 'Compare GPT, Claude, Gemini, and other AI model rates on API-Route to estimate token and per-call costs.',
       questions: [
         ['How do I compare OpenAI, Claude, and Gemini API pricing?', 'Start with input and output token rates, then include cache pricing, per-call models, context length, and expected request volume.'],
         ['How do I estimate AI API token cost?', 'For text models, estimate input tokens times input rate plus output tokens times output rate plus cache-related costs. Image, audio, and video models follow the displayed spec or per-call price.'],
@@ -114,16 +114,16 @@ export const SEO_COPY = {
   ja: {
     home: {
       title: '主要 AI モデルをひとつの API で',
-      description: 'API-Route は OpenAI 互換のマルチモデル AI API ゲートウェイです。ひとつの Base URL と API キーで GPT、Claude、Gemini などを呼び出せます。',
+      description: 'API-Route は OpenAI 互換のマルチモデル AI API ゲートウェイです。ひとつの Base URL と API キーで GPT、Claude、Gemini、Kimi、Qwen などを呼び出せます。',
       questions: [
         ['API-Route とは何ですか？', 'API-Route は OpenAI 互換のマルチモデル AI API ゲートウェイで、ひとつの Base URL と API キーで複数の主要モデルを呼び出せます。'],
-        ['GPT、Claude、Gemini をひとつの API で使えますか？', 'はい。API-Route の OpenAI 互換 API で GPT、Claude、Gemini などを利用し、料金、残高、プラン、利用ログをまとめて管理できます。'],
+        ['GPT、Claude、Gemini、Kimi、Qwen をひとつの API で使えますか？', 'はい。API-Route の OpenAI 互換 API で GPT、Claude、Gemini、Kimi、Qwen などを利用し、料金、残高、プラン、利用ログをまとめて管理できます。'],
         ['どんな用途に向いていますか？', 'AI プロダクト開発、SaaS 連携、Claude Code、VSCode、LibreChat、自動化ワークフロー、複数モデルの統一ルーティングに向いています。'],
       ],
     },
     pricing: {
       title: 'AI API 料金比較・モデル単価・トークンコスト',
-      description: 'API-Route で利用できる GPT、Claude、Gemini などの入力料金、出力料金、キャッシュ料金、回数課金、公式参考価格を比較し、AI API のトークンコストを見積もれます。',
+      description: 'API-Route で利用できる GPT、Claude、Gemini、Kimi、Qwen などの入力料金、出力料金、キャッシュ料金、回数課金、公式参考価格を比較し、AI API のトークンコストを見積もれます。',
       questions: [
         ['OpenAI、Claude、Gemini の API 料金はどう比較しますか？', '入力と出力のトークン単価に加えて、キャッシュ料金、回数課金、コンテキスト長、想定呼び出し回数を合わせて見ます。'],
         ['AI API のトークンコストはどう見積もりますか？', 'テキストモデルでは、入力トークン数と入力単価、出力トークン数と出力単価、キャッシュ関連費用を合計します。画像、音声、動画は表の仕様や回数単価に従います。'],
@@ -169,16 +169,16 @@ export const SEO_COPY = {
   ko: {
     home: {
       title: '주요 AI 모델을 하나의 API로',
-      description: 'API-Route는 OpenAI 호환 멀티 모델 AI API 게이트웨이입니다. 하나의 Base URL과 API 키로 GPT, Claude, Gemini 등 주요 모델을 호출하세요.',
+      description: 'API-Route는 OpenAI 호환 멀티 모델 AI API 게이트웨이입니다. 하나의 Base URL과 API 키로 GPT, Claude, Gemini, Kimi, Qwen 등 주요 모델을 호출하세요.',
       questions: [
         ['API-Route는 무엇인가요?', 'API-Route는 하나의 Base URL과 API 키로 여러 주요 모델을 호출할 수 있는 OpenAI 호환 멀티 모델 AI API 게이트웨이입니다.'],
-        ['하나의 API로 GPT, Claude, Gemini를 호출할 수 있나요?', '네. API-Route의 OpenAI 호환 API로 GPT, Claude, Gemini 등을 호출하고 요금, 잔액, 플랜, 사용 로그를 통합 관리할 수 있습니다.'],
+        ['하나의 API로 GPT, Claude, Gemini, Kimi, Qwen을 호출할 수 있나요?', '네. API-Route의 OpenAI 호환 API로 GPT, Claude, Gemini, Kimi, Qwen 등을 호출하고 요금, 잔액, 플랜, 사용 로그를 통합 관리할 수 있습니다.'],
         ['어떤 용도에 적합한가요?', 'AI 제품 개발, SaaS 연동, Claude Code, VSCode, LibreChat, 자동화 워크플로, 멀티 모델 통합 라우팅에 적합합니다.'],
       ],
     },
     pricing: {
       title: 'AI API 요금 비교, 모델 단가 및 토큰 비용',
-      description: 'API-Route에서 지원하는 GPT, Claude, Gemini 등 모델의 입력 요금, 출력 요금, 캐시 요금, 호출당 과금, 공식 참고가를 비교하고 AI API 토큰 비용을 빠르게 추정하세요.',
+      description: 'API-Route에서 지원하는 GPT, Claude, Gemini, Kimi, Qwen 등 모델의 입력 요금, 출력 요금, 캐시 요금, 호출당 과금, 공식 참고가를 비교하고 AI API 토큰 비용을 빠르게 추정하세요.',
       questions: [
         ['OpenAI, Claude, Gemini API 요금은 어떻게 비교하나요?', '입력/출력 토큰 단가를 먼저 보고 캐시 요금, 호출당 과금, 문맥 길이, 예상 호출량을 함께 계산합니다.'],
         ['AI API 토큰 비용은 어떻게 추정하나요?', '텍스트 모델은 입력 토큰 비용, 출력 토큰 비용, 캐시 관련 비용을 더해 계산합니다. 이미지, 오디오, 영상 모델은 표의 사양이나 호출당 가격을 따릅니다.'],
