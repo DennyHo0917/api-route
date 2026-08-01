@@ -59,6 +59,7 @@ function submitEpayForm(resData) {
 }
 
 const SUB_DISTRIBUTOR_ITEM_ID = 'sub_distributor_setup';
+const SUB_DISTRIBUTOR_TRACKING_ID_KEY = 'ga_pending_sub_distributor_tracking_id';
 const SHOWCASE_IMAGES = [
   { src: providerMarketScreenshot, width: 1845, height: 3197 },
   { src: providerManagementScreenshot, width: 1560, height: 1058 },
@@ -590,7 +591,7 @@ export default function SubDistributor() {
     const trackPricingView = () => {
       if (pricingTrackedRef.current) return;
       pricingTrackedRef.current = true;
-      const value = Number((Number(subInfo?.price || 0) * cnyRate).toFixed(2));
+      const value = Number(Number(subInfo?.price || 0).toFixed(2));
       trackEvent('reseller_pricing_view', {
         currency: 'CNY',
         ...(value > 0 ? { value } : {}),
@@ -614,7 +615,7 @@ export default function SubDistributor() {
     }, { threshold: 0.25 });
     observer.observe(panel);
     return () => observer.disconnect();
-  }, [authLoading, cnyRate, loading, subInfo?.enabled, subInfo?.price, user]);
+  }, [authLoading, loading, subInfo?.enabled, subInfo?.price, user]);
 
   useEffect(() => {
     if (!paymentReturned || authLoading) return;
@@ -634,11 +635,24 @@ export default function SubDistributor() {
       if (cancelled) return;
 
       if (refreshed?.has_distributor) {
-        const value = Number((Number(subInfo?.price || 0) * cnyRate).toFixed(2));
-        const trackingKey = `sub_dist_purchase_tracked_${refreshed.id || user.id || 'user'}`;
-        if (!sessionStorage.getItem(trackingKey)) {
+        const value = Number(Number(subInfo?.price || 0).toFixed(2));
+        let trackingId = '';
+        try {
+          trackingId = sessionStorage.getItem(SUB_DISTRIBUTOR_TRACKING_ID_KEY) || '';
+        } catch {
+          trackingId = '';
+        }
+        trackingId ||= `sub_distributor_${refreshed.id || user.id || Date.now()}`;
+        const trackingKey = `sub_dist_purchase_tracked_${trackingId}`;
+        let alreadyTracked = false;
+        try {
+          alreadyTracked = Boolean(sessionStorage.getItem(trackingKey));
+        } catch {
+          alreadyTracked = false;
+        }
+        if (!alreadyTracked) {
           trackEvent('purchase', {
-            transaction_id: `sub_distributor_${refreshed.id || user.id || Date.now()}`,
+            transaction_id: trackingId,
             affiliation: 'API-Route reseller platform',
             currency: 'CNY',
             ...(value > 0 ? { value } : {}),
@@ -650,7 +664,11 @@ export default function SubDistributor() {
               quantity: 1,
             }],
           });
-          sessionStorage.setItem(trackingKey, '1');
+          try {
+            sessionStorage.setItem(trackingKey, '1');
+          } catch {
+            // Best-effort de-duplication only.
+          }
         }
         toast.success(t('subDist.openedSuccess'), { id: toastId });
       } else {
@@ -713,7 +731,13 @@ export default function SubDistributor() {
         payload.chain = form.chain;
         payload.token = form.token;
       }
-      const value = Number((Number(subInfo?.price || 0) * cnyRate).toFixed(2));
+      const value = Number(Number(subInfo?.price || 0).toFixed(2));
+      const trackingId = `sub_distributor_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+      try {
+        sessionStorage.setItem(SUB_DISTRIBUTOR_TRACKING_ID_KEY, trackingId);
+      } catch {
+        // Purchase tracking can fall back to the user-scoped identifier.
+      }
       trackEvent('begin_checkout', {
         currency: 'CNY',
         ...(value > 0 ? { value } : {}),

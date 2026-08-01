@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { useSite } from '../context/SiteContext';
+import { trackEvent } from '../utils/analytics';
 
 const SHARED_API_ENDPOINTS = [
   {
@@ -66,8 +67,9 @@ export default function ApiEndpoints() {
     [siteEndpoint, t],
   );
 
-  const handleCopy = async (url) => {
+  const handleCopy = async (url, endpoint) => {
     await copyToClipboard(url);
+    trackEvent('api_endpoint_copy', { endpoint });
     toast.success(t('config.apiUrlCopied'));
   };
 
@@ -93,7 +95,7 @@ export default function ApiEndpoints() {
             <button
               key={endpoint.id}
               type="button"
-              onClick={() => handleCopy(endpoint.url)}
+              onClick={() => handleCopy(endpoint.url, endpoint.id)}
               className="rounded-xl border border-page-divider bg-page-inset/40 px-4 py-3 text-left transition-colors hover:bg-page-surface-hover"
             >
               <div className="mb-1 flex items-center gap-2">

@@ -114,6 +114,7 @@ export default function Packages() {
       currency: 'CNY',
       value: item.price,
       login_state: user ? 'logged_in' : 'anonymous',
+      placement: 'packages',
       items: [item],
     });
     if (!user) {
@@ -136,6 +137,7 @@ export default function Packages() {
           affiliation: 'API-Route package',
           currency: 'CNY',
           value: item.price,
+          placement: 'packages',
           items: [item],
         });
         toast.success(t('packages.subscribedSuccess'));

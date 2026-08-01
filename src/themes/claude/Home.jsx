@@ -47,6 +47,17 @@ function getTotalQuotaDollars(pkg) {
   return quotaDollars * Math.max(1, resetCount);
 }
 
+function getPackageAnalyticsItem(pkg) {
+  const price = Number(pkg?.price || 0);
+  return {
+    item_id: String(pkg?.id || ''),
+    item_name: pkg?.name || 'API package',
+    item_category: 'api_package',
+    price,
+    quantity: 1,
+  };
+}
+
 const LEGACY_HERO_SUBTITLES = new Set([
   '通过单一 API 端点访问全球最强大的 AI 模型。简单、实惠、可靠。',
 ]);
@@ -163,6 +174,14 @@ export default function ClaudeHome() {
   const supportLink = getSupportLink(site);
 
   const handleSubscribe = (pkg) => {
+    const item = getPackageAnalyticsItem(pkg);
+    trackEvent('begin_checkout', {
+      currency: 'CNY',
+      value: item.price,
+      login_state: user ? 'logged_in' : 'anonymous',
+      placement: 'home_packages',
+      items: [item],
+    });
     if (!user) {
       navigate('/register');
       return;
@@ -177,6 +196,15 @@ export default function ClaudeHome() {
     try {
       const res = await subscribePackage(pkgId);
       if (res.data.success) {
+        const item = getPackageAnalyticsItem(confirmPkg);
+        trackEvent('purchase', {
+          transaction_id: String(res.data.data?.id || res.data.data?.subscription_id || `package_${pkgId}_${Date.now()}`),
+          affiliation: 'API-Route package',
+          currency: 'CNY',
+          value: item.price,
+          placement: 'home_packages',
+          items: [item],
+        });
         toast.success(t('packages.subscribedSuccess'));
         setConfirmPkg(null);
         await refreshUser({ skipErrorHandler: true }).catch(() => null);

@@ -747,6 +747,11 @@ print(message.content[0].text)`;
     const config = generateConfig();
     if (!config) return;
     await copyToClipboard(config);
+    trackEvent('api_config_copy', {
+      endpoint: selectedEndpointId,
+      source: embedded ? 'api_access' : 'config',
+      tool: selectedTool,
+    });
     setCopied(true);
     toast.success(t('config.copied'));
     window.setTimeout(() => setCopied(false), 2000);
@@ -775,6 +780,11 @@ print(message.content[0].text)`;
     a.download = getFilename();
     a.click();
     URL.revokeObjectURL(url);
+    trackEvent('api_config_download', {
+      endpoint: selectedEndpointId,
+      source: embedded ? 'api_access' : 'config',
+      tool: selectedTool,
+    });
     toast.success(t('config.downloaded'));
   };
 

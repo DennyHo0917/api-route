@@ -1,5 +1,16 @@
 export const GA_MEASUREMENT_ID = 'G-GZT5KLBKJ8';
 
+const SENSITIVE_QUERY_KEYS = new Set([
+  'code',
+  'state',
+  'token',
+  'access_token',
+  'id_token',
+  'refresh_token',
+  'password',
+  'email',
+]);
+
 export function trackEvent(name, params = {}) {
   if (typeof window === 'undefined' || typeof window.gtag !== 'function') return false;
   window.gtag('event', name, params);
@@ -26,10 +37,19 @@ export function trackEventOnce(storageKey, name, params = {}) {
 
 export function trackPageView(pageTitle) {
   if (typeof window === 'undefined' || typeof window.gtag !== 'function') return false;
+  const safeUrl = new URL(window.location.href);
+  if (safeUrl.pathname.startsWith('/oauth/')) {
+    safeUrl.search = '';
+  } else {
+    for (const key of [...safeUrl.searchParams.keys()]) {
+      if (SENSITIVE_QUERY_KEYS.has(key.toLowerCase())) safeUrl.searchParams.delete(key);
+    }
+  }
+  safeUrl.hash = '';
   window.gtag('config', GA_MEASUREMENT_ID, {
     page_title: pageTitle,
-    page_path: `${window.location.pathname}${window.location.search}`,
-    page_location: window.location.href,
+    page_path: `${safeUrl.pathname}${safeUrl.search}`,
+    page_location: safeUrl.toString(),
   });
   return true;
 }

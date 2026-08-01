@@ -23,14 +23,20 @@ export default function OAuthCallback() {
 
     const normalizedProvider = provider.toLowerCase();
     if (!SUPPORTED_OAUTH_PROVIDERS.has(normalizedProvider)) {
+      trackEvent('oauth_failed', {
+        method: normalizedProvider || 'unknown',
+        reason: 'unsupported_provider',
+      });
       setError(t('login.oauthUnsupported'));
       return;
     }
 
     const params = Object.fromEntries(new URLSearchParams(location.search).entries());
+    window.history.replaceState(null, '', window.location.pathname);
     completeOAuth(normalizedProvider, params)
       .then((result) => {
         if (!result.success) {
+          trackEvent('oauth_failed', { method: normalizedProvider, reason: 'callback_rejected' });
           setError(result.message || t('login.oauthFailed'));
           return;
         }
@@ -39,6 +45,7 @@ export default function OAuthCallback() {
         navigate(returnTo, { replace: true });
       })
       .catch((err) => {
+        trackEvent('oauth_failed', { method: normalizedProvider, reason: 'request_error' });
         setError(err.response?.data?.message || t('login.oauthFailed'));
       });
   }, [completeOAuth, location.search, navigate, provider, returnTo, t]);

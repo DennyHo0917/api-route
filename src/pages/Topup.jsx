@@ -337,6 +337,7 @@ export default function Topup() {
     try {
       const res = await redeemCode(redeemInput.trim());
       if (res.data.success) {
+        trackEvent('topup_redeem_success', { source_funnel: sourceFunnel });
         setRedeemInput('');
         setShowRedeemModal(false);
         await Promise.all([
@@ -449,9 +450,19 @@ export default function Topup() {
         if (res.data.message === 'success' && res.data.data?.checkout_url) {
           redirectPaymentWindow(paymentWindow, res.data.data.checkout_url);
         } else if (res.data.message === 'success') {
+          trackEvent('topup_payment_error', {
+            payment_method: method,
+            reason: 'missing_checkout_url',
+            source_funnel: sourceFunnel,
+          });
           closePendingPaymentWindow(paymentWindow);
           toast.error(t('common.requestFailed'));
         } else if (res.data.message !== 'success') {
+          trackEvent('topup_payment_error', {
+            payment_method: method,
+            reason: 'order_rejected',
+            source_funnel: sourceFunnel,
+          });
           closePendingPaymentWindow(paymentWindow);
           const errMsg = typeof res.data.data === 'string' ? res.data.data : res.data.message;
           toast.error(errMsg || t('common.requestFailed'));
@@ -462,6 +473,11 @@ export default function Topup() {
         if (res.data.message === 'success' && res.data.data?.pay_link) {
           window.open(res.data.data.pay_link, '_blank');
         } else if (res.data.message !== 'success') {
+          trackEvent('topup_payment_error', {
+            payment_method: method,
+            reason: 'order_rejected',
+            source_funnel: sourceFunnel,
+          });
           const errMsg = typeof res.data.data === 'string' ? res.data.data : res.data.message;
           toast.error(errMsg || t('common.requestFailed'));
         }
@@ -491,13 +507,30 @@ export default function Topup() {
             document.body.appendChild(form);
             form.submit();
             document.body.removeChild(form);
+          } else {
+            trackEvent('topup_payment_error', {
+              payment_method: method,
+              reason: 'missing_gateway_payload',
+              source_funnel: sourceFunnel,
+            });
+            toast.error(t('common.requestFailed'));
           }
         } else {
+          trackEvent('topup_payment_error', {
+            payment_method: method,
+            reason: 'order_rejected',
+            source_funnel: sourceFunnel,
+          });
           const errMsg = typeof res.data.data === 'string' ? res.data.data : res.data.message;
           toast.error(errMsg || t('common.requestFailed'));
         }
       }
     } catch (e) {
+      trackEvent('topup_payment_error', {
+        payment_method: method,
+        reason: 'request_error',
+        source_funnel: sourceFunnel,
+      });
       closePendingPaymentWindow(paymentWindow);
       /* interceptor */
     }
@@ -538,31 +571,46 @@ export default function Topup() {
           items: [getTopupAnalyticsItem(analyticsValue)],
         });
         setCryptoOrder(res.data.data);
-        startCryptoPolling(res.data.data.trade_no, analyticsValue);
+        startCryptoPolling(res.data.data.trade_no, payAmountVal);
       } else if (res.data.message !== 'success') {
+        trackEvent('topup_payment_error', {
+          payment_method: 'crypto',
+          reason: 'order_rejected',
+          source_funnel: sourceFunnel,
+        });
         const errMsg = typeof res.data.data === 'string' ? res.data.data : res.data.message;
         toast.error(errMsg || t('common.requestFailed'));
       }
-    } catch (e) { /* interceptor */ }
+    } catch (e) {
+      trackEvent('topup_payment_error', {
+        payment_method: 'crypto',
+        reason: 'request_error',
+        source_funnel: sourceFunnel,
+      });
+      /* interceptor */
+    }
     setPaymentLoading(false);
     setPayingMethod('');
   };
 
-  const startCryptoPolling = (tradeNo, analyticsValue) => {
+  const startCryptoPolling = (tradeNo, payAmount) => {
     setCryptoPolling(true);
     const interval = setInterval(async () => {
       try {
         const res = await getCryptoOrderStatus(tradeNo);
         if (res.data.data?.status === 'success') {
-          trackEvent('purchase', {
-            transaction_id: String(tradeNo || `crypto_topup_${Date.now()}`),
-            affiliation: 'API-Route balance top-up',
-            currency: code || 'CNY',
-            value: analyticsValue,
-            payment_method: 'crypto',
-            source_funnel: sourceFunnel,
-            items: [getTopupAnalyticsItem(analyticsValue)],
-          });
+          trackTopupPurchaseOnce(
+            {
+              trade_no: tradeNo,
+              amount: payAmount,
+              payment_method: 'crypto',
+              status: 'success',
+            },
+            code || 'CNY',
+            rate,
+            decimals,
+            sourceFunnel,
+          );
           clearInterval(interval);
           setCryptoPolling(false);
           setCryptoOrder(null);
@@ -570,6 +618,10 @@ export default function Topup() {
           await Promise.all([loadData(), refreshUser()]);
           resumePendingFunnel();
         } else if (res.data.data?.status === 'expired') {
+          trackEvent('topup_payment_expired', {
+            payment_method: 'crypto',
+            source_funnel: sourceFunnel,
+          });
           clearInterval(interval);
           setCryptoPolling(false);
           toast.error(t('topup.orderExpired'));

@@ -83,8 +83,16 @@ export default function Register() {
         navigate('/login', { replace: true, state: { from: returnTo } });
         return; // component may unmount — skip setLoading
       }
+      trackEvent('sign_up_failed', {
+        method: affCode ? 'affiliate' : 'email',
+        reason: 'request_rejected',
+      });
       // error toast is handled by api interceptor for success:false
     } catch (err) {
+      trackEvent('sign_up_failed', {
+        method: new URLSearchParams(window.location.search).get('aff') ? 'affiliate' : 'email',
+        reason: 'request_error',
+      });
       // Network error handled by interceptor
     }
     setLoading(false);

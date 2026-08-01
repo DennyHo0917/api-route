@@ -39,8 +39,10 @@ export default function Login() {
         navigate(returnTo, { replace: true });
         return; // component may unmount — skip setLoading
       }
+      trackEvent('login_failed', { method: 'email', reason: 'credentials_rejected' });
       // error toast is handled by api interceptor for success:false
     } catch (err) {
+      trackEvent('login_failed', { method: 'email', reason: 'request_error' });
       // Network error handled by interceptor
     }
     setLoading(false);

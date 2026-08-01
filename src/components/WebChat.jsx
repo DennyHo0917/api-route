@@ -374,6 +374,10 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
     const nextCategory = MODEL_CATEGORIES.find((category) => (
       modelsByCategory[category].some((item) => item.name === model)
     )) || 'chat';
+    trackEvent('chat_model_select', {
+      category: nextCategory,
+      model,
+    });
     preferredModelRef.current = model;
     setModelCategory(nextCategory);
     setSelectedModel(model);
@@ -526,6 +530,12 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
       });
     } catch (error) {
       if (error.name !== 'AbortError') {
+        trackEvent('chat_request_error', {
+          category: modelCategory,
+          has_image: Boolean(userMessage.attachment),
+          model: selectedModel,
+          reason: 'request_error',
+        });
         toast.error(error.message || t('chat.requestFailed'));
       }
     } finally {
@@ -544,6 +554,11 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
           updatedAt: Date.now(),
         });
         if (assistantContent) {
+          trackEvent('chat_request_success', {
+            category: modelCategory,
+            has_image: Boolean(userMessage.attachment),
+            model: selectedModel,
+          });
           trackEventOnce(
             `ga_first_chat_success_${user.id}`,
             'first_chat_success',
