@@ -23,6 +23,11 @@
     "notFound.description": "The requested page does not exist, has moved, or the address is incorrect.",
     "notFound.backHome": "Back to home",
     "common.close": "Close",
+    "auth.legalPrefix": "By signing in or registering, you agree to our ",
+    "auth.terms": "Terms of Service",
+    "auth.legalAnd": " and ",
+    "auth.privacy": "Privacy Policy",
+    "auth.legalSuffix": ".",
 
     "home.heroTagline": "AI API Platform",
     "home.heroSubtitle": "Use GPT, Claude, Gemini, Kimi, and other leading models directly in AI Chat, or connect apps, developer tools, and automations through an OpenAI-compatible API.",

@@ -96,6 +96,18 @@ export default function Login() {
             </button>
           </form>
 
+          <p className="mt-3 text-center text-xs leading-5 text-page-muted">
+            {t('auth.legalPrefix')}
+            <Link to="/terms-of-service" className="text-page-link hover:text-page-link transition-colors">
+              {t('auth.terms')}
+            </Link>
+            {t('auth.legalAnd')}
+            <Link to="/privacy-policy" className="text-page-link hover:text-page-link transition-colors">
+              {t('auth.privacy')}
+            </Link>
+            {t('auth.legalSuffix')}
+          </p>
+
           <OAuthButtons disabled={loading} />
 
           <div className="mt-6 text-center">
