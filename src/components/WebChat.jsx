@@ -4,7 +4,9 @@ import {
   Copy,
   FileText,
   Gift,
+  Image as ImageIcon,
   Menu,
+  MessageSquare,
   MessageSquarePlus,
   Paperclip,
   Send,
@@ -12,6 +14,7 @@ import {
   Square,
   Trash2,
   UserRound,
+  Video,
   WalletCards,
   X,
 } from 'lucide-react';
@@ -24,6 +27,7 @@ import { useCurrency } from '../context/SiteContext';
 import { trackEvent, trackEventOnce } from '../utils/analytics';
 import {
   filterAvailableModels,
+  filterAvailableModelsByCategory,
   modelSupportsImageUpload,
   toChatCompletionMessage,
 } from '../utils/chatModels';
@@ -36,7 +40,12 @@ const DEFAULT_MODEL = 'moonshotai/kimi-k3';
 const MAX_IMAGE_SIZE_MB = 3;
 const MAX_IMAGE_SIZE = MAX_IMAGE_SIZE_MB * 1024 * 1024;
 const SUPPORTED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
+const MODEL_CATEGORIES = ['chat', 'image', 'video'];
 let databasePromise;
+
+const findDefaultChatModel = (models) => models.find((model) => (
+  model.name === DEFAULT_MODEL || String(model.name).split('/').pop() === 'kimi-k3'
+))?.name || '';
 
 function openDatabase() {
   if (!databasePromise) {
@@ -119,7 +128,8 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
   const [conversations, setConversations] = useState([]);
   const [activeConversation, setActiveConversation] = useState(null);
   const [messages, setMessages] = useState([]);
-  const [models, setModels] = useState([]);
+  const [modelsByCategory, setModelsByCategory] = useState({ chat: [], image: [], video: [] });
+  const [modelCategory, setModelCategory] = useState('chat');
   const [selectedModel, setSelectedModel] = useState(DEFAULT_MODEL);
   const [pendingModel, setPendingModel] = useState('');
   const [balancePromptOpen, setBalancePromptOpen] = useState(false);
@@ -132,6 +142,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
   const [referralCardOpen, setReferralCardOpen] = useState(false);
   const [referralLink, setReferralLink] = useState('');
   const abortControllerRef = useRef(null);
+  const preferredModelRef = useRef('');
   const referralPromptRequestedRef = useRef(false);
   const imageInputRef = useRef(null);
   const messagesContainerRef = useRef(null);
@@ -141,7 +152,8 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
     () => tokens.filter((token) => token.status === 1 && token.key),
     [tokens],
   );
-  const canUploadImage = modelSupportsImageUpload(selectedModel);
+  const models = modelsByCategory[modelCategory] || [];
+  const canUploadImage = modelCategory === 'chat' && modelSupportsImageUpload(selectedModel);
   const balanceValue = Math.max(0, Number(user?.quota || 0) / Q * rate);
   const balanceEmpty = hasNoBalance(user);
   const commissionPercent = Number((
@@ -156,13 +168,13 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
       .then((items) => {
         if (cancelled) return;
         setConversations(items);
-        if (items[0]) {
-          setActiveConversation(items[0]);
-          setMessages(items[0].messages || []);
-          setSelectedModel(items[0].model || '');
-          setInput(items[0].pendingMessage?.input || '');
-          setAttachment(items[0].pendingMessage?.attachment || null);
-        }
+        const latestConversation = items[0] || null;
+        setActiveConversation(latestConversation);
+        setMessages(latestConversation?.messages || []);
+        preferredModelRef.current = latestConversation?.model || '';
+        setSelectedModel(latestConversation?.model || DEFAULT_MODEL);
+        setInput(latestConversation?.pendingMessage?.input || '');
+        setAttachment(latestConversation?.pendingMessage?.attachment || null);
       })
       .catch(() => toast.error(t('chat.storageError')))
       .finally(() => {
@@ -175,8 +187,9 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
 
   useEffect(() => {
     if (enabledTokens.length === 0) {
-      setModels([]);
+      setModelsByCategory({ chat: [], image: [], video: [] });
       setSelectedModel('');
+      setModelCategory('chat');
       return;
     }
 
@@ -197,18 +210,32 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
       }),
     ]).then(([siteResponse, ...groups]) => {
       if (cancelled) return;
-      const uniqueModels = filterAvailableModels(groups, siteResponse.data.data || []);
-      setModels(uniqueModels);
-      setSelectedModel((current) => (
-        uniqueModels.some((model) => model.name === current)
-          ? current
-          : uniqueModels.find((model) => model.name === DEFAULT_MODEL)?.name
-            || uniqueModels[0]?.name
-            || ''
+      const siteModels = siteResponse.data.data || [];
+      const nextModelsByCategory = {
+        chat: filterAvailableModels(groups, siteModels),
+        image: filterAvailableModelsByCategory(groups, siteModels, 'image'),
+        video: filterAvailableModelsByCategory(groups, siteModels, 'video'),
+      };
+      const preferredModel = preferredModelRef.current;
+      const preferredCategory = MODEL_CATEGORIES.find((category) => (
+        nextModelsByCategory[category].some((model) => model.name === preferredModel)
       ));
+      const fallbackCategory = preferredCategory || (
+        nextModelsByCategory.chat.length ? 'chat' : MODEL_CATEGORIES.find(
+          (category) => nextModelsByCategory[category].length,
+        ) || 'chat'
+      );
+      const fallbackModel = nextModelsByCategory[fallbackCategory].find(
+        (model) => model.name === preferredModel,
+      )?.name || findDefaultChatModel(nextModelsByCategory.chat)
+        || nextModelsByCategory[fallbackCategory][0]?.name
+        || '';
+      setModelsByCategory(nextModelsByCategory);
+      setModelCategory(fallbackCategory);
+      setSelectedModel(fallbackModel);
     }).catch(() => {
       if (cancelled) return;
-      setModels([]);
+      setModelsByCategory({ chat: [], image: [], video: [] });
       setSelectedModel('');
     }).finally(() => {
       if (!cancelled) setLoadingModels(false);
@@ -296,8 +323,12 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
     setMessages([]);
     setInput('');
     setAttachment(null);
+    preferredModelRef.current = findDefaultChatModel(modelsByCategory.chat)
+      || modelsByCategory.chat[0]?.name
+      || '';
+    setModelCategory('chat');
     setSelectedModel(
-      models.find((model) => model.name === DEFAULT_MODEL)?.name || models[0]?.name || '',
+      preferredModelRef.current,
     );
   };
 
@@ -308,7 +339,14 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
     setMessages(conversation.messages || []);
     setInput(conversation.pendingMessage?.input || '');
     setAttachment(conversation.pendingMessage?.attachment || null);
-    if (models.some((model) => model.name === conversation.model)) {
+    const conversationCategory = MODEL_CATEGORIES.find((category) => (
+      modelsByCategory[category].some((model) => model.name === conversation.model)
+    ));
+    if (conversationCategory) setModelCategory(conversationCategory);
+    if (conversationCategory && modelsByCategory[conversationCategory].some(
+      (model) => model.name === conversation.model,
+    )) {
+      preferredModelRef.current = conversation.model;
       setSelectedModel(conversation.model);
     }
   };
@@ -333,8 +371,13 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
   };
 
   const applyModelChange = (model) => {
+    const nextCategory = MODEL_CATEGORIES.find((category) => (
+      modelsByCategory[category].some((item) => item.name === model)
+    )) || 'chat';
+    preferredModelRef.current = model;
+    setModelCategory(nextCategory);
     setSelectedModel(model);
-    if (attachment && !modelSupportsImageUpload(model)) {
+    if (attachment && (nextCategory !== 'chat' || !modelSupportsImageUpload(model))) {
       setAttachment(null);
       toast.error(t('chat.attachmentsUnsupported'));
     }
@@ -343,6 +386,17 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
       setMessages([]);
     }
     setPendingModel('');
+  };
+
+  const changeModelCategory = (category) => {
+    if (generating || category === modelCategory) return;
+    const nextModel = modelsByCategory[category][0]?.name;
+    if (!nextModel) return;
+    if (activeConversation && activeConversation.model !== nextModel) {
+      setPendingModel(nextModel);
+      return;
+    }
+    applyModelChange(nextModel);
   };
 
   const changeModel = (event) => {
@@ -591,8 +645,37 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
             <Menu size={20} />
           </button>
           <div className="flex min-w-0 flex-1 flex-wrap items-end gap-2">
+            <div className="flex shrink-0 rounded-xl border border-page-divider bg-page-inset/40 p-1" role="tablist" aria-label={t('chat.modelModes')}>
+              {[
+                ['chat', MessageSquare, 'chat.modeChat'],
+                ['image', ImageIcon, 'chat.modeImage'],
+                ['video', Video, 'chat.modeVideo'],
+              ].map(([category, Icon, labelKey]) => {
+                const active = modelCategory === category;
+                const available = modelsByCategory[category].length > 0;
+                return (
+                  <button
+                    key={category}
+                    type="button"
+                    role="tab"
+                    aria-selected={active}
+                    onClick={() => changeModelCategory(category)}
+                    disabled={generating || loadingModels || !available}
+                    className={`flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold transition-colors sm:px-3 ${
+                      active
+                        ? 'bg-page-surface text-page shadow-sm'
+                        : available
+                          ? 'text-page-secondary hover:bg-page-surface-hover hover:text-page'
+                          : 'cursor-not-allowed text-page-muted opacity-60'
+                    }`}
+                  >
+                    <Icon size={14} />
+                    <span>{t(labelKey)}</span>
+                  </button>
+                );
+              })}
+            </div>
             <label className="min-w-[180px] flex-1 sm:max-w-[320px]">
-              <span className="mb-1 block text-xs text-page-muted">{t('chat.model')}</span>
               <select
                 value={selectedModel}
                 onChange={changeModel}

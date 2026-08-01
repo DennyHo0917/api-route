@@ -1,4 +1,5 @@
 const IMAGE_INPUT_MODEL_PATTERN = /(^|\/)(gpt-|claude-|gemini-|kimi-|grok-)/;
+const WEB_CHAT_EXCLUDED_MODEL_PATTERN = /(^|\/)gpt-5\.(?:3|4)(?:[-.]|$)/;
 
 const normalizeModelName = (name) => String(name || '').toLowerCase();
 const compareModelNames = (a, b) => {
@@ -78,6 +79,7 @@ export function filterAvailableModels(groups, siteModels) {
     .filter((model) => (
       getWebChatFamily(siteModelsByName.get(normalizeModelName(model.name))) >= 0
     ))
+    .filter((model) => !WEB_CHAT_EXCLUDED_MODEL_PATTERN.test(normalizeModelName(model.name)))
     .sort((a, b) => {
       const aName = normalizeModelName(a.name);
       const bName = normalizeModelName(b.name);
@@ -85,6 +87,25 @@ export function filterAvailableModels(groups, siteModels) {
         - getWebChatFamily(siteModelsByName.get(bName));
       return familyDiff || compareModelNames(a.name, b.name);
     })
+    .filter((model) => {
+      const displayName = normalizeModelName(model.name).split('/').pop();
+      if (seenDisplayNames.has(displayName)) return false;
+      seenDisplayNames.add(displayName);
+      return true;
+    });
+}
+
+export function filterAvailableModelsByCategory(groups, siteModels, category) {
+  const { models } = intersectListedModels(
+    groups,
+    siteModels.filter(
+      (model) => String(model?.category || '').toLowerCase() === category,
+    ),
+  );
+  const seenDisplayNames = new Set();
+
+  return models
+    .sort((a, b) => compareModelNames(a.name, b.name))
     .filter((model) => {
       const displayName = normalizeModelName(model.name).split('/').pop();
       if (seenDisplayNames.has(displayName)) return false;
