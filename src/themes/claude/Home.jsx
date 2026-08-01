@@ -72,18 +72,21 @@ function getSupportLink(site) {
 }
 
 const providerLogo = (slug) => `https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/${slug}.svg`;
-const grokLogo = 'https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@latest/icons/grok.svg';
+const lobeLogo = (slug) => `https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@latest/icons/${slug}.svg`;
 
 const PROVIDER_CATALOG = {
   openai: { name: 'OpenAI', mark: 'OpenAI', logo: providerLogo('openai') },
   anthropic: { name: 'Claude', mark: 'Claude', logo: providerLogo('claude') },
   google: { name: 'Google Gemini', mark: 'Gemini', logo: providerLogo('googlegemini') },
-  xai: { name: 'xAI Grok', mark: 'Grok', logo: grokLogo },
+  xai: { name: 'xAI Grok', mark: 'Grok', logo: lobeLogo('grok') },
   deepseek: { name: 'DeepSeek', mark: 'DeepSeek', logo: providerLogo('deepseek') },
   zhipu: { name: 'Zhipu GLM', mark: 'GLM', logo: 'https://stable-learn.com/appicon/zhipu-color.png', logoClass: 'brightness-0 opacity-80' },
+  qwen: { name: 'Qwen', mark: 'Qwen', logo: lobeLogo('qwen') },
+  kimi: { name: 'Kimi', mark: 'Kimi', logo: lobeLogo('kimi') },
+  volcengine: { name: 'Volcengine', mark: 'Volcengine', logo: lobeLogo('volcengine') },
 };
 
-const DISPLAY_PROVIDER_KEYS = ['openai', 'anthropic', 'google', 'xai', 'zhipu', 'deepseek'];
+const DISPLAY_PROVIDER_KEYS = ['openai', 'anthropic', 'google', 'xai', 'zhipu', 'deepseek', 'qwen', 'kimi', 'volcengine'];
 
 function VendorMark({ vendor }) {
   if (vendor.more) {

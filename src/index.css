@@ -515,7 +515,7 @@
   overflow: hidden;
   outline: 1px solid transparent;
   outline-offset: -1px;
-  animation: route-provider-card-scan 9s ease-in-out infinite;
+  animation: route-provider-card-scan 13.5s ease-in-out infinite;
 }
 
 .route-provider-card::after {
@@ -528,7 +528,7 @@
   opacity: 0;
   pointer-events: none;
   transform: scale(0.96);
-  animation: route-provider-card-aura 9s ease-in-out infinite;
+  animation: route-provider-card-aura 13.5s ease-in-out infinite;
   animation-delay: inherit;
   z-index: 0;
 }
@@ -537,7 +537,7 @@
 .route-provider-card .provider-logo-fallback {
   position: relative;
   z-index: 1;
-  animation: route-provider-logo-scan 9s ease-in-out infinite;
+  animation: route-provider-logo-scan 13.5s ease-in-out infinite;
 }
 
 .route-provider-card--2,
@@ -568,6 +568,24 @@
 .route-provider-card--6 .provider-logo,
 .route-provider-card--6 .provider-logo-fallback {
   animation-delay: 7.5s;
+}
+
+.route-provider-card--7,
+.route-provider-card--7 .provider-logo,
+.route-provider-card--7 .provider-logo-fallback {
+  animation-delay: 9s;
+}
+
+.route-provider-card--8,
+.route-provider-card--8 .provider-logo,
+.route-provider-card--8 .provider-logo-fallback {
+  animation-delay: 10.5s;
+}
+
+.route-provider-card--9,
+.route-provider-card--9 .provider-logo,
+.route-provider-card--9 .provider-logo-fallback {
+  animation-delay: 12s;
 }
 
 @keyframes route-workflow-step-focus {
