@@ -154,7 +154,7 @@ export default function Packages() {
 
   return (
     <div className="pb-20">
-      <section className="route-hero border-b border-[#E8DDD0]">
+      <section>
         <div className="mx-auto grid max-w-7xl gap-8 px-5 py-14 md:px-8 md:py-20 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
           <div>
             <p className="route-kicker">{t('packages.eyebrow')}</p>
