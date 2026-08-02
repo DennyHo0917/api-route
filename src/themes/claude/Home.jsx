@@ -349,12 +349,12 @@ export default function ClaudeHome() {
         direction="left"
       >
         <FadeContent direction="up" distance={30} duration={760} className="mx-auto max-w-3xl text-center">
-          <p className="route-kicker">生态伙伴</p>
+          <p className="route-kicker">{t('home.ecosystemEyebrow')}</p>
           <h2 className="route-section-title mt-3">
-            与主流模型供应商深度对接
+            {t('home.ecosystemTitle')}
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-[#7D6B5B] md:text-lg">
-            保持统一协议，快速切换与扩展模型能力，随时接入最新生态。
+            {t('home.ecosystemSubtitle')}
           </p>
           <Link to="/pricing" className="route-motion-link mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#C56547] transition-colors hover:text-[#A84F34]">
             {t('home.viewAllModels', { count: enabledModels.length })}
