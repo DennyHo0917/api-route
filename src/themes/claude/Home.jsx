@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowRight,
@@ -15,48 +15,13 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useSite, useCurrency } from '../../context/SiteContext';
-import { getSiteModels, getSitePackages, subscribePackage, Q } from '../../api';
-import { calcOfficialEquivList } from '../../utils/officialEquiv';
-import { localizePackage } from '../../utils/packageLocalization';
+import { getSiteModels } from '../../api';
+import { getOfficialPrice } from '../../utils/officialEquiv';
 import { getHomeContent } from '../../utils/siteContent';
 import { trackEvent } from '../../utils/analytics';
 import FadeContent from '../../components/bits/FadeContent';
 import SnapSection, { SnapDeck } from '../../components/bits/SnapSection';
-import toast from 'react-hot-toast';
-
-const resetLabelKeys = {
-  never: 'packages.resetNever',
-  daily: 'packages.resetDaily',
-  weekly: 'packages.resetWeekly',
-  monthly: 'packages.resetMonthly',
-};
 const SUPPORT_EMAIL = 'support@api-route.com';
-
-function getTotalQuotaDollars(pkg) {
-  const quotaDollars = pkg.quota_amount > 0 ? pkg.quota_amount / Q : 0;
-  const resetPeriod = pkg.quota_reset_period || 'never';
-  if (resetPeriod === 'never' || !pkg.duration || !quotaDollars) return quotaDollars;
-
-  const resetCount = resetPeriod === 'daily'
-    ? pkg.duration
-    : resetPeriod === 'weekly'
-      ? Math.floor(pkg.duration / 7)
-      : resetPeriod === 'monthly'
-        ? Math.floor(pkg.duration / 30)
-        : 1;
-  return quotaDollars * Math.max(1, resetCount);
-}
-
-function getPackageAnalyticsItem(pkg) {
-  const price = Number(pkg?.price || 0);
-  return {
-    item_id: String(pkg?.id || ''),
-    item_name: pkg?.name || 'API package',
-    item_category: 'api_package',
-    price,
-    quantity: 1,
-  };
-}
 
 const LEGACY_HERO_SUBTITLES = new Set([
   '通过单一 API 端点访问全球最强大的 AI 模型。简单、实惠、可靠。',
@@ -98,6 +63,18 @@ const PROVIDER_CATALOG = {
 };
 
 const DISPLAY_PROVIDER_KEYS = ['openai', 'anthropic', 'google', 'xai', 'zhipu', 'deepseek', 'qwen', 'kimi', 'volcengine'];
+const PRICE_PREVIEW_MODEL_ORDER = [
+  'gpt-5.6-sol',
+  'claude-fable-5',
+  'gemini-3.1-pro',
+  'deepseek-v4-pro',
+  'kimi-k3',
+];
+
+function getPricePreviewGroup(model) {
+  const modelName = String(model?.model_name || '').toLowerCase();
+  return PRICE_PREVIEW_MODEL_ORDER.includes(modelName) ? modelName : null;
+}
 
 function VendorMark({ vendor }) {
   if (vendor.more) {
@@ -128,22 +105,14 @@ function VendorMark({ vendor }) {
 
 export default function ClaudeHome() {
   const { t, i18n } = useTranslation();
-  const { user, refreshUser } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAuth();
   const { site } = useSite();
-  const { symbol, rate, fmtCNY, cnyPerUsd, decimals } = useCurrency();
+  const { symbol, rate } = useCurrency();
   const [models, setModels] = useState([]);
-  const [packages, setPackages] = useState([]);
-  const [subscribing, setSubscribing] = useState(null);
-  const [confirmPkg, setConfirmPkg] = useState(null);
-  const getResetLabel = (period) => t(resetLabelKeys[period] || resetLabelKeys.never);
 
   useEffect(() => {
     getSiteModels()
       .then((res) => { if (res.data.success) setModels(res.data.data || []); })
-      .catch(() => {});
-    getSitePackages()
-      .then((res) => { if (res.data.success) setPackages(res.data.data || []); })
       .catch(() => {});
   }, []);
 
@@ -158,63 +127,41 @@ export default function ClaudeHome() {
   const modelProviders = useMemo(() => {
     return DISPLAY_PROVIDER_KEYS.map((key) => PROVIDER_CATALOG[key]);
   }, []);
-  const enabledPackages = useMemo(
-    () => packages
-      .filter((pkg) => pkg.enabled !== false)
-      .map((pkg) => localizePackage(pkg, t, i18n.resolvedLanguage)),
-    [i18n.resolvedLanguage, packages, t],
+  const pricePreviewModels = useMemo(
+    () => enabledModels
+      .filter((model) => (
+        model.input_price != null &&
+        model.output_price != null &&
+        getPricePreviewGroup(model)
+      ))
+      .sort((a, b) => {
+        const groupDiff = PRICE_PREVIEW_MODEL_ORDER.indexOf(getPricePreviewGroup(a))
+          - PRICE_PREVIEW_MODEL_ORDER.indexOf(getPricePreviewGroup(b));
+        return groupDiff || String(a.model_name || a.display_name || '').localeCompare(String(b.model_name || b.display_name || ''));
+      }),
+    [enabledModels],
   );
-  const previewPackages = enabledPackages.slice(0, 6);
-  const recommendedId = previewPackages.find((pkg) => Number(pkg.duration) === 30)?.id
-    || previewPackages[1]?.id;
   const homeContent = getHomeContent(site, t, i18n.resolvedLanguage);
   const heroSubtitle = LEGACY_HERO_SUBTITLES.has(homeContent.heroSubtitle)
     ? t('home.heroSubtitle')
     : homeContent.heroSubtitle;
   const supportLink = getSupportLink(site);
-
-  const handleSubscribe = (pkg) => {
-    const item = getPackageAnalyticsItem(pkg);
-    trackEvent('begin_checkout', {
-      currency: 'CNY',
-      value: item.price,
-      login_state: user ? 'logged_in' : 'anonymous',
-      placement: 'home_packages',
-      items: [item],
-    });
-    if (!user) {
-      navigate('/register');
-      return;
-    }
-    setConfirmPkg(pkg);
+  const formatTokenPrice = (price) => {
+    const value = Number(price);
+    return Number.isFinite(value) ? `${symbol}${(value * 1000 * rate).toFixed(4)}` : '-';
   };
-
-  const confirmSubscribe = async () => {
-    if (!confirmPkg) return;
-    const pkgId = confirmPkg.id;
-    setSubscribing(pkgId);
-    try {
-      const res = await subscribePackage(pkgId);
-      if (res.data.success) {
-        const item = getPackageAnalyticsItem(confirmPkg);
-        trackEvent('purchase', {
-          transaction_id: String(res.data.data?.id || res.data.data?.subscription_id || `package_${pkgId}_${Date.now()}`),
-          affiliation: 'API-Route package',
-          currency: 'CNY',
-          value: item.price,
-          placement: 'home_packages',
-          items: [item],
-        });
-        toast.success(t('packages.subscribedSuccess'));
-        setConfirmPkg(null);
-        await refreshUser({ skipErrorHandler: true }).catch(() => null);
-      } else {
-        toast.error(res.data.message || t('common.requestFailed'));
-      }
-    } catch {
-      // Global interceptor displays request errors.
-    }
-    setSubscribing(null);
+  const formatOfficialTokenPrice = (price) => {
+    if (price == null) return '-';
+    const value = Number(price);
+    if (!Number.isFinite(value)) return '-';
+    const decimals = value >= 1 ? 2 : value >= 0.01 ? 3 : 4;
+    return `$${Number.isInteger(value) ? value.toFixed(0) : value.toFixed(decimals).replace(/0+$/, '').replace(/\.$/, '')}`;
+  };
+  const getSavingsPercent = (model, official) => {
+    const siteInputPerMtok = Number(model.input_price) * 1000;
+    if (!official?.inputPerMtok || !Number.isFinite(siteInputPerMtok)) return null;
+    const savings = Math.round((1 - siteInputPerMtok / official.inputPerMtok) * 100);
+    return savings > 0 ? savings : null;
   };
 
   return (
@@ -322,7 +269,7 @@ export default function ClaudeHome() {
                 to="/pricing"
                 className="route-motion-button inline-flex items-center justify-center gap-2 rounded-full border border-[#DCCBBD] bg-white/75 px-5 py-3 text-sm font-semibold text-[#59483A] transition-colors hover:bg-white"
               >
-                {t('nav.modelMarketplace')}
+                {t('nav.pricing')}
               </Link>
             </div>
           </FadeContent>
@@ -382,110 +329,69 @@ export default function ClaudeHome() {
         </div>
       </SnapSection>
 
-      {previewPackages.length > 0 && (
+      {pricePreviewModels.length > 0 && (
         <SnapSection
-          id="packages"
+          id="pricing-preview"
           className="bg-[#FAF6F1]"
-          contentClassName="mx-auto w-full max-w-7xl px-5 py-8 md:px-8"
+          contentClassName="mx-auto grid w-full max-w-7xl items-center gap-10 px-5 py-8 md:px-8 lg:grid-cols-[1.08fr_0.92fr]"
           direction="right"
         >
-          <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-            <FadeContent direction="left" distance={36} duration={750}>
-              <p className="route-kicker">{t('home.packageSectionEyebrow')}</p>
-              <h2 className="route-section-title">{t('home.plansPackages')}</h2>
-              <p className="mt-2 max-w-xl text-sm leading-6 text-[#7D6B5B]">{t('home.choosePlan')}</p>
-            </FadeContent>
-            <FadeContent direction="right" distance={36} duration={750} delay={80}>
-              <Link to="/packages" className="route-motion-link inline-flex items-center gap-2 text-sm font-semibold text-[#C56547] hover:text-[#A84F34]">
-                {t('home.viewAllPackages')}
-                <ArrowRight size={15} className="route-motion-arrow" />
-              </Link>
-            </FadeContent>
-          </div>
+          <FadeContent direction="left" distance={36} duration={750} className="flex flex-col items-start">
+            <p className="route-kicker">{t('home.pricePreviewEyebrow', { count: modelCount })}</p>
+            <h2 className="route-section-title">{t('home.pricePreviewTitle')}</h2>
+            <p className="mt-2 max-w-xl text-sm leading-6 text-[#7D6B5B]">
+              {t('home.pricePreviewSubtitle', { count: pricePreviewModels.length })}
+            </p>
+            <Link to="/pricing" className="route-motion-link mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#C56547] hover:text-[#A84F34]">
+              {t('home.viewFullPricing', { count: modelCount })}
+              <ArrowRight size={15} className="route-motion-arrow" />
+            </Link>
+          </FadeContent>
 
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {previewPackages.map((pkg, index) => {
-              const recommended = pkg.id === recommendedId;
-              const equiv = calcOfficialEquivList(enabledModels, getTotalQuotaDollars(pkg))[0];
-              return (
-                <FadeContent
-                  key={pkg.id}
-                  direction={index % 2 === 0 ? 'left' : 'right'}
-                  distance={36}
-                  duration={780}
-                  delay={index * 90}
-                  className="h-full"
-                >
-                  <article
-                    className={`route-motion-card relative flex h-full min-h-[255px] flex-col rounded-[22px] border p-5 transition-all hover:-translate-y-1 ${
-                      recommended
-                        ? 'border-[#D97757] bg-[#FFF1E7] text-[#3D3024] shadow-[0_20px_50px_rgba(217,119,87,0.14)]'
-                        : 'border-[#E5D7CB] bg-white/75 text-[#3D3024] shadow-[0_14px_40px_rgba(82,61,43,0.06)]'
-                    }`}
+          <FadeContent direction="right" distance={36} duration={780} delay={80} className="min-w-0 lg:col-start-2 lg:self-center">
+            <div className="route-motion-card overflow-hidden rounded-[28px] border border-[#E6C7B3] bg-[#FFFDF9] shadow-[0_20px_60px_rgba(217,119,87,0.12)]">
+              <div className="grid grid-cols-[minmax(0,1fr)_5.5rem_5.5rem] items-center gap-3 bg-[#FFF3EB] px-5 py-4 text-xs font-semibold text-[#806D5D]">
+                <span className="flex min-w-0 items-baseline gap-1.5">
+                  <span>{t('pricing.model')}</span>
+                  <span className="truncate text-[10px] font-normal text-[#927E6C]">· {t('home.pricePreviewUnit')}</span>
+                </span>
+                <span className="text-right text-[11px]">{t('pricing.inputPriceShort')}</span>
+                <span className="text-right text-[11px]">{t('pricing.outputPriceShort')}</span>
+              </div>
+              {pricePreviewModels.map((model, index) => {
+                const official = getOfficialPrice(model);
+                const savings = getSavingsPercent(model, official);
+                return (
+                  <div
+                    key={`${model.model_name || 'model'}-${model.id || index}`}
+                    className="grid grid-cols-[minmax(0,1fr)_5.5rem_5.5rem] items-center gap-3 border-t border-[#F0E1D7] px-5 py-4 transition-colors hover:bg-[#FFF8F4]"
                   >
-                    {recommended && (
-                      <span className="absolute right-5 top-5 rounded-full bg-[#D97757] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-white">
-                        {t('packages.recommended')}
-                      </span>
-                    )}
-                    <div className="pr-14">
-                      <h3 className="text-lg font-semibold leading-6">{pkg.name}</h3>
-                      {pkg.description && (
-                        <p className="mt-1.5 max-h-10 overflow-hidden text-xs leading-5 text-[#806F60]">
-                          {pkg.description}
-                        </p>
-                      )}
-                    </div>
-                    <div className="mt-4">
-                      <span className="text-3xl font-bold tracking-tight">{fmtCNY(pkg.price)}</span>
-                      {pkg.original_price > pkg.price && (
-                        <span className="ml-2 text-sm text-[#A89685] line-through">
-                          {fmtCNY(pkg.original_price)}
+                    <div className="min-w-0">
+                      <p className="truncate text-[15px] font-semibold tracking-[-0.01em] text-[#3D3024]" title={model.display_name || model.model_name}>
+                        {model.display_name || model.model_name}
+                      </p>
+                      {official && (
+                        <span className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[11px] text-[#927E6C]">
+                          <span>{t('pricing.officialPrice')}: {formatOfficialTokenPrice(official.inputPerMtok)} / {formatOfficialTokenPrice(official.outputPerMtok)}</span>
+                          {savings && (
+                            <span className="inline-flex rounded-full bg-[#E8F5EC] px-1.5 py-0.5 font-semibold text-emerald-700">
+                              · {t('pricing.savings')} {savings}%
+                            </span>
+                          )}
                         </span>
                       )}
-                      {pkg.duration > 0 && (
-                        <p className="mt-2 text-xs text-[#927E6C]">
-                          {t('home.days', { count: pkg.duration })}
-                        </p>
-                      )}
                     </div>
-                    <div className="my-4 h-px bg-[#E8D6C8]" />
-                    <ul className="space-y-2 text-xs">
-                      <li className="flex items-center gap-2">
-                        <Check size={15} className="text-[#D97757]" />
-                        {t('packages.allModels')}
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <Check size={15} className="text-[#D97757]" />
-                        {t('packages.openaiApi')}
-                      </li>
-                      {equiv && (
-                        <li className="flex min-w-0 items-center gap-2 text-[#786657]">
-                          <Sparkles size={15} className="text-[#D97757]" />
-                          <span className="truncate">
-                            {t('packages.officialEquiv', { model: equiv.label, amount: equiv.equivDollars })}
-                          </span>
-                        </li>
-                      )}
-                    </ul>
-                    <button
-                      type="button"
-                      onClick={() => handleSubscribe(pkg)}
-                      disabled={subscribing === pkg.id}
-                      className={`route-motion-button mt-auto inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold transition-colors ${
-                        recommended
-                          ? 'bg-[#D97757] text-white hover:bg-[#E38969]'
-                          : 'bg-[#F0E5DB] text-[#4B3B30] hover:bg-[#E6D6C8]'
-                      } disabled:cursor-not-allowed disabled:opacity-60`}
-                    >
-                      <WalletCards size={16} />
-                      {subscribing === pkg.id ? t('packages.processing') : t('packages.subscribeNow')}
-                    </button>
-                  </article>
-                </FadeContent>
-              );
-            })}
-          </div>
+                    <span className="whitespace-nowrap text-right font-mono text-[15px] font-semibold tracking-[-0.02em] text-[#3D3024]">
+                      {formatTokenPrice(model.input_price)}
+                    </span>
+                    <span className="whitespace-nowrap text-right font-mono text-[15px] font-semibold tracking-[-0.02em] text-[#3D3024]">
+                      {formatTokenPrice(model.output_price)}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </FadeContent>
         </SnapSection>
       )}
 
@@ -639,63 +545,6 @@ export default function ClaudeHome() {
         </FadeContent>
       </SnapSection>
 
-      {confirmPkg && (() => {
-        const userBalanceCny = (user?.quota || 0) / Q * cnyPerUsd;
-        const pkgPrice = Number(confirmPkg.price);
-        const insufficient = userBalanceCny < pkgPrice;
-        const resetPeriod = confirmPkg.quota_reset_period || 'never';
-        const isSubscription = resetPeriod !== 'never';
-        return (
-          <div
-            className="modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 backdrop-blur-sm"
-            onClick={() => !subscribing && setConfirmPkg(null)}
-          >
-            <div className="glass w-full max-w-sm rounded-2xl p-6" onClick={(event) => event.stopPropagation()}>
-              <h2 className="text-lg font-semibold text-page">{t('packages.confirmTitle')}</h2>
-              <p className="mt-3 text-sm text-page-secondary">
-                {t('packages.confirmDesc', { name: confirmPkg.name, price: fmtCNY(pkgPrice) })}
-              </p>
-              {isSubscription && (
-                <div className="mt-3 rounded-xl border border-[#E6D1C1] bg-[#FFF3E9] p-3">
-                  <p className="text-xs text-[#9C583F]">
-                    {t('packages.subscriptionInfo', {
-                      symbol,
-                      period: getResetLabel(resetPeriod),
-                      days: confirmPkg.duration || 30,
-                      amount: (confirmPkg.quota_amount / Q * rate).toFixed(decimals),
-                    })}
-                  </p>
-                </div>
-              )}
-              <p className="mt-4 text-sm text-page-secondary">
-                {t('packages.yourBalance')}{' '}
-                <span className={`font-semibold ${insufficient ? 'text-page-danger' : 'text-page-success'}`}>
-                  {fmtCNY(userBalanceCny)}
-                </span>
-              </p>
-              {insufficient && (
-                <p className="mt-3 rounded-xl bg-red-500/10 p-3 text-sm text-page-danger">
-                  {t('packages.insufficientBalance')}
-                </p>
-              )}
-              <div className="mt-6 flex justify-end gap-3">
-                <button type="button" onClick={() => setConfirmPkg(null)} disabled={subscribing} className="btn-secondary">
-                  {t('tokens.cancel')}
-                </button>
-                {insufficient ? (
-                  <button type="button" onClick={() => navigate('/topup')} disabled={subscribing} className="btn-primary">
-                    {t('nav.topup')}
-                  </button>
-                ) : (
-                  <button type="button" onClick={confirmSubscribe} disabled={subscribing} className="btn-primary">
-                    {subscribing ? t('packages.processing') : t('packages.confirm')}
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        );
-      })()}
     </SnapDeck>
   );
 }

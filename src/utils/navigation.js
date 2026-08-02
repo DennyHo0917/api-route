@@ -3,10 +3,10 @@ export function getSiteNavItems({ t, site }) {
     { to: '/#hero', sectionId: 'hero', label: t('nav.home'), auth: false },
     { to: '/#features', sectionId: 'features', label: t('nav.audience'), auth: false },
     { to: '/#ecosystem', sectionId: 'ecosystem', label: t('nav.ecosystem'), auth: false },
+    { to: '/#pricing-preview', sectionId: 'pricing-preview', label: t('nav.pricing'), auth: false },
     ...(site?.allow_sub_dist
       ? [{ to: '/#platform', sectionId: 'platform', label: t('nav.apiAggregation'), auth: false }]
       : []),
-    { to: '/pricing', label: t('nav.modelMarketplace'), auth: false },
     { to: '/#contact', sectionId: 'contact', label: t('nav.contact'), auth: false },
   ];
 }
