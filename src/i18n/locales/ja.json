@@ -381,6 +381,7 @@
     "chat.imageReadFailed": "画像を読み込めませんでした。",
     "chat.describeImagePrompt": "この画像について説明してください。",
     "chat.referenceImagePrompt": "この参考画像をもとに新しい画像を生成してください。",
+    "chat.copyFailed": "コピーできませんでした。もう一度お試しください。",
     "chat.requestFailed": "モデルへのリクエストに失敗しました",
     "chat.videoProviderUnavailable": "動画タスクを送信できませんでした。しばらくしてから再試行してください。",
     "chat.stop": "生成を停止",

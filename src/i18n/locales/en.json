@@ -399,6 +399,7 @@
     "chat.imageReadFailed": "Could not read this image.",
     "chat.describeImagePrompt": "Describe this image.",
     "chat.referenceImagePrompt": "Create a new image based on this reference image.",
+    "chat.copyFailed": "Could not copy. Please try again.",
     "chat.requestFailed": "Model request failed",
     "chat.videoProviderUnavailable": "The video task could not be submitted. Please try again later.",
     "chat.stop": "Stop generating",

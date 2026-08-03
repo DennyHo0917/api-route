@@ -381,6 +381,7 @@
     "chat.imageReadFailed": "이미지를 읽을 수 없습니다.",
     "chat.describeImagePrompt": "이 이미지를 설명해 주세요.",
     "chat.referenceImagePrompt": "이 참조 이미지를 바탕으로 새 이미지를 생성해 주세요.",
+    "chat.copyFailed": "복사하지 못했습니다. 다시 시도해 주세요.",
     "chat.requestFailed": "모델 요청에 실패했습니다",
     "chat.videoProviderUnavailable": "동영상 작업을 제출하지 못했습니다. 잠시 후 다시 시도해 주세요.",
     "chat.stop": "생성 중지",

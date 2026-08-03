@@ -244,6 +244,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
   const [mobileHistoryOpen, setMobileHistoryOpen] = useState(false);
   const [referralCardOpen, setReferralCardOpen] = useState(false);
   const [referralLink, setReferralLink] = useState('');
+  const [previewImage, setPreviewImage] = useState('');
   const abortControllerRef = useRef(null);
   const preferredModelRef = useRef('');
   const referralPromptRequestedRef = useRef(false);
@@ -397,13 +398,20 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
     }
   };
 
-  const copyReferralLink = async () => {
+  const copyText = async (text) => {
     try {
-      await navigator.clipboard.writeText(referralLink);
-      trackEvent('referral_link_copy', { source: 'chat_success_card' });
+      await navigator.clipboard.writeText(text);
       toast.success(t('topup.copied'));
+      return true;
     } catch {
-      toast.error(t('referral.copyFailed'));
+      toast.error(t('chat.copyFailed'));
+      return false;
+    }
+  };
+
+  const copyReferralLink = async () => {
+    if (await copyText(referralLink)) {
+      trackEvent('referral_link_copy', { source: 'chat_success_card' });
     }
   };
 
@@ -990,11 +998,14 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
                           <Bot size={16} />
                         </span>
                       )}
-                      <div className={`max-w-[90%] whitespace-pre-wrap rounded-2xl text-sm leading-7 sm:max-w-[85%] sm:px-4 sm:py-3 ${
-                        message.role === 'user'
-                          ? 'bg-page-link px-4 py-2.5 text-white'
-                          : 'px-1 py-2 text-page sm:border sm:border-page-divider sm:bg-page-surface'
+                      <div className={`flex min-w-0 max-w-[90%] flex-col sm:max-w-[85%] ${
+                        message.role === 'user' ? 'items-end' : 'items-start'
                       }`}>
+                        <div className={`max-w-full whitespace-pre-wrap rounded-2xl text-sm leading-7 sm:px-4 sm:py-3 ${
+                          message.role === 'user'
+                            ? 'bg-page-link px-4 py-2.5 text-white'
+                            : 'px-1 py-2 text-page sm:border sm:border-page-divider sm:bg-page-surface'
+                        }`}>
                         {message.attachment?.dataUrl && (
                           <img
                             src={message.attachment.dataUrl}
@@ -1011,26 +1022,54 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
                           />
                         )}
                         {message.images?.map((source, index) => (
-                          <img
+                          <button
                             key={`${message.id}-generated-image-${index}`}
-                            src={source}
-                            alt={t('chat.modeImage')}
-                            className="my-2 max-h-[32rem] max-w-full rounded-xl object-contain"
-                            loading="lazy"
-                            referrerPolicy="no-referrer"
-                          />
+                            type="button"
+                            onClick={() => setPreviewImage(source)}
+                            className="my-2 block max-w-full cursor-zoom-in"
+                            aria-label={t('tasks.previewImage')}
+                          >
+                            <img
+                              src={source}
+                              alt={t('chat.modeImage')}
+                              className="max-h-[32rem] max-w-full rounded-xl object-contain"
+                              loading="lazy"
+                              referrerPolicy="no-referrer"
+                            />
+                          </button>
                         ))}
                         {message.content ? (
                           message.role === 'assistant' ? parseChatContent(message.content).map((part, index) => (
                             part.type === 'image' ? (
-                              <img
+                              <button
                                 key={`${message.id}-image-${index}`}
-                                src={part.url}
-                                alt={part.alt || t('chat.attachImage')}
-                                className="my-2 max-h-[32rem] max-w-full rounded-xl object-contain"
-                                loading="lazy"
-                                referrerPolicy="no-referrer"
-                              />
+                                type="button"
+                                onClick={() => setPreviewImage(part.url)}
+                                className="my-2 block max-w-full cursor-zoom-in"
+                                aria-label={t('tasks.previewImage')}
+                              >
+                                <img
+                                  src={part.url}
+                                  alt={part.alt || t('chat.attachImage')}
+                                  className="max-h-[32rem] max-w-full rounded-xl object-contain"
+                                  loading="lazy"
+                                  referrerPolicy="no-referrer"
+                                />
+                              </button>
+                            ) : part.type === 'code' ? (
+                              <div
+                                key={`${message.id}-code-${index}`}
+                                className="my-3 max-w-full overflow-hidden rounded-xl border border-page-divider bg-page-inset text-page"
+                              >
+                                {part.language && (
+                                  <div className="border-b border-page-divider bg-page-surface-hover px-3 py-1.5 text-[11px] text-page-muted">
+                                    {part.language}
+                                  </div>
+                                )}
+                                <pre className="max-w-full overflow-x-auto p-3 font-mono text-xs leading-6 whitespace-pre">
+                                  <code>{part.text}</code>
+                                </pre>
+                              </div>
                             ) : (
                               <React.Fragment key={`${message.id}-text-${index}`}>
                                 {part.text}
@@ -1038,6 +1077,19 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
                             )
                           )) : message.content
                         ) : (generating && !message.videoTaskId ? '…' : '')}
+                        </div>
+                        {modelCategory === 'chat' && message.role === 'assistant' && message.content && (
+                          <button
+                            type="button"
+                            onClick={() => copyText(message.content)}
+                            className="mt-1 inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-page-muted hover:bg-page-surface-hover hover:text-page"
+                            title={t('topup.copy')}
+                            aria-label={t('topup.copy')}
+                          >
+                            <Copy size={14} />
+                            {t('topup.copy')}
+                          </button>
+                        )}
                       </div>
                       {message.role === 'user' && (
                         <span className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-page-inset text-page-secondary sm:flex">
@@ -1253,6 +1305,37 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
         )}
       </section>
       </div>
+      {previewImage && (
+        <div
+          className="fixed inset-0 z-[110] flex items-center justify-center bg-black/75 p-4"
+          onClick={() => setPreviewImage('')}
+          onKeyDown={(event) => event.key === 'Escape' && setPreviewImage('')}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label={t('tasks.previewImage')}
+            className="relative max-h-[92vh] max-w-[94vw]"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setPreviewImage('')}
+              className="absolute -right-3 -top-3 z-10 rounded-full bg-white p-2 text-slate-900 shadow-lg"
+              aria-label={t('common.close')}
+              autoFocus
+            >
+              <X size={18} />
+            </button>
+            <img
+              src={previewImage}
+              alt={t('tasks.previewImage')}
+              className="max-h-[90vh] max-w-[92vw] rounded-2xl object-contain shadow-2xl"
+              referrerPolicy="no-referrer"
+            />
+          </div>
+        </div>
+      )}
       {pendingModel && (
         <div className="modal-overlay fixed inset-0 z-[100] flex items-center justify-center bg-black/55 px-4 py-6 backdrop-blur-sm">
           <section

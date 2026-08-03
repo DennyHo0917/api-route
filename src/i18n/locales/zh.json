@@ -399,6 +399,7 @@
     "chat.imageReadFailed": "无法读取这张图片",
     "chat.describeImagePrompt": "请描述这张图片。",
     "chat.referenceImagePrompt": "请基于这张参考图生成一张新图片。",
+    "chat.copyFailed": "复制失败，请重试",
     "chat.requestFailed": "模型请求失败",
     "chat.videoProviderUnavailable": "视频任务提交失败，请稍后重试",
     "chat.stop": "停止生成",
