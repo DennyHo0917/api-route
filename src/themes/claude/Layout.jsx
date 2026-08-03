@@ -276,6 +276,14 @@ export default function ClaudeLayout() {
                       {t('nav.dashboard')}
                     </Link>
                     <Link
+                      to="/api-connect"
+                      role="menuitem"
+                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-[#5E4E40] transition-colors hover:bg-[#FAF6F1] hover:text-[#3D3024]"
+                    >
+                      <KeyRound size={16} />
+                      {t('nav.apiAccess')}
+                    </Link>
+                    <Link
                       to="/topup"
                       role="menuitem"
                       onClick={() => setUserMenuOpen(false)}
@@ -285,22 +293,6 @@ export default function ClaudeLayout() {
                       {t('nav.topup')}
                     </Link>
                     <Link
-                      to="/account"
-                      role="menuitem"
-                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-[#5E4E40] transition-colors hover:bg-[#FAF6F1] hover:text-[#3D3024]"
-                    >
-                      <UserRound size={16} />
-                      {t('nav.account')}
-                    </Link>
-                    <Link
-                      to="/api-keys"
-                      role="menuitem"
-                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-[#5E4E40] transition-colors hover:bg-[#FAF6F1] hover:text-[#3D3024]"
-                    >
-                      <KeyRound size={16} />
-                      {t('nav.apiAccess')}
-                    </Link>
-                    <Link
                       to="/dashboard#referral"
                       role="menuitem"
                       onClick={() => setUserMenuOpen(false)}
@@ -308,6 +300,14 @@ export default function ClaudeLayout() {
                     >
                       <Gift size={16} />
                       {t('referral.menuLabel', { rate: commissionPercent })}
+                    </Link>
+                    <Link
+                      to="/account"
+                      role="menuitem"
+                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-[#5E4E40] transition-colors hover:bg-[#FAF6F1] hover:text-[#3D3024]"
+                    >
+                      <UserRound size={16} />
+                      {t('account.title')}
                     </Link>
                     <div className="my-1 border-t border-[#E8DDD0]" />
                     <button
