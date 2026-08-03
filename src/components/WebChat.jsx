@@ -31,8 +31,21 @@ import {
   modelSupportsImageUpload,
   toChatCompletionMessage,
 } from '../utils/chatModels';
+import { parseChatContent } from '../utils/chatContent';
 import { readChatResponse } from '../utils/chatResponse';
+import {
+  createImageEditRequest,
+  createImageRequest,
+  readImageResponse,
+} from '../utils/imageTask';
 import { hasNoBalance, rememberPendingChatTopup } from '../utils/pendingChat';
+import {
+  createVideoRequest,
+  getVideoTaskError,
+  getVideoTaskId,
+  getVideoTaskState,
+  readVideoResponse,
+} from '../utils/videoTask';
 
 const DB_NAME = 'api-route-web-chat';
 const STORE_NAME = 'conversations';
@@ -41,10 +54,15 @@ const MAX_IMAGE_SIZE_MB = 3;
 const MAX_IMAGE_SIZE = MAX_IMAGE_SIZE_MB * 1024 * 1024;
 const SUPPORTED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 const MODEL_CATEGORIES = ['chat', 'image', 'video'];
+const VIDEO_POLL_INTERVAL = 3000;
 let databasePromise;
 
 const findDefaultChatModel = (models) => models.find((model) => (
   model.name === DEFAULT_MODEL || String(model.name).split('/').pop() === 'kimi-k3'
+))?.name || '';
+
+const findDefaultImageModel = (models) => models.find((model) => (
+  String(model.name).split('/').pop().toLowerCase() === 'gpt-image-2'
 ))?.name || '';
 
 function openDatabase() {
@@ -107,7 +125,87 @@ function createId() {
 
 function getApiKey(token) {
   const key = String(token?.key || '');
+  if (!key) return '';
   return key.startsWith('sk-') ? key : `sk-${key}`;
+}
+
+function supportsImageAttachment(category, model) {
+  return category === 'image' || (category === 'chat' && modelSupportsImageUpload(model));
+}
+
+function waitForVideoPoll(signal) {
+  return new Promise((resolve, reject) => {
+    if (signal.aborted) {
+      reject(new DOMException('Aborted', 'AbortError'));
+      return;
+    }
+    const onAbort = () => {
+      window.clearTimeout(timeout);
+      reject(new DOMException('Aborted', 'AbortError'));
+    };
+    const timeout = window.setTimeout(() => {
+      signal.removeEventListener('abort', onAbort);
+      resolve();
+    }, VIDEO_POLL_INTERVAL);
+    signal.addEventListener('abort', onAbort, { once: true });
+  });
+}
+
+function AuthenticatedVideo({ taskId, apiKey }) {
+  const { t } = useTranslation();
+  const [source, setSource] = useState('');
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!taskId || !apiKey) {
+      setError(t('chat.requestFailed'));
+      return undefined;
+    }
+
+    const controller = new AbortController();
+    let cancelled = false;
+    let objectUrl = '';
+    setSource('');
+    setError('');
+    fetch(`/v1/videos/${encodeURIComponent(taskId)}/content`, {
+      headers: { Authorization: `Bearer ${apiKey}` },
+      signal: controller.signal,
+    }).then(async (response) => {
+      if (!response.ok) await readVideoResponse(response);
+      return response.blob();
+    }).then((blob) => {
+      const nextUrl = URL.createObjectURL(blob);
+      if (cancelled) {
+        URL.revokeObjectURL(nextUrl);
+        return;
+      }
+      objectUrl = nextUrl;
+      setSource(objectUrl);
+    }).catch((requestError) => {
+      if (!cancelled && requestError.name !== 'AbortError') {
+        setError(requestError.message || t('chat.requestFailed'));
+      }
+    });
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [apiKey, taskId, t]);
+
+  if (error) return <span className="text-red-600">{error}</span>;
+  if (!source) return <span>{t('tasks.statusInProgress')}</span>;
+  return (
+    <video
+      src={source}
+      controls
+      playsInline
+      preload="metadata"
+      aria-label={t('tasks.previewVideo')}
+      className="my-2 max-h-[32rem] w-full rounded-xl bg-black"
+    />
+  );
 }
 
 function readImage(file) {
@@ -135,6 +233,11 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
   const [balancePromptOpen, setBalancePromptOpen] = useState(false);
   const [input, setInput] = useState('');
   const [attachment, setAttachment] = useState(null);
+  const [imageSize, setImageSize] = useState('1024x1024');
+  const [imageQuality, setImageQuality] = useState('auto');
+  const [videoSeconds, setVideoSeconds] = useState('4');
+  const [videoRatio, setVideoRatio] = useState('16:9');
+  const [videoResolution, setVideoResolution] = useState('720p');
   const [loadingModels, setLoadingModels] = useState(false);
   const [loadingHistory, setLoadingHistory] = useState(true);
   const [generating, setGenerating] = useState(false);
@@ -153,7 +256,9 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
     [tokens],
   );
   const models = modelsByCategory[modelCategory] || [];
-  const canUploadImage = modelCategory === 'chat' && modelSupportsImageUpload(selectedModel);
+  const canUploadImage = supportsImageAttachment(modelCategory, selectedModel);
+  const canConfigureImage = modelCategory === 'image'
+    && String(selectedModel).split('/').pop().toLowerCase() === 'gpt-image-2';
   const balanceValue = Math.max(0, Number(user?.quota || 0) / Q * rate);
   const balanceEmpty = hasNoBalance(user);
   const commissionPercent = Number((
@@ -228,6 +333,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
       const fallbackModel = nextModelsByCategory[fallbackCategory].find(
         (model) => model.name === preferredModel,
       )?.name || findDefaultChatModel(nextModelsByCategory.chat)
+        || (fallbackCategory === 'image' && findDefaultImageModel(nextModelsByCategory.image))
         || nextModelsByCategory[fallbackCategory][0]?.name
         || '';
       setModelsByCategory(nextModelsByCategory);
@@ -381,7 +487,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
     preferredModelRef.current = model;
     setModelCategory(nextCategory);
     setSelectedModel(model);
-    if (attachment && (nextCategory !== 'chat' || !modelSupportsImageUpload(model))) {
+    if (attachment && !supportsImageAttachment(nextCategory, model)) {
       setAttachment(null);
       toast.error(t('chat.attachmentsUnsupported'));
     }
@@ -394,7 +500,8 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
 
   const changeModelCategory = (category) => {
     if (generating || category === modelCategory) return;
-    const nextModel = modelsByCategory[category][0]?.name;
+    const nextModel = (category === 'image' && findDefaultImageModel(modelsByCategory.image))
+      || modelsByCategory[category][0]?.name;
     if (!nextModel) return;
     if (activeConversation && activeConversation.model !== nextModel) {
       setPendingModel(nextModel);
@@ -441,7 +548,9 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
   };
 
   const sendMessage = async () => {
-    const content = input.trim() || (attachment ? t('chat.describeImagePrompt') : '');
+    const content = input.trim() || (attachment
+      ? t(modelCategory === 'image' ? 'chat.referenceImagePrompt' : 'chat.describeImagePrompt')
+      : '');
     const modelOption = models.find((model) => model.name === selectedModel);
     const token = enabledTokens.find((item) => item.id === modelOption?.tokenId);
     if (!content || generating || !selectedModel || !token) return;
@@ -503,45 +612,148 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
     const controller = new AbortController();
     abortControllerRef.current = controller;
     let assistantContent = '';
+    let finalAssistantMessage = null;
 
     try {
-      const response = await fetch('/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${getApiKey(token)}`,
-        },
-        body: JSON.stringify({
-          model: selectedModel,
-          messages: requestMessages.map((message) => (
-            toChatCompletionMessage(message, canUploadImage)
-          )),
-          stream: true,
-        }),
-        signal: controller.signal,
-      });
+      if (modelCategory === 'video') {
+        const apiKey = getApiKey(token);
+        const response = await fetch('/v1/videos', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify(createVideoRequest(selectedModel, content, {
+            seconds: videoSeconds,
+            ratio: videoRatio,
+            resolution: videoResolution,
+          })),
+          signal: controller.signal,
+        });
+        let task = await readVideoResponse(response);
+        const taskId = getVideoTaskId(task);
+        if (!taskId) throw new Error(t('chat.requestFailed'));
 
-      await readChatResponse(response, (chunk) => {
-        assistantContent += chunk;
-        setMessages([
-          ...requestMessages,
-          { ...assistantMessage, content: assistantContent },
-        ]);
-      });
+        let taskState = getVideoTaskState(task);
+        const updateVideoStatus = (state) => {
+          const statusKey = state === 'processing'
+            ? 'tasks.statusInProgress'
+            : 'tasks.statusQueued';
+          finalAssistantMessage = {
+            ...assistantMessage,
+            content: `${t(statusKey)} · ${t('tasks.taskId')}: ${taskId}`,
+            videoTaskId: taskId,
+            videoTokenId: token.id,
+            videoStatus: state,
+          };
+          setMessages([...requestMessages, finalAssistantMessage]);
+        };
+
+        updateVideoStatus(taskState);
+        while (taskState !== 'success' && taskState !== 'failure') {
+          await waitForVideoPoll(controller.signal);
+          const taskResponse = await fetch(`/v1/videos/${encodeURIComponent(taskId)}`, {
+            headers: { Authorization: `Bearer ${apiKey}` },
+            signal: controller.signal,
+          });
+          task = await readVideoResponse(taskResponse);
+          taskState = getVideoTaskState(task);
+          if (taskState !== 'success' && taskState !== 'failure') {
+            updateVideoStatus(taskState);
+          }
+        }
+
+        if (taskState === 'failure') {
+          throw new Error(getVideoTaskError(task) || t('chat.requestFailed'));
+        }
+        finalAssistantMessage = {
+          ...assistantMessage,
+          content: '',
+          videoTaskId: taskId,
+          videoTokenId: token.id,
+          videoStatus: 'success',
+        };
+        setMessages([...requestMessages, finalAssistantMessage]);
+      } else if (modelCategory === 'image') {
+        const imageOptions = canConfigureImage ? {
+          size: imageSize,
+          quality: imageQuality,
+        } : undefined;
+        const referenceImage = userMessage.attachment;
+        const response = await fetch(referenceImage
+          ? '/v1/images/edits'
+          : '/v1/images/generations', {
+          method: 'POST',
+          headers: {
+            ...(referenceImage ? {} : { 'Content-Type': 'application/json' }),
+            Authorization: `Bearer ${getApiKey(token)}`,
+          },
+          body: referenceImage
+            ? await createImageEditRequest(selectedModel, content, referenceImage, imageOptions)
+            : JSON.stringify(createImageRequest(selectedModel, content, imageOptions)),
+          signal: controller.signal,
+        });
+        const images = await readImageResponse(response);
+        if (images.length === 0) throw new Error(t('chat.requestFailed'));
+        finalAssistantMessage = { ...assistantMessage, images };
+        setMessages([...requestMessages, finalAssistantMessage]);
+      } else {
+        const response = await fetch('/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${getApiKey(token)}`,
+          },
+          body: JSON.stringify({
+            model: selectedModel,
+            messages: requestMessages.map((message) => (
+              toChatCompletionMessage(message, canUploadImage)
+            )),
+            stream: true,
+          }),
+          signal: controller.signal,
+        });
+
+        await readChatResponse(response, (chunk) => {
+          assistantContent += chunk;
+          setMessages([
+            ...requestMessages,
+            { ...assistantMessage, content: assistantContent },
+          ]);
+        });
+      }
     } catch (error) {
       if (error.name !== 'AbortError') {
+        const errorMessage = modelCategory === 'video' && error.code === 'fail_to_fetch_task'
+          ? t('chat.videoProviderUnavailable')
+          : error.message || t('chat.requestFailed');
         trackEvent('chat_request_error', {
           category: modelCategory,
           has_image: Boolean(userMessage.attachment),
           model: selectedModel,
           reason: 'request_error',
         });
-        toast.error(error.message || t('chat.requestFailed'));
+        toast.error(errorMessage);
+        if (modelCategory === 'video' && finalAssistantMessage) {
+          finalAssistantMessage = {
+            ...finalAssistantMessage,
+            content: errorMessage,
+            videoStatus: 'failure',
+          };
+          setMessages([...requestMessages, finalAssistantMessage]);
+        }
       }
     } finally {
-      const finalMessages = assistantContent
-        ? [...requestMessages, { ...assistantMessage, content: assistantContent }]
-        : requestMessages;
+      const finalMessages = finalAssistantMessage
+        ? [...requestMessages, finalAssistantMessage]
+        : assistantContent
+          ? [...requestMessages, { ...assistantMessage, content: assistantContent }]
+          : requestMessages;
+      const requestSucceeded = modelCategory === 'video'
+        ? finalAssistantMessage?.videoStatus === 'success'
+        : modelCategory === 'image'
+          ? Boolean(finalAssistantMessage?.images?.length)
+          : Boolean(assistantContent);
       setMessages(finalMessages);
       setGenerating(false);
       abortControllerRef.current = null;
@@ -553,7 +765,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
           pendingMessage: null,
           updatedAt: Date.now(),
         });
-        if (assistantContent) {
+        if (requestSucceeded) {
           trackEvent('chat_request_success', {
             category: modelCategory,
             has_image: Boolean(userMessage.attachment),
@@ -790,7 +1002,42 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
                             className="mb-2 max-h-72 max-w-full rounded-xl object-contain"
                           />
                         )}
-                        {message.content || (generating ? '…' : '')}
+                        {message.videoStatus === 'success' && message.videoTaskId && (
+                          <AuthenticatedVideo
+                            taskId={message.videoTaskId}
+                            apiKey={getApiKey(enabledTokens.find((token) => (
+                              String(token.id) === String(message.videoTokenId)
+                            )) || enabledTokens[0])}
+                          />
+                        )}
+                        {message.images?.map((source, index) => (
+                          <img
+                            key={`${message.id}-generated-image-${index}`}
+                            src={source}
+                            alt={t('chat.modeImage')}
+                            className="my-2 max-h-[32rem] max-w-full rounded-xl object-contain"
+                            loading="lazy"
+                            referrerPolicy="no-referrer"
+                          />
+                        ))}
+                        {message.content ? (
+                          message.role === 'assistant' ? parseChatContent(message.content).map((part, index) => (
+                            part.type === 'image' ? (
+                              <img
+                                key={`${message.id}-image-${index}`}
+                                src={part.url}
+                                alt={part.alt || t('chat.attachImage')}
+                                className="my-2 max-h-[32rem] max-w-full rounded-xl object-contain"
+                                loading="lazy"
+                                referrerPolicy="no-referrer"
+                              />
+                            ) : (
+                              <React.Fragment key={`${message.id}-text-${index}`}>
+                                {part.text}
+                              </React.Fragment>
+                            )
+                          )) : message.content
+                        ) : (generating && !message.videoTaskId ? '…' : '')}
                       </div>
                       {message.role === 'user' && (
                         <span className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-page-inset text-page-secondary sm:flex">
@@ -843,6 +1090,85 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
                 </p>
               )}
               <div className="mx-auto max-w-3xl rounded-2xl border border-page-divider bg-page-surface p-2 focus-within:border-page-link/60">
+                {canConfigureImage && (
+                  <div className="mb-2 flex flex-wrap gap-2 border-b border-page-divider px-1 pb-2">
+                    <label className="flex items-center gap-1.5 rounded-lg bg-page-inset px-2.5 py-1.5 text-xs text-page-secondary">
+                      <span>{t('chat.imageRatio')}</span>
+                      <select
+                        value={imageSize}
+                        onChange={(event) => setImageSize(event.target.value)}
+                        disabled={generating}
+                        className="bg-transparent font-semibold text-page outline-none"
+                      >
+                        <option value="720x1280">9:16</option>
+                        <option value="1280x720">16:9</option>
+                        <option value="768x1024">3:4</option>
+                        <option value="1024x768">4:3</option>
+                        <option value="1024x1024">1:1</option>
+                      </select>
+                    </label>
+                    <label className="flex items-center gap-1.5 rounded-lg bg-page-inset px-2.5 py-1.5 text-xs text-page-secondary">
+                      <span>{t('chat.imageQuality')}</span>
+                      <select
+                        value={imageQuality}
+                        onChange={(event) => setImageQuality(event.target.value)}
+                        disabled={generating}
+                        className="bg-transparent font-semibold text-page outline-none"
+                      >
+                        {['auto', 'low', 'medium', 'high'].map((quality) => (
+                          <option key={quality} value={quality}>
+                            {t(`chat.imageQuality.${quality}`)}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+                )}
+                {modelCategory === 'video' && (
+                  <div className="mb-2 flex flex-wrap gap-2 border-b border-page-divider px-1 pb-2">
+                    <label className="flex items-center gap-1.5 rounded-lg bg-page-inset px-2.5 py-1.5 text-xs text-page-secondary">
+                      <span>{t('chat.videoDuration')}</span>
+                      <select
+                        value={videoSeconds}
+                        onChange={(event) => setVideoSeconds(event.target.value)}
+                        disabled={generating}
+                        className="bg-transparent font-semibold text-page outline-none"
+                      >
+                        {['4', '8', '12'].map((seconds) => (
+                          <option key={seconds} value={seconds}>
+                            {t('chat.videoSeconds', { seconds })}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <label className="flex items-center gap-1.5 rounded-lg bg-page-inset px-2.5 py-1.5 text-xs text-page-secondary">
+                      <span>{t('chat.videoRatio')}</span>
+                      <select
+                        value={videoRatio}
+                        onChange={(event) => setVideoRatio(event.target.value)}
+                        disabled={generating}
+                        className="bg-transparent font-semibold text-page outline-none"
+                      >
+                        {['16:9', '9:16', '1:1'].map((ratio) => (
+                          <option key={ratio} value={ratio}>{ratio}</option>
+                        ))}
+                      </select>
+                    </label>
+                    <label className="flex items-center gap-1.5 rounded-lg bg-page-inset px-2.5 py-1.5 text-xs text-page-secondary">
+                      <span>{t('chat.videoResolution')}</span>
+                      <select
+                        value={videoResolution}
+                        onChange={(event) => setVideoResolution(event.target.value)}
+                        disabled={generating}
+                        className="bg-transparent font-semibold text-page outline-none"
+                      >
+                        {['480p', '720p', '1080p'].map((resolution) => (
+                          <option key={resolution} value={resolution}>{resolution}</option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+                )}
                 {attachment && (
                   <div className="mb-2 flex items-center gap-3 rounded-xl bg-page-inset p-2">
                     <img

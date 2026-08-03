@@ -7,6 +7,18 @@ import {
   toChatCompletionMessage,
 } from '../src/utils/chatModels.js';
 import { readChatResponse } from '../src/utils/chatResponse.js';
+import {
+  createImageEditRequest,
+  createImageRequest,
+  readImageResponse,
+} from '../src/utils/imageTask.js';
+import {
+  createVideoRequest,
+  getVideoTaskError,
+  getVideoTaskId,
+  getVideoTaskState,
+  readVideoResponse,
+} from '../src/utils/videoTask.js';
 
 const webChatModels = filterAvailableModels(
     [
@@ -164,3 +176,95 @@ await readChatResponse(jsonResponse, (chunk) => {
   content += chunk;
 });
 assert.equal(content, 'ok');
+
+assert.deepEqual(
+  createImageRequest('gpt-image-2', 'A red fox', {
+    size: '1536x1024',
+    quality: 'high',
+    n: '2',
+  }),
+  {
+    model: 'gpt-image-2',
+    prompt: 'A red fox',
+    n: 2,
+    size: '1536x1024',
+    quality: 'high',
+  },
+);
+const imageEditRequest = await createImageEditRequest(
+  'gpt-image-2',
+  'Keep the fox, change the background',
+  {
+    name: 'fox.png',
+    dataUrl: 'data:image/png;base64,dGVzdA==',
+  },
+  { size: '1024x1024', quality: 'high', n: '2' },
+);
+assert.equal(imageEditRequest.get('model'), 'gpt-image-2');
+assert.equal(imageEditRequest.get('prompt'), 'Keep the fox, change the background');
+assert.equal(imageEditRequest.get('image').name, 'fox.png');
+assert.equal(imageEditRequest.get('size'), '1024x1024');
+assert.equal(imageEditRequest.get('quality'), 'high');
+assert.equal(imageEditRequest.get('n'), '2');
+assert.deepEqual(
+  await readImageResponse(new Response(JSON.stringify({
+    data: [
+      { url: 'https://example.com/image.png' },
+      { b64_json: 'dGVzdA==' },
+    ],
+  }))),
+  [
+    'https://example.com/image.png',
+    'data:image/png;base64,dGVzdA==',
+  ],
+);
+await assert.rejects(
+  readImageResponse(new Response(JSON.stringify({
+    error: { message: 'image failed' },
+  }), { status: 400 })),
+  /image failed/,
+);
+
+assert.deepEqual(
+  createVideoRequest('Doubao-Seedance-2.0', 'A running dog', {
+    seconds: '8',
+    ratio: '9:16',
+    resolution: '1080p',
+  }),
+  {
+    model: 'Doubao-Seedance-2.0',
+    prompt: 'A running dog',
+    seconds: '8',
+    metadata: {
+      ratio: '9:16',
+      resolution: '1080p',
+    },
+  },
+);
+assert.equal(getVideoTaskId({ id: 'task-1' }), 'task-1');
+assert.equal(getVideoTaskId({ data: { task_id: 'task-2' } }), 'task-2');
+assert.equal(getVideoTaskState({ status: 'queued' }), 'queued');
+assert.equal(getVideoTaskState({ status: 'IN_PROGRESS' }), 'processing');
+assert.equal(getVideoTaskState({ status: 'completed' }), 'success');
+assert.equal(getVideoTaskState({ data: { status: 'FAILURE' } }), 'failure');
+assert.equal(getVideoTaskError({ error: { message: 'upstream failed' } }), 'upstream failed');
+assert.deepEqual(
+  await readVideoResponse(new Response(JSON.stringify({ id: 'task-3', status: 'queued' }))),
+  { id: 'task-3', status: 'queued' },
+);
+await assert.rejects(
+  readVideoResponse(new Response(JSON.stringify({ error: { message: 'bad request' } }), {
+    status: 400,
+  })),
+  /bad request/,
+);
+await assert.rejects(
+  readVideoResponse(new Response(JSON.stringify({
+    code: 'fail_to_fetch_task',
+    message: '',
+    data: null,
+  }), { status: 502 })),
+  (error) => error.message === 'fail_to_fetch_task'
+    && error.code === 'fail_to_fetch_task'
+    && error.status === 502,
+);

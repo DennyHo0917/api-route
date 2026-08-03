@@ -47,6 +47,36 @@ export const API_ENDPOINTS = [
     nameKey: 'config.apiEndpointOverseasCdnName',
     descKey: 'config.apiEndpointOverseasCdnDesc',
   },
+  {
+    id: 'hong-kong',
+    url: 'https://api.43-161-200-52.sslip.io',
+    nameKey: 'config.apiEndpointHongKongName',
+    descKey: 'config.apiEndpointHongKongDesc',
+  },
+  {
+    id: 'usa-west',
+    url: 'https://usawest.up.railway.app',
+    nameKey: 'config.apiEndpointUsaWestName',
+    descKey: 'config.apiEndpointUsaWestDesc',
+  },
+  {
+    id: 'usa-east',
+    url: 'https://usaeast.up.railway.app',
+    nameKey: 'config.apiEndpointUsaEastName',
+    descKey: 'config.apiEndpointUsaEastDesc',
+  },
+  {
+    id: 'europe-west',
+    url: 'https://euwest.up.railway.app',
+    nameKey: 'config.apiEndpointEuropeWestName',
+    descKey: 'config.apiEndpointEuropeWestDesc',
+  },
+  {
+    id: 'asia-south',
+    url: 'https://asiasouth.up.railway.app',
+    nameKey: 'config.apiEndpointAsiaSouthName',
+    descKey: 'config.apiEndpointAsiaSouthDesc',
+  },
 ];
 
 function getTokenApiKey(token) {

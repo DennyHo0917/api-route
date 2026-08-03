@@ -15,6 +15,31 @@ const SHARED_API_ENDPOINTS = [
     labelKey: 'home.apiEndpointOverseasCdn',
     url: 'https://ai.orbitlink.me',
   },
+  {
+    id: 'hong-kong',
+    labelKey: 'config.apiEndpointHongKongName',
+    url: 'https://api.43-161-200-52.sslip.io',
+  },
+  {
+    id: 'usa-west',
+    labelKey: 'config.apiEndpointUsaWestName',
+    url: 'https://usawest.up.railway.app',
+  },
+  {
+    id: 'usa-east',
+    labelKey: 'config.apiEndpointUsaEastName',
+    url: 'https://usaeast.up.railway.app',
+  },
+  {
+    id: 'europe-west',
+    labelKey: 'config.apiEndpointEuropeWestName',
+    url: 'https://euwest.up.railway.app',
+  },
+  {
+    id: 'asia-south',
+    labelKey: 'config.apiEndpointAsiaSouthName',
+    url: 'https://asiasouth.up.railway.app',
+  },
 ];
 
 const normalizeEndpoint = (value = '') => {
