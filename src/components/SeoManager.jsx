@@ -384,12 +384,12 @@ export default function SeoManager() {
       siteUrl,
     });
 
-    const trackedUrl = `${location.pathname}${location.search}`;
+    const trackedUrl = location.pathname;
     if (lastTrackedUrlRef.current !== trackedUrl) {
       lastTrackedUrlRef.current = trackedUrl;
       trackPageView(pageTitle);
     }
-  }, [i18n.resolvedLanguage, location.pathname, location.search, site?.favicon, site?.logo, site?.name]);
+  }, [i18n.resolvedLanguage, location.pathname, site?.favicon, site?.logo, site?.name]);
 
   return null;
 }
