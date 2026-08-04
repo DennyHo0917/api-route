@@ -19,17 +19,35 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 
-const navItems = [
-  { to: '/dashboard', label: 'nav.dashboard', icon: BarChart3, end: true },
-  { to: '/api-keys', label: 'nav.apiKeys', icon: KeyRound },
-  { to: '/api-connect', label: 'nav.apiAccess', icon: Settings2 },
-  { to: '/clients', label: 'nav.clients', icon: Download },
-  { to: '/docs/quickstart', label: 'nav.docs', icon: BookOpen },
-  { to: '/chats', label: 'nav.aiChat', icon: MessageSquare },
-  { to: '/dashboard/logs', label: 'logs.callLogs', icon: ReceiptText },
-  { to: '/dashboard/tasks', label: 'tasks.title', icon: Network },
-  { to: '/topup', label: 'nav.topup', icon: Coins },
-  { to: '/account', label: 'nav.account', icon: UserRound },
+const navGroups = [
+  {
+    label: 'nav.groupOverview',
+    items: [{ to: '/dashboard', label: 'nav.dashboard', icon: BarChart3, end: true }],
+  },
+  {
+    label: 'nav.groupDevelopment',
+    items: [
+      { to: '/api-keys', label: 'nav.apiKeys', icon: KeyRound },
+      { to: '/api-connect', label: 'nav.apiAccess', icon: Settings2 },
+      { to: '/docs/quickstart', label: 'nav.docs', icon: BookOpen },
+      { to: '/clients', label: 'nav.clients', icon: Download },
+    ],
+  },
+  {
+    label: 'nav.groupActivity',
+    items: [
+      { to: '/chats', label: 'nav.aiChat', icon: MessageSquare },
+      { to: '/dashboard/logs', label: 'logs.callLogs', icon: ReceiptText },
+      { to: '/dashboard/tasks', label: 'tasks.title', icon: Network },
+    ],
+  },
+  {
+    label: 'nav.groupAccount',
+    items: [
+      { to: '/topup', label: 'nav.topup', icon: Coins },
+      { to: '/account', label: 'nav.account', icon: UserRound },
+    ],
+  },
 ];
 
 export function ConsoleSidebar({ collapsed = false, onToggle = () => {} }) {
@@ -56,24 +74,34 @@ export function ConsoleSidebar({ collapsed = false, onToggle = () => {} }) {
         </button>
       </div>
 
-      <nav className="flex-1 space-y-1 overflow-y-auto p-3">
-        {navItems.map(({ to, label, icon: Icon, end }) => (
-          <NavLink
-            key={to}
-            to={to}
-            end={end}
-            title={collapsed ? t(label) : undefined}
-            className={({ isActive }) => `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-              collapsed ? 'justify-center' : ''
-            } ${
-              isActive
-                ? 'bg-page-link/10 text-page-link'
-                : 'text-page-secondary hover:bg-page-surface-hover hover:text-page'
-            }`}
-          >
-            <Icon className="h-[18px] w-[18px] shrink-0" />
-            <span className={collapsed ? 'sr-only' : ''}>{t(label)}</span>
-          </NavLink>
+      <nav className="flex-1 space-y-4 overflow-y-auto p-3">
+        {navGroups.map((group) => (
+          <div key={group.label} className="space-y-1" aria-label={t(group.label)}>
+            {!collapsed && (
+              <p className="flex items-center gap-2 px-3 pb-1 text-[11px] font-bold tracking-wide text-page-link">
+                <span>{t(group.label)}</span>
+                <span aria-hidden="true" className="h-px flex-1 bg-page-divider" />
+              </p>
+            )}
+            {group.items.map(({ to, label, icon: Icon, end }) => (
+              <NavLink
+                key={to}
+                to={to}
+                end={end}
+                title={collapsed ? t(label) : undefined}
+                className={({ isActive }) => `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                  collapsed ? 'justify-center' : ''
+                } ${
+                  isActive
+                    ? 'bg-page-link/10 text-page-link'
+                    : 'text-page-secondary hover:bg-page-surface-hover hover:text-page'
+                }`}
+              >
+                <Icon className="h-[18px] w-[18px] shrink-0" />
+                <span className={collapsed ? 'sr-only' : ''}>{t(label)}</span>
+              </NavLink>
+            ))}
+          </div>
         ))}
       </nav>
 
