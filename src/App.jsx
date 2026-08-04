@@ -22,6 +22,7 @@ const AppMarket = lazy(() => import('./pages/AppMarket'));
 const DocsQuickstart = lazy(() => import('./pages/DocsQuickstart'));
 const Faq = lazy(() => import('./pages/Faq'));
 const Topup = lazy(() => import('./pages/Topup'));
+const Referrals = lazy(() => import('./pages/Referrals'));
 const Logs = lazy(() => import('./pages/Logs'));
 const Tasks = lazy(() => import('./pages/Tasks'));
 const SubDistributor = lazy(() => import('./pages/SubDistributor'));
@@ -153,6 +154,7 @@ function ThemedRoutes() {
               </Route>
               <Route path="/api-connect" element={<ApiConnect />} />
               <Route path="/clients" element={<Clients />} />
+              <Route path="/referrals" element={<Referrals />} />
               <Route path="/logs" element={<Navigate to="/dashboard/logs" replace />} />
               <Route path="/tasks" element={<Navigate to="/dashboard/tasks" replace />} />
               <Route path="/account" element={<Account />} />

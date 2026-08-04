@@ -5,14 +5,13 @@ import {
   BookOpen,
   Coins,
   Download,
+  Gift,
   House,
   KeyRound,
   LogOut,
   MessageSquare,
-  Network,
   PanelLeftClose,
   PanelLeftOpen,
-  ReceiptText,
   Settings2,
   UserRound,
 } from 'lucide-react';
@@ -22,7 +21,7 @@ import { useAuth } from '../context/AuthContext';
 const navGroups = [
   {
     label: 'nav.groupOverview',
-    items: [{ to: '/dashboard', label: 'nav.dashboard', icon: BarChart3, end: true }],
+    items: [{ to: '/dashboard', label: 'nav.dashboard', icon: BarChart3 }],
   },
   {
     label: 'nav.groupDevelopment',
@@ -35,17 +34,14 @@ const navGroups = [
   },
   {
     label: 'nav.groupActivity',
-    items: [
-      { to: '/chats', label: 'nav.aiChat', icon: MessageSquare },
-      { to: '/dashboard/logs', label: 'logs.callLogs', icon: ReceiptText },
-      { to: '/dashboard/tasks', label: 'tasks.title', icon: Network },
-    ],
+    items: [{ to: '/chats', label: 'nav.aiChat', icon: MessageSquare }],
   },
   {
     label: 'nav.groupAccount',
     items: [
       { to: '/topup', label: 'nav.topup', icon: Coins },
       { to: '/account', label: 'nav.account', icon: UserRound },
+      { to: '/referrals', label: 'topup.inviteTitle', icon: Gift },
     ],
   },
 ];

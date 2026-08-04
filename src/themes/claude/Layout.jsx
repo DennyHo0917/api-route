@@ -291,7 +291,7 @@ export default function ClaudeLayout() {
                       {t('nav.topup')}
                     </Link>
                     <Link
-                      to="/dashboard#referral"
+                      to="/referrals"
                       role="menuitem"
                       onClick={() => setUserMenuOpen(false)}
                       className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-[#5E4E40] transition-colors hover:bg-[#FAF6F1] hover:text-[#3D3024]"
