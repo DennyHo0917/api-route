@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import {
   ChevronDown,
   Copy,
+  Crown,
   KeyRound,
   ListChecks,
   Pencil,
@@ -463,22 +464,18 @@ export default function Tokens() {
 
       <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
         {hasGroups && (
-          <section className="overflow-hidden rounded-lg border border-page-divider bg-page-card-bg shadow-sm">
-            <div className="border-b border-page-divider px-5 py-4">
-              <h2 className="text-base font-bold text-page">{t('tokens.selectGroup')}</h2>
-              <p className="mt-1 text-sm text-page-secondary">{t('tokens.selectGroupSubtitle')}</p>
-            </div>
-
+          <section className="premium-surface overflow-hidden rounded-lg border border-[#c8a45e]/50 shadow-[0_12px_30px_rgba(147,109,50,0.12)]">
             <div className="space-y-6 px-5 py-5">
               {Object.entries(groupedByVendor).map(([vendor, groups]) => (
                 <div key={vendor}>
                   <div className="mb-3 flex items-center gap-2">
+                    {vendor === t('tokens.otherGroups') && <Crown className="h-4 w-4 text-[#b88a3f]" aria-hidden="true" />}
                     <h3 className="text-base font-semibold text-page">{vendor}</h3>
                     <span className="rounded-full bg-page-surface px-2 py-0.5 text-[11px] text-page-muted">
                       {groups.length} {t('tokens.groupCount')}
                     </span>
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-0">
                     {groups.map((group) => (
                       <KeyGroupCard
                         key={group.id}
@@ -533,6 +530,7 @@ export default function Tokens() {
                   onToggleModels={() => handleToggleSupportedModels(token.id)}
                   onToggle={() => handleToggle(token)}
                   onDelete={() => setDeleteConfirm(token)}
+                  premium={Number(token.key_group_id) > 0}
                   t={t}
                 />
               ))}
@@ -554,15 +552,16 @@ function TokenWorkbenchRow({
   onToggleModels,
   onToggle,
   onDelete,
+  premium,
   t,
 }) {
   const enabled = Number(token.status) === 1;
 
   return (
-    <div className="px-5 py-4">
+    <div className={`px-5 py-4 ${premium ? 'premium-surface border-l-[3px] border-l-[#c8a45e]' : ''}`}>
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="flex min-w-0 items-start gap-3">
-          <span className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${enabled ? 'bg-emerald-500' : 'bg-page-muted'}`} />
+          <span className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${enabled ? (premium ? 'bg-[#c8a45e]' : 'bg-emerald-500') : 'bg-page-muted'}`} />
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <p className="truncate text-sm font-semibold text-page">{token.name}</p>
@@ -599,7 +598,10 @@ function TokenWorkbenchRow({
           <button
             type="button"
             onClick={onToggle}
-            className={`btn-secondary inline-flex items-center gap-1.5 !px-3 !py-1.5 text-xs ${enabled ? 'text-amber-700 hover:bg-amber-500/10' : 'text-emerald-700 hover:bg-emerald-500/10'}`}
+            className={`btn-secondary inline-flex items-center gap-1.5 !px-3 !py-1.5 text-xs ${premium
+              ? (enabled ? '!text-[#8c6729] hover:!bg-[#b88a3f]/10' : '!text-emerald-700 hover:!bg-emerald-500/10')
+              : (enabled ? 'text-amber-700 hover:bg-amber-500/10' : 'text-emerald-700 hover:bg-emerald-500/10')
+            }`}
           >
             <KeyRound className="h-3.5 w-3.5" />
             {enabled ? t('tokens.disable') : t('tokens.enable')}
@@ -900,15 +902,26 @@ function TokenModal({
 function KeyGroupCard({ group, parseTags, onSelect, onViewPricing, symbol, cnyRate, t }) {
   const tags = parseTags(group.tags);
   const unavailable = Boolean(group.is_unavailable);
+  const discount = Number(group.price_discount || 1);
+  const hasDiscount = Number.isFinite(discount) && discount > 0 && discount < 1;
+  const discountPercent = Number(((1 - discount) * 100).toFixed(2));
 
   return (
-    <div className={`rounded-xl border border-page-divider bg-page-card-bg p-4 ${
-      unavailable ? 'opacity-70' : 'transition-colors hover:border-page-link/40'
+    <div className={`grid gap-2 border-t border-page-divider py-3 first:border-t-0 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-center sm:gap-3 ${
+      unavailable ? 'opacity-70' : ''
     }`}>
-      <div className="flex items-start gap-3">
-        <div className="min-w-0 flex-1">
+      <div className="flex min-h-10 min-w-0 items-center rounded-xl border border-page-divider bg-page-surface px-3.5 py-2.5">
+        <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <p className="text-sm font-semibold text-page">{group.name}</p>
+            <p className="truncate text-sm font-semibold text-page">{group.name}</p>
+            {hasDiscount && (
+              <span className="discount-setting text-[11px] font-semibold">
+                {t('tokens.groupSettlementDiscount', { percent: discountPercent })}
+              </span>
+            )}
+            {group.discount_label && (
+              <span className="discount-setting text-[11px] font-semibold">{group.discount_label}</span>
+            )}
             {group.is_recommended && (
               <span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-700">{t('tokens.recommended')}</span>
             )}
@@ -920,22 +933,22 @@ function KeyGroupCard({ group, parseTags, onSelect, onViewPricing, symbol, cnyRa
             {group.rmb_per_usd > 0 && (
               <span className="text-xs font-medium text-page">{formatCnyPerUsdRate(group.rmb_per_usd, symbol, cnyRate)} {t('tokens.perUsd')}</span>
             )}
-            {group.discount_label && <span className="text-[11px] font-semibold text-page-success">{group.discount_label}</span>}
-            {tags.map((tag) => <span key={tag} className="rounded bg-page-surface px-1.5 py-0.5 text-[10px] text-page-secondary">{tag}</span>)}
+            {tags.map((tag) => <span key={tag} className="rounded bg-page-surface-hover px-1.5 py-0.5 text-[10px] text-page-secondary">{tag}</span>)}
           </div>
-          {group.description && <p className="mt-1 text-xs text-page-muted">{group.description}</p>}
-        </div>
-        <div className="flex shrink-0 flex-col items-end gap-2">
-          <button type="button" onClick={() => onViewPricing(group)} className="btn-secondary !px-3 !py-1.5 text-xs">
-            {t('tokens.viewGroupPricing')}
-          </button>
-          {!unavailable && (
-            <button type="button" onClick={() => onSelect(group)} className="text-xs font-semibold text-page-link hover:underline">
-              {t('tokens.create')} →
-            </button>
-          )}
+          {group.description && <p className="mt-1 truncate text-xs text-page-muted">{group.description}</p>}
         </div>
       </div>
+      <button type="button" onClick={() => onViewPricing(group)} className="btn-secondary inline-flex min-h-10 w-full items-center justify-center !px-3 !py-2 text-xs sm:w-auto">
+        {t('tokens.viewGroupPricing')}
+      </button>
+      <button
+        type="button"
+        onClick={() => onSelect(group)}
+        disabled={unavailable}
+        className="btn-primary inline-flex min-h-10 w-full items-center justify-center !px-4 !py-2 text-xs sm:w-auto"
+      >
+        {unavailable ? t('tokens.unavailable') : `${t('tokens.create')} →`}
+      </button>
     </div>
   );
 }

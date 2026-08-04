@@ -178,6 +178,52 @@
     background: rgba(var(--page-text), 0.05);
   }
 
+  .premium-surface {
+    --page-text: 72 56 35;
+    --page-text-secondary: 112 90 58;
+    --page-text-muted: 151 125 86;
+    --page-label: 83 64 39;
+    --page-link: 166 119 47;
+    --page-card-bg: #fffbf3;
+    --page-card-border: rgba(184, 139, 61, 0.38);
+    --page-input-border: #d9c09a;
+    --page-surface: rgba(184, 139, 61, 0.08);
+    --page-surface-hover: rgba(184, 139, 61, 0.14);
+    --page-divider: rgba(184, 139, 61, 0.22);
+    --page-inset: rgba(184, 139, 61, 0.1);
+    --page-success: 47 133 90;
+    --page-success-text: 47 133 90;
+    background: #fffbf3;
+  }
+
+  .discount-setting {
+    color: #c66b1d;
+  }
+
+  html[data-color-scheme='dark'] .premium-surface {
+    --page-text: 246 238 226;
+    --page-text-secondary: 219 201 181;
+    --page-text-muted: 172 148 123;
+    --page-label: 238 220 196;
+    --page-link: 232 173 102;
+    --page-card-bg: #2c211b;
+    --page-card-border: rgba(214, 166, 93, 0.46);
+    --page-input-border: #71553c;
+    --page-surface: rgba(214, 166, 93, 0.1);
+    --page-surface-hover: rgba(214, 166, 93, 0.16);
+    --page-divider: rgba(214, 166, 93, 0.24);
+    --page-inset: rgba(0, 0, 0, 0.18);
+    --page-success: 122 203 151;
+    --page-success-text: 122 203 151;
+    background: #2c211b;
+    border-color: rgba(214, 166, 93, 0.46);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  }
+
+  html[data-color-scheme='dark'] .premium-surface .discount-setting {
+    color: #f0b66b;
+  }
+
   .input {
     @apply w-full px-4 py-2.5 rounded-xl text-sm
            focus:outline-none focus:ring-2 focus:ring-brand-500/40 focus:border-brand-500/60
