@@ -5,10 +5,9 @@ import { Toaster } from 'react-hot-toast';
 import App from './App';
 import { AuthProvider } from './context/AuthContext';
 import { SiteProvider } from './context/SiteContext';
-import { getAutoLanguageRedirectPath, getRouterBasename, normalizeLanguagePath } from './i18n/languageUtils';
+import { getAutoLanguageRedirectPath, getPathLanguage, getRouterBasename, normalizeLanguagePath } from './i18n/languageUtils';
 import { i18nReady } from './i18n';
 import '@fontsource-variable/inter/wght.css';
-import '@fontsource-variable/noto-sans-sc/wght.css';
 import '@fontsource-variable/jetbrains-mono/wght.css';
 import './index.css';
 
@@ -36,8 +35,11 @@ if (autoLanguageRedirectPath) {
   window.location.replace(autoLanguageRedirectPath);
 } else {
   const routerBasename = getRouterBasename(window.location.pathname);
+  const fontReady = getPathLanguage(window.location.pathname) === 'en'
+    ? Promise.resolve()
+    : import('@fontsource-variable/noto-sans-sc/wght.css');
 
-  i18nReady.then(() => {
+  Promise.all([i18nReady, fontReady]).then(() => {
     ReactDOM.createRoot(document.getElementById('root')).render(
       <React.StrictMode>
         <BrowserRouter basename={routerBasename}>

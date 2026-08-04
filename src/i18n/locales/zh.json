@@ -33,6 +33,8 @@
     "auth.legalAnd": "和",
     "auth.privacy": "《隐私政策》",
     "auth.legalSuffix": "",
+    "footer.privacy": "隐私政策",
+    "footer.terms": "服务条款",
 
     "home.heroTagline": "AI API 平台",
     "home.heroSubtitle": "在 AI Chat 中直接使用 GPT、Claude、Gemini、Kimi 等主流模型，或通过 OpenAI 兼容 API 接入应用、开发工具和自动化流程。",

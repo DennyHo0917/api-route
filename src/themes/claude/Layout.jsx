@@ -11,8 +11,6 @@ import {
   getVisibleNavItems,
   isSiteNavActive,
 } from '../../utils/navigation';
-import { getLegalCopy } from '../../content/legalCopy';
-import { normalizeAppLanguage } from '../../i18n/languageUtils';
 
 const LOCAL_LOGO_URL = '/images/logo.png';
 
@@ -37,7 +35,7 @@ function getSupportLink(site) {
 }
 
 export default function ClaudeLayout() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { user, logout } = useAuth();
   const { site } = useSite();
   const { symbol, rate } = useCurrency();
@@ -67,10 +65,6 @@ export default function ClaudeLayout() {
   const supportLabel = supportLink?.isTelegram
     ? t('nav.telegramSupport')
     : t('nav.contactSupport');
-  const legalLabels = getLegalCopy(
-    normalizeAppLanguage(i18n.resolvedLanguage || i18n.language),
-    'privacy',
-  ).labels;
   const isSnapDeckPage = location.pathname === '/';
 
   useEffect(() => {
@@ -428,8 +422,8 @@ export default function ClaudeLayout() {
             )}
             <Link to="/apps" className="hover:text-[#D97757]">{t('nav.apps')}</Link>
             <Link to="/faq" className="hover:text-[#D97757]">{t('nav.faq')}</Link>
-            <Link to="/privacy-policy" className="hover:text-[#D97757]">{legalLabels.privacy}</Link>
-            <Link to="/terms-of-service" className="hover:text-[#D97757]">{legalLabels.terms}</Link>
+            <Link to="/privacy-policy" className="hover:text-[#D97757]">{t('footer.privacy')}</Link>
+            <Link to="/terms-of-service" className="hover:text-[#D97757]">{t('footer.terms')}</Link>
             <span className="text-[#A89685]">&copy; {new Date().getFullYear()}</span>
           </div>
         </div>

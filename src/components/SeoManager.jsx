@@ -3,9 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { useSite } from '../context/SiteContext';
 import { DIST_SITE_LANGUAGES, getLocalizedPath, normalizeAppLanguage } from '../i18n/languageUtils';
-import { FAQ_COPY } from '../content/faqCopy';
 import { SEO_COPY } from '../content/seoCopy';
-import { getLegalCopy } from '../content/legalCopy';
 import { trackPageView } from '../utils/analytics';
 
 const DEFAULT_SITE_URL = 'https://www.api-route.com';
@@ -124,7 +122,8 @@ function syncOgLocaleAlternates(currentLanguage) {
     });
 }
 
-function getFaqSeoPage(languageKey) {
+async function getFaqSeoPage(languageKey) {
+  const { FAQ_COPY } = await import('../content/faqCopy');
   const copy = FAQ_COPY[languageKey] || FAQ_COPY.en;
   return {
     title: copy.title,
@@ -135,12 +134,14 @@ function getFaqSeoPage(languageKey) {
   };
 }
 
-function getPageCopy(pathname, copy, languageKey) {
+async function getPageCopy(pathname, copy, languageKey) {
   if (pathname === '/privacy-policy') {
+    const { getLegalCopy } = await import('../content/legalCopy');
     const { page } = getLegalCopy(languageKey, 'privacy');
     return { title: page.title, description: page.description };
   }
   if (pathname === '/terms-of-service') {
+    const { getLegalCopy } = await import('../content/legalCopy');
     const { page } = getLegalCopy(languageKey, 'terms');
     return { title: page.title, description: page.description };
   }
@@ -287,7 +288,11 @@ export default function SeoManager() {
     const languageKey = normalizeAppLanguage(i18n.resolvedLanguage);
     const copy = SEO_COPY[languageKey];
     const knownPath = INDEXABLE_PATHS.has(pathname) || PRIVATE_PATHS.has(pathname);
-    const page = knownPath ? getPageCopy(pathname, copy, languageKey) : copy.notFound;
+    let cancelled = false;
+    const pagePromise = knownPath ? getPageCopy(pathname, copy, languageKey) : Promise.resolve(copy.notFound);
+
+    pagePromise.then((page) => {
+      if (cancelled) return;
     const siteName = normalizeSiteName(site?.name);
     const siteUrl = getSiteUrl();
     const canonicalPath = getLocalizedPath(pathname, languageKey);
@@ -389,6 +394,11 @@ export default function SeoManager() {
       lastTrackedUrlRef.current = trackedUrl;
       trackPageView(pageTitle);
     }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [i18n.resolvedLanguage, location.pathname, site?.name]);
 
   return null;

@@ -33,6 +33,8 @@
     "auth.legalAnd": " and ",
     "auth.privacy": "Privacy Policy",
     "auth.legalSuffix": ".",
+    "footer.privacy": "Privacy Policy",
+    "footer.terms": "Terms of Service",
 
     "home.heroTagline": "AI API Platform",
     "home.heroSubtitle": "Use GPT, Claude, Gemini, Kimi, and other leading models directly in AI Chat, or connect apps, developer tools, and automations through an OpenAI-compatible API.",

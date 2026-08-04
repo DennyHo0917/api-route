@@ -37,6 +37,8 @@
     "auth.legalAnd": "と",
     "auth.privacy": "「プライバシーポリシー」",
     "auth.legalSuffix": "に同意したものとみなされます。",
+    "footer.privacy": "プライバシーポリシー",
+    "footer.terms": "利用規約",
     "common.sessionExpired": "セッションの有効期限が切れました。もう一度ログインしてください。",
     "common.requestFailed": "リクエストに失敗しました",
     "common.changeLanguage": "言語を切り替える",

@@ -37,6 +37,8 @@
     "auth.legalAnd": " 및 ",
     "auth.privacy": "《개인정보 처리방침》",
     "auth.legalSuffix": "에 동의한 것으로 간주됩니다.",
+    "footer.privacy": "개인정보 처리방침",
+    "footer.terms": "서비스 약관",
     "common.sessionExpired": "세션이 만료되었습니다. 다시 로그인해 주세요.",
     "common.requestFailed": "요청에 실패했습니다",
     "common.changeLanguage": "언어 변경",
