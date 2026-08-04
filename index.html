@@ -50,12 +50,24 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GZT5KLBKJ8"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-GZT5KLBKJ8', { send_page_view: false });
+      window.gtag = function(){dataLayer.push(arguments);};
+      window.gtag('js', new Date());
+      window.gtag('config', 'G-GZT5KLBKJ8', { send_page_view: false });
+
+      function loadGoogleAnalytics() {
+        if (document.getElementById('google-analytics')) return;
+        var script = document.createElement('script');
+        script.id = 'google-analytics';
+        script.async = true;
+        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-GZT5KLBKJ8';
+        document.head.appendChild(script);
+      }
+
+      ['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach(function(eventName) {
+        window.addEventListener(eventName, loadGoogleAnalytics, { once: true, passive: true });
+      });
     </script>
     <script id="seo-structured-data" type="application/ld+json">
       {
