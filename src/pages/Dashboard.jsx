@@ -17,27 +17,38 @@ const DASHBOARD_RANGES = [
   { key: '30d', labelKey: 'dashboard.range30d' },
 ];
 const DASHBOARD_FETCH_RANGE = '30d';
-const DASHBOARD_LOG_PAGE_SIZE = 1000;
+const DASHBOARD_LOG_PAGE_SIZE = 100;
+const DASHBOARD_LOG_PAGE_CONCURRENCY = 5;
 
 // ponytail: page-session cache; refresh the browser page to pull fresh dashboard logs.
 let dashboardLogsCache = null;
 
 const fetchDashboardLogs = async (baseParams) => {
-  const logs = [];
-  for (let page = 1; ; page += 1) {
-    const res = await getUserLogs({
-      ...baseParams,
-      type: '2',
-      p: page,
-      page_size: DASHBOARD_LOG_PAGE_SIZE,
-    });
-    if (!res.data.success) throw new Error(res.data.message || 'Failed to load dashboard logs');
+  const params = {
+    ...baseParams,
+    type: '2',
+    page_size: DASHBOARD_LOG_PAGE_SIZE,
+  };
+  const first = await getUserLogs({ ...params, p: 1 });
+  if (!first.data.success) throw new Error(first.data.message || 'Failed to load dashboard logs');
 
-    const data = res.data.data || {};
-    const items = data.items || [];
-    logs.push(...items);
-    if (items.length === 0 || logs.length >= Number(data.total || 0)) return logs;
+  const firstData = first.data.data || {};
+  const totalPages = Math.ceil(Number(firstData.total || 0) / DASHBOARD_LOG_PAGE_SIZE);
+  const logs = [...(firstData.items || [])];
+
+  for (let page = 2; page <= totalPages; page += DASHBOARD_LOG_PAGE_CONCURRENCY) {
+    const responses = await Promise.all(
+      Array.from({ length: Math.min(DASHBOARD_LOG_PAGE_CONCURRENCY, totalPages - page + 1) }, (_, index) => (
+        getUserLogs({ ...params, p: page + index })
+      )),
+    );
+    responses.forEach((res) => {
+      if (!res.data.success) throw new Error(res.data.message || 'Failed to load dashboard logs');
+      logs.push(...(res.data.data?.items || []));
+    });
   }
+
+  return logs;
 };
 
 const getRangeBounds = (range) => {
