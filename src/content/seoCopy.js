@@ -31,6 +31,15 @@ export const SEO_COPY = {
         ['Claude Code 或 VSCode 如何接入？', '在客户端里填写 API-Route 的 Base URL、API Key 和定价页显示的模型名，也可以用 cc switch 导入配置。'],
       ],
     },
+    docs: {
+      title: 'API-Route API 快速开始：API Key、模型列表与首次调用',
+      description: '创建并验证 API Key，通过 /v1/models 获取当前密钥可用模型，再向 /v1/chat/completions 发送第一次 OpenAI 兼容请求。',
+      questions: [
+        ['如何发送第一次 AI API 请求？', '先创建并启用 API Key，调用 /v1/models 复制该密钥可用的完整模型 ID，再向 /v1/chat/completions 发送最小请求。'],
+        ['如何查看当前密钥可以调用的模型？', '以 API 密钥页面中的“支持模型”或 /v1/models 返回结果为准；价格页主要用于比较已上架模型与价格。'],
+        ['OpenAI 和 Claude 客户端使用同一个 Base URL 吗？', '调用节点可以相同，但格式不同：OpenAI 兼容 SDK 通常使用带 /v1 的地址，Anthropic 或 Claude 客户端使用不带 /v1 的根地址。'],
+      ],
+    },
     subSite: {
       title: 'AI API 分站与白标转售平台',
       description: '为已有用户或客户搭建白标 AI API 分站，统一管理品牌、模型售价、套餐、充值、API Key 和调用记录，无需自己寻找上游、购买 VPS 或部署服务。',
@@ -88,6 +97,15 @@ export const SEO_COPY = {
         ['How do Claude Code or VS Code connect?', 'Set API-Route as the Base URL, use your API key, and choose a supported model name from the Pricing page, or import the profile with cc switch.'],
       ],
     },
+    docs: {
+      title: 'API-Route Quickstart: API Keys, Models, and Your First Request',
+      description: 'Create and verify an API key, list the models available to that key with /v1/models, and send your first OpenAI-compatible request to /v1/chat/completions.',
+      questions: [
+        ['How do I send my first AI API request?', 'Create and enable an API key, call /v1/models to copy a complete model ID available to that key, then send a minimal request to /v1/chat/completions.'],
+        ['How do I list the models available to my key?', 'Use Supported Models on the API Keys page or call /v1/models. Pricing is primarily for comparing listed models and rates.'],
+        ['Do OpenAI and Claude clients use the same Base URL?', 'They can use the same route, but the format differs: OpenAI-compatible SDKs normally use the address with /v1, while Anthropic or Claude clients use the root address without /v1.'],
+      ],
+    },
     subSite: {
       title: 'AI API Reseller Platform',
       description: 'Start an AI API reseller business with your own white-label platform. Set model pricing, sell plans, accept top-ups, and route traffic automatically.',
@@ -143,6 +161,15 @@ export const SEO_COPY = {
         ['Claude Code や VSCode で使うには？', 'API-Route の Base URL、API キー、料金ページのモデル名を設定するか、cc switch でプロファイルを取り込みます。'],
       ],
     },
+    docs: {
+      title: 'API-Route クイックスタート：API キー、モデル一覧、最初のリクエスト',
+      description: 'API キーを作成して確認し、/v1/models でそのキーが利用できるモデルを取得してから、/v1/chat/completions に最初の OpenAI 互換リクエストを送ります。',
+      questions: [
+        ['最初の AI API リクエストを送るには？', 'API キーを作成して有効にし、/v1/models からそのキーで利用できる完全なモデル ID をコピーして、/v1/chat/completions に最小リクエストを送ります。'],
+        ['キーで使えるモデルを確認するには？', 'API キーページの「対応モデル」または /v1/models の結果を使用します。料金ページは掲載モデルと料金の比較用です。'],
+        ['OpenAI と Claude クライアントは同じ Base URL を使いますか？', '同じ接続先を使えますが形式が異なります。OpenAI 互換 SDK は通常 /v1 付き、Anthropic または Claude クライアントは /v1 なしのルート URL を使います。'],
+      ],
+    },
     subSite: {
       title: 'AI API リセラープラットフォーム',
       description: '既存顧客向けにホワイトラベルの AI API プラットフォームを構築できます。ブランド、モデル価格、プラン、残高、API キー、利用履歴を一元管理し、上流接続や VPS 運用は不要です。',
@@ -196,6 +223,15 @@ export const SEO_COPY = {
         ['OpenAI 호환 Base URL을 사용할 수 있는 클라이언트는 무엇인가요?', '사용자 지정 OpenAI 호환 Base URL, API 키, 모델명을 설정할 수 있는 클라이언트라면 대부분 API-Route에 연결할 수 있습니다.'],
         ['LibreChat은 API-Route에 연결할 수 있나요?', 'LibreChat의 사용자 지정 OpenAI endpoint에 API-Route Base URL, API 키, 모델명을 입력하면 됩니다.'],
         ['Claude Code나 VSCode에서는 어떻게 사용하나요?', 'API-Route Base URL, API 키, 요금 페이지의 모델명을 설정하거나 cc switch로 프로필을 가져오면 됩니다.'],
+      ],
+    },
+    docs: {
+      title: 'API-Route 빠른 시작: API 키, 모델 목록, 첫 요청',
+      description: 'API 키를 만들고 확인한 뒤 /v1/models로 해당 키에서 사용할 수 있는 모델을 조회하고 /v1/chat/completions로 첫 OpenAI 호환 요청을 보냅니다.',
+      questions: [
+        ['첫 AI API 요청은 어떻게 보내나요?', 'API 키를 만들고 활성화한 뒤 /v1/models에서 해당 키가 사용할 수 있는 완전한 모델 ID를 복사하고 /v1/chat/completions로 최소 요청을 보내세요.'],
+        ['내 키로 사용할 수 있는 모델은 어떻게 확인하나요?', 'API 키 페이지의 지원 모델 또는 /v1/models 결과를 사용하세요. 요금 페이지는 등록 모델과 가격을 비교하는 용도입니다.'],
+        ['OpenAI와 Claude 클라이언트는 같은 Base URL을 사용하나요?', '같은 엔드포인트를 사용할 수 있지만 형식이 다릅니다. OpenAI 호환 SDK는 보통 /v1이 포함된 주소를, Anthropic 또는 Claude 클라이언트는 /v1이 없는 루트 주소를 사용합니다.'],
       ],
     },
     subSite: {

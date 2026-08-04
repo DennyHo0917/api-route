@@ -19,6 +19,7 @@ const Clients = lazy(() => import('./pages/Clients'));
 const Packages = lazy(() => import('./pages/Packages'));
 const Pricing = lazy(() => import('./pages/Pricing'));
 const AppMarket = lazy(() => import('./pages/AppMarket'));
+const DocsQuickstart = lazy(() => import('./pages/DocsQuickstart'));
 const Faq = lazy(() => import('./pages/Faq'));
 const Topup = lazy(() => import('./pages/Topup'));
 const Logs = lazy(() => import('./pages/Logs'));
@@ -117,6 +118,7 @@ function ThemedRoutes() {
           <Route path="/pricing/packages" element={<Navigate to="/packages" replace />} />
           <Route path="/packages" element={<Packages />} />
           <Route path="/apps" element={<AppMarket />} />
+          <Route path="/docs/quickstart" element={<DocsQuickstart />} />
           <Route path="/ai-api-reseller-platform" element={<SubDistributor />} />
           <Route path="/sub-site" element={<LegacySubSiteRedirect />} />
           <Route path="/faq" element={<Faq />} />

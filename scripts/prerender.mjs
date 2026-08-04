@@ -31,6 +31,7 @@ const pages = [
   { key: 'pricing', path: '/pricing' },
   { key: 'packages', path: '/packages' },
   { key: 'apps', path: '/apps' },
+  { key: 'docs', path: '/docs/quickstart' },
   { key: 'subSite', path: '/ai-api-reseller-platform' },
   { key: 'faq', path: '/faq' },
   { key: 'privacy', path: '/privacy-policy' },
@@ -45,10 +46,11 @@ const snapshotLabels = {
 };
 
 const relatedPageKeys = {
-  home: ['pricing', 'packages', 'faq', 'subSite'],
-  pricing: ['packages', 'faq', 'apps'],
+  home: ['pricing', 'packages', 'apps', 'docs', 'faq', 'subSite'],
+  pricing: ['packages', 'apps', 'docs', 'faq'],
   packages: ['pricing', 'faq'],
-  apps: ['pricing', 'faq', 'packages'],
+  apps: ['pricing', 'docs', 'faq', 'packages'],
+  docs: ['apps', 'pricing', 'faq'],
   subSite: ['pricing', 'faq', 'packages'],
   faq: ['pricing', 'packages', 'subSite'],
   privacy: ['terms', 'faq'],
@@ -126,6 +128,7 @@ function renderSnapshot(page, language, title, description, questions) {
     ['/pricing', 'Pricing'],
     ['/packages', 'Packages'],
     ['/apps', 'Apps'],
+    ['/docs/quickstart', 'Docs'],
     ['/ai-api-reseller-platform', 'Reseller'],
     ['/faq', 'FAQ'],
     ['/privacy-policy', 'Privacy Policy'],

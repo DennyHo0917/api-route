@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
   BarChart3,
+  BookOpen,
   Coins,
   Download,
   House,
@@ -23,6 +24,7 @@ const navItems = [
   { to: '/api-keys', label: 'nav.apiKeys', icon: KeyRound },
   { to: '/api-connect', label: 'nav.apiAccess', icon: Settings2 },
   { to: '/clients', label: 'nav.clients', icon: Download },
+  { to: '/docs/quickstart', label: 'nav.docs', icon: BookOpen },
   { to: '/chats', label: 'nav.aiChat', icon: MessageSquare },
   { to: '/dashboard/logs', label: 'logs.callLogs', icon: ReceiptText },
   { to: '/dashboard/tasks', label: 'tasks.title', icon: Network },
@@ -30,13 +32,10 @@ const navItems = [
   { to: '/account', label: 'nav.account', icon: UserRound },
 ];
 
-export default function ConsoleLayout() {
+export function ConsoleSidebar({ collapsed = false, onToggle = () => {} }) {
   const { t } = useTranslation();
   const { logout } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-  const [collapsed, setCollapsed] = useState(false);
-  const isChatRoute = location.pathname === '/chats';
 
   const handleLogout = async () => {
     await logout();
@@ -48,7 +47,7 @@ export default function ConsoleLayout() {
       <div className={`flex h-12 shrink-0 items-center border-b border-page-divider px-3 ${collapsed ? 'justify-center' : 'justify-end'}`}>
         <button
           type="button"
-          onClick={() => setCollapsed((value) => !value)}
+          onClick={onToggle}
           className="flex h-8 w-8 items-center justify-center rounded-lg text-page-secondary hover:bg-page-surface-hover hover:text-page"
           aria-label={collapsed ? t('common.expandSidebar', { defaultValue: 'Expand sidebar' }) : t('common.collapseSidebar', { defaultValue: 'Collapse sidebar' })}
           title={collapsed ? t('common.expandSidebar', { defaultValue: 'Expand sidebar' }) : t('common.collapseSidebar', { defaultValue: 'Collapse sidebar' })}
@@ -91,10 +90,18 @@ export default function ConsoleLayout() {
     </>
   );
 
+  return sidebar;
+}
+
+export default function ConsoleLayout() {
+  const location = useLocation();
+  const [collapsed, setCollapsed] = useState(false);
+  const isChatRoute = location.pathname === '/chats';
+
   return (
     <div className="theme-light theme-claude min-h-[calc(100dvh-72px)] bg-page-bg text-page">
       <aside className={`fixed inset-y-0 left-0 top-[72px] z-20 hidden flex-col border-r border-page-divider bg-page-card-bg transition-[width] duration-200 lg:flex ${collapsed ? 'w-16' : 'w-60'}`}>
-        {sidebar}
+        <ConsoleSidebar collapsed={collapsed} onToggle={() => setCollapsed((value) => !value)} />
       </aside>
 
       <div className={`min-h-[calc(100dvh-72px)] transition-[margin] duration-200 ${

@@ -14,8 +14,6 @@ import {
 import { getLegalCopy } from '../../content/legalCopy';
 import { normalizeAppLanguage } from '../../i18n/languageUtils';
 
-const SUPPORT_EMAIL = 'support@api-route.com';
-
 function getSupportLink(site) {
   const announcement = String(site?.announcement || '');
   const telegramMatch = announcement.match(/https?:\/\/(?:www\.)?(?:t\.me|telegram\.me)\/[^\s<>"']+/i);
@@ -424,23 +422,18 @@ export default function ClaudeLayout() {
             <p className="mt-1 text-sm text-[#8B7D6E]">One API for the models you use.</p>
           </div>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-[#766657]">
+            {isSnapDeckPage && (
+              <Link
+                to="/docs/quickstart"
+                className="hover:text-[#D97757]"
+              >
+                {t('nav.docs')}
+              </Link>
+            )}
             <Link to="/apps" className="hover:text-[#D97757]">{t('nav.apps')}</Link>
             <Link to="/faq" className="hover:text-[#D97757]">{t('nav.faq')}</Link>
             <Link to="/privacy-policy" className="hover:text-[#D97757]">{legalLabels.privacy}</Link>
             <Link to="/terms-of-service" className="hover:text-[#D97757]">{legalLabels.terms}</Link>
-            <a href={`mailto:${SUPPORT_EMAIL}`} className="hover:text-[#D97757]">
-              {SUPPORT_EMAIL}
-            </a>
-            {supportLink?.isTelegram && (
-              <a
-                href={supportLink.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-[#D97757]"
-              >
-                {supportLabel}
-              </a>
-            )}
             <span className="text-[#A89685]">&copy; {new Date().getFullYear()}</span>
           </div>
         </div>
