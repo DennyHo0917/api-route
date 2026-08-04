@@ -14,6 +14,8 @@ import {
 import { getLegalCopy } from '../../content/legalCopy';
 import { normalizeAppLanguage } from '../../i18n/languageUtils';
 
+const LOCAL_LOGO_URL = '/images/logo.png';
+
 function getSupportLink(site) {
   const announcement = String(site?.announcement || '');
   const telegramMatch = announcement.match(/https?:\/\/(?:www\.)?(?:t\.me|telegram\.me)\/[^\s<>"']+/i);
@@ -182,13 +184,7 @@ export default function ClaudeLayout() {
       <header className="sticky top-0 z-50 border-b border-[#E8DDD0] bg-[#FAF6F1]/92 backdrop-blur-xl">
         <div className="grid h-[72px] w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 sm:px-5 md:px-8 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:gap-5">
           <Link to="/" className="group flex min-w-0 items-center gap-3 justify-self-start">
-            {site?.logo ? (
-              <img src={site.logo} alt={siteName} className="h-9 w-9 shrink-0 rounded-xl object-contain" />
-            ) : (
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#D97757] text-sm font-bold text-white shadow-sm">
-                {siteName.charAt(0).toUpperCase()}
-              </div>
-            )}
+            <img src={LOCAL_LOGO_URL} alt={siteName} className="h-9 w-9 shrink-0 rounded-xl object-contain" />
             <div className="min-w-0">
               <span className="block truncate text-[17px] font-bold leading-none text-[#3D3024] transition-colors group-hover:text-[#D97757]">
                 {siteName}

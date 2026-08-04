@@ -7,7 +7,7 @@ import { SEO_COPY } from '../src/content/seoCopy.js';
 import { getLocalizedPath } from '../src/i18n/languageUtils.js';
 
 const SITE_URL = 'https://www.api-route.com';
-const DEFAULT_LOGO_URL = 'https://img.api-route.com/3.png';
+const DEFAULT_LOGO_URL = `${SITE_URL}/images/logo.png`;
 const DEFAULT_OG_IMAGE_URL = `${SITE_URL}/og-image.png`;
 const DEFAULT_OG_IMAGE_WIDTH = '1200';
 const DEFAULT_OG_IMAGE_HEIGHT = '630';

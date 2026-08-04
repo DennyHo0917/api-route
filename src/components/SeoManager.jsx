@@ -9,7 +9,7 @@ import { getLegalCopy } from '../content/legalCopy';
 import { trackPageView } from '../utils/analytics';
 
 const DEFAULT_SITE_URL = 'https://www.api-route.com';
-const DEFAULT_LOGO_URL = 'https://img.api-route.com/3.png';
+const DEFAULT_LOGO_PATH = '/images/logo.png';
 const DEFAULT_OG_IMAGE_PATH = '/og-image.png';
 const DEFAULT_OG_IMAGE_WIDTH = '1200';
 const DEFAULT_OG_IMAGE_HEIGHT = '630';
@@ -302,8 +302,7 @@ export default function SeoManager() {
         ? i18n.t('nav.clients')
         : metaTitle;
     const pageTitle = `${privatePageTitle} | ${siteName}`;
-    const logoSource = site?.logo || site?.favicon || DEFAULT_LOGO_URL;
-    const logoUrl = resolveUrl(logoSource, siteUrl);
+    const logoUrl = resolveUrl(DEFAULT_LOGO_PATH, siteUrl);
     const ogImageUrl = resolveUrl(DEFAULT_OG_IMAGE_PATH, siteUrl);
     const robots = indexable
       ? 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
@@ -390,7 +389,7 @@ export default function SeoManager() {
       lastTrackedUrlRef.current = trackedUrl;
       trackPageView(pageTitle);
     }
-  }, [i18n.resolvedLanguage, location.pathname, site?.favicon, site?.logo, site?.name]);
+  }, [i18n.resolvedLanguage, location.pathname, site?.name]);
 
   return null;
 }

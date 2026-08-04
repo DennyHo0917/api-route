@@ -13,9 +13,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'Noto Sans SC', 'system-ui', '-apple-system', 'sans-serif'],
-        heading: ['Inter', 'Noto Sans SC', 'system-ui', '-apple-system', 'sans-serif'],
-        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+        sans: ['Inter Variable', 'Noto Sans SC Variable', 'system-ui', '-apple-system', 'sans-serif'],
+        heading: ['Inter Variable', 'Noto Sans SC Variable', 'system-ui', '-apple-system', 'sans-serif'],
+        mono: ['JetBrains Mono Variable', 'Fira Code', 'monospace'],
       },
       colors: {
         brand: {

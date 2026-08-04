@@ -6,6 +6,7 @@ import { normalizeAppLanguage } from '../i18n/languageUtils';
 const SiteContext = createContext(null);
 const SITE_STORAGE_KEY = 'dist_site_info_v1';
 const FX_STORAGE_KEY = 'dist_cny_fx_rates_v1';
+const LOCAL_LOGO_URL = '/images/logo.png';
 export const COLOR_SCHEME_STORAGE_KEY = 'dist_color_scheme';
 
 const currencyByLanguage = {
@@ -141,19 +142,16 @@ function upsertLink(rel, href, attrs = {}) {
 
 function applySiteDocumentMeta(site) {
   const siteName = site?.name;
-  const iconUrl = site?.favicon || site?.logo;
 
   if (siteName) {
     upsertMeta('application-name', siteName);
     upsertMeta('apple-mobile-web-app-title', siteName);
   }
 
-  if (iconUrl) {
-    upsertLink('icon', iconUrl);
-    upsertLink('shortcut icon', iconUrl);
-    upsertLink('apple-touch-icon', iconUrl);
-    upsertLink('apple-touch-icon', iconUrl, { sizes: '180x180' });
-  }
+  upsertLink('icon', LOCAL_LOGO_URL);
+  upsertLink('shortcut icon', LOCAL_LOGO_URL);
+  upsertLink('apple-touch-icon', LOCAL_LOGO_URL);
+  upsertLink('apple-touch-icon', LOCAL_LOGO_URL, { sizes: '180x180' });
 
   upsertLink('manifest', '/site.webmanifest');
 }
