@@ -34,7 +34,6 @@ import {
 import { parseChatContent } from '../utils/chatContent';
 import { readChatResponse } from '../utils/chatResponse';
 import {
-  createImageEditRequest,
   createImageRequest,
   readImageResponse,
 } from '../utils/imageTask';
@@ -130,7 +129,7 @@ function getApiKey(token) {
 }
 
 function supportsImageAttachment(category, model) {
-  return category === 'image' || (category === 'chat' && modelSupportsImageUpload(model));
+  return category === 'chat' && modelSupportsImageUpload(model);
 }
 
 function waitForVideoPoll(signal) {
@@ -556,9 +555,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
   };
 
   const sendMessage = async () => {
-    const content = input.trim() || (attachment
-      ? t(modelCategory === 'image' ? 'chat.referenceImagePrompt' : 'chat.describeImagePrompt')
-      : '');
+    const content = input.trim() || (attachment ? t('chat.describeImagePrompt') : '');
     const modelOption = models.find((model) => model.name === selectedModel);
     const token = enabledTokens.find((item) => item.id === modelOption?.tokenId);
     if (!content || generating || !selectedModel || !token) return;
@@ -687,18 +684,13 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
           size: imageSize,
           quality: imageQuality,
         } : undefined;
-        const referenceImage = userMessage.attachment;
-        const response = await fetch(referenceImage
-          ? '/v1/images/edits'
-          : '/v1/images/generations', {
+        const response = await fetch('/v1/images/generations', {
           method: 'POST',
           headers: {
-            ...(referenceImage ? {} : { 'Content-Type': 'application/json' }),
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${getApiKey(token)}`,
           },
-          body: referenceImage
-            ? await createImageEditRequest(selectedModel, content, referenceImage, imageOptions)
-            : JSON.stringify(createImageRequest(selectedModel, content, imageOptions)),
+          body: JSON.stringify(createImageRequest(selectedModel, content, imageOptions)),
           signal: controller.signal,
         });
         const images = await readImageResponse(response);

@@ -8,7 +8,6 @@ import {
 } from '../src/utils/chatModels.js';
 import { readChatResponse } from '../src/utils/chatResponse.js';
 import {
-  createImageEditRequest,
   createImageRequest,
   readImageResponse,
 } from '../src/utils/imageTask.js';
@@ -191,21 +190,6 @@ assert.deepEqual(
     quality: 'high',
   },
 );
-const imageEditRequest = await createImageEditRequest(
-  'gpt-image-2',
-  'Keep the fox, change the background',
-  {
-    name: 'fox.png',
-    dataUrl: 'data:image/png;base64,dGVzdA==',
-  },
-  { size: '1024x1024', quality: 'high', n: '2' },
-);
-assert.equal(imageEditRequest.get('model'), 'gpt-image-2');
-assert.equal(imageEditRequest.get('prompt'), 'Keep the fox, change the background');
-assert.equal(imageEditRequest.get('image').name, 'fox.png');
-assert.equal(imageEditRequest.get('size'), '1024x1024');
-assert.equal(imageEditRequest.get('quality'), 'high');
-assert.equal(imageEditRequest.get('n'), '2');
 assert.deepEqual(
   await readImageResponse(new Response(JSON.stringify({
     data: [

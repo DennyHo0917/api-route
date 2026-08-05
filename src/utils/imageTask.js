@@ -5,18 +5,6 @@ export function createImageRequest(model, prompt, options = {}) {
   return request;
 }
 
-export async function createImageEditRequest(model, prompt, attachment, options = {}) {
-  const form = new FormData();
-  const image = await fetch(attachment.dataUrl).then((response) => response.blob());
-  form.append('model', model);
-  form.append('prompt', prompt);
-  form.append('image', image, attachment.name || 'reference.png');
-  form.append('n', String(Number(options.n) || 1));
-  if (options.size) form.append('size', options.size);
-  if (options.quality) form.append('quality', options.quality);
-  return form;
-}
-
 export async function readImageResponse(response) {
   const body = await response.text();
   let payload;
