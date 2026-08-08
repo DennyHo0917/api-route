@@ -386,7 +386,7 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
       if (!res.data.success || !res.data.data) return;
       setReferralLink(`${window.location.origin}/register?aff=${res.data.data}`);
       setReferralCardOpen(true);
-      trackEvent('referral_prompt_view', { source: 'first_chat_success' });
+      trackEvent('referral_prompt_view', { placement: 'first_chat_success' });
       try {
         window.localStorage.setItem(storageKey, '1');
       } catch {
@@ -410,13 +410,13 @@ export default function WebChat({ tokens = [], onOpenLocalSetup, onTopUp }) {
 
   const copyReferralLink = async () => {
     if (await copyText(referralLink)) {
-      trackEvent('referral_link_copy', { source: 'chat_success_card' });
+      trackEvent('referral_link_copy', { placement: 'chat_success_card' });
     }
   };
 
   const shareReferralLink = () => {
     const text = t('loginNotice.xPost', { link: referralLink });
-    trackEvent('referral_share', { method: 'x', source: 'chat_success_card' });
+    trackEvent('referral_share', { method: 'x', placement: 'chat_success_card' });
     window.open(`https://x.com/intent/post?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
   };
 

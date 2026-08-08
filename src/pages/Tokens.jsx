@@ -212,7 +212,7 @@ export default function Tokens() {
           toast.success(t('tokens.tokenUpdated'));
         } else {
           trackEvent('api_key_created', {
-            source: tokenDialog?.group ? 'key_group' : 'manual',
+            placement: tokenDialog?.group ? 'key_group' : 'manual',
           });
           if (response.data.data?.key) setNewKey(response.data.data.key);
         }

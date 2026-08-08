@@ -599,7 +599,7 @@ export default function SubDistributor() {
         logged_in: Boolean(user),
       });
       if (!user) {
-        trackEvent('reseller_login_required', { source: 'pricing_view' });
+        trackEvent('reseller_login_required', { placement: 'pricing_view' });
       }
     };
 
@@ -702,7 +702,7 @@ export default function SubDistributor() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user) {
-      trackEvent('reseller_login_required', { source: 'checkout_submit' });
+      trackEvent('reseller_login_required', { placement: 'checkout_submit' });
       trackCheckoutError('login_required', 'validation');
       toast.error(t('subDist.loginRequired'));
       return;

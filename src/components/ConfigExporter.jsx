@@ -779,7 +779,7 @@ print(message.content[0].text)`;
     await copyToClipboard(config);
     trackEvent('api_config_copy', {
       endpoint: selectedEndpointId,
-      source: embedded ? 'api_access' : 'config',
+      placement: embedded ? 'api_access' : 'config',
       tool: selectedTool,
     });
     setCopied(true);
@@ -812,7 +812,7 @@ print(message.content[0].text)`;
     URL.revokeObjectURL(url);
     trackEvent('api_config_download', {
       endpoint: selectedEndpointId,
-      source: embedded ? 'api_access' : 'config',
+      placement: embedded ? 'api_access' : 'config',
       tool: selectedTool,
     });
     toast.success(t('config.downloaded'));
@@ -1251,7 +1251,7 @@ print(message.content[0].text)`;
                 target="_blank"
                 rel="noreferrer"
                 onClick={() => trackEvent('ccswitch_download_click', {
-                  source: 'import_fallback',
+                  placement: 'import_fallback',
                   platform: 'primary',
                 })}
                 className="btn-primary block w-full text-center"
@@ -1263,7 +1263,7 @@ print(message.content[0].text)`;
                 target="_blank"
                 rel="noreferrer"
                 onClick={() => trackEvent('ccswitch_download_click', {
-                  source: 'import_fallback',
+                  placement: 'import_fallback',
                   platform: 'github',
                 })}
                 className="btn-secondary block w-full text-center"
