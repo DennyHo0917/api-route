@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
+import { Award, ChevronDown, ChevronUp } from 'lucide-react';
 import {
   getAffCode,
   getAffEarnings,
@@ -12,6 +13,13 @@ import {
 } from '../api';
 import { useAuth } from '../context/AuthContext';
 import { useCurrency } from '../context/SiteContext';
+
+// ponytail: keep the displayed campaign tiers local until the backend exposes a public configuration endpoint.
+const AFFILIATE_MILESTONES = [
+  { invites: 20, rate: 0.07 },
+  { invites: 50, rate: 0.10 },
+  { invites: 100, rate: 0.15 },
+];
 
 export default function Referrals() {
   const { t } = useTranslation();
@@ -35,6 +43,7 @@ export default function Referrals() {
   const [followers, setFollowers] = useState('');
   const [promotionPlan, setPromotionPlan] = useState('');
   const [contactInfo, setContactInfo] = useState('');
+  const [showMilestones, setShowMilestones] = useState(true);
 
   const loadData = useCallback(async () => {
     const [affRes, kolRes] = await Promise.all([
@@ -57,6 +66,9 @@ export default function Referrals() {
   const defaultCommissionRate = Number(user?.default_commission_rate ?? 0.05);
   const currentCommissionRate = Number(user?.commission_rate ?? defaultCommissionRate);
   const hasCustomCommissionRate = currentCommissionRate > defaultCommissionRate + 1e-8;
+  const inviteCount = Math.max(0, Number(user?.aff_count) || 0);
+  const completedMilestones = AFFILIATE_MILESTONES.filter(({ invites }) => inviteCount >= invites).length;
+  const nextMilestone = AFFILIATE_MILESTONES.find(({ invites }) => inviteCount < invites);
 
   const loadAffEarnings = async () => {
     setAffEarningsLoading(true);
@@ -293,6 +305,69 @@ export default function Referrals() {
             <p className="mb-1 text-xs text-page-secondary">{t('topup.affCount')}</p>
             <p className="text-xl font-bold text-page">{user?.aff_count || 0}</p>
           </div>
+        </div>
+
+        <div className="mb-6 border-y border-page-divider">
+          <button
+            type="button"
+            onClick={() => setShowMilestones((value) => !value)}
+            aria-expanded={showMilestones}
+            className="flex w-full items-center justify-between gap-4 py-4 text-left"
+          >
+            <div className="flex min-w-0 items-center gap-3">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-page-link/10 text-page-link">
+                <Award size={20} strokeWidth={1.8} />
+              </span>
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-page">{t('topup.milestonesTitle')}</p>
+                <p className="mt-0.5 truncate text-xs text-page-secondary">
+                  {nextMilestone
+                    ? t('topup.milestonesNext', { count: nextMilestone.invites - inviteCount })
+                    : t('topup.milestonesAllReached')}
+                </p>
+              </div>
+            </div>
+            <span className="flex shrink-0 items-center gap-2 text-xs text-page-secondary">
+              {t('topup.milestonesProgress', {
+                completed: completedMilestones,
+                total: AFFILIATE_MILESTONES.length,
+              })}
+              {showMilestones ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            </span>
+          </button>
+
+          {showMilestones && (
+            <div className="border-t border-page-divider pb-4 pt-4">
+              <p className="mb-3 text-xs text-page-muted">{t('topup.milestonesDescription')}</p>
+              <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] text-sm">
+                <div className="border-b border-page-divider px-2 pb-2 text-page-secondary">{t('topup.milestonesInviteHeader')}</div>
+                <div className="border-b border-page-divider px-2 pb-2 text-page-secondary">{t('topup.milestonesRateHeader')}</div>
+                <div className="border-b border-page-divider px-2 pb-2 text-right text-page-secondary">{t('topup.milestonesStatusHeader')}</div>
+                {AFFILIATE_MILESTONES.map((milestone) => {
+                  const reached = inviteCount >= milestone.invites;
+                  const inProgress = !reached && nextMilestone?.invites === milestone.invites;
+                  return (
+                    <React.Fragment key={milestone.invites}>
+                      <div className="border-b border-page-divider px-2 py-3 text-page last:border-0">{milestone.invites} {t('topup.milestonesPeopleSuffix')}</div>
+                      <div className="border-b border-page-divider px-2 py-3 text-page-secondary last:border-0">{(milestone.rate * 100).toFixed(0)}%</div>
+                      <div className="border-b border-page-divider px-2 py-3 text-right last:border-0">
+                        <span className={`inline-flex rounded-full px-2.5 py-1 text-xs ${
+                          reached
+                            ? 'bg-emerald-500/10 text-emerald-600'
+                            : inProgress
+                              ? 'bg-page-link/10 text-page-link'
+                              : 'bg-page-surface-hover text-page-muted'
+                        }`}>
+                          {t(`topup.milestonesStatus${reached ? 'Reached' : inProgress ? 'InProgress' : 'NotReached'}`)}
+                        </span>
+                      </div>
+                    </React.Fragment>
+                  );
+                })}
+              </div>
+              <p className="mt-3 text-xs text-page-muted">{t('topup.milestonesFootnote')}</p>
+            </div>
+          )}
         </div>
 
         {affLink && (
