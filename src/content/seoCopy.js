@@ -32,12 +32,13 @@ export const SEO_COPY = {
       ],
     },
     docs: {
-      title: 'Codex、Claude Code、CC Switch、VSCode 与 Cursor API 接入指南',
-      description: '先统一完成 API Key、Base URL、模型查询和首次请求，再按 Codex、Claude Code、CC Switch、VSCode 或 Cursor 分支接入 API-Route。',
+      title: 'Codex、Claude Code、Cursor、VS Code、OpenClaw 与 Hermes API 接入',
+      description: '推荐使用 CC Switch 一键把 API-Route 接入 Codex、Claude Code、OpenClaw、Hermes、Gemini CLI 或 OpenCode，也可手动配置，并在 Cursor、VS Code 中使用。',
       questions: [
         ['如何给 Codex 配置第三方 API？', '在 API 接入工作台选择已验证的密钥、可用模型和节点，目标应用选择 Codex，再通过 CC Switch 一键导入；手动配置可使用生成的 config.toml 和 auth.json。'],
         ['Claude Code 如何接入 API-Route？', '在 API 接入工作台选择 Claude Code 并导入配置。Claude Code 使用不带 /v1 的 Anthropic 格式根地址，不要直接套用 OpenAI SDK Base URL。'],
         ['CC Switch 如何导入 API-Route？', '先安装并打开 CC Switch，再从 API 接入工作台选择密钥、模型、节点和目标应用，点击一键导入并确认 Provider 已启用。'],
+        ['OpenClaw 或 Hermes 如何接入 API-Route？', '在 API 接入工作台选择 OpenClaw 或 Hermes，通过 CC Switch 一键导入；无法使用 CC Switch 时，可下载页面生成的手动配置文件。'],
         ['VSCode 如何使用 API-Route？', 'VSCode 本身是编辑器。应配置在 VSCode 中实际运行的 Codex、Claude Code 或相应扩展，再从编辑器或集成终端调用。'],
         ['Cursor 如何使用 API-Route？', '当前可在 Cursor 集成终端中运行已经接入 API-Route 的 Codex 或 Claude Code；本站暂不声称可以替换 Cursor 内置模型供应商。'],
       ],
@@ -100,12 +101,13 @@ export const SEO_COPY = {
       ],
     },
     docs: {
-      title: 'Connect Codex, Claude Code, CC Switch, VS Code, and Cursor',
-      description: 'Prepare one API key, Base URL, model check, and test request, then follow the Codex, Claude Code, CC Switch, VS Code, or Cursor branch to connect API-Route.',
+      title: 'Connect Codex, Claude Code, Cursor, VS Code, OpenClaw, and Hermes',
+      description: 'Use the recommended CC Switch one-click import or manual configuration to connect API-Route to Codex, Claude Code, OpenClaw, Hermes, Gemini CLI, OpenCode, Cursor, or VS Code.',
       questions: [
         ['How do I configure a third-party API in Codex?', 'Choose a verified key, available model, and endpoint in API Access, select Codex as the target, and import through CC Switch. Manual setup uses the generated config.toml and auth.json values.'],
         ['How do I connect Claude Code to API-Route?', 'Generate and import the Claude Code profile in API Access. Claude Code uses the Anthropic-style root endpoint without /v1, not the OpenAI SDK Base URL.'],
         ['How do I import API-Route with CC Switch?', 'Install and open CC Switch, then choose the key, model, endpoint, and target app in API Access. Run the one-click import and confirm the provider is enabled.'],
+        ['How do I connect OpenClaw or Hermes to API-Route?', 'Choose OpenClaw or Hermes in API Access and import with CC Switch. If CC Switch is unavailable, download the generated manual configuration file.'],
         ['How does VS Code use API-Route?', 'VS Code is the editor. Configure the Codex, Claude Code, or other supported AI client that actually runs inside VS Code, then use it from the editor or integrated terminal.'],
         ['How does Cursor use API-Route?', 'The currently supported path is to run a configured Codex or Claude Code client in Cursor’s integrated terminal. This guide does not claim to replace Cursor’s built-in model provider.'],
       ],
@@ -166,12 +168,13 @@ export const SEO_COPY = {
       ],
     },
     docs: {
-      title: 'Codex・Claude Code・CC Switch・VSCode・Cursor 接続ガイド',
-      description: 'API キー、Base URL、モデル確認、テストリクエストを共通手順で準備し、Codex、Claude Code、CC Switch、VSCode、Cursor 別に API-Route へ接続します。',
+      title: 'Codex・Claude Code・Cursor・VS Code・OpenClaw・Hermes API 接続',
+      description: '推奨の CC Switch ワンクリック導入または手動設定で、Codex、Claude Code、OpenClaw、Hermes、Gemini CLI、OpenCode、Cursor、VS Code から API-Route を利用できます。',
       questions: [
         ['Codex に外部 API を設定するには？', 'API 接続ワークベンチで確認済みキー、利用可能なモデル、接続先を選び、対象アプリを Codex にして CC Switch から取り込みます。手動設定では生成された config.toml と auth.json を使います。'],
         ['Claude Code を API-Route に接続するには？', 'Claude Code 用プロファイルを生成して取り込みます。Claude Code は OpenAI SDK 用の /v1 URL ではなく、Anthropic 形式のルート URL を使います。'],
         ['CC Switch で API-Route を取り込むには？', 'CC Switch を起動し、API 接続ワークベンチでキー、モデル、接続先、対象アプリを選び、ワンクリック取り込みを実行します。'],
+        ['OpenClaw または Hermes を API-Route に接続するには？', 'API 接続ワークベンチで OpenClaw または Hermes を選び、CC Switch から取り込みます。利用できない場合は生成された手動設定ファイルを使います。'],
         ['VSCode から API-Route を使うには？', 'VSCode 本体ではなく、VSCode 内で実際に動かす Codex、Claude Code、または対応拡張機能を設定します。'],
         ['Cursor から API-Route を使うには？', '現在は Cursor の統合ターミナルで設定済みの Codex または Claude Code を実行する方法に対応しています。Cursor 内蔵 Provider の置き換えを案内するものではありません。'],
       ],
@@ -232,12 +235,13 @@ export const SEO_COPY = {
       ],
     },
     docs: {
-      title: 'Codex, Claude Code, CC Switch, VS Code, Cursor 연결 가이드',
-      description: 'API 키, Base URL, 모델 확인, 테스트 요청은 공통으로 준비하고 Codex, Claude Code, CC Switch, VS Code, Cursor별 단계로 API-Route를 연결합니다.',
+      title: 'Codex, Claude Code, Cursor, VS Code, OpenClaw, Hermes API 연결',
+      description: '권장 방식인 CC Switch 원클릭 가져오기 또는 수동 설정으로 Codex, Claude Code, OpenClaw, Hermes, Gemini CLI, OpenCode, Cursor, VS Code에서 API-Route를 사용할 수 있습니다.',
       questions: [
         ['Codex에 타사 API를 설정하려면 어떻게 하나요?', 'API 연결 워크벤치에서 검증한 키, 사용 가능한 모델, 엔드포인트를 선택하고 대상 앱을 Codex로 지정해 CC Switch로 가져옵니다. 수동 설정은 생성된 config.toml과 auth.json을 사용합니다.'],
         ['Claude Code를 API-Route에 연결하려면 어떻게 하나요?', 'Claude Code 프로필을 생성해 가져오세요. Claude Code는 OpenAI SDK의 /v1 주소가 아니라 Anthropic 형식의 루트 주소를 사용합니다.'],
         ['CC Switch로 API-Route를 가져오려면 어떻게 하나요?', 'CC Switch를 실행하고 API 연결 워크벤치에서 키, 모델, 엔드포인트, 대상 앱을 선택한 뒤 원클릭 가져오기를 실행합니다.'],
+        ['OpenClaw 또는 Hermes를 API-Route에 연결하려면 어떻게 하나요?', 'API 연결 워크벤치에서 OpenClaw 또는 Hermes를 선택해 CC Switch로 가져옵니다. CC Switch를 사용할 수 없다면 생성된 수동 설정 파일을 사용하세요.'],
         ['VS Code에서 API-Route를 사용하려면 어떻게 하나요?', 'VS Code 자체가 아니라 VS Code 안에서 실제로 실행하는 Codex, Claude Code 또는 지원 확장을 설정합니다.'],
         ['Cursor에서 API-Route를 사용하려면 어떻게 하나요?', '현재는 Cursor 통합 터미널에서 설정된 Codex 또는 Claude Code를 실행하는 방식을 지원합니다. Cursor 내장 Provider를 교체한다고 안내하지 않습니다.'],
       ],

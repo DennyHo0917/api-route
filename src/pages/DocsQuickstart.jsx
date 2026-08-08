@@ -1,682 +1,697 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import {
-  ArrowRight,
-  Check,
-  Copy,
-  ExternalLink,
-} from 'lucide-react';
 import { API_ENDPOINTS } from '../components/ConfigExporter';
 import { ConsoleSidebar } from '../components/ConsoleLayout';
-import { DOWNLOAD_TOOLS } from '../constants/downloads';
 import { useAuth } from '../context/AuthContext';
 import { normalizeAppLanguage } from '../i18n/languageUtils';
 
-const CC_SWITCH_DOWNLOADS = DOWNLOAD_TOOLS
-  .find((tool) => tool.id === 'cc-switch')
-  ?.groups.flatMap((group) => group.links) || [];
-
 const COPY = {
   en: {
-    eyebrow: 'Developer docs · Quickstart',
-    title: 'Connect Codex, Claude Code, CC Switch, VS Code, and Cursor',
-    description: 'Prepare and verify one API-Route key once, then follow the final branch for the coding client you actually use.',
-    copy: 'Copy code',
-    copied: 'Copied',
-    before: {
-      kicker: '01 · Before you start',
-      title: 'Prepare the account that will send the request',
-      body: 'API requests use real account credit or plan quota. Confirm these three items before debugging code or client settings.',
+    eyebrow: 'Getting started',
+    title: 'Start using API-Route',
+    description: 'Choose AI Chat, API Access, or an independent AI API platform, then follow the shortest path to your first successful use.',
+    directoryTitle: 'On this page',
+    directory: [
+      ['choose', 'Choose a path'],
+      ['prepare', 'Before you start'],
+      ['chat', 'Use AI Chat'],
+      ['api', 'Connect an API'],
+      ['basics', 'Basic API calls'],
+      ['platform', 'Launch a platform'],
+      ['troubleshooting', 'Troubleshooting'],
+    ],
+    choose: {
+      kicker: 'Choose a path',
+      title: 'What do you want to do?',
+      body: 'The home page has two main entrances for using models. Platform setup is a separate path for operators.',
+      successLabel: 'You are done when:',
       items: [
-        ['Signed-in account', 'API keys, the connection workbench, and usage logs are available after sign-in.'],
-        ['Available balance or plan', 'Actual charges follow account records and usage logs; the browser does not calculate billing.'],
-        ['Active API key', 'Create and enable a key on the API Keys page. Disable or delete it immediately if it may be exposed.'],
+        {
+          title: 'Use AI directly',
+          description: 'Chat with models, analyze images, or generate images directly in the browser without configuring another tool.',
+          success: 'AI Chat returns a reply or generated image.',
+          to: '/chats',
+          link: 'Open AI Chat',
+        },
+        {
+          title: 'Connect a tool or app',
+          description: 'Connect Codex, Claude Code, OpenClaw, Hermes, Gemini CLI, OpenCode, and other supported clients. Configured clients can also run inside Cursor or VS Code.',
+          success: 'The client receives a test reply and the request appears in Usage Logs.',
+          to: '/api-connect',
+          link: 'Open API Access',
+        },
+        {
+          title: 'Launch your own platform',
+          description: 'For operators with customers, a community, or an existing sales channel who need a branded AI API site.',
+          success: 'Payment is confirmed and the account receives platform management access.',
+          to: '/ai-api-reseller-platform',
+          link: 'Learn about the platform',
+        },
       ],
-      keyCta: 'Create or manage API keys',
-      topupCta: 'Check balance and plans',
     },
-    values: {
-      kicker: '02 · Use exact values',
-      title: 'Get the API key, Base URL, and model ID from the account',
-      body: 'Most failed first requests come from mixing values from different keys, endpoints, or client protocols.',
-      items: [
-        ['API key', 'Use an enabled key from API Keys. Keep it in a server-side secret or local environment variable, never frontend code or a public repository.'],
-        ['Base URL', 'OpenAI-compatible SDKs use the selected endpoint with /v1. Raw HTTP requests use the complete resource path.'],
-        ['Model ID', 'Use Supported Models for the current key or the result from /v1/models. Pricing shows listed models and rates, not guaranteed access for every key.'],
+    prepare: {
+      kicker: 'Before you start',
+      title: 'Prepare your account and credit',
+      body: 'These points apply whether you use AI Chat or connect an API.',
+      steps: [
+        ['Sign in', 'Create an account or sign in with the account that will use the models.'],
+        ['Add credit', 'Top-ups support Alipay, Stripe, and crypto. The methods currently shown on the Top Up page are the available methods.'],
+        ['Choose how to pay for usage', 'Calls can consume account balance directly, or you can use balance to buy a plan. Balance does not expire; plans can offer discounted usage but have a validity period and usage limits.'],
       ],
-      example: 'Example endpoint used on this page',
-      openai: 'OpenAI-compatible SDK Base URL',
-      anthropic: 'Anthropic / Claude Base URL',
-      anthropicNote: 'Claude and Anthropic clients use the root endpoint without /v1. The API Access workbench generates the correct format for each client.',
-      pricingCta: 'Compare listed model prices',
+      note: 'If you are unsure, add balance first and use pay-as-you-go. You can buy a plan later when your usage becomes predictable.',
+      links: [
+        ['/topup', 'Top up balance'],
+        ['/topup/packages', 'View plans'],
+      ],
     },
-    models: {
-      kicker: '03 · Verify the key',
-      title: 'List the models available to this API key',
-      body: 'Call /v1/models before choosing a model. This checks the Base URL and authorization, and returns the model IDs this key can use.',
-      label: 'List available models',
-      resultTitle: 'What to copy from the result',
-      resultBody: 'Copy one complete model ID from the returned data list. Use that exact value in the next request; do not guess or shorten it.',
+    chat: {
+      kicker: 'AI Chat',
+      title: 'Use AI Chat in the browser',
+      body: 'AI Chat is the shortest path when you want to use a model without configuring an external client.',
+      steps: [
+        ['Open AI Chat', 'Click AI Chat on the home page after signing in.'],
+        ['Create a key if prompted', 'AI Chat uses your own API key. If no key exists, follow the prompt to create one and then return.'],
+        ['Choose a model', 'Select the model type and a model that is currently available.'],
+        ['Send your first request', 'Enter a question or task and send it. A normal model reply means setup is complete.'],
+      ],
+      abilitiesTitle: 'What you can do',
+      abilities: [
+        'Chat with currently listed, product-supported text models.',
+        'Upload an image for models that support image understanding.',
+        'Generate an image with an available text-to-image model.',
+      ],
+      notesTitle: 'Important notes',
+      notes: [
+        'Model and attachment availability depends on the model selected on the page.',
+        'Conversation history is stored only in the current browser.',
+        'If balance is insufficient, top up and return to send the preserved message.',
+      ],
+      links: [['/chats', 'Open AI Chat']],
     },
-    request: {
-      kicker: '04 · First request',
-      title: 'Send one minimal chat request with cURL',
-      body: 'Replace the API key and YOUR_MODEL_ID. Keep this first test small so authentication, model access, and request formatting are easy to isolate.',
-      label: 'POST /v1/chat/completions',
-      successTitle: 'Success means two things',
-      successBody: 'The terminal returns a model reply, and a new request appears in Usage Logs. Verify both before moving the settings into an SDK or client.',
+    api: {
+      kicker: 'API Access',
+      title: 'Complete your first API call',
+      body: 'You can import with CC Switch or configure the client manually. CC Switch is recommended because it is simpler, but it is not required.',
+      downloadCta: 'Download CC Switch and clients',
+      steps: [
+        ['Check your balance', 'Make sure the account has enough balance for a test request.'],
+        ['Open API Access', 'Click API Access on the home page.'],
+        ['Create an API key if needed', 'If no enabled key is available, create one and return to API Access.'],
+        ['Choose the connection details', 'Select an enabled key, an available model, an endpoint, and the target client.'],
+        ['Choose a configuration method', 'Use CC Switch for one-click import, or switch to Manual Configuration and download the generated configuration file.'],
+        ['Send a test message', 'Open the target client and send: “Reply with OK and tell me the model you are using.”'],
+        ['Verify the result', 'A normal reply plus a successful entry in Usage Logs means the connection works.'],
+      ],
+      recommendedTitle: 'Recommended: one-click import with CC Switch',
+      recommended: [
+        'After installing and opening CC Switch, you can import the key, model, and endpoint into the target client with one click.',
+        'Supports Codex, Claude Code, Gemini CLI, OpenCode, OpenClaw, and Hermes.',
+      ],
+      fallbackTitle: 'Alternative: manual configuration',
+      fallback: [
+        'Choose Manual Configuration in API Access if you prefer not to install CC Switch.',
+        'Select the target client, then copy or download the generated configuration file and place it at the path shown on the page.',
+      ],
+      successTitle: 'Success criteria',
+      success: [
+        'The target client returns a normal model response.',
+        'Usage Logs show the request status and token usage.',
+      ],
+      links: [
+        ['/api-connect', 'Open API Access'],
+        ['/api-keys', 'Manage API keys'],
+        ['/dashboard/logs', 'View Usage Logs'],
+      ],
     },
-    sdk: {
-      kicker: '05 · SDKs',
-      title: 'Move the verified values into your application',
-      body: 'Only switch to an SDK after the cURL request succeeds. Reuse the same API key, Base URL, and exact model ID.',
-      tabs: { python: 'Python', javascript: 'JavaScript' },
+    basics: {
+      kicker: 'Basic API calls',
+      title: 'Verify the API with cURL',
+      body: 'Use the endpoint selected in API Access, an enabled API key, and an exact model ID returned by the model list. Never expose an API key in frontend code or a public repository.',
+      endpointLabel: 'Example endpoint used below',
+      modelsTitle: 'List models available to the key',
+      modelsBody: 'This request verifies the endpoint and API key, then returns the model IDs the key can call.',
+      requestTitle: 'Send a minimal chat request',
+      requestBody: 'Replace sk-your-api-key and YOUR_MODEL_ID. Use one complete model ID returned by the previous request.',
     },
-    clients: {
-      kicker: '06 · Clients',
-      title: 'Choose the client you want to connect',
-      body: 'The account, balance, API key, Base URL, model check, and test request above are shared. Only this last configuration step changes by client.',
-      selectLabel: 'Client guide',
-      recommended: 'Recommended',
-      guides: {
-        codex: {
-          label: 'Codex',
-          title: 'Use API-Route with Codex',
-          intro: 'The shortest path is to generate a Codex profile in API Access and import it through CC Switch. Manual files remain available when you want to inspect every field.',
-          steps: [
-            ['Generate the profile', 'Open API Access and select the verified key, an available model, and the endpoint that works on your network.'],
-            ['Import into Codex', 'Keep CC Switch mode selected, choose Codex as the target app, then run the one-click import.'],
-            ['Restart the session', 'Open a new Codex session so it reads the imported provider, model, Base URL, and API key.'],
-            ['Verify the request', 'Send a small task and confirm that the expected model and key appear in API-Route Usage Logs.'],
-          ],
-          note: 'For manual setup, choose Codex under Manual Configuration and place the generated values in ~/.codex/config.toml and ~/.codex/auth.json.',
-        },
-        claudeCode: {
-          label: 'Claude Code',
-          title: 'Use API-Route with Claude Code',
-          intro: 'Claude Code uses the Anthropic-style root endpoint without /v1. Let API Access generate that format instead of adapting an OpenAI URL by hand.',
-          steps: [
-            ['Generate the profile', 'Open API Access and select the verified key, model, and endpoint.'],
-            ['Import into Claude Code', 'In CC Switch mode choose Claude Code as the target app, then run the one-click import.'],
-            ['Restart Claude Code', 'Start a new terminal session so Claude Code reloads the imported environment settings.'],
-            ['Verify the request', 'Send a short prompt and confirm the request in API-Route Usage Logs.'],
-          ],
-          note: 'For manual setup, choose Claude Code and use the generated ~/.claude/settings.json. Its Base URL is the root endpoint, not the OpenAI-compatible /v1 address.',
-        },
-        ccSwitch: {
-          label: 'CC Switch',
-          title: 'Import an API-Route provider with CC Switch',
-          intro: 'CC Switch is the configuration manager in this workflow. It writes the selected API-Route provider into Codex, Claude Code, or another supported target client.',
-          steps: [
-            ['Install CC Switch', 'Download and open CC Switch before starting the import.'],
-            ['Prepare the provider', 'In API Access select the verified key, model, endpoint, and the target app that will use them.'],
-            ['Run one-click import', 'Choose “Import to CC Switch” and allow the browser to open the ccswitch link.'],
-            ['Check the target app', 'Confirm the new API-Route provider is enabled, then start a fresh session in the target client.'],
-          ],
-          note: 'CC Switch does not send model requests itself. Usage and billing appear only after the target client makes a real API call.',
-          showDownload: true,
-        },
-        vscode: {
-          label: 'VS Code',
-          title: 'Use API-Route from VS Code',
-          intro: 'VS Code is the editor, not the API client. Connect the Codex or Claude Code workflow you run inside VS Code, then use that client from the editor or integrated terminal.',
-          steps: [
-            ['Choose the actual AI client', 'Decide whether your VS Code workflow uses Codex or Claude Code.'],
-            ['Configure that client', 'In API Access import the Codex or Claude Code profile with CC Switch, or use its manual configuration.'],
-            ['Return to VS Code', 'Restart the relevant extension, terminal, or client session so it reloads the provider settings.'],
-            ['Verify the request', 'Run a small task and check API-Route Usage Logs for the request.'],
-          ],
-          note: 'Do not look for an API-Route field in VS Code core settings. The Base URL, API key, and model belong to the AI client or extension you use inside VS Code.',
-        },
-        cursor: {
-          label: 'Cursor',
-          title: 'Use API-Route from Cursor',
-          intro: 'For the current supported workflow, run Codex or Claude Code from Cursor’s integrated terminal and configure that client with API-Route.',
-          steps: [
-            ['Choose Codex or Claude Code', 'Pick the command-line client you want to run inside Cursor.'],
-            ['Configure that target', 'Use API Access and CC Switch to import the matching Codex or Claude Code profile.'],
-            ['Open a fresh terminal', 'Restart Cursor’s integrated terminal and launch the configured client there.'],
-            ['Verify the request', 'Send a small task and confirm it appears in API-Route Usage Logs.'],
-          ],
-          note: 'Cursor itself is not currently listed as a one-click target in the API Access workbench. This guide does not claim that Cursor’s built-in model provider has been replaced.',
-        },
-      },
-      cta: 'Open API Access',
-      ccSwitchDownload: 'Download CC Switch',
-      downloadsCta: 'Other client downloads',
+    platform: {
+      kicker: 'For operators',
+      title: 'Launch your own AI API platform',
+      body: 'This path is for people who already have customers, a community, or a sales channel and want to provide AI API access under their own brand.',
+      steps: [
+        ['Review the platform page', 'Open the independent platform page and confirm that the product and operating responsibilities fit your needs.'],
+        ['Sign in', 'Use the account that will own and manage the platform.'],
+        ['Enter the platform details', 'Provide the platform name and its URL slug.'],
+        ['Choose a payment method', 'Use one of the payment methods currently enabled on the page. Crypto payments also require a network and token.'],
+        ['Pay the setup fee', 'Complete payment in the opened payment flow.'],
+        ['Wait for confirmation', 'After payment is confirmed, the same account receives management access and can continue initialization.'],
+      ],
+      afterTitle: 'Recommended setup order after activation',
+      after: [
+        'Set the platform name, logo, brand information, and domain.',
+        'Choose which models to list and set customer prices.',
+        'Configure top-ups and plans.',
+        'Test registration, API keys, balance deduction, and a real model call.',
+        'Publish the platform address and start directing your own users to it.',
+      ],
+      notesTitle: 'Before you open a platform',
+      notes: [
+        'You do not need to buy a VPS or connect upstream model providers yourself.',
+        'The platform supplies the core account, payment, billing, API key, and log flows.',
+        'You remain responsible for customer acquisition, pricing, support, and daily operation.',
+        'The platform does not provide customers or guarantee revenue.',
+      ],
+      links: [['/ai-api-reseller-platform', 'Learn about and open a platform']],
     },
     troubleshooting: {
-      kicker: '07 · Verify and troubleshoot',
-      title: 'Start with the real request record',
-      body: 'Usage Logs are the fastest way to separate a client-side configuration error from a request that reached the API.',
-      successTitle: 'A completed first call',
-      successItems: [
-        'The terminal, SDK, or client received a normal model reply.',
-        'Usage Logs show a new record with the expected key and model.',
-        'Usage and billing follow the account record, not a browser-side estimate.',
-      ],
+      kicker: 'Troubleshooting',
+      title: 'Find the problem by what you see',
+      body: 'Start with the visible symptom instead of changing every setting at once.',
       items: [
-        ['No log record', 'The request probably did not reach the API. Check the selected endpoint and whether the client actually sent the request.'],
-        ['Authentication failed', 'Confirm the key is enabled and sent as Authorization: Bearer <API_KEY>.'],
-        ['Model unavailable', 'Copy a model returned for this key by /v1/models or shown under Supported Models.'],
-        ['Wrong path', 'Do not append /v1 twice. Anthropic and Claude clients use the root endpoint instead of the OpenAI SDK Base URL.'],
-        ['Insufficient balance or plan', 'Add credit or activate a plan, then retry the same minimal request.'],
+        ['No API key is available', 'Create and enable a key, then return to AI Chat or API Access.'],
+        ['The account has insufficient balance', 'Top up the account, then retry the preserved message or test request.'],
+        ['A model is missing', 'Only currently listed models appear. Use the model list shown on the current page.'],
+        ['AI Chat cannot upload an image', 'The selected model does not support image attachments. Switch to an image-capable model.'],
+        ['The client does not respond', 'Recheck the selected key, model, target client, and generated configuration, then send one new test request.'],
+        ['No successful call appears', 'Send a test request first, then open Usage Logs and check the latest status.'],
+        ['Platform payment is still pending', 'Refresh using the same account after payment confirmation. If access still does not update, contact site support.'],
       ],
-      logsCta: 'Open Usage Logs',
     },
   },
   zh: {
-    eyebrow: '开发者文档 · 快速开始',
-    title: '接入 Codex、Claude Code、CC Switch、VSCode 与 Cursor',
-    description: '账号、余额、API Key、Base URL、模型验证和第一次请求只准备一次，最后再按你实际使用的客户端完成配置。',
-    copy: '复制代码',
-    copied: '已复制',
-    before: {
-      kicker: '01 · 开始前检查',
-      title: '先准备实际发送请求的账号',
-      body: 'API 请求会消耗真实余额或套餐额度。开始排查代码和客户端配置前，先确认下面三项。',
+    eyebrow: '使用指南',
+    title: '开始使用 API-Route',
+    description: '选择 AI Chat、API 接入或独立平台，按照对应步骤完成第一次成功使用。',
+    directoryTitle: '本页目录',
+    directory: [
+      ['choose', '选择使用方式'],
+      ['prepare', '开始前准备'],
+      ['chat', '使用 AI Chat'],
+      ['api', '完成 API 接入'],
+      ['basics', '基础 API 操作'],
+      ['platform', '开通独立平台'],
+      ['troubleshooting', '问题排查'],
+    ],
+    choose: {
+      kicker: '选择使用方式',
+      title: '你想用 API-Route 做什么？',
+      body: '首页的两个主要入口分别面向网页使用和技术接入；独立平台则面向有运营需求的用户。',
+      successLabel: '完成标志：',
       items: [
-        ['已登录账号', 'API 密钥、API 接入工作台和调用日志都需要登录后使用。'],
-        ['可用余额或套餐', '实际扣费以账户记录和调用日志为准，浏览器端不会自行计算费用。'],
-        ['已启用的 API Key', '在“API 密钥”页面创建并保持启用；如果怀疑泄露，立即禁用或删除。'],
+        {
+          title: '直接使用 AI',
+          description: '无需配置其他工具，直接在网页中进行模型对话、图片理解或图片生成。',
+          success: 'AI Chat 正常返回文字或生成的图片。',
+          to: '/chats',
+          link: '打开 AI Chat',
+        },
+        {
+          title: '接入工具或应用',
+          description: '支持接入 Codex、Claude Code、OpenClaw、Hermes、Gemini CLI、OpenCode 等客户端；配置后的客户端也可以在 Cursor、VS Code 中使用。',
+          success: '客户端收到测试回复，并且调用日志出现成功记录。',
+          to: '/api-connect',
+          link: '进入 API 接入',
+        },
+        {
+          title: '搭建自己的平台',
+          description: '适合已经有客户、社群或销售渠道，希望使用自己品牌运营 AI API 的用户。',
+          success: '支付确认后，当前账户获得平台管理权限。',
+          to: '/ai-api-reseller-platform',
+          link: '了解独立平台',
+        },
       ],
-      keyCta: '创建或管理 API Key',
-      topupCta: '检查余额与套餐',
     },
-    values: {
-      kicker: '02 · 使用准确参数',
-      title: '从当前账号取得 API Key、Base URL 和模型 ID',
-      body: '第一次调用失败，通常不是代码复杂，而是混用了不同密钥、节点或客户端协议的参数。',
-      items: [
-        ['API Key', '使用“API 密钥”页面中已启用的密钥。只保存在服务端密钥或本地环境变量中，不要写入前端代码和公开仓库。'],
-        ['Base URL', 'OpenAI 兼容 SDK 使用所选节点加 /v1；直接发送 HTTP 请求时使用完整接口路径。'],
-        ['模型 ID', '以当前密钥的“支持模型”或 /v1/models 返回结果为准。价格页用于查看上架状态与价格，不代表每个密钥都能调用。'],
+    prepare: {
+      kicker: '开始前准备',
+      title: '准备账户和余额',
+      body: '无论使用 AI Chat 还是接入 API，都先确认以下内容。',
+      steps: [
+        ['登录账户', '注册或登录实际使用模型的账户。'],
+        ['充值余额', '支持支付宝、Stripe 和加密货币充值，实际可用方式以充值页面当前显示为准。'],
+        ['选择扣费方式', '调用可以直接消耗账户余额，也可以使用余额购买套餐。余额不会过期；套餐通常有价格优惠，但存在有效期和额度限制。'],
       ],
-      example: '本页示例使用的节点',
-      openai: 'OpenAI 兼容 SDK Base URL',
-      anthropic: 'Anthropic / Claude Base URL',
-      anthropicNote: 'Claude 和 Anthropic 客户端使用不带 /v1 的根地址。API 接入工作台会按照不同客户端生成正确格式。',
-      pricingCta: '比较已上架模型价格',
+      note: '如果暂时不确定怎么选，先充值余额并按量使用即可；使用量稳定后再考虑购买套餐。',
+      links: [
+        ['/topup', '充值余额'],
+        ['/topup/packages', '查看套餐'],
+      ],
     },
-    models: {
-      kicker: '03 · 验证密钥',
-      title: '查询这个 API Key 当前可调用的模型',
-      body: '选择模型前先请求 /v1/models。这一步会同时验证 Base URL 和鉴权，并返回该密钥可用的模型 ID。',
-      label: '获取可用模型',
-      resultTitle: '从结果中复制什么',
-      resultBody: '从返回的 data 列表中复制一个完整模型 ID，并原样用于下一次请求。不要猜测、缩写或自行拼接模型名。',
+    chat: {
+      kicker: 'AI Chat',
+      title: '直接在网页使用 AI Chat',
+      body: '不需要配置外部客户端，登录后即可在网页中选择模型并开始使用。',
+      steps: [
+        ['打开 AI Chat', '登录后，从首页点击“AI Chat”。'],
+        ['按提示创建密钥', 'AI Chat 使用你自己的 API Key 调用模型。如果页面提示没有密钥，创建后再返回。'],
+        ['选择模型', '选择模型类型和当前可用的具体模型。'],
+        ['发送第一次请求', '输入问题或任务并发送；模型正常回复即表示可以使用。'],
+      ],
+      abilitiesTitle: '可以做什么',
+      abilities: [
+        '使用当前已上架并允许网页调用的文字模型进行对话。',
+        '选择支持识图的模型，上传图片进行理解和分析。',
+        '选择当前可用的文生图模型，通过文字生成图片。',
+      ],
+      notesTitle: '使用提醒',
+      notes: [
+        '模型和附件能力以页面当前选择的模型为准。',
+        '会话记录只保存在当前设备的浏览器中。',
+        '余额不足时，完成充值后可以返回并继续发送保留的消息。',
+      ],
+      links: [['/chats', '打开 AI Chat']],
     },
-    request: {
-      kicker: '04 · 第一次请求',
-      title: '先用 cURL 发送一个最小聊天请求',
-      body: '替换 API Key 和 YOUR_MODEL_ID。第一次测试保持最小，才能快速区分鉴权、模型权限和请求格式问题。',
-      label: 'POST /v1/chat/completions',
-      successTitle: '成功需要同时满足两件事',
-      successBody: '终端收到模型的正常回复，并且“调用日志”新增了一条请求记录。确认这两项后，再把参数迁移到 SDK 或客户端。',
+    api: {
+      kicker: 'API 接入',
+      title: '完成第一次 API 调用',
+      body: '可以通过 CC Switch 一键导入，也可以手动导入配置文件。推荐使用 CC Switch，操作更简单，但并非必须安装。',
+      downloadCta: '下载 CC Switch 和客户端',
+      steps: [
+        ['确认余额', '确保账户余额足够完成一次测试调用。'],
+        ['进入 API 接入', '从首页点击“API 接入”。'],
+        ['创建 API Key', '如果页面没有可用密钥，先创建并启用一个密钥，然后返回 API 接入。'],
+        ['选择接入信息', '选择启用的密钥、当前可用模型、调用节点和目标客户端。'],
+        ['选择接入方式', '可以使用 CC Switch 一键导入，也可以切换到“手动配置”并下载对应配置文件。'],
+        ['发送测试消息', '打开目标客户端，发送：“请回复 OK，并告诉我你当前使用的模型。”'],
+        ['确认调用成功', '客户端正常回复，并且调用日志出现成功记录，即表示接入完成。'],
+      ],
+      recommendedTitle: '推荐方式：CC Switch 一键导入',
+      recommended: [
+        '安装并打开 CC Switch 后，可以把密钥、模型和调用节点一键导入目标客户端。',
+        '支持 Codex、Claude Code、Gemini CLI、OpenCode、OpenClaw 和 Hermes。',
+      ],
+      fallbackTitle: '另一种方式：手动导入配置',
+      fallback: [
+        '如果不想安装 CC Switch，可以在 API 接入页面选择“手动配置”。',
+        '选择目标客户端，复制或下载页面生成的配置文件，并放到页面标明的配置路径。',
+      ],
+      successTitle: '如何判断接入成功',
+      success: [
+        '目标客户端正常返回模型回复。',
+        '调用日志显示对应请求的状态和 Token 消耗。',
+      ],
+      links: [
+        ['/api-connect', '进入 API 接入'],
+        ['/api-keys', '管理 API Key'],
+        ['/dashboard/logs', '查看调用日志'],
+      ],
     },
-    sdk: {
-      kicker: '05 · SDK 接入',
-      title: '把已经验证过的参数放进应用代码',
-      body: '只有 cURL 请求成功后再切换 SDK。继续使用同一个 API Key、Base URL 和完整模型 ID。',
-      tabs: { python: 'Python', javascript: 'JavaScript' },
+    basics: {
+      kicker: '基础 API 操作',
+      title: '使用 cURL 验证 API',
+      body: '使用 API 接入页面选择的调用节点、已启用的 API Key，以及模型列表返回的完整模型 ID。不要把 API Key 写入前端代码或公开仓库。',
+      endpointLabel: '下方示例使用的调用节点',
+      modelsTitle: '查询当前密钥可调用的模型',
+      modelsBody: '这个请求会同时验证调用节点和 API Key，并返回当前密钥可以调用的模型 ID。',
+      requestTitle: '发送一个最小对话请求',
+      requestBody: '替换 sk-your-api-key 和 YOUR_MODEL_ID；模型名称必须完整复制自上一步返回结果。',
     },
-    clients: {
-      kicker: '06 · 客户端接入',
-      title: '选择你要接入的客户端',
-      body: '前面的账号、余额、API Key、Base URL、模型查询和测试请求都相同。只有最后一步需要根据客户端选择不同配置方式。',
-      selectLabel: '客户端指南',
-      recommended: '推荐',
-      guides: {
-        codex: {
-          label: 'Codex',
-          title: '在 Codex 中使用 API-Route',
-          intro: '最省事的方式是在 API 接入工作台生成 Codex 配置，再通过 CC Switch 一键导入；需要逐项核对时也可以手动配置。',
-          steps: [
-            ['生成配置', '打开 API 接入工作台，选择已经验证的密钥、该密钥可用的模型和当前网络可用的节点。'],
-            ['导入 Codex', '保持 CC Switch 接入方式，目标应用选择 Codex，然后执行一键导入。'],
-            ['重启会话', '新建 Codex 会话，让客户端重新读取 Provider、模型、Base URL 和 API Key。'],
-            ['验证调用', '发送一个小任务，并在 API-Route 调用日志中确认密钥和模型是否符合预期。'],
-          ],
-          note: '手动配置时，在工作台选择 Codex，把生成内容分别放入 ~/.codex/config.toml 和 ~/.codex/auth.json。',
-        },
-        claudeCode: {
-          label: 'Claude Code',
-          title: '在 Claude Code 中使用 API-Route',
-          intro: 'Claude Code 使用 Anthropic 格式的根地址，不带 /v1。直接让 API 接入工作台生成对应格式，不要手动改写 OpenAI 地址。',
-          steps: [
-            ['生成配置', '打开 API 接入工作台，选择已经验证的密钥、模型和调用节点。'],
-            ['导入 Claude Code', '在 CC Switch 模式中把目标应用设为 Claude Code，然后执行一键导入。'],
-            ['重启 Claude Code', '新开一个终端或会话，让 Claude Code 重新读取导入的环境配置。'],
-            ['验证调用', '发送一个短提示词，并在 API-Route 调用日志中确认请求。'],
-          ],
-          note: '手动配置时选择 Claude Code，使用工作台生成的 ~/.claude/settings.json。Base URL 应为根地址，不是带 /v1 的 OpenAI 兼容地址。',
-        },
-        ccSwitch: {
-          label: 'CC Switch',
-          title: '使用 CC Switch 导入 API-Route Provider',
-          intro: 'CC Switch 在这里负责管理和写入配置。它会把 API-Route Provider 导入 Codex、Claude Code 或其他受支持的目标客户端。',
-          steps: [
-            ['安装 CC Switch', '先下载并打开 CC Switch，再开始导入。'],
-            ['准备 Provider', '在 API 接入工作台选择已验证的密钥、模型、节点和最终要使用的目标应用。'],
-            ['执行一键导入', '点击“一键导入到 CC Switch”，并允许浏览器打开 ccswitch 链接。'],
-            ['检查目标应用', '确认新的 API-Route Provider 已启用，然后在目标客户端新建会话。'],
-          ],
-          note: 'CC Switch 本身不发送模型请求。只有目标客户端真实调用后，API-Route 才会产生用量和扣费记录。',
-          showDownload: true,
-        },
-        vscode: {
-          label: 'VS Code',
-          title: '在 VS Code 中使用 API-Route',
-          intro: 'VS Code 是编辑器，不是直接发送模型请求的 API 客户端。你需要配置在 VS Code 中运行的 Codex 或 Claude Code，再从编辑器或集成终端使用它。',
-          steps: [
-            ['确认实际客户端', '先确定你的 VS Code 工作流使用的是 Codex 还是 Claude Code。'],
-            ['配置对应客户端', '在 API 接入工作台中，通过 CC Switch 导入 Codex 或 Claude Code 配置；也可以选择对应的手动配置。'],
-            ['回到 VS Code', '重启相关扩展、终端或客户端会话，让它重新读取 Provider 配置。'],
-            ['验证调用', '执行一个小任务，并在 API-Route 调用日志中检查请求。'],
-          ],
-          note: '不要在 VS Code 核心设置里寻找 API-Route 输入框。Base URL、API Key 和模型应配置在你实际使用的 AI 客户端或扩展中。',
-        },
-        cursor: {
-          label: 'Cursor',
-          title: '在 Cursor 中使用 API-Route',
-          intro: '当前受支持的方式是在 Cursor 集成终端中运行 Codex 或 Claude Code，并为这个实际客户端配置 API-Route。',
-          steps: [
-            ['选择 Codex 或 Claude Code', '确定你准备在 Cursor 集成终端里运行的命令行客户端。'],
-            ['配置对应目标', '通过 API 接入工作台和 CC Switch 导入匹配的 Codex 或 Claude Code 配置。'],
-            ['新开集成终端', '重启 Cursor 的集成终端，再启动已经配置好的客户端。'],
-            ['验证调用', '发送一个小任务，并在 API-Route 调用日志中确认请求。'],
-          ],
-          note: '当前 API 接入工作台没有把 Cursor 本身列为一键导入目标。本指南不会声称已经替换 Cursor 内置的模型供应商。',
-        },
-      },
-      cta: '打开 API 接入工作台',
-      ccSwitchDownload: '下载 CC Switch',
-      downloadsCta: '下载其他客户端',
+    platform: {
+      kicker: '平台运营者',
+      title: '开通自己的 AI API 平台',
+      body: '适合已经有客户、社群或销售渠道，希望使用自己品牌提供 AI API 服务的用户。',
+      steps: [
+        ['查看独立平台页面', '先确认平台能力、费用和运营责任是否符合你的需求。'],
+        ['登录账户', '使用以后负责管理独立平台的账户登录。'],
+        ['填写平台信息', '填写平台名称和用于平台地址的访问标识。'],
+        ['选择支付方式', '使用页面当前已经开通的支付渠道；选择加密货币时还需要选择网络和币种。'],
+        ['支付建站费用', '在打开的支付流程中完成付款。'],
+        ['等待系统确认', '支付确认后，同一账户会自动获得管理权限并进入初始化流程。'],
+      ],
+      afterTitle: '开通后的建议配置顺序',
+      after: [
+        '设置平台名称、Logo、品牌信息和域名。',
+        '选择要上架的模型，并设置面向用户的销售价格。',
+        '配置余额充值方式和销售套餐。',
+        '完整测试用户注册、API Key、余额扣费和一次真实模型调用。',
+        '发布平台地址，并把入口提供给自己的用户。',
+      ],
+      notesTitle: '开通前需要了解',
+      notes: [
+        '不需要自己购买 VPS，也不需要自行接入上游模型。',
+        '平台提供账户、支付、计费、API Key 和调用日志等基础流程。',
+        '获客、定价、客户支持和日常运营仍由你负责。',
+        '平台不提供客户，也不承诺收入。',
+      ],
+      links: [['/ai-api-reseller-platform', '了解并开通独立平台']],
     },
     troubleshooting: {
-      kicker: '07 · 验证与排错',
-      title: '先查看真实请求记录',
-      body: '调用日志能最快区分“客户端配置错误”和“请求已经到达 API 但调用失败”。',
-      successTitle: '第一次调用完成的标准',
-      successItems: [
-        '终端、SDK 或客户端收到了正常的模型回复。',
-        '调用日志出现了使用预期密钥和模型的新记录。',
-        '用量和扣费以账户记录为准，不使用浏览器端估算结果。',
-      ],
+      kicker: '问题排查',
+      title: '根据页面现象找到问题',
+      body: '先处理当前看到的问题，不要一次修改所有配置。',
       items: [
-        ['日志里没有请求', '请求可能没有到达 API。检查所选节点，以及客户端是否真的发送了请求。'],
-        ['鉴权失败', '确认密钥仍处于启用状态，并通过 Authorization: Bearer <API_KEY> 发送。'],
-        ['模型不可用', '只使用当前密钥“支持模型”或 /v1/models 返回的完整模型 ID。'],
-        ['接口路径错误', '不要重复拼接 /v1；Anthropic 和 Claude 客户端使用根地址，不使用 OpenAI SDK Base URL。'],
-        ['余额或套餐不足', '充值或开通套餐后，重新发送同一个最小请求。'],
+        ['没有可用的 API Key', '先创建并启用密钥，然后返回 AI Chat 或 API 接入。'],
+        ['账户余额不足', '完成充值后，再重试保留的消息或测试请求。'],
+        ['找不到某个模型', '页面只显示当前已上架的模型，请以当前模型列表为准。'],
+        ['AI Chat 无法上传图片', '当前模型不支持图片附件，请切换到支持识图的模型。'],
+        ['客户端没有响应', '重新检查密钥、模型、目标客户端和页面生成的配置，然后只发送一次新的测试请求。'],
+        ['调用日志没有成功记录', '先在客户端发送测试消息，再打开调用日志检查最新请求状态。'],
+        ['建站付款后仍在等待', '支付确认后使用同一账户刷新页面；状态仍未更新时联系站点支持。'],
       ],
-      logsCta: '打开调用日志',
     },
   },
   ja: {
-    eyebrow: '開発者ドキュメント · クイックスタート',
-    title: 'Codex、Claude Code、CC Switch、VSCode、Cursor を接続する',
-    description: 'アカウント、残高、API キー、Base URL、モデル確認、最初のテストは一度だけ行い、最後に利用するクライアント別の設定へ進みます。',
-    copy: 'コードをコピー',
-    copied: 'コピー済み',
-    before: {
-      kicker: '01 · 事前確認',
-      title: '実際にリクエストを送るアカウントを準備する',
-      body: 'API リクエストでは残高またはプランの利用枠を消費します。コードやクライアント設定を確認する前に、次の 3 点を揃えてください。',
+    eyebrow: '利用ガイド',
+    title: 'API-Route を使い始める',
+    description: 'AI Chat、API 連携、独立 AI API プラットフォームから目的を選び、最短の手順で初回利用を完了します。',
+    directoryTitle: 'このページ',
+    directory: [
+      ['choose', '利用方法を選ぶ'],
+      ['prepare', '事前準備'],
+      ['chat', 'AI Chat を使う'],
+      ['api', 'API を連携する'],
+      ['basics', '基本的な API 操作'],
+      ['platform', '独立サイトを開設する'],
+      ['troubleshooting', 'トラブル解決'],
+    ],
+    choose: {
+      kicker: '利用方法を選ぶ',
+      title: 'API-Route で何をしたいですか？',
+      body: 'トップページの主な入口は AI Chat と API 連携です。独立サイトの開設は運営者向けの別ルートです。',
+      successLabel: '完了の目安：',
       items: [
-        ['ログイン済みアカウント', 'API キー、接続ワークベンチ、利用ログはログイン後に使用できます。'],
-        ['利用可能な残高またはプラン', '実際の請求はアカウント記録と利用ログに従い、ブラウザ側では計算しません。'],
-        ['有効な API キー', 'API キーページで作成して有効にします。漏えいの可能性があれば、すぐに無効化または削除してください。'],
+        {
+          title: 'ブラウザで AI を使う',
+          description: '別のツールを設定せず、ブラウザで対話、画像理解、画像生成を直接利用できます。',
+          success: 'AI Chat から回答または生成画像が返ります。',
+          to: '/chats',
+          link: 'AI Chat を開く',
+        },
+        {
+          title: 'ツールやアプリに接続する',
+          description: 'Codex、Claude Code、OpenClaw、Hermes、Gemini CLI、OpenCode などに接続できます。設定済みのクライアントは Cursor や VS Code 内でも利用できます。',
+          success: 'クライアントにテスト回答が届き、利用ログに成功記録が表示されます。',
+          to: '/api-connect',
+          link: 'API 連携を開く',
+        },
+        {
+          title: '自分の AI API サイトを開設する',
+          description: '既存の顧客、コミュニティ、販売チャネルを持つ運営者向けです。',
+          success: '支払い確認後、アカウントにサイト管理権限が付与されます。',
+          to: '/ai-api-reseller-platform',
+          link: '独立サイトを見る',
+        },
       ],
-      keyCta: 'API キーを作成・管理',
-      topupCta: '残高とプランを確認',
     },
-    values: {
-      kicker: '02 · 正確な値を使う',
-      title: 'アカウントから API キー、Base URL、モデル ID を取得する',
-      body: '最初の失敗は、別のキー、接続先、クライアント方式の値を混ぜたときに起こりやすくなります。',
-      items: [
-        ['API キー', 'API キーページの有効なキーを使用します。サーバー側のシークレットまたはローカル環境変数に保存し、フロントエンドや公開リポジトリには置かないでください。'],
-        ['Base URL', 'OpenAI 互換 SDK は選択した接続先に /v1 を付けます。HTTP を直接送る場合は完全なリソースパスを使います。'],
-        ['モデル ID', '現在のキーの「対応モデル」または /v1/models の結果を使用します。料金ページは掲載状況と料金の確認用で、すべてのキーの利用可否を保証しません。'],
+    prepare: {
+      kicker: '事前準備',
+      title: 'アカウントと残高を準備する',
+      body: 'AI Chat と API 連携のどちらを使う場合も、最初に確認してください。',
+      steps: [
+        ['ログインする', 'モデルを利用するアカウントを作成するか、既存のアカウントでログインします。'],
+        ['残高をチャージする', 'Alipay、Stripe、暗号資産に対応しています。実際に利用できる方法はチャージ画面の表示が基準です。'],
+        ['支払い方法を選ぶ', '利用料は残高から直接支払うか、残高でプランを購入して利用できます。残高に有効期限はありません。プランは割引がありますが、有効期限と利用枠があります。'],
       ],
-      example: 'このページで使う接続先',
-      openai: 'OpenAI 互換 SDK Base URL',
-      anthropic: 'Anthropic / Claude Base URL',
-      anthropicNote: 'Claude と Anthropic クライアントでは /v1 を付けないルート URL を使います。API 接続ワークベンチがクライアント別の形式を生成します。',
-      pricingCta: '掲載モデルの料金を比較',
+      note: '迷う場合は、まず残高をチャージして従量利用してください。利用量が安定してからプランを検討できます。',
+      links: [
+        ['/topup', '残高をチャージ'],
+        ['/topup/packages', 'プランを見る'],
+      ],
     },
-    models: {
-      kicker: '03 · キーを確認',
-      title: 'この API キーで利用できるモデルを取得する',
-      body: 'モデルを選ぶ前に /v1/models を呼び出します。Base URL と認証を同時に確認し、このキーで利用できるモデル ID を取得できます。',
-      label: '利用可能なモデルを取得',
-      resultTitle: '結果からコピーする値',
-      resultBody: '返された data 一覧から完全なモデル ID を 1 つコピーし、次のリクエストでそのまま使用します。省略や推測はしないでください。',
+    chat: {
+      kicker: 'AI Chat',
+      title: 'ブラウザで AI Chat を使う',
+      body: '外部クライアントの設定は不要です。ログイン後、モデルを選んですぐに利用できます。',
+      steps: [
+        ['AI Chat を開く', 'ログイン後、トップページの「AI Chat」をクリックします。'],
+        ['必要なら API キーを作成する', 'AI Chat は自分の API キーを使います。キーがないという案内が出たら、作成してから戻ります。'],
+        ['モデルを選ぶ', 'モデルの種類と、現在利用できるモデルを選択します。'],
+        ['最初のメッセージを送る', '質問や依頼を入力して送信します。通常の回答が返れば利用準備は完了です。'],
+      ],
+      abilitiesTitle: 'できること',
+      abilities: [
+        '公開中かつブラウザ利用が許可されたテキストモデルとの対話。',
+        '画像理解に対応するモデルへの画像アップロードと分析。',
+        '現在利用可能な画像生成モデルによるテキストからの画像生成。',
+      ],
+      notesTitle: '利用上の注意',
+      notes: [
+        'モデルや添付機能は、画面で選択したモデルの対応状況に従います。',
+        '会話履歴は現在のブラウザにのみ保存されます。',
+        '残高不足の場合は、チャージ後に戻って保存されたメッセージを送信できます。',
+      ],
+      links: [['/chats', 'AI Chat を開く']],
     },
-    request: {
-      kicker: '04 · 最初のリクエスト',
-      title: 'まず cURL で最小のチャットリクエストを送る',
-      body: 'API キーと YOUR_MODEL_ID を置き換えます。最初のテストを小さく保つと、認証、モデル権限、形式の問題を切り分けやすくなります。',
-      label: 'POST /v1/chat/completions',
-      successTitle: '成功は 2 か所で確認します',
-      successBody: 'ターミナルにモデルの応答が表示され、利用ログに新しいリクエストが追加されます。両方を確認してから SDK やクライアントへ移してください。',
+    api: {
+      kicker: 'API 連携',
+      title: '最初の API 呼び出しを完了する',
+      body: 'CC Switch によるワンクリック導入と、設定ファイルを使う手動設定のどちらも利用できます。CC Switch は操作が簡単な推奨方法ですが、インストールは必須ではありません。',
+      downloadCta: 'CC Switch とクライアントをダウンロード',
+      steps: [
+        ['残高を確認する', 'テスト呼び出しに必要な残高があることを確認します。'],
+        ['API 連携を開く', 'トップページの「API 連携」をクリックします。'],
+        ['必要なら API キーを作成する', '有効なキーがなければ作成して有効化し、API 連携画面に戻ります。'],
+        ['接続情報を選ぶ', '有効なキー、利用可能なモデル、接続先、対象クライアントを選択します。'],
+        ['設定方法を選ぶ', 'CC Switch でワンクリック導入するか、「手動設定」に切り替えて設定ファイルをダウンロードします。'],
+        ['テストする', '対象クライアントで「OK と、現在使っているモデル名を回答してください」と送信します。'],
+        ['結果を確認する', '回答が返り、利用ログに成功記録があれば接続完了です。'],
+      ],
+      recommendedTitle: '推奨方法：CC Switch でワンクリック導入',
+      recommended: [
+        'CC Switch をインストールして起動すると、キー、モデル、接続先を対象クライアントへワンクリックで導入できます。',
+        'Codex、Claude Code、Gemini CLI、OpenCode、OpenClaw、Hermes に対応しています。',
+      ],
+      fallbackTitle: '代替手段：手動設定',
+      fallback: [
+        'CC Switch をインストールしない場合は、API 連携画面で「手動設定」を選びます。',
+        '対象クライアントを選び、生成された設定ファイルをコピーまたはダウンロードして、画面に表示されたパスへ配置します。',
+      ],
+      successTitle: '接続成功の確認',
+      success: [
+        '対象クライアントから正常なモデル回答が返る。',
+        '利用ログにリクエスト状態と Token 使用量が表示される。',
+      ],
+      links: [
+        ['/api-connect', 'API 連携を開く'],
+        ['/api-keys', 'API キーを管理'],
+        ['/dashboard/logs', '利用ログを見る'],
+      ],
     },
-    sdk: {
-      kicker: '05 · SDK',
-      title: '確認済みの値をアプリケーションに移す',
-      body: 'cURL が成功してから SDK に切り替えます。同じ API キー、Base URL、完全なモデル ID を使用してください。',
-      tabs: { python: 'Python', javascript: 'JavaScript' },
+    basics: {
+      kicker: '基本的な API 操作',
+      title: 'cURL で API を確認する',
+      body: 'API 連携画面で選択した接続先、有効な API キー、モデル一覧で返された完全なモデル ID を使います。API キーをフロントエンドコードや公開リポジトリに書かないでください。',
+      endpointLabel: '以下の例で使用する接続先',
+      modelsTitle: 'このキーで利用できるモデルを取得する',
+      modelsBody: '接続先と API キーを確認し、このキーで呼び出せるモデル ID を返します。',
+      requestTitle: '最小構成の対話リクエストを送る',
+      requestBody: 'sk-your-api-key と YOUR_MODEL_ID を置き換えます。モデル名は直前の結果から完全な ID をコピーしてください。',
     },
-    clients: {
-      kicker: '06 · クライアント',
-      title: '接続するクライアントを選ぶ',
-      body: '上記のアカウント、残高、API キー、Base URL、モデル確認、テストリクエストは共通です。最後の設定だけがクライアントごとに異なります。',
-      selectLabel: 'クライアントガイド',
-      recommended: '推奨',
-      guides: {
-        codex: {
-          label: 'Codex',
-          title: 'Codex で API-Route を使う',
-          intro: '最短の方法は、API 接続ワークベンチで Codex 用プロファイルを生成し、CC Switch から取り込むことです。項目を確認したい場合は手動設定も利用できます。',
-          steps: [
-            ['プロファイルを生成', 'API 接続ワークベンチで確認済みのキー、利用可能なモデル、ネットワークに合う接続先を選びます。'],
-            ['Codex に取り込む', 'CC Switch 方式のまま対象アプリに Codex を選び、ワンクリック取り込みを実行します。'],
-            ['セッションを再起動', '新しい Codex セッションを開き、Provider、モデル、Base URL、API キーを読み直します。'],
-            ['リクエストを確認', '小さなタスクを実行し、API-Route の利用ログでキーとモデルを確認します。'],
-          ],
-          note: '手動設定では Codex を選び、生成内容を ~/.codex/config.toml と ~/.codex/auth.json に配置します。',
-        },
-        claudeCode: {
-          label: 'Claude Code',
-          title: 'Claude Code で API-Route を使う',
-          intro: 'Claude Code は /v1 なしの Anthropic 形式ルート URL を使います。OpenAI 用 URL を手で直さず、ワークベンチに正しい形式を生成させてください。',
-          steps: [
-            ['プロファイルを生成', 'API 接続ワークベンチで確認済みのキー、モデル、接続先を選びます。'],
-            ['Claude Code に取り込む', 'CC Switch 方式で対象アプリに Claude Code を選び、ワンクリック取り込みを実行します。'],
-            ['Claude Code を再起動', '新しいターミナルまたはセッションを開き、環境設定を読み直します。'],
-            ['リクエストを確認', '短いプロンプトを送り、API-Route の利用ログを確認します。'],
-          ],
-          note: '手動設定では Claude Code を選び、生成された ~/.claude/settings.json を使います。Base URL は /v1 付きではなくルート URL です。',
-        },
-        ccSwitch: {
-          label: 'CC Switch',
-          title: 'CC Switch で API-Route Provider を取り込む',
-          intro: 'CC Switch はこの手順で設定を管理し、Codex、Claude Code、その他の対応クライアントへ API-Route Provider を書き込みます。',
-          steps: [
-            ['CC Switch をインストール', '取り込み前に CC Switch をダウンロードして起動します。'],
-            ['Provider を準備', 'API 接続ワークベンチで確認済みのキー、モデル、接続先、対象アプリを選びます。'],
-            ['ワンクリック取り込み', '「CC Switch に取り込む」を押し、ブラウザから ccswitch リンクを開くことを許可します。'],
-            ['対象アプリを確認', 'API-Route Provider が有効になっていることを確認し、対象クライアントで新しいセッションを開始します。'],
-          ],
-          note: 'CC Switch 自体はモデルへリクエストを送りません。対象クライアントが実際に呼び出した後に、利用量と請求が記録されます。',
-          showDownload: true,
-        },
-        vscode: {
-          label: 'VS Code',
-          title: 'VS Code から API-Route を使う',
-          intro: 'VS Code はエディターであり、API クライアントそのものではありません。VS Code 内で使う Codex または Claude Code を設定します。',
-          steps: [
-            ['実際の AI クライアントを確認', 'VS Code のワークフローが Codex と Claude Code のどちらを使うか確認します。'],
-            ['そのクライアントを設定', 'API 接続ワークベンチから、対応する Codex または Claude Code 設定を取り込みます。'],
-            ['VS Code に戻る', '関連する拡張機能、ターミナル、クライアントセッションを再起動します。'],
-            ['リクエストを確認', '小さなタスクを実行し、API-Route の利用ログを確認します。'],
-          ],
-          note: 'VS Code 本体の設定に API-Route の入力欄があるわけではありません。Base URL、API キー、モデルは実際に使う AI クライアントまたは拡張機能側へ設定します。',
-        },
-        cursor: {
-          label: 'Cursor',
-          title: 'Cursor から API-Route を使う',
-          intro: '現在対応している方法は、Cursor の統合ターミナルで Codex または Claude Code を動かし、そのクライアントへ API-Route を設定することです。',
-          steps: [
-            ['Codex または Claude Code を選ぶ', 'Cursor の統合ターミナルで使うコマンドラインクライアントを決めます。'],
-            ['対象クライアントを設定', 'API 接続ワークベンチと CC Switch で、対応する設定を取り込みます。'],
-            ['新しいターミナルを開く', 'Cursor の統合ターミナルを再起動し、設定済みクライアントを起動します。'],
-            ['リクエストを確認', '小さなタスクを送り、API-Route の利用ログを確認します。'],
-          ],
-          note: '現在、API 接続ワークベンチでは Cursor 自体をワンクリック取り込み先として扱っていません。このガイドは Cursor 内蔵 Provider の置き換えを案内するものではありません。',
-        },
-      },
-      cta: 'API 接続ワークベンチを開く',
-      ccSwitchDownload: 'CC Switch をダウンロード',
-      downloadsCta: 'その他のクライアントをダウンロード',
+    platform: {
+      kicker: '運営者向け',
+      title: '自分の AI API プラットフォームを開設する',
+      body: '既存の顧客、コミュニティ、販売チャネルがあり、自分のブランドで AI API を提供したい方向けです。',
+      steps: [
+        ['独立サイトの案内を確認する', '機能、費用、運営上の責任が自分の用途に合うか確認します。'],
+        ['ログインする', '今後サイトを所有・管理するアカウントを使います。'],
+        ['サイト情報を入力する', 'サイト名と URL に使う識別子を入力します。'],
+        ['支払い方法を選ぶ', '画面で現在有効な方法を選びます。暗号資産の場合はネットワークと通貨も選択します。'],
+        ['開設費用を支払う', '表示された決済フローで支払いを完了します。'],
+        ['確認を待つ', '支払い確認後、同じアカウントに管理権限が付与され、初期設定へ進めます。'],
+      ],
+      afterTitle: '開設後の推奨設定順',
+      after: [
+        'サイト名、ロゴ、ブランド情報、ドメインを設定する。',
+        '公開するモデルを選び、顧客向け価格を設定する。',
+        'チャージ方法と販売プランを設定する。',
+        'ユーザー登録、API キー、残高消費、実際のモデル呼び出しを一通りテストする。',
+        'サイト URL を公開し、自分のユーザーへ案内する。',
+      ],
+      notesTitle: '開設前に確認すること',
+      notes: [
+        'VPS の購入や上流モデルの接続を自分で行う必要はありません。',
+        'アカウント、決済、課金、API キー、利用ログの基本フローが用意されています。',
+        '集客、価格設定、顧客対応、日々の運営は自分で行います。',
+        '顧客の提供や収益の保証はありません。',
+      ],
+      links: [['/ai-api-reseller-platform', '独立サイトを確認して開設する']],
     },
     troubleshooting: {
-      kicker: '07 · 確認とトラブルシューティング',
-      title: '実際のリクエスト記録から確認する',
-      body: '利用ログを見ると、クライアント側の設定ミスか、API 到達後の失敗かを最短で切り分けられます。',
-      successTitle: '最初の呼び出しが完了した状態',
-      successItems: [
-        'ターミナル、SDK、またはクライアントで正常なモデル応答を受信した。',
-        '利用ログに想定したキーとモデルの新しい記録がある。',
-        '利用量と請求はブラウザの推定ではなくアカウント記録に従う。',
-      ],
+      kicker: 'トラブル解決',
+      title: '画面に表示された症状から確認する',
+      body: 'すべての設定を一度に変更せず、現在の症状から順番に確認してください。',
       items: [
-        ['ログに記録がない', 'API に到達していない可能性があります。接続先と、クライアントが実際に送信したかを確認してください。'],
-        ['認証に失敗する', 'キーが有効で、Authorization: Bearer <API_KEY> として送信されているか確認します。'],
-        ['モデルを利用できない', 'このキーの「対応モデル」または /v1/models が返した完全なモデル ID を使います。'],
-        ['パスが正しくない', '/v1 を重複させないでください。Anthropic と Claude は OpenAI SDK 用 Base URL ではなくルート URL を使います。'],
-        ['残高またはプラン不足', 'チャージまたはプランを有効化し、同じ最小リクエストを再実行します。'],
+        ['利用できる API キーがない', 'キーを作成して有効化し、AI Chat または API 連携に戻ります。'],
+        ['残高が不足している', 'チャージ後、保存されたメッセージまたはテストを再実行します。'],
+        ['目的のモデルが見つからない', '画面には現在公開中のモデルだけが表示されます。現在の一覧から選んでください。'],
+        ['AI Chat に画像を添付できない', '選択したモデルが画像添付に対応していません。画像理解対応モデルへ切り替えます。'],
+        ['クライアントから応答がない', 'キー、モデル、対象クライアント、生成された設定を確認してから、新しいテストを一度送信します。'],
+        ['成功した呼び出しが表示されない', '先にテストを送信し、その後で利用ログの最新状態を確認します。'],
+        ['サイト開設の支払いが保留中', '支払い確認後、同じアカウントでページを更新します。反映されない場合はサイトサポートへ連絡してください。'],
       ],
-      logsCta: '利用ログを開く',
     },
   },
   ko: {
-    eyebrow: '개발자 문서 · 빠른 시작',
-    title: 'Codex, Claude Code, CC Switch, VS Code, Cursor 연결하기',
-    description: '계정, 잔액, API 키, Base URL, 모델 확인, 첫 테스트는 한 번만 준비하고 마지막 단계에서 실제 사용하는 클라이언트별 설정을 진행합니다.',
-    copy: '코드 복사',
-    copied: '복사됨',
-    before: {
-      kicker: '01 · 시작 전 확인',
-      title: '실제로 요청을 보낼 계정을 준비하세요',
-      body: 'API 요청은 실제 잔액 또는 플랜 한도를 사용합니다. 코드나 클라이언트 설정을 점검하기 전에 다음 세 가지를 확인하세요.',
+    eyebrow: '사용 가이드',
+    title: 'API-Route 시작하기',
+    description: 'AI Chat, API 연결, 독립 AI API 플랫폼 중 목적에 맞는 경로를 선택하고 첫 사용을 완료하세요.',
+    directoryTitle: '이 페이지',
+    directory: [
+      ['choose', '사용 방식 선택'],
+      ['prepare', '시작 전 준비'],
+      ['chat', 'AI Chat 사용'],
+      ['api', 'API 연결'],
+      ['basics', '기본 API 호출'],
+      ['platform', '독립 플랫폼 개설'],
+      ['troubleshooting', '문제 해결'],
+    ],
+    choose: {
+      kicker: '사용 방식 선택',
+      title: 'API-Route로 무엇을 하시나요?',
+      body: '홈의 두 주요 입구는 AI Chat과 API 연결입니다. 독립 플랫폼 개설은 운영자를 위한 별도 경로입니다.',
+      successLabel: '완료 기준:',
       items: [
-        ['로그인된 계정', 'API 키, 연결 워크벤치, 사용 로그는 로그인 후 사용할 수 있습니다.'],
-        ['사용 가능한 잔액 또는 플랜', '실제 과금은 계정 기록과 사용 로그를 따르며 브라우저에서 임의로 계산하지 않습니다.'],
-        ['활성화된 API 키', 'API 키 페이지에서 키를 만들고 활성 상태로 유지하세요. 노출이 의심되면 즉시 비활성화하거나 삭제하세요.'],
+        {
+          title: '웹에서 AI 바로 사용',
+          description: '다른 도구를 설정하지 않고 브라우저에서 대화, 이미지 이해, 이미지 생성을 바로 사용할 수 있습니다.',
+          success: 'AI Chat에서 답변이나 생성 이미지가 정상적으로 표시됩니다.',
+          to: '/chats',
+          link: 'AI Chat 열기',
+        },
+        {
+          title: '도구 또는 앱 연결',
+          description: 'Codex, Claude Code, OpenClaw, Hermes, Gemini CLI, OpenCode 등에 연결할 수 있습니다. 설정된 클라이언트는 Cursor나 VS Code 안에서도 사용할 수 있습니다.',
+          success: '클라이언트가 테스트 답변을 받고 사용 로그에 성공 기록이 표시됩니다.',
+          to: '/api-connect',
+          link: 'API 연결 열기',
+        },
+        {
+          title: '내 AI API 플랫폼 개설',
+          description: '기존 고객, 커뮤니티, 판매 채널을 보유하고 자체 브랜드로 운영하려는 분에게 적합합니다.',
+          success: '결제가 확인되고 현재 계정에 플랫폼 관리 권한이 부여됩니다.',
+          to: '/ai-api-reseller-platform',
+          link: '독립 플랫폼 알아보기',
+        },
       ],
-      keyCta: 'API 키 만들기 또는 관리',
-      topupCta: '잔액과 플랜 확인',
     },
-    values: {
-      kicker: '02 · 정확한 값 사용',
-      title: '계정에서 API 키, Base URL, 모델 ID를 가져오세요',
-      body: '첫 요청 실패는 서로 다른 키, 엔드포인트, 클라이언트 방식의 값을 섞을 때 가장 자주 발생합니다.',
-      items: [
-        ['API 키', 'API 키 페이지의 활성 키를 사용하세요. 서버 비밀값이나 로컬 환경 변수에만 보관하고 프런트엔드 코드나 공개 저장소에 넣지 마세요.'],
-        ['Base URL', 'OpenAI 호환 SDK는 선택한 엔드포인트에 /v1을 붙여 사용합니다. HTTP 요청은 전체 리소스 경로로 전송합니다.'],
-        ['모델 ID', '현재 키의 지원 모델 또는 /v1/models 결과를 사용하세요. 요금 페이지는 등록 상태와 가격을 보여 주지만 모든 키의 접근 권한을 보장하지 않습니다.'],
+    prepare: {
+      kicker: '시작 전 준비',
+      title: '계정과 잔액 준비',
+      body: 'AI Chat과 API 연결 모두 먼저 아래 내용을 확인하세요.',
+      steps: [
+        ['로그인', '모델을 실제로 사용할 계정을 만들거나 기존 계정으로 로그인합니다.'],
+        ['잔액 충전', 'Alipay, Stripe, 암호화폐를 지원합니다. 실제 사용 가능한 방식은 충전 페이지에 현재 표시된 항목을 기준으로 합니다.'],
+        ['사용 금액 결제 방식 선택', '호출 금액을 잔액에서 바로 차감하거나, 잔액으로 플랜을 구매해 사용할 수 있습니다. 잔액은 만료되지 않으며, 플랜은 할인 혜택이 있지만 유효 기간과 사용 한도가 있습니다.'],
       ],
-      example: '이 페이지에서 사용하는 예시 엔드포인트',
-      openai: 'OpenAI 호환 SDK Base URL',
-      anthropic: 'Anthropic / Claude Base URL',
-      anthropicNote: 'Claude와 Anthropic 클라이언트는 /v1이 없는 루트 주소를 사용합니다. API 연결 워크벤치가 클라이언트별 형식을 생성합니다.',
-      pricingCta: '등록된 모델 가격 비교',
+      note: '선택이 어렵다면 먼저 잔액을 충전해 사용량만큼 결제하세요. 사용량이 일정해진 뒤 플랜을 구매해도 됩니다.',
+      links: [
+        ['/topup', '잔액 충전'],
+        ['/topup/packages', '플랜 보기'],
+      ],
     },
-    models: {
-      kicker: '03 · 키 확인',
-      title: '이 API 키로 사용할 수 있는 모델 조회',
-      body: '모델을 선택하기 전에 /v1/models를 호출하세요. Base URL과 인증을 함께 확인하고 이 키에서 사용할 수 있는 모델 ID를 받을 수 있습니다.',
-      label: '사용 가능한 모델 조회',
-      resultTitle: '결과에서 복사할 값',
-      resultBody: '반환된 data 목록에서 완전한 모델 ID 하나를 복사해 다음 요청에 그대로 사용하세요. 모델명을 추측하거나 줄이지 마세요.',
+    chat: {
+      kicker: 'AI Chat',
+      title: '브라우저에서 AI Chat 사용',
+      body: '외부 클라이언트를 설정할 필요 없이 로그인 후 모델을 선택해 바로 사용할 수 있습니다.',
+      steps: [
+        ['AI Chat 열기', '로그인 후 홈에서 “AI Chat”을 클릭합니다.'],
+        ['필요하면 API 키 생성', 'AI Chat은 자신의 API 키를 사용합니다. 키가 없다는 안내가 나오면 생성한 뒤 돌아옵니다.'],
+        ['모델 선택', '모델 유형과 현재 사용 가능한 모델을 선택합니다.'],
+        ['첫 요청 전송', '질문이나 작업을 입력해 전송합니다. 모델이 정상적으로 답하면 준비가 끝난 것입니다.'],
+      ],
+      abilitiesTitle: '할 수 있는 작업',
+      abilities: [
+        '현재 등록되어 있고 웹 사용이 허용된 텍스트 모델과 대화합니다.',
+        '이미지 이해를 지원하는 모델에 이미지를 업로드해 분석합니다.',
+        '현재 사용 가능한 이미지 생성 모델로 텍스트에서 이미지를 만듭니다.',
+      ],
+      notesTitle: '사용 시 참고사항',
+      notes: [
+        '모델과 첨부 기능은 화면에서 선택한 모델의 지원 범위를 따릅니다.',
+        '대화 기록은 현재 브라우저에만 저장됩니다.',
+        '잔액이 부족하면 충전 후 돌아와 보관된 메시지를 다시 전송할 수 있습니다.',
+      ],
+      links: [['/chats', 'AI Chat 열기']],
     },
-    request: {
-      kicker: '04 · 첫 요청',
-      title: '먼저 cURL로 최소 채팅 요청을 보내세요',
-      body: 'API 키와 YOUR_MODEL_ID를 바꾸세요. 첫 테스트를 작게 유지하면 인증, 모델 권한, 요청 형식 문제를 쉽게 구분할 수 있습니다.',
-      label: 'POST /v1/chat/completions',
-      successTitle: '두 곳에서 성공을 확인하세요',
-      successBody: '터미널에 정상적인 모델 응답이 표시되고 사용 로그에 새 요청이 추가되어야 합니다. 두 항목을 확인한 뒤 SDK나 클라이언트로 옮기세요.',
+    api: {
+      kicker: 'API 연결',
+      title: '첫 API 호출 완료',
+      body: 'CC Switch로 한 번에 가져오거나 설정 파일을 직접 적용할 수 있습니다. CC Switch가 더 간편한 권장 방식이지만 반드시 설치해야 하는 것은 아닙니다.',
+      downloadCta: 'CC Switch 및 클라이언트 다운로드',
+      steps: [
+        ['잔액 확인', '테스트 호출을 실행할 수 있는 잔액이 있는지 확인합니다.'],
+        ['API 연결 열기', '홈에서 “API 연결”을 클릭합니다.'],
+        ['필요하면 API 키 생성', '활성화된 키가 없다면 키를 만들고 활성화한 뒤 API 연결로 돌아옵니다.'],
+        ['연결 정보 선택', '활성 키, 사용 가능한 모델, 엔드포인트, 대상 클라이언트를 선택합니다.'],
+        ['설정 방식 선택', 'CC Switch로 한 번에 가져오거나 “수동 설정”으로 전환해 설정 파일을 다운로드합니다.'],
+        ['테스트 메시지 전송', '대상 클라이언트에서 “OK라고 답하고 현재 사용 중인 모델을 알려 주세요.”라고 전송합니다.'],
+        ['결과 확인', '정상 답변이 오고 사용 로그에 성공 기록이 나타나면 연결이 완료된 것입니다.'],
+      ],
+      recommendedTitle: '권장 방식: CC Switch로 한 번에 가져오기',
+      recommended: [
+        'CC Switch를 설치하고 실행하면 키, 모델, 엔드포인트를 대상 클라이언트로 한 번에 가져올 수 있습니다.',
+        'Codex, Claude Code, Gemini CLI, OpenCode, OpenClaw, Hermes를 지원합니다.',
+      ],
+      fallbackTitle: '대체 방식: 수동 설정',
+      fallback: [
+        'CC Switch를 설치하지 않으려면 API 연결 화면에서 “수동 설정”을 선택합니다.',
+        '대상 클라이언트를 선택하고 생성된 설정 파일을 복사하거나 다운로드한 뒤 화면에 표시된 경로에 배치합니다.',
+      ],
+      successTitle: '연결 성공 기준',
+      success: [
+        '대상 클라이언트에서 정상적인 모델 답변을 받습니다.',
+        '사용 로그에 요청 상태와 Token 사용량이 표시됩니다.',
+      ],
+      links: [
+        ['/api-connect', 'API 연결 열기'],
+        ['/api-keys', 'API 키 관리'],
+        ['/dashboard/logs', '사용 로그 보기'],
+      ],
     },
-    sdk: {
-      kicker: '05 · SDK',
-      title: '검증한 값을 애플리케이션 코드로 옮기세요',
-      body: 'cURL 요청이 성공한 뒤 SDK로 전환하세요. 같은 API 키, Base URL, 완전한 모델 ID를 사용합니다.',
-      tabs: { python: 'Python', javascript: 'JavaScript' },
+    basics: {
+      kicker: '기본 API 호출',
+      title: 'cURL로 API 확인',
+      body: 'API 연결 화면에서 선택한 엔드포인트, 활성화된 API 키, 모델 목록에서 반환된 정확한 모델 ID를 사용합니다. API 키를 프런트엔드 코드나 공개 저장소에 노출하지 마세요.',
+      endpointLabel: '아래 예시에서 사용하는 엔드포인트',
+      modelsTitle: '현재 키로 호출 가능한 모델 조회',
+      modelsBody: '엔드포인트와 API 키를 확인하고 이 키로 호출할 수 있는 모델 ID를 반환합니다.',
+      requestTitle: '최소 대화 요청 전송',
+      requestBody: 'sk-your-api-key와 YOUR_MODEL_ID를 바꿉니다. 모델 이름은 이전 결과에서 전체 ID를 그대로 복사하세요.',
     },
-    clients: {
-      kicker: '06 · 클라이언트',
-      title: '연결할 클라이언트를 선택하세요',
-      body: '위의 계정, 잔액, API 키, Base URL, 모델 확인, 테스트 요청은 모두 같습니다. 마지막 설정 단계만 클라이언트별로 달라집니다.',
-      selectLabel: '클라이언트 가이드',
-      recommended: '권장',
-      guides: {
-        codex: {
-          label: 'Codex',
-          title: 'Codex에서 API-Route 사용하기',
-          intro: '가장 빠른 방법은 API 연결 워크벤치에서 Codex 프로필을 만든 뒤 CC Switch로 가져오는 것입니다. 각 항목을 확인해야 한다면 수동 설정도 사용할 수 있습니다.',
-          steps: [
-            ['프로필 생성', 'API 연결 워크벤치에서 검증한 키, 사용 가능한 모델, 현재 네트워크에 맞는 엔드포인트를 선택합니다.'],
-            ['Codex로 가져오기', 'CC Switch 방식을 유지하고 대상 앱으로 Codex를 선택한 뒤 원클릭 가져오기를 실행합니다.'],
-            ['세션 다시 시작', '새 Codex 세션을 열어 Provider, 모델, Base URL, API 키를 다시 읽습니다.'],
-            ['요청 확인', '작은 작업을 실행하고 API-Route 사용 로그에서 키와 모델을 확인합니다.'],
-          ],
-          note: '수동 설정에서는 Codex를 선택하고 생성된 내용을 ~/.codex/config.toml과 ~/.codex/auth.json에 배치하세요.',
-        },
-        claudeCode: {
-          label: 'Claude Code',
-          title: 'Claude Code에서 API-Route 사용하기',
-          intro: 'Claude Code는 /v1이 없는 Anthropic 형식의 루트 주소를 사용합니다. OpenAI 주소를 직접 고치지 말고 워크벤치에서 올바른 형식을 생성하세요.',
-          steps: [
-            ['프로필 생성', 'API 연결 워크벤치에서 검증한 키, 모델, 엔드포인트를 선택합니다.'],
-            ['Claude Code로 가져오기', 'CC Switch 방식에서 대상 앱을 Claude Code로 선택한 뒤 원클릭 가져오기를 실행합니다.'],
-            ['Claude Code 다시 시작', '새 터미널이나 세션을 열어 가져온 환경 설정을 다시 읽습니다.'],
-            ['요청 확인', '짧은 프롬프트를 보내고 API-Route 사용 로그를 확인합니다.'],
-          ],
-          note: '수동 설정에서는 Claude Code를 선택하고 생성된 ~/.claude/settings.json을 사용하세요. Base URL은 /v1 주소가 아니라 루트 주소입니다.',
-        },
-        ccSwitch: {
-          label: 'CC Switch',
-          title: 'CC Switch로 API-Route Provider 가져오기',
-          intro: 'CC Switch는 이 과정에서 설정을 관리하고 API-Route Provider를 Codex, Claude Code 또는 다른 지원 대상에 기록합니다.',
-          steps: [
-            ['CC Switch 설치', '가져오기를 시작하기 전에 CC Switch를 다운로드하고 실행합니다.'],
-            ['Provider 준비', 'API 연결 워크벤치에서 검증한 키, 모델, 엔드포인트, 최종 대상 앱을 선택합니다.'],
-            ['원클릭 가져오기', '“CC Switch로 가져오기”를 누르고 브라우저가 ccswitch 링크를 열도록 허용합니다.'],
-            ['대상 앱 확인', '새 API-Route Provider가 활성화되었는지 확인한 뒤 대상 클라이언트에서 새 세션을 시작합니다.'],
-          ],
-          note: 'CC Switch 자체는 모델 요청을 보내지 않습니다. 대상 클라이언트가 실제 호출한 뒤에만 사용량과 과금 기록이 생성됩니다.',
-          showDownload: true,
-        },
-        vscode: {
-          label: 'VS Code',
-          title: 'VS Code에서 API-Route 사용하기',
-          intro: 'VS Code는 편집기이며 API 클라이언트가 아닙니다. VS Code 안에서 사용하는 Codex 또는 Claude Code를 설정해야 합니다.',
-          steps: [
-            ['실제 AI 클라이언트 확인', 'VS Code 워크플로가 Codex와 Claude Code 중 무엇을 사용하는지 확인합니다.'],
-            ['해당 클라이언트 설정', 'API 연결 워크벤치에서 Codex 또는 Claude Code 설정을 가져오거나 수동 설정을 사용합니다.'],
-            ['VS Code로 돌아가기', '관련 확장, 터미널 또는 클라이언트 세션을 다시 시작합니다.'],
-            ['요청 확인', '작은 작업을 실행하고 API-Route 사용 로그를 확인합니다.'],
-          ],
-          note: 'VS Code 기본 설정에서 API-Route 입력란을 찾을 필요가 없습니다. Base URL, API 키, 모델은 실제로 사용하는 AI 클라이언트나 확장에 설정합니다.',
-        },
-        cursor: {
-          label: 'Cursor',
-          title: 'Cursor에서 API-Route 사용하기',
-          intro: '현재 지원되는 방식은 Cursor 통합 터미널에서 Codex 또는 Claude Code를 실행하고 그 클라이언트에 API-Route를 설정하는 것입니다.',
-          steps: [
-            ['Codex 또는 Claude Code 선택', 'Cursor 통합 터미널에서 실행할 명령줄 클라이언트를 정합니다.'],
-            ['대상 클라이언트 설정', 'API 연결 워크벤치와 CC Switch로 일치하는 설정을 가져옵니다.'],
-            ['새 통합 터미널 열기', 'Cursor 통합 터미널을 다시 시작하고 설정한 클라이언트를 실행합니다.'],
-            ['요청 확인', '작은 작업을 보내고 API-Route 사용 로그를 확인합니다.'],
-          ],
-          note: '현재 API 연결 워크벤치는 Cursor 자체를 원클릭 대상으로 제공하지 않습니다. 이 가이드는 Cursor 내장 모델 Provider를 교체한다고 주장하지 않습니다.',
-        },
-      },
-      cta: 'API 연결 워크벤치 열기',
-      ccSwitchDownload: 'CC Switch 다운로드',
-      downloadsCta: '기타 클라이언트 다운로드',
+    platform: {
+      kicker: '운영자',
+      title: '내 AI API 플랫폼 개설',
+      body: '기존 고객, 커뮤니티, 판매 채널이 있고 자체 브랜드로 AI API 서비스를 제공하려는 분에게 적합합니다.',
+      steps: [
+        ['독립 플랫폼 페이지 확인', '기능, 비용, 운영 책임이 자신의 요구와 맞는지 먼저 확인합니다.'],
+        ['로그인', '앞으로 플랫폼을 소유하고 관리할 계정을 사용합니다.'],
+        ['플랫폼 정보 입력', '플랫폼 이름과 URL에 사용할 식별자를 입력합니다.'],
+        ['결제 방식 선택', '페이지에서 현재 활성화된 결제 방식을 사용합니다. 암호화폐는 네트워크와 토큰도 선택해야 합니다.'],
+        ['개설 비용 결제', '열린 결제 절차에서 결제를 완료합니다.'],
+        ['확인 대기', '결제가 확인되면 같은 계정에 관리 권한이 부여되고 초기 설정을 계속할 수 있습니다.'],
+      ],
+      afterTitle: '개설 후 권장 설정 순서',
+      after: [
+        '플랫폼 이름, 로고, 브랜드 정보, 도메인을 설정합니다.',
+        '판매할 모델을 선택하고 고객 가격을 설정합니다.',
+        '잔액 충전 방식과 판매 플랜을 설정합니다.',
+        '회원가입, API 키, 잔액 차감, 실제 모델 호출을 전체 테스트합니다.',
+        '플랫폼 주소를 공개하고 자신의 사용자에게 안내합니다.',
+      ],
+      notesTitle: '개설 전에 알아둘 점',
+      notes: [
+        '직접 VPS를 구매하거나 상위 모델 공급자를 연결할 필요가 없습니다.',
+        '계정, 결제, 과금, API 키, 사용 로그의 기본 흐름이 제공됩니다.',
+        '고객 확보, 가격 설정, 고객 지원, 일상 운영은 직접 담당합니다.',
+        '플랫폼은 고객이나 수익을 보장하지 않습니다.',
+      ],
+      links: [['/ai-api-reseller-platform', '독립 플랫폼 확인 및 개설']],
     },
     troubleshooting: {
-      kicker: '07 · 확인과 문제 해결',
-      title: '실제 요청 기록부터 확인하세요',
-      body: '사용 로그를 보면 클라이언트 설정 문제인지, API에 도달한 뒤 실패한 것인지 가장 빠르게 구분할 수 있습니다.',
-      successTitle: '첫 호출이 완료된 상태',
-      successItems: [
-        '터미널, SDK 또는 클라이언트에서 정상적인 모델 응답을 받았습니다.',
-        '사용 로그에 예상한 키와 모델의 새 기록이 있습니다.',
-        '사용량과 과금은 브라우저 추정값이 아닌 계정 기록을 따릅니다.',
-      ],
+      kicker: '문제 해결',
+      title: '화면에 보이는 증상부터 확인',
+      body: '모든 설정을 한꺼번에 바꾸지 말고 현재 보이는 문제부터 처리하세요.',
       items: [
-        ['로그에 요청이 없음', '요청이 API에 도달하지 않았을 수 있습니다. 엔드포인트와 클라이언트가 실제로 요청을 보냈는지 확인하세요.'],
-        ['인증 실패', '키가 활성 상태이며 Authorization: Bearer <API_KEY>로 전송되는지 확인하세요.'],
-        ['모델을 사용할 수 없음', '현재 키의 지원 모델 또는 /v1/models가 반환한 완전한 모델 ID만 사용하세요.'],
-        ['잘못된 경로', '/v1을 두 번 붙이지 마세요. Anthropic과 Claude는 OpenAI SDK Base URL이 아닌 루트 주소를 사용합니다.'],
-        ['잔액 또는 플랜 부족', '충전하거나 플랜을 활성화한 뒤 같은 최소 요청을 다시 보내세요.'],
+        ['사용 가능한 API 키가 없음', '키를 만들고 활성화한 뒤 AI Chat 또는 API 연결로 돌아갑니다.'],
+        ['계정 잔액 부족', '충전 후 보관된 메시지나 테스트 요청을 다시 전송합니다.'],
+        ['원하는 모델이 보이지 않음', '현재 등록된 모델만 표시됩니다. 화면의 현재 모델 목록에서 선택하세요.'],
+        ['AI Chat에 이미지를 올릴 수 없음', '선택한 모델이 이미지 첨부를 지원하지 않습니다. 이미지 이해 모델로 전환하세요.'],
+        ['클라이언트가 응답하지 않음', '키, 모델, 대상 클라이언트, 생성된 설정을 다시 확인한 뒤 새 테스트를 한 번 전송합니다.'],
+        ['성공한 호출 기록이 없음', '먼저 테스트 요청을 전송한 다음 사용 로그에서 최신 상태를 확인합니다.'],
+        ['플랫폼 결제가 계속 대기 중', '결제 확인 후 같은 계정으로 페이지를 새로 고칩니다. 계속 반영되지 않으면 사이트 지원팀에 문의하세요.'],
       ],
-      logsCta: '사용 로그 열기',
     },
   },
 };
-
-const DIRECTORY_COPY = {
-  en: {
-    title: 'On this page',
-    items: [
-      ['before', 'Before you start'],
-      ['values', 'Exact values'],
-      ['models', 'List models'],
-      ['request', 'First request'],
-      ['sdk', 'SDKs'],
-      ['clients', 'Clients'],
-    ],
-  },
-  zh: {
-    title: '本页目录',
-    items: [
-      ['before', '开始前检查'],
-      ['values', '准确参数'],
-      ['models', '查询模型'],
-      ['request', '第一次请求'],
-      ['sdk', 'SDK 接入'],
-      ['clients', '客户端接入'],
-    ],
-  },
-  ja: {
-    title: 'このページ',
-    items: [
-      ['before', '事前確認'],
-      ['values', '正確な値'],
-      ['models', 'モデル一覧'],
-      ['request', '最初のリクエスト'],
-      ['sdk', 'SDK'],
-      ['clients', 'クライアント'],
-    ],
-  },
-  ko: {
-    title: '이 페이지',
-    items: [
-      ['before', '시작 전 확인'],
-      ['values', '정확한 값'],
-      ['models', '모델 조회'],
-      ['request', '첫 요청'],
-      ['sdk', 'SDK'],
-      ['clients', '클라이언트'],
-    ],
-  },
-};
-
-function CodeBlock({ code, label, copied, copyLabel, copiedLabel, onCopy }) {
-  return (
-    <div className="overflow-hidden rounded-lg border border-[#493A31] bg-[#211914]">
-      <div className="flex items-center justify-between gap-3 border-b border-[#493A31] px-4 py-3 text-xs text-[#BDA999]">
-        <span className="font-mono uppercase tracking-[0.14em]">{label}</span>
-        <button
-          type="button"
-          onClick={onCopy}
-          className="inline-flex items-center gap-1.5 rounded-md border border-[#685043] px-2.5 py-1.5 font-semibold text-[#E8B29A] transition-colors hover:bg-[#3A2820]"
-        >
-          {copied ? <Check size={14} /> : <Copy size={14} />}
-          {copied ? copiedLabel : copyLabel}
-        </button>
-      </div>
-      <pre className="max-h-[440px] overflow-x-auto p-4 text-[12px] leading-6 text-[#F5EDE7] sm:p-5 sm:text-[13px]"><code>{code}</code></pre>
-    </div>
-  );
-}
 
 function SectionHeading({ kicker, title, body }) {
   return (
@@ -688,55 +703,60 @@ function SectionHeading({ kicker, title, body }) {
   );
 }
 
+function StepList({ items }) {
+  return (
+    <ol className="mt-7 list-decimal space-y-4 border-y border-page-divider py-5 pl-6 marker:font-bold marker:text-page-link">
+      {items.map(([title, body]) => (
+        <li key={title} className="pl-2">
+          <p className="text-sm font-bold text-page">{title}</p>
+          <p className="mt-1 text-sm leading-6 text-page-secondary">{body}</p>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+function BulletSection({ title, items }) {
+  return (
+    <div className="mt-7">
+      <h3 className="text-base font-bold text-page">{title}</h3>
+      <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-page-secondary marker:text-page-link">
+        {items.map((item) => <li key={item}>{item}</li>)}
+      </ul>
+    </div>
+  );
+}
+
+function PageLinks({ items }) {
+  return (
+    <p className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+      {items.map(([to, label]) => (
+        <Link key={to} to={to} className="font-bold text-page-link hover:underline">{label}</Link>
+      ))}
+    </p>
+  );
+}
+
+function CodeExample({ title, body, code }) {
+  return (
+    <div className="mt-7">
+      <h3 className="text-base font-bold text-page">{title}</h3>
+      <p className="mt-2 text-sm leading-6 text-page-secondary">{body}</p>
+      <pre className="mt-3 overflow-x-auto rounded-md border border-[#4A342A] bg-[#211814] p-4 text-xs leading-6 text-[#F5EDE7] sm:text-sm">
+        <code>{code}</code>
+      </pre>
+    </div>
+  );
+}
+
 export default function DocsQuickstart() {
   const { i18n } = useTranslation();
   const { user } = useAuth();
   const language = normalizeAppLanguage(i18n.resolvedLanguage || i18n.language);
   const copy = COPY[language] || COPY.en;
-  const directory = DIRECTORY_COPY[language] || DIRECTORY_COPY.en;
-  const [activeSnippet, setActiveSnippet] = useState('python');
-  const [activeClientGuide, setActiveClientGuide] = useState('codex');
-  const [activeSection, setActiveSection] = useState('before');
-  const [copiedId, setCopiedId] = useState('');
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const baseUrl = (API_ENDPOINTS[0]?.url || 'https://your-api-endpoint.example').replace(/\/+$/, '');
-  const clientGuide = copy.clients.guides[activeClientGuide] || copy.clients.guides.codex;
-
-  const snippets = useMemo(() => ({
-    python: `# pip install openai
-import os
-from openai import OpenAI
-
-client = OpenAI(
-    api_key=os.environ["API_ROUTE_API_KEY"],
-    base_url="${baseUrl}/v1",
-)
-
-response = client.chat.completions.create(
-    model="YOUR_MODEL_ID",
-    messages=[
-        {"role": "user", "content": "Reply with OK and the model name."}
-    ],
-)
-
-print(response.choices[0].message.content)`,
-    javascript: `// npm install openai
-import OpenAI from "openai";
-
-const client = new OpenAI({
-  apiKey: process.env.API_ROUTE_API_KEY,
-  baseURL: "${baseUrl}/v1",
-});
-
-const response = await client.chat.completions.create({
-  model: "YOUR_MODEL_ID",
-  messages: [
-    { role: "user", content: "Reply with OK and the model name." },
-  ],
-});
-
-console.log(response.choices[0].message.content);`,
-  }), [baseUrl]);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [activeSection, setActiveSection] = useState(copy.directory[0][0]);
 
   const modelsSnippet = `curl "${baseUrl}/v1/models" \\
   -H "Authorization: Bearer sk-your-api-key"`;
@@ -753,28 +773,21 @@ console.log(response.choices[0].message.content);`,
 
   useEffect(() => {
     const updateActiveSection = () => {
-      const current = directory.items.reduce((active, [id]) => {
-        const section = document.getElementById(id);
-        return section && section.getBoundingClientRect().top <= 140 ? id : active;
-      }, directory.items[0]?.[0] || '');
-      setActiveSection(current);
+      const lastSection = copy.directory.at(-1)?.[0];
+      const atPageBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+      const currentSection = atPageBottom
+        ? lastSection
+        : copy.directory.reduce((active, [id]) => {
+          const section = document.getElementById(id);
+          return section && section.getBoundingClientRect().top <= 140 ? id : active;
+        }, copy.directory[0][0]);
+      setActiveSection(currentSection);
     };
 
     updateActiveSection();
     window.addEventListener('scroll', updateActiveSection, { passive: true });
     return () => window.removeEventListener('scroll', updateActiveSection);
-  }, [directory.items]);
-
-  const handleCopy = async (id, value) => {
-    if (!navigator.clipboard?.writeText) return;
-    try {
-      await navigator.clipboard.writeText(value);
-      setCopiedId(id);
-      window.setTimeout(() => setCopiedId(''), 1600);
-    } catch {
-      // Clipboard permissions vary by browser and local preview context.
-    }
-  };
+  }, [copy.directory]);
 
   return (
     <div className="theme-light theme-claude min-h-[calc(100dvh-72px)] bg-page-bg text-page">
@@ -788,268 +801,111 @@ console.log(response.choices[0].message.content);`,
       )}
 
       <div className={`min-h-[calc(100dvh-72px)] ${user ? 'lg:mx-60' : ''}`}>
-        <div className="min-h-full bg-page-bg text-page">
-          <div className="mx-auto max-w-5xl px-5 py-12 sm:px-8 lg:py-16">
-            <div className="grid gap-10 lg:grid-cols-[170px_minmax(0,1fr)] lg:items-start">
-              <aside className="self-start lg:sticky lg:top-24" aria-label={directory.title}>
-                <div className="border-r border-page-divider pr-4">
-                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-page-secondary">{directory.title}</p>
-                  <nav className="mt-3 space-y-1">
-                    {directory.items.map(([id, label]) => (
-                      <a
-                        key={id}
-                        href={`#${id}`}
-                        aria-current={activeSection === id ? 'location' : undefined}
-                        className={`block py-1.5 text-sm transition-colors hover:text-page-link ${
-                          activeSection === id ? 'font-bold text-page-link' : 'text-page-secondary'
-                        }`}
-                      >
-                        {label}
-                      </a>
-                    ))}
-                  </nav>
+        <div className="mx-auto max-w-5xl px-5 py-12 sm:px-8 lg:py-16">
+          <div className="grid gap-10 lg:grid-cols-[170px_minmax(0,1fr)] lg:items-start">
+            <aside className="self-start lg:sticky lg:top-24" aria-label={copy.directoryTitle}>
+              <div className="border-r border-page-divider pr-4">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-page-secondary">{copy.directoryTitle}</p>
+                <nav className="mt-3 space-y-1">
+                  {copy.directory.map(([id, label], index) => (
+                    <a
+                      key={id}
+                      href={`#${id}`}
+                      aria-current={activeSection === id ? 'location' : undefined}
+                      className={`flex items-center gap-2 py-1.5 text-sm transition-colors hover:text-page-link ${
+                        activeSection === id ? 'font-bold text-page-link' : 'text-page-secondary'
+                      }`}
+                    >
+                      <span className="w-6 shrink-0 text-xs tabular-nums">{String(index + 1).padStart(2, '0')}</span>
+                      <span>{label}</span>
+                    </a>
+                  ))}
+                </nav>
+              </div>
+            </aside>
+
+            <main className="min-w-0 max-w-4xl space-y-16">
+              <header className="border-b border-page-divider pb-8">
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-page-link">{copy.eyebrow}</p>
+                <h1 className="mt-3 text-3xl font-bold tracking-[-0.04em] text-page sm:text-4xl">{copy.title}</h1>
+                <p className="mt-3 max-w-3xl text-sm leading-7 text-page-secondary sm:text-base">{copy.description}</p>
+              </header>
+
+              <section id="choose" className="scroll-mt-28">
+                <SectionHeading {...copy.choose} />
+                <div className="mt-7 divide-y divide-page-divider border-y border-page-divider">
+                  {copy.choose.items.map((item) => (
+                    <div key={item.title} className="grid gap-3 py-5 sm:grid-cols-[180px_1fr] sm:gap-6">
+                      <p className="text-sm font-bold text-page">{item.title}</p>
+                      <div>
+                        <p className="text-sm leading-6 text-page-secondary">{item.description}</p>
+                        <p className="mt-1 text-sm leading-6 text-page-secondary">
+                          <span className="font-semibold text-page">{copy.choose.successLabel}</span> {item.success}
+                        </p>
+                        <Link to={item.to} className="mt-2 inline-block text-sm font-bold text-page-link hover:underline">{item.link}</Link>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </aside>
+              </section>
 
-              <main className="min-w-0 max-w-4xl space-y-16">
-                <header className="border-b border-page-divider pb-8">
-                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-page-link">{copy.eyebrow}</p>
-                  <h1 className="mt-3 text-3xl font-bold tracking-[-0.04em] text-page sm:text-4xl">{copy.title}</h1>
-                  <p className="mt-3 max-w-3xl text-sm leading-7 text-page-secondary sm:text-base">{copy.description}</p>
-                </header>
+              <section id="prepare" className="scroll-mt-28">
+                <SectionHeading {...copy.prepare} />
+                <StepList items={copy.prepare.steps} />
+                <p className="mt-5 border-l-2 border-page-divider pl-4 text-sm leading-6 text-page-secondary">{copy.prepare.note}</p>
+                <PageLinks items={copy.prepare.links} />
+              </section>
 
-                <section id="before" className="scroll-mt-28">
-                  <SectionHeading {...copy.before} />
-                  <div className="mt-7 divide-y divide-page-divider border-y border-page-divider">
-                    {copy.before.items.map(([title, body]) => (
-                      <div key={title} className="grid gap-2 py-4 sm:grid-cols-[180px_1fr] sm:gap-6">
-                        <p className="text-sm font-bold text-page">{title}</p>
-                        <p className="text-sm leading-6 text-page-secondary">{body}</p>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-5 flex flex-wrap gap-4">
-                    <Link to="/api-keys" className="inline-flex items-center gap-2 text-sm font-bold text-page-link hover:underline">
-                      {copy.before.keyCta}
-                      <ExternalLink size={15} />
-                    </Link>
-                    <Link to="/topup" className="inline-flex items-center gap-2 text-sm font-bold text-page-link hover:underline">
-                      {copy.before.topupCta}
-                      <ArrowRight size={15} />
-                    </Link>
-                  </div>
-                </section>
+              <section id="chat" className="scroll-mt-28">
+                <SectionHeading {...copy.chat} />
+                <StepList items={copy.chat.steps} />
+                <BulletSection title={copy.chat.abilitiesTitle} items={copy.chat.abilities} />
+                <BulletSection title={copy.chat.notesTitle} items={copy.chat.notes} />
+                <PageLinks items={copy.chat.links} />
+              </section>
 
-                <section id="values" className="scroll-mt-28">
-                  <SectionHeading {...copy.values} />
-                  <div className="mt-7 divide-y divide-page-divider border-y border-page-divider">
-                    {copy.values.items.map(([title, body]) => (
-                      <div key={title} className="grid gap-2 py-4 sm:grid-cols-[180px_1fr] sm:gap-6">
-                        <p className="text-sm font-bold text-page-link">{title}</p>
-                        <p className="text-sm leading-6 text-page-secondary">{body}</p>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-7 border-l-2 border-page-divider pl-5">
-                    <p className="text-xs font-bold uppercase tracking-[0.14em] text-page-secondary">{copy.values.example}</p>
-                    <code className="mt-2 block break-all text-sm text-page">{baseUrl}</code>
-                    <div className="mt-5 divide-y divide-page-divider border-y border-page-divider">
-                      <div className="grid gap-2 py-3 sm:grid-cols-[210px_1fr] sm:gap-5">
-                        <p className="text-xs font-semibold text-page-secondary">{copy.values.openai}</p>
-                        <code className="block break-all text-xs text-page-link">{baseUrl}/v1</code>
-                      </div>
-                      <div className="grid gap-2 py-3 sm:grid-cols-[210px_1fr] sm:gap-5">
-                        <p className="text-xs font-semibold text-page-secondary">{copy.values.anthropic}</p>
-                        <code className="block break-all text-xs text-page-link">{baseUrl}</code>
-                      </div>
+              <section id="api" className="scroll-mt-28">
+                <SectionHeading {...copy.api} />
+                <StepList items={copy.api.steps} />
+                <BulletSection title={copy.api.recommendedTitle} items={copy.api.recommended} />
+                <Link to="/clients" className="mt-5 inline-block text-sm font-bold text-page-link hover:underline">
+                  {copy.api.downloadCta}
+                </Link>
+                <BulletSection title={copy.api.fallbackTitle} items={copy.api.fallback} />
+                <BulletSection title={copy.api.successTitle} items={copy.api.success} />
+                <PageLinks items={copy.api.links} />
+              </section>
+
+              <section id="basics" className="scroll-mt-28">
+                <SectionHeading {...copy.basics} />
+                <div className="mt-6 border-l-2 border-page-divider pl-4">
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-page-secondary">{copy.basics.endpointLabel}</p>
+                  <code className="mt-2 block break-all text-sm text-page-link">{baseUrl}</code>
+                </div>
+                <CodeExample title={copy.basics.modelsTitle} body={copy.basics.modelsBody} code={modelsSnippet} />
+                <CodeExample title={copy.basics.requestTitle} body={copy.basics.requestBody} code={requestSnippet} />
+              </section>
+
+              <section id="platform" className="scroll-mt-28">
+                <SectionHeading {...copy.platform} />
+                <StepList items={copy.platform.steps} />
+                <BulletSection title={copy.platform.afterTitle} items={copy.platform.after} />
+                <BulletSection title={copy.platform.notesTitle} items={copy.platform.notes} />
+                <PageLinks items={copy.platform.links} />
+              </section>
+
+              <section id="troubleshooting" className="scroll-mt-28">
+                <SectionHeading {...copy.troubleshooting} />
+                <div className="mt-7 divide-y divide-page-divider border-y border-page-divider">
+                  {copy.troubleshooting.items.map(([title, body]) => (
+                    <div key={title} className="grid gap-2 py-4 sm:grid-cols-[200px_1fr] sm:gap-6">
+                      <p className="text-sm font-bold text-page">{title}</p>
+                      <p className="text-sm leading-6 text-page-secondary">{body}</p>
                     </div>
-                    <p className="mt-4 text-sm leading-6 text-page-secondary">{copy.values.anthropicNote}</p>
-                  </div>
-                  <Link to="/pricing" className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-page-link hover:underline">
-                    {copy.values.pricingCta}
-                    <ArrowRight size={15} />
-                  </Link>
-                </section>
-
-                <section id="models" className="scroll-mt-28">
-                  <SectionHeading {...copy.models} />
-                  <div className="mt-7">
-                    <CodeBlock
-                      code={modelsSnippet}
-                      label={copy.models.label}
-                      copied={copiedId === 'models'}
-                      copyLabel={copy.copy}
-                      copiedLabel={copy.copied}
-                      onCopy={() => handleCopy('models', modelsSnippet)}
-                    />
-                  </div>
-                  <div className="mt-6 border-l-2 border-page-link pl-5">
-                    <p className="font-bold text-page">{copy.models.resultTitle}</p>
-                    <p className="mt-2 text-sm leading-7 text-page-secondary">{copy.models.resultBody}</p>
-                  </div>
-                </section>
-
-                <section id="request" className="scroll-mt-28">
-                  <SectionHeading {...copy.request} />
-                  <div className="mt-7">
-                    <CodeBlock
-                      code={requestSnippet}
-                      label={copy.request.label}
-                      copied={copiedId === 'request'}
-                      copyLabel={copy.copy}
-                      copiedLabel={copy.copied}
-                      onCopy={() => handleCopy('request', requestSnippet)}
-                    />
-                  </div>
-                  <div className="mt-6 border-l-2 border-emerald-600 pl-5">
-                    <p className="flex items-center gap-2 font-bold text-page">
-                      <Check size={17} className="text-emerald-600" />
-                      {copy.request.successTitle}
-                    </p>
-                    <p className="mt-2 text-sm leading-7 text-page-secondary">{copy.request.successBody}</p>
-                  </div>
-                </section>
-
-                <section id="sdk" className="scroll-mt-28">
-                  <SectionHeading {...copy.sdk} />
-                  <div className="mt-7 border-b border-page-divider">
-                    <div className="flex gap-6 overflow-x-auto">
-                      {Object.entries(copy.sdk.tabs).map(([id, label]) => (
-                        <button
-                          key={id}
-                          type="button"
-                          onClick={() => setActiveSnippet(id)}
-                          className={`shrink-0 border-b-2 px-0 pb-2.5 text-sm font-bold transition-colors ${
-                            activeSnippet === id
-                              ? 'border-page-link text-page-link'
-                              : 'border-transparent text-page-secondary hover:text-page'
-                          }`}
-                        >
-                          {label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="mt-3">
-                    <CodeBlock
-                      code={snippets[activeSnippet]}
-                      label={copy.sdk.tabs[activeSnippet]}
-                      copied={copiedId === activeSnippet}
-                      copyLabel={copy.copy}
-                      copiedLabel={copy.copied}
-                      onCopy={() => handleCopy(activeSnippet, snippets[activeSnippet])}
-                    />
-                  </div>
-                </section>
-
-                <section id="clients" className="scroll-mt-28">
-                  <SectionHeading {...copy.clients} />
-                  <div className="mt-7">
-                    <p className="text-xs font-bold uppercase tracking-[0.14em] text-page-secondary">{copy.clients.selectLabel}</p>
-                    <div className="mt-3 flex gap-2 overflow-x-auto border-b border-page-divider pb-3" role="tablist" aria-label={copy.clients.selectLabel}>
-                      {Object.entries(copy.clients.guides).map(([id, guide]) => (
-                        <button
-                          key={id}
-                          type="button"
-                          role="tab"
-                          aria-selected={activeClientGuide === id}
-                          onClick={() => setActiveClientGuide(id)}
-                          className={`shrink-0 rounded-full border px-4 py-2 text-sm font-bold transition-colors ${
-                            activeClientGuide === id
-                              ? 'border-page-link bg-page-link text-white'
-                              : 'border-page-divider text-page-secondary hover:bg-page-surface-hover hover:text-page'
-                          }`}
-                        >
-                          {guide.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="mt-6 rounded-2xl border border-page-divider bg-page-card-bg p-5 sm:p-7" role="tabpanel">
-                    <div className="flex flex-wrap items-center gap-3">
-                      <h3 className="text-xl font-bold tracking-[-0.02em] text-page sm:text-2xl">{clientGuide.title}</h3>
-                      {(activeClientGuide === 'codex' || activeClientGuide === 'claudeCode') && (
-                        <span className="rounded-full bg-page-link/10 px-2.5 py-1 text-xs font-bold text-page-link">{copy.clients.recommended}</span>
-                      )}
-                    </div>
-                    <p className="mt-3 text-sm leading-7 text-page-secondary">{clientGuide.intro}</p>
-
-                    <ol className="mt-6 divide-y divide-page-divider border-y border-page-divider">
-                      {clientGuide.steps.map(([title, body], index) => (
-                        <li key={title} className="grid gap-3 py-4 sm:grid-cols-[36px_170px_1fr] sm:gap-5">
-                          <span className="font-mono text-xs text-page-muted">{String(index + 1).padStart(2, '0')}</span>
-                          <p className="font-bold text-page">{title}</p>
-                          <p className="text-sm leading-6 text-page-secondary">{body}</p>
-                        </li>
-                      ))}
-                    </ol>
-
-                    {clientGuide.showDownload && (
-                      <div className="mt-5 grid gap-3 border-b border-page-divider pb-5 sm:grid-cols-[170px_1fr] sm:gap-5">
-                        <p className="text-sm font-bold text-page">{copy.clients.ccSwitchDownload}</p>
-                        <div className="flex flex-wrap gap-x-5 gap-y-2">
-                          {CC_SWITCH_DOWNLOADS.map((download) => (
-                            <a
-                              key={download.href}
-                              href={download.href}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="inline-flex items-center gap-1.5 text-sm font-bold text-page-link hover:underline"
-                            >
-                              {download.label}
-                              <ExternalLink size={14} />
-                            </a>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="mt-5 border-l-2 border-page-link pl-5">
-                      <p className="text-sm leading-7 text-page-secondary">{clientGuide.note}</p>
-                    </div>
-                  </div>
-
-                  <div className="mt-5 flex flex-wrap gap-4">
-                    <Link to="/api-connect" className="inline-flex items-center gap-2 text-sm font-bold text-page-link hover:underline">
-                      {copy.clients.cta}
-                      <ExternalLink size={15} />
-                    </Link>
-                    <Link to="/clients" className="inline-flex items-center gap-2 text-sm font-bold text-page-link hover:underline">
-                      {copy.clients.downloadsCta}
-                      <ArrowRight size={15} />
-                    </Link>
-                  </div>
-                </section>
-
-                <section id="troubleshooting" className="scroll-mt-28">
-                  <SectionHeading {...copy.troubleshooting} />
-                  <div className="mt-7 border-y border-page-divider py-5">
-                    <p className="font-bold text-page">{copy.troubleshooting.successTitle}</p>
-                    <ul className="mt-3 space-y-2">
-                      {copy.troubleshooting.successItems.map((item) => (
-                        <li key={item} className="flex gap-2 text-sm leading-6 text-page-secondary">
-                          <Check size={16} className="mt-1 shrink-0 text-emerald-600" />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div className="mt-6 divide-y divide-page-divider border-y border-page-divider">
-                    {copy.troubleshooting.items.map(([title, body]) => (
-                      <div key={title} className="grid gap-2 py-4 sm:grid-cols-[190px_1fr] sm:gap-6">
-                        <p className="text-sm font-bold text-page-link">{title}</p>
-                        <p className="text-sm leading-6 text-page-secondary">{body}</p>
-                      </div>
-                    ))}
-                  </div>
-                  <Link to="/dashboard/logs" className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-page-link hover:underline">
-                    {copy.troubleshooting.logsCta}
-                    <ExternalLink size={15} />
-                  </Link>
-                </section>
-              </main>
-            </div>
+                  ))}
+                </div>
+              </section>
+            </main>
           </div>
         </div>
       </div>
