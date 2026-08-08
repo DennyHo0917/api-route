@@ -54,6 +54,12 @@ OpenAI-compatible clients that allow a custom Base URL, API key, and model name 
 
 Relevant page: [App integrations](https://www.api-route.com/apps)
 
+### Coding client setup
+
+The quickstart prepares one API key, Base URL, model check, and test request, then provides separate final-step guidance for Codex, Claude Code, CC Switch, VS Code, and Cursor. VS Code is treated as an editor that hosts an AI client. The documented Cursor path uses Codex or Claude Code from Cursor's integrated terminal and does not claim to replace Cursor's built-in model provider.
+
+Relevant page: [Coding client setup guide](https://www.api-route.com/docs/quickstart)
+
 ### White-label AI API reseller platform
 
 API-Route can be used to launch a branded AI API reseller platform. This is useful for people with users, communities, customers, or model/API channels who want to sell AI API access and plans.
@@ -98,6 +104,7 @@ API-Route is a hosted OpenAI-compatible AI API gateway that lets you call multip
 - [Pricing](https://www.api-route.com/pricing)
 - [Plans](https://www.api-route.com/packages)
 - [App integrations](https://www.api-route.com/apps)
+- [Coding client setup](https://www.api-route.com/docs/quickstart)
 - [Reseller platform](https://www.api-route.com/ai-api-reseller-platform)
 - [FAQ](https://www.api-route.com/faq)
 - [Sitemap](https://www.api-route.com/sitemap.xml)

@@ -20,8 +20,8 @@ const CC_SWITCH_DOWNLOADS = DOWNLOAD_TOOLS
 const COPY = {
   en: {
     eyebrow: 'Developer docs · Quickstart',
-    title: 'Make your first API-Route request',
-    description: 'Use your own API key to list the models available to that key, send a request to /v1/chat/completions, and verify the call in usage logs.',
+    title: 'Connect Codex, Claude Code, CC Switch, VS Code, and Cursor',
+    description: 'Prepare and verify one API-Route key once, then follow the final branch for the coding client you actually use.',
     copy: 'Copy code',
     copied: 'Copied',
     before: {
@@ -75,18 +75,76 @@ const COPY = {
     },
     clients: {
       kicker: '06 · Clients',
-      title: 'Import client configuration with CC Switch',
-      body: 'The recommended workflow is to generate the configuration in API Access and import it with CC Switch. Manual configuration remains available when one-click import is not suitable.',
-      items: [
-        ['Prepare the configuration', 'In API Access, select an enabled key, a model available to that key, and the endpoint for your network.'],
-        ['Recommended: CC Switch', 'Select the target app, then use one-click import. CC Switch writes the generated provider configuration into the client.'],
-        ['Alternative: manual setup', 'Switch to Manual Configuration, choose the client, then copy or download the generated file and place it at the displayed path.'],
-      ],
+      title: 'Choose the client you want to connect',
+      body: 'The account, balance, API key, Base URL, model check, and test request above are shared. Only this last configuration step changes by client.',
+      selectLabel: 'Client guide',
+      recommended: 'Recommended',
+      guides: {
+        codex: {
+          label: 'Codex',
+          title: 'Use API-Route with Codex',
+          intro: 'The shortest path is to generate a Codex profile in API Access and import it through CC Switch. Manual files remain available when you want to inspect every field.',
+          steps: [
+            ['Generate the profile', 'Open API Access and select the verified key, an available model, and the endpoint that works on your network.'],
+            ['Import into Codex', 'Keep CC Switch mode selected, choose Codex as the target app, then run the one-click import.'],
+            ['Restart the session', 'Open a new Codex session so it reads the imported provider, model, Base URL, and API key.'],
+            ['Verify the request', 'Send a small task and confirm that the expected model and key appear in API-Route Usage Logs.'],
+          ],
+          note: 'For manual setup, choose Codex under Manual Configuration and place the generated values in ~/.codex/config.toml and ~/.codex/auth.json.',
+        },
+        claudeCode: {
+          label: 'Claude Code',
+          title: 'Use API-Route with Claude Code',
+          intro: 'Claude Code uses the Anthropic-style root endpoint without /v1. Let API Access generate that format instead of adapting an OpenAI URL by hand.',
+          steps: [
+            ['Generate the profile', 'Open API Access and select the verified key, model, and endpoint.'],
+            ['Import into Claude Code', 'In CC Switch mode choose Claude Code as the target app, then run the one-click import.'],
+            ['Restart Claude Code', 'Start a new terminal session so Claude Code reloads the imported environment settings.'],
+            ['Verify the request', 'Send a short prompt and confirm the request in API-Route Usage Logs.'],
+          ],
+          note: 'For manual setup, choose Claude Code and use the generated ~/.claude/settings.json. Its Base URL is the root endpoint, not the OpenAI-compatible /v1 address.',
+        },
+        ccSwitch: {
+          label: 'CC Switch',
+          title: 'Import an API-Route provider with CC Switch',
+          intro: 'CC Switch is the configuration manager in this workflow. It writes the selected API-Route provider into Codex, Claude Code, or another supported target client.',
+          steps: [
+            ['Install CC Switch', 'Download and open CC Switch before starting the import.'],
+            ['Prepare the provider', 'In API Access select the verified key, model, endpoint, and the target app that will use them.'],
+            ['Run one-click import', 'Choose “Import to CC Switch” and allow the browser to open the ccswitch link.'],
+            ['Check the target app', 'Confirm the new API-Route provider is enabled, then start a fresh session in the target client.'],
+          ],
+          note: 'CC Switch does not send model requests itself. Usage and billing appear only after the target client makes a real API call.',
+          showDownload: true,
+        },
+        vscode: {
+          label: 'VS Code',
+          title: 'Use API-Route from VS Code',
+          intro: 'VS Code is the editor, not the API client. Connect the Codex or Claude Code workflow you run inside VS Code, then use that client from the editor or integrated terminal.',
+          steps: [
+            ['Choose the actual AI client', 'Decide whether your VS Code workflow uses Codex or Claude Code.'],
+            ['Configure that client', 'In API Access import the Codex or Claude Code profile with CC Switch, or use its manual configuration.'],
+            ['Return to VS Code', 'Restart the relevant extension, terminal, or client session so it reloads the provider settings.'],
+            ['Verify the request', 'Run a small task and check API-Route Usage Logs for the request.'],
+          ],
+          note: 'Do not look for an API-Route field in VS Code core settings. The Base URL, API key, and model belong to the AI client or extension you use inside VS Code.',
+        },
+        cursor: {
+          label: 'Cursor',
+          title: 'Use API-Route from Cursor',
+          intro: 'For the current supported workflow, run Codex or Claude Code from Cursor’s integrated terminal and configure that client with API-Route.',
+          steps: [
+            ['Choose Codex or Claude Code', 'Pick the command-line client you want to run inside Cursor.'],
+            ['Configure that target', 'Use API Access and CC Switch to import the matching Codex or Claude Code profile.'],
+            ['Open a fresh terminal', 'Restart Cursor’s integrated terminal and launch the configured client there.'],
+            ['Verify the request', 'Send a small task and confirm it appears in API-Route Usage Logs.'],
+          ],
+          note: 'Cursor itself is not currently listed as a one-click target in the API Access workbench. This guide does not claim that Cursor’s built-in model provider has been replaced.',
+        },
+      },
       cta: 'Open API Access',
       ccSwitchDownload: 'Download CC Switch',
       downloadsCta: 'Other client downloads',
-      noteTitle: 'Why CC Switch is the recommended method',
-      noteBody: 'It imports the selected endpoint, API key, model ID, and client-specific format together, reducing path and configuration mistakes. Use manual setup when CC Switch is unavailable or you need to review every field yourself.',
     },
     troubleshooting: {
       kicker: '07 · Verify and troubleshoot',
@@ -110,8 +168,8 @@ const COPY = {
   },
   zh: {
     eyebrow: '开发者文档 · 快速开始',
-    title: '第一次调用 API-Route',
-    description: '使用你自己的 API Key 获取该密钥可用的模型，向 /v1/chat/completions 发送请求，并在调用日志中确认结果。',
+    title: '接入 Codex、Claude Code、CC Switch、VSCode 与 Cursor',
+    description: '账号、余额、API Key、Base URL、模型验证和第一次请求只准备一次，最后再按你实际使用的客户端完成配置。',
     copy: '复制代码',
     copied: '已复制',
     before: {
@@ -165,18 +223,76 @@ const COPY = {
     },
     clients: {
       kicker: '06 · 客户端接入',
-      title: '使用 CC Switch 导入客户端配置',
-      body: '最佳实践是在 API 接入工作台生成配置，再通过 CC Switch 一键导入。无法使用一键导入或需要自行核对字段时，也可以手动配置。',
-      items: [
-        ['准备配置', '在 API 接入工作台选择已启用的密钥、该密钥可用的模型，以及适合当前网络的调用节点。'],
-        ['推荐：CC Switch 一键导入', '选择要导入的目标应用，然后点击一键导入。CC Switch 会把生成的 Provider 配置写入对应客户端。'],
-        ['备选：手动配置', '切换到“手动配置”，选择客户端，复制或下载生成的配置文件，并按照页面显示的路径放置。'],
-      ],
+      title: '选择你要接入的客户端',
+      body: '前面的账号、余额、API Key、Base URL、模型查询和测试请求都相同。只有最后一步需要根据客户端选择不同配置方式。',
+      selectLabel: '客户端指南',
+      recommended: '推荐',
+      guides: {
+        codex: {
+          label: 'Codex',
+          title: '在 Codex 中使用 API-Route',
+          intro: '最省事的方式是在 API 接入工作台生成 Codex 配置，再通过 CC Switch 一键导入；需要逐项核对时也可以手动配置。',
+          steps: [
+            ['生成配置', '打开 API 接入工作台，选择已经验证的密钥、该密钥可用的模型和当前网络可用的节点。'],
+            ['导入 Codex', '保持 CC Switch 接入方式，目标应用选择 Codex，然后执行一键导入。'],
+            ['重启会话', '新建 Codex 会话，让客户端重新读取 Provider、模型、Base URL 和 API Key。'],
+            ['验证调用', '发送一个小任务，并在 API-Route 调用日志中确认密钥和模型是否符合预期。'],
+          ],
+          note: '手动配置时，在工作台选择 Codex，把生成内容分别放入 ~/.codex/config.toml 和 ~/.codex/auth.json。',
+        },
+        claudeCode: {
+          label: 'Claude Code',
+          title: '在 Claude Code 中使用 API-Route',
+          intro: 'Claude Code 使用 Anthropic 格式的根地址，不带 /v1。直接让 API 接入工作台生成对应格式，不要手动改写 OpenAI 地址。',
+          steps: [
+            ['生成配置', '打开 API 接入工作台，选择已经验证的密钥、模型和调用节点。'],
+            ['导入 Claude Code', '在 CC Switch 模式中把目标应用设为 Claude Code，然后执行一键导入。'],
+            ['重启 Claude Code', '新开一个终端或会话，让 Claude Code 重新读取导入的环境配置。'],
+            ['验证调用', '发送一个短提示词，并在 API-Route 调用日志中确认请求。'],
+          ],
+          note: '手动配置时选择 Claude Code，使用工作台生成的 ~/.claude/settings.json。Base URL 应为根地址，不是带 /v1 的 OpenAI 兼容地址。',
+        },
+        ccSwitch: {
+          label: 'CC Switch',
+          title: '使用 CC Switch 导入 API-Route Provider',
+          intro: 'CC Switch 在这里负责管理和写入配置。它会把 API-Route Provider 导入 Codex、Claude Code 或其他受支持的目标客户端。',
+          steps: [
+            ['安装 CC Switch', '先下载并打开 CC Switch，再开始导入。'],
+            ['准备 Provider', '在 API 接入工作台选择已验证的密钥、模型、节点和最终要使用的目标应用。'],
+            ['执行一键导入', '点击“一键导入到 CC Switch”，并允许浏览器打开 ccswitch 链接。'],
+            ['检查目标应用', '确认新的 API-Route Provider 已启用，然后在目标客户端新建会话。'],
+          ],
+          note: 'CC Switch 本身不发送模型请求。只有目标客户端真实调用后，API-Route 才会产生用量和扣费记录。',
+          showDownload: true,
+        },
+        vscode: {
+          label: 'VS Code',
+          title: '在 VS Code 中使用 API-Route',
+          intro: 'VS Code 是编辑器，不是直接发送模型请求的 API 客户端。你需要配置在 VS Code 中运行的 Codex 或 Claude Code，再从编辑器或集成终端使用它。',
+          steps: [
+            ['确认实际客户端', '先确定你的 VS Code 工作流使用的是 Codex 还是 Claude Code。'],
+            ['配置对应客户端', '在 API 接入工作台中，通过 CC Switch 导入 Codex 或 Claude Code 配置；也可以选择对应的手动配置。'],
+            ['回到 VS Code', '重启相关扩展、终端或客户端会话，让它重新读取 Provider 配置。'],
+            ['验证调用', '执行一个小任务，并在 API-Route 调用日志中检查请求。'],
+          ],
+          note: '不要在 VS Code 核心设置里寻找 API-Route 输入框。Base URL、API Key 和模型应配置在你实际使用的 AI 客户端或扩展中。',
+        },
+        cursor: {
+          label: 'Cursor',
+          title: '在 Cursor 中使用 API-Route',
+          intro: '当前受支持的方式是在 Cursor 集成终端中运行 Codex 或 Claude Code，并为这个实际客户端配置 API-Route。',
+          steps: [
+            ['选择 Codex 或 Claude Code', '确定你准备在 Cursor 集成终端里运行的命令行客户端。'],
+            ['配置对应目标', '通过 API 接入工作台和 CC Switch 导入匹配的 Codex 或 Claude Code 配置。'],
+            ['新开集成终端', '重启 Cursor 的集成终端，再启动已经配置好的客户端。'],
+            ['验证调用', '发送一个小任务，并在 API-Route 调用日志中确认请求。'],
+          ],
+          note: '当前 API 接入工作台没有把 Cursor 本身列为一键导入目标。本指南不会声称已经替换 Cursor 内置的模型供应商。',
+        },
+      },
       cta: '打开 API 接入工作台',
       ccSwitchDownload: '下载 CC Switch',
       downloadsCta: '下载其他客户端',
-      noteTitle: '为什么推荐使用 CC Switch',
-      noteBody: '它会同时导入所选节点、API Key、模型 ID 和客户端对应格式，减少路径与字段填写错误。只有无法使用 CC Switch，或需要逐项审查配置时，再使用手动方式。',
     },
     troubleshooting: {
       kicker: '07 · 验证与排错',
@@ -200,8 +316,8 @@ const COPY = {
   },
   ja: {
     eyebrow: '開発者ドキュメント · クイックスタート',
-    title: 'API-Route で最初のリクエストを送る',
-    description: '自分の API キーで利用可能なモデルを取得し、/v1/chat/completions にリクエストを送り、利用ログで結果を確認します。',
+    title: 'Codex、Claude Code、CC Switch、VSCode、Cursor を接続する',
+    description: 'アカウント、残高、API キー、Base URL、モデル確認、最初のテストは一度だけ行い、最後に利用するクライアント別の設定へ進みます。',
     copy: 'コードをコピー',
     copied: 'コピー済み',
     before: {
@@ -255,18 +371,76 @@ const COPY = {
     },
     clients: {
       kicker: '06 · クライアント',
-      title: 'CC Switch でクライアント設定を取り込む',
-      body: '推奨手順は、API 接続ワークベンチで設定を生成し、CC Switch でワンクリック取り込みを行う方法です。必要な場合は手動設定も利用できます。',
-      items: [
-        ['設定を準備', 'API 接続ワークベンチで有効なキー、そのキーで利用できるモデル、ネットワークに合う接続先を選びます。'],
-        ['推奨：CC Switch', '取り込み先のアプリを選び、ワンクリック取り込みを実行します。生成された Provider 設定が対象クライアントに書き込まれます。'],
-        ['代替：手動設定', '「手動設定」に切り替えてクライアントを選び、生成されたファイルをコピーまたはダウンロードして表示されたパスに配置します。'],
-      ],
+      title: '接続するクライアントを選ぶ',
+      body: '上記のアカウント、残高、API キー、Base URL、モデル確認、テストリクエストは共通です。最後の設定だけがクライアントごとに異なります。',
+      selectLabel: 'クライアントガイド',
+      recommended: '推奨',
+      guides: {
+        codex: {
+          label: 'Codex',
+          title: 'Codex で API-Route を使う',
+          intro: '最短の方法は、API 接続ワークベンチで Codex 用プロファイルを生成し、CC Switch から取り込むことです。項目を確認したい場合は手動設定も利用できます。',
+          steps: [
+            ['プロファイルを生成', 'API 接続ワークベンチで確認済みのキー、利用可能なモデル、ネットワークに合う接続先を選びます。'],
+            ['Codex に取り込む', 'CC Switch 方式のまま対象アプリに Codex を選び、ワンクリック取り込みを実行します。'],
+            ['セッションを再起動', '新しい Codex セッションを開き、Provider、モデル、Base URL、API キーを読み直します。'],
+            ['リクエストを確認', '小さなタスクを実行し、API-Route の利用ログでキーとモデルを確認します。'],
+          ],
+          note: '手動設定では Codex を選び、生成内容を ~/.codex/config.toml と ~/.codex/auth.json に配置します。',
+        },
+        claudeCode: {
+          label: 'Claude Code',
+          title: 'Claude Code で API-Route を使う',
+          intro: 'Claude Code は /v1 なしの Anthropic 形式ルート URL を使います。OpenAI 用 URL を手で直さず、ワークベンチに正しい形式を生成させてください。',
+          steps: [
+            ['プロファイルを生成', 'API 接続ワークベンチで確認済みのキー、モデル、接続先を選びます。'],
+            ['Claude Code に取り込む', 'CC Switch 方式で対象アプリに Claude Code を選び、ワンクリック取り込みを実行します。'],
+            ['Claude Code を再起動', '新しいターミナルまたはセッションを開き、環境設定を読み直します。'],
+            ['リクエストを確認', '短いプロンプトを送り、API-Route の利用ログを確認します。'],
+          ],
+          note: '手動設定では Claude Code を選び、生成された ~/.claude/settings.json を使います。Base URL は /v1 付きではなくルート URL です。',
+        },
+        ccSwitch: {
+          label: 'CC Switch',
+          title: 'CC Switch で API-Route Provider を取り込む',
+          intro: 'CC Switch はこの手順で設定を管理し、Codex、Claude Code、その他の対応クライアントへ API-Route Provider を書き込みます。',
+          steps: [
+            ['CC Switch をインストール', '取り込み前に CC Switch をダウンロードして起動します。'],
+            ['Provider を準備', 'API 接続ワークベンチで確認済みのキー、モデル、接続先、対象アプリを選びます。'],
+            ['ワンクリック取り込み', '「CC Switch に取り込む」を押し、ブラウザから ccswitch リンクを開くことを許可します。'],
+            ['対象アプリを確認', 'API-Route Provider が有効になっていることを確認し、対象クライアントで新しいセッションを開始します。'],
+          ],
+          note: 'CC Switch 自体はモデルへリクエストを送りません。対象クライアントが実際に呼び出した後に、利用量と請求が記録されます。',
+          showDownload: true,
+        },
+        vscode: {
+          label: 'VS Code',
+          title: 'VS Code から API-Route を使う',
+          intro: 'VS Code はエディターであり、API クライアントそのものではありません。VS Code 内で使う Codex または Claude Code を設定します。',
+          steps: [
+            ['実際の AI クライアントを確認', 'VS Code のワークフローが Codex と Claude Code のどちらを使うか確認します。'],
+            ['そのクライアントを設定', 'API 接続ワークベンチから、対応する Codex または Claude Code 設定を取り込みます。'],
+            ['VS Code に戻る', '関連する拡張機能、ターミナル、クライアントセッションを再起動します。'],
+            ['リクエストを確認', '小さなタスクを実行し、API-Route の利用ログを確認します。'],
+          ],
+          note: 'VS Code 本体の設定に API-Route の入力欄があるわけではありません。Base URL、API キー、モデルは実際に使う AI クライアントまたは拡張機能側へ設定します。',
+        },
+        cursor: {
+          label: 'Cursor',
+          title: 'Cursor から API-Route を使う',
+          intro: '現在対応している方法は、Cursor の統合ターミナルで Codex または Claude Code を動かし、そのクライアントへ API-Route を設定することです。',
+          steps: [
+            ['Codex または Claude Code を選ぶ', 'Cursor の統合ターミナルで使うコマンドラインクライアントを決めます。'],
+            ['対象クライアントを設定', 'API 接続ワークベンチと CC Switch で、対応する設定を取り込みます。'],
+            ['新しいターミナルを開く', 'Cursor の統合ターミナルを再起動し、設定済みクライアントを起動します。'],
+            ['リクエストを確認', '小さなタスクを送り、API-Route の利用ログを確認します。'],
+          ],
+          note: '現在、API 接続ワークベンチでは Cursor 自体をワンクリック取り込み先として扱っていません。このガイドは Cursor 内蔵 Provider の置き換えを案内するものではありません。',
+        },
+      },
       cta: 'API 接続ワークベンチを開く',
       ccSwitchDownload: 'CC Switch をダウンロード',
       downloadsCta: 'その他のクライアントをダウンロード',
-      noteTitle: 'CC Switch を推奨する理由',
-      noteBody: '接続先、API キー、モデル ID、クライアント別の形式をまとめて取り込めるため、パスや項目の入力ミスを減らせます。CC Switch を利用できない場合や、各項目を自分で確認したい場合は手動設定を使います。',
     },
     troubleshooting: {
       kicker: '07 · 確認とトラブルシューティング',
@@ -290,8 +464,8 @@ const COPY = {
   },
   ko: {
     eyebrow: '개발자 문서 · 빠른 시작',
-    title: 'API-Route에서 첫 요청 보내기',
-    description: '내 API 키로 사용할 수 있는 모델을 조회하고 /v1/chat/completions로 요청을 보낸 뒤 사용 로그에서 결과를 확인합니다.',
+    title: 'Codex, Claude Code, CC Switch, VS Code, Cursor 연결하기',
+    description: '계정, 잔액, API 키, Base URL, 모델 확인, 첫 테스트는 한 번만 준비하고 마지막 단계에서 실제 사용하는 클라이언트별 설정을 진행합니다.',
     copy: '코드 복사',
     copied: '복사됨',
     before: {
@@ -345,18 +519,76 @@ const COPY = {
     },
     clients: {
       kicker: '06 · 클라이언트',
-      title: 'CC Switch로 클라이언트 설정 가져오기',
-      body: '권장 방식은 API 연결 워크벤치에서 설정을 만든 뒤 CC Switch로 한 번에 가져오는 것입니다. 원클릭 가져오기를 사용할 수 없거나 직접 검토해야 할 때는 수동 설정도 사용할 수 있습니다.',
-      items: [
-        ['설정 준비', 'API 연결 워크벤치에서 활성 키, 해당 키에서 사용할 수 있는 모델, 현재 네트워크에 맞는 엔드포인트를 선택합니다.'],
-        ['권장: CC Switch', '가져올 대상 앱을 선택하고 원클릭 가져오기를 실행하세요. 생성된 Provider 설정이 대상 클라이언트에 기록됩니다.'],
-        ['대안: 수동 설정', '수동 설정으로 전환해 클라이언트를 선택한 뒤 생성된 파일을 복사하거나 다운로드하여 화면에 표시된 경로에 배치합니다.'],
-      ],
+      title: '연결할 클라이언트를 선택하세요',
+      body: '위의 계정, 잔액, API 키, Base URL, 모델 확인, 테스트 요청은 모두 같습니다. 마지막 설정 단계만 클라이언트별로 달라집니다.',
+      selectLabel: '클라이언트 가이드',
+      recommended: '권장',
+      guides: {
+        codex: {
+          label: 'Codex',
+          title: 'Codex에서 API-Route 사용하기',
+          intro: '가장 빠른 방법은 API 연결 워크벤치에서 Codex 프로필을 만든 뒤 CC Switch로 가져오는 것입니다. 각 항목을 확인해야 한다면 수동 설정도 사용할 수 있습니다.',
+          steps: [
+            ['프로필 생성', 'API 연결 워크벤치에서 검증한 키, 사용 가능한 모델, 현재 네트워크에 맞는 엔드포인트를 선택합니다.'],
+            ['Codex로 가져오기', 'CC Switch 방식을 유지하고 대상 앱으로 Codex를 선택한 뒤 원클릭 가져오기를 실행합니다.'],
+            ['세션 다시 시작', '새 Codex 세션을 열어 Provider, 모델, Base URL, API 키를 다시 읽습니다.'],
+            ['요청 확인', '작은 작업을 실행하고 API-Route 사용 로그에서 키와 모델을 확인합니다.'],
+          ],
+          note: '수동 설정에서는 Codex를 선택하고 생성된 내용을 ~/.codex/config.toml과 ~/.codex/auth.json에 배치하세요.',
+        },
+        claudeCode: {
+          label: 'Claude Code',
+          title: 'Claude Code에서 API-Route 사용하기',
+          intro: 'Claude Code는 /v1이 없는 Anthropic 형식의 루트 주소를 사용합니다. OpenAI 주소를 직접 고치지 말고 워크벤치에서 올바른 형식을 생성하세요.',
+          steps: [
+            ['프로필 생성', 'API 연결 워크벤치에서 검증한 키, 모델, 엔드포인트를 선택합니다.'],
+            ['Claude Code로 가져오기', 'CC Switch 방식에서 대상 앱을 Claude Code로 선택한 뒤 원클릭 가져오기를 실행합니다.'],
+            ['Claude Code 다시 시작', '새 터미널이나 세션을 열어 가져온 환경 설정을 다시 읽습니다.'],
+            ['요청 확인', '짧은 프롬프트를 보내고 API-Route 사용 로그를 확인합니다.'],
+          ],
+          note: '수동 설정에서는 Claude Code를 선택하고 생성된 ~/.claude/settings.json을 사용하세요. Base URL은 /v1 주소가 아니라 루트 주소입니다.',
+        },
+        ccSwitch: {
+          label: 'CC Switch',
+          title: 'CC Switch로 API-Route Provider 가져오기',
+          intro: 'CC Switch는 이 과정에서 설정을 관리하고 API-Route Provider를 Codex, Claude Code 또는 다른 지원 대상에 기록합니다.',
+          steps: [
+            ['CC Switch 설치', '가져오기를 시작하기 전에 CC Switch를 다운로드하고 실행합니다.'],
+            ['Provider 준비', 'API 연결 워크벤치에서 검증한 키, 모델, 엔드포인트, 최종 대상 앱을 선택합니다.'],
+            ['원클릭 가져오기', '“CC Switch로 가져오기”를 누르고 브라우저가 ccswitch 링크를 열도록 허용합니다.'],
+            ['대상 앱 확인', '새 API-Route Provider가 활성화되었는지 확인한 뒤 대상 클라이언트에서 새 세션을 시작합니다.'],
+          ],
+          note: 'CC Switch 자체는 모델 요청을 보내지 않습니다. 대상 클라이언트가 실제 호출한 뒤에만 사용량과 과금 기록이 생성됩니다.',
+          showDownload: true,
+        },
+        vscode: {
+          label: 'VS Code',
+          title: 'VS Code에서 API-Route 사용하기',
+          intro: 'VS Code는 편집기이며 API 클라이언트가 아닙니다. VS Code 안에서 사용하는 Codex 또는 Claude Code를 설정해야 합니다.',
+          steps: [
+            ['실제 AI 클라이언트 확인', 'VS Code 워크플로가 Codex와 Claude Code 중 무엇을 사용하는지 확인합니다.'],
+            ['해당 클라이언트 설정', 'API 연결 워크벤치에서 Codex 또는 Claude Code 설정을 가져오거나 수동 설정을 사용합니다.'],
+            ['VS Code로 돌아가기', '관련 확장, 터미널 또는 클라이언트 세션을 다시 시작합니다.'],
+            ['요청 확인', '작은 작업을 실행하고 API-Route 사용 로그를 확인합니다.'],
+          ],
+          note: 'VS Code 기본 설정에서 API-Route 입력란을 찾을 필요가 없습니다. Base URL, API 키, 모델은 실제로 사용하는 AI 클라이언트나 확장에 설정합니다.',
+        },
+        cursor: {
+          label: 'Cursor',
+          title: 'Cursor에서 API-Route 사용하기',
+          intro: '현재 지원되는 방식은 Cursor 통합 터미널에서 Codex 또는 Claude Code를 실행하고 그 클라이언트에 API-Route를 설정하는 것입니다.',
+          steps: [
+            ['Codex 또는 Claude Code 선택', 'Cursor 통합 터미널에서 실행할 명령줄 클라이언트를 정합니다.'],
+            ['대상 클라이언트 설정', 'API 연결 워크벤치와 CC Switch로 일치하는 설정을 가져옵니다.'],
+            ['새 통합 터미널 열기', 'Cursor 통합 터미널을 다시 시작하고 설정한 클라이언트를 실행합니다.'],
+            ['요청 확인', '작은 작업을 보내고 API-Route 사용 로그를 확인합니다.'],
+          ],
+          note: '현재 API 연결 워크벤치는 Cursor 자체를 원클릭 대상으로 제공하지 않습니다. 이 가이드는 Cursor 내장 모델 Provider를 교체한다고 주장하지 않습니다.',
+        },
+      },
       cta: 'API 연결 워크벤치 열기',
       ccSwitchDownload: 'CC Switch 다운로드',
       downloadsCta: '기타 클라이언트 다운로드',
-      noteTitle: 'CC Switch를 권장하는 이유',
-      noteBody: '선택한 엔드포인트, API 키, 모델 ID, 클라이언트별 형식을 함께 가져와 경로와 필드 입력 실수를 줄입니다. CC Switch를 사용할 수 없거나 모든 값을 직접 검토해야 할 때만 수동 설정을 사용하세요.',
     },
     troubleshooting: {
       kicker: '07 · 확인과 문제 해결',
@@ -463,10 +695,12 @@ export default function DocsQuickstart() {
   const copy = COPY[language] || COPY.en;
   const directory = DIRECTORY_COPY[language] || DIRECTORY_COPY.en;
   const [activeSnippet, setActiveSnippet] = useState('python');
+  const [activeClientGuide, setActiveClientGuide] = useState('codex');
   const [activeSection, setActiveSection] = useState('before');
   const [copiedId, setCopiedId] = useState('');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const baseUrl = (API_ENDPOINTS[0]?.url || 'https://your-api-endpoint.example').replace(/\/+$/, '');
+  const clientGuide = copy.clients.guides[activeClientGuide] || copy.clients.guides.codex;
 
   const snippets = useMemo(() => ({
     python: `# pip install openai
@@ -710,32 +944,72 @@ console.log(response.choices[0].message.content);`,
 
                 <section id="clients" className="scroll-mt-28">
                   <SectionHeading {...copy.clients} />
-                  <ol className="mt-7 divide-y divide-page-divider border-y border-page-divider">
-                    {copy.clients.items.map(([title, body], index) => (
-                      <li key={title} className="grid gap-3 py-4 sm:grid-cols-[36px_180px_1fr] sm:gap-5">
-                        <span className="font-mono text-xs text-page-muted">{String(index + 1).padStart(2, '0')}</span>
-                          <p className="font-bold text-page">{title}</p>
-                        <p className="text-sm leading-6 text-page-secondary">{body}</p>
-                      </li>
-                    ))}
-                  </ol>
-                  <div className="mt-6 grid gap-3 border-y border-page-divider py-4 sm:grid-cols-[180px_1fr] sm:gap-5">
-                    <p className="text-sm font-bold text-page">{copy.clients.ccSwitchDownload}</p>
-                    <div className="flex flex-wrap gap-x-5 gap-y-2">
-                      {CC_SWITCH_DOWNLOADS.map((download) => (
-                        <a
-                          key={download.href}
-                          href={download.href}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-1.5 text-sm font-bold text-page-link hover:underline"
+                  <div className="mt-7">
+                    <p className="text-xs font-bold uppercase tracking-[0.14em] text-page-secondary">{copy.clients.selectLabel}</p>
+                    <div className="mt-3 flex gap-2 overflow-x-auto border-b border-page-divider pb-3" role="tablist" aria-label={copy.clients.selectLabel}>
+                      {Object.entries(copy.clients.guides).map(([id, guide]) => (
+                        <button
+                          key={id}
+                          type="button"
+                          role="tab"
+                          aria-selected={activeClientGuide === id}
+                          onClick={() => setActiveClientGuide(id)}
+                          className={`shrink-0 rounded-full border px-4 py-2 text-sm font-bold transition-colors ${
+                            activeClientGuide === id
+                              ? 'border-page-link bg-page-link text-white'
+                              : 'border-page-divider text-page-secondary hover:bg-page-surface-hover hover:text-page'
+                          }`}
                         >
-                          {download.label}
-                          <ExternalLink size={14} />
-                        </a>
+                          {guide.label}
+                        </button>
                       ))}
                     </div>
                   </div>
+
+                  <div className="mt-6 rounded-2xl border border-page-divider bg-page-card-bg p-5 sm:p-7" role="tabpanel">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <h3 className="text-xl font-bold tracking-[-0.02em] text-page sm:text-2xl">{clientGuide.title}</h3>
+                      {(activeClientGuide === 'codex' || activeClientGuide === 'claudeCode') && (
+                        <span className="rounded-full bg-page-link/10 px-2.5 py-1 text-xs font-bold text-page-link">{copy.clients.recommended}</span>
+                      )}
+                    </div>
+                    <p className="mt-3 text-sm leading-7 text-page-secondary">{clientGuide.intro}</p>
+
+                    <ol className="mt-6 divide-y divide-page-divider border-y border-page-divider">
+                      {clientGuide.steps.map(([title, body], index) => (
+                        <li key={title} className="grid gap-3 py-4 sm:grid-cols-[36px_170px_1fr] sm:gap-5">
+                          <span className="font-mono text-xs text-page-muted">{String(index + 1).padStart(2, '0')}</span>
+                          <p className="font-bold text-page">{title}</p>
+                          <p className="text-sm leading-6 text-page-secondary">{body}</p>
+                        </li>
+                      ))}
+                    </ol>
+
+                    {clientGuide.showDownload && (
+                      <div className="mt-5 grid gap-3 border-b border-page-divider pb-5 sm:grid-cols-[170px_1fr] sm:gap-5">
+                        <p className="text-sm font-bold text-page">{copy.clients.ccSwitchDownload}</p>
+                        <div className="flex flex-wrap gap-x-5 gap-y-2">
+                          {CC_SWITCH_DOWNLOADS.map((download) => (
+                            <a
+                              key={download.href}
+                              href={download.href}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex items-center gap-1.5 text-sm font-bold text-page-link hover:underline"
+                            >
+                              {download.label}
+                              <ExternalLink size={14} />
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="mt-5 border-l-2 border-page-link pl-5">
+                      <p className="text-sm leading-7 text-page-secondary">{clientGuide.note}</p>
+                    </div>
+                  </div>
+
                   <div className="mt-5 flex flex-wrap gap-4">
                     <Link to="/api-connect" className="inline-flex items-center gap-2 text-sm font-bold text-page-link hover:underline">
                       {copy.clients.cta}
@@ -745,10 +1019,6 @@ console.log(response.choices[0].message.content);`,
                       {copy.clients.downloadsCta}
                       <ArrowRight size={15} />
                     </Link>
-                  </div>
-                  <div className="mt-8 border-l-2 border-page-link pl-5">
-                    <p className="font-bold text-page">{copy.clients.noteTitle}</p>
-                    <p className="mt-2 text-sm leading-7 text-page-secondary">{copy.clients.noteBody}</p>
                   </div>
                 </section>
 
