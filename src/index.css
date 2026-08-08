@@ -1103,23 +1103,26 @@ html[data-color-scheme='dark'] .theme-claude .route-motion-card:hover {
   color: rgb(var(--page-text-secondary));
   background: linear-gradient(
     90deg,
-    rgb(var(--page-text-secondary)) 20%,
+    rgb(var(--page-text-secondary)) 12%,
+    rgb(var(--page-text-secondary)) 34%,
     rgb(var(--page-link)) 50%,
-    rgb(var(--page-text-secondary)) 80%
+    rgb(var(--page-text-secondary)) 66%,
+    rgb(var(--page-text-secondary)) 88%
   );
-  background-size: 250% 100%;
+  background-size: 220% 100%;
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: dashboard-loading-shimmer 1.8s linear infinite;
+  animation: dashboard-loading-thinking 2.4s ease-in-out infinite;
 }
 
-@keyframes dashboard-loading-shimmer {
-  from {
-    background-position: 200% 0;
+@keyframes dashboard-loading-thinking {
+  0%,
+  100% {
+    background-position: 150% 0;
   }
-  to {
-    background-position: -200% 0;
+  50% {
+    background-position: -50% 0;
   }
 }
 
