@@ -198,8 +198,8 @@ export default function ClaudeHome() {
                 <ArrowRight size={16} className="route-motion-arrow" />
               </Link>
               <Link
-                to={user ? '/api-keys' : '/register'}
-                state={user ? undefined : { from: '/api-keys' }}
+                to={user ? '/api-connect' : '/register'}
+                state={user ? undefined : { from: '/api-connect' }}
                 onClick={() => trackEvent('funnel_select', { funnel: 'api', placement: 'home_hero' })}
                 className="route-motion-button inline-flex items-center justify-center gap-2 rounded-full border border-[#DCCBBD] bg-white/75 px-6 py-3.5 text-sm font-semibold text-[#59483A] transition-all hover:border-[#CBAE98] hover:bg-white"
               >
@@ -257,8 +257,8 @@ export default function ClaudeHome() {
           <FadeContent direction="up" distance={24} duration={700} delay={100} className="lg:col-start-1 lg:row-start-2">
             <div className="flex flex-col gap-3 sm:flex-row">
               <Link
-                to={user ? '/api-keys' : '/register'}
-                state={user ? undefined : { from: '/api-keys' }}
+                to={user ? '/api-connect' : '/register'}
+                state={user ? undefined : { from: '/api-connect' }}
                 onClick={() => trackEvent('funnel_select', { funnel: 'api', placement: 'home_features' })}
                 className="route-motion-button route-motion-primary inline-flex items-center justify-center gap-2 rounded-full bg-[#D97757] px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(217,119,87,0.20)] transition-all hover:-translate-y-0.5 hover:bg-[#C4613F]"
               >
