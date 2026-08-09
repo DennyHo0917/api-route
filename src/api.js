@@ -150,6 +150,8 @@ export const completeOAuth = (provider, params) =>
 // ===== User =====
 export const getUserSelf = (config) => api.get('/api/dist/user/self', config);
 export const updateUserPassword = (data) => api.put('/api/dist/user/password', data);
+export const sendUserEmailBindVerification = (data) => api.post('/api/dist/user/email/bind-verification', data);
+export const bindUserEmail = (data) => api.put('/api/dist/user/email', data);
 export const getUserUsage = (config) => api.get('/api/dist/user/usage', config);
 export const getUserLogs = (params) => api.get('/api/dist/user/logs', { params });
 export const getUserLogsStat = (params) => api.get('/api/dist/user/logs/stat', { params });

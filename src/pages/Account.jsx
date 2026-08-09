@@ -1,15 +1,27 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FileText, Lock, Save, UserCircle } from 'lucide-react';
+import { FileText, Lock, Mail, Save, Send, UserCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { useSite } from '../context/SiteContext';
-import { createInvoice, getInvoiceHistory, getInvoiceInfo, updateUserPassword } from '../api';
+import {
+  bindUserEmail,
+  createInvoice,
+  getInvoiceHistory,
+  getInvoiceInfo,
+  sendUserEmailBindVerification,
+  updateUserPassword,
+} from '../api';
 
 const initialForm = {
   original_password: '',
   password: '',
   confirm_password: '',
+};
+
+const initialEmailForm = {
+  email: '',
+  code: '',
 };
 
 const initialInvoiceInfo = {
@@ -24,6 +36,7 @@ const initialInvoiceInfo = {
 };
 
 const money = (value) => `$${Number(value || 0).toFixed(2)}`;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const getInvoiceValidationError = ({ amount, summary, info, t }) => {
   if (!Number.isFinite(amount) || amount <= 0) {
@@ -74,10 +87,13 @@ const getInvoiceValidationError = ({ amount, summary, info, t }) => {
 
 export default function Account() {
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const { site } = useSite();
   const [form, setForm] = useState(initialForm);
+  const [emailForm, setEmailForm] = useState(initialEmailForm);
   const [saving, setSaving] = useState(false);
+  const [sendingEmailCode, setSendingEmailCode] = useState(false);
+  const [bindingEmail, setBindingEmail] = useState(false);
   const [invoiceSummary, setInvoiceSummary] = useState(null);
   const [invoiceHistory, setInvoiceHistory] = useState([]);
   const [invoiceAmount, setInvoiceAmount] = useState('');
@@ -111,6 +127,71 @@ export default function Account() {
 
   const handleChange = (field, value) => {
     setForm((current) => ({ ...current, [field]: value }));
+  };
+
+  const handleEmailChange = (field, value) => {
+    setEmailForm((current) => ({ ...current, [field]: value }));
+  };
+
+  const getNormalizedBindEmail = () => emailForm.email.trim();
+
+  const validateBindEmailForm = ({ requireCode = false } = {}) => {
+    const normalizedEmail = getNormalizedBindEmail();
+    if (!normalizedEmail) {
+      toast.error(t('account.emailRequired'));
+      return null;
+    }
+    if (!EMAIL_RE.test(normalizedEmail)) {
+      toast.error(t('account.emailInvalid'));
+      return null;
+    }
+    const normalizedCode = emailForm.code.trim();
+    if (requireCode && !normalizedCode) {
+      toast.error(t('account.emailCodeRequired'));
+      return null;
+    }
+    return {
+      email: normalizedEmail,
+      code: normalizedCode,
+    };
+  };
+
+  const handleSendEmailCode = async () => {
+    const payload = validateBindEmailForm();
+    if (!payload) return;
+    setSendingEmailCode(true);
+    try {
+      const res = await sendUserEmailBindVerification({ email: payload.email });
+      if (res.data.success) {
+        toast.success(t('account.emailCodeSent'));
+      }
+    } catch {
+      // shared interceptor handles user-facing errors
+    } finally {
+      setSendingEmailCode(false);
+    }
+  };
+
+  const handleBindEmail = async (event) => {
+    event.preventDefault();
+    const payload = validateBindEmailForm({ requireCode: true });
+    if (!payload) return;
+    setBindingEmail(true);
+    try {
+      const res = await bindUserEmail({
+        email: payload.email,
+        code: payload.code,
+      });
+      if (res.data.success) {
+        toast.success(t('account.emailBound'));
+        setEmailForm(initialEmailForm);
+        await refreshUser();
+      }
+    } catch {
+      // shared interceptor handles user-facing errors
+    } finally {
+      setBindingEmail(false);
+    }
   };
 
   const handleSubmit = async (event) => {
@@ -210,6 +291,64 @@ export default function Account() {
               <dd className="mt-1 text-sm text-page">{user?.id || '-'}</dd>
             </div>
           </dl>
+
+          <div className="mt-6 border-t border-page-border pt-6">
+            <div className="mb-4 flex items-start gap-3">
+              <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-page-surface text-page-link">
+                <Mail className="h-4 w-4" />
+              </div>
+              <div className="min-w-0">
+                <h3 className="text-base font-semibold text-page">{t('account.bindEmail')}</h3>
+                <p className="mt-1 text-sm text-page-secondary">
+                  {user?.email ? t('account.emailBoundHint') : t('account.bindEmailHint')}
+                </p>
+              </div>
+            </div>
+
+            {user?.email ? (
+              <div className="rounded-xl border border-page-border bg-page-surface/70 px-4 py-3 text-sm text-page">
+                {user.email}
+              </div>
+            ) : (
+              <form onSubmit={handleBindEmail} className="space-y-4">
+                <TextField
+                  label={t('account.email')}
+                  type="email"
+                  value={emailForm.email}
+                  onChange={(value) => handleEmailChange('email', value)}
+                  autoComplete="email"
+                />
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+                  <TextField
+                    label={t('account.emailCode')}
+                    value={emailForm.code}
+                    onChange={(value) => handleEmailChange('code', value)}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleSendEmailCode}
+                    disabled={sendingEmailCode || bindingEmail}
+                    className="btn-secondary inline-flex items-center justify-center gap-2 whitespace-nowrap"
+                  >
+                    {sendingEmailCode ? (
+                      <span className="h-4 w-4 rounded-full border-2 border-page-link/30 border-t-page-link animate-spin" />
+                    ) : (
+                      <Send className="h-4 w-4" />
+                    )}
+                    {sendingEmailCode ? t('account.sendingCode') : t('account.sendCode')}
+                  </button>
+                </div>
+                <button type="submit" disabled={bindingEmail || sendingEmailCode} className="btn-primary inline-flex items-center justify-center gap-2">
+                  {bindingEmail ? (
+                    <span className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                  ) : (
+                    <Mail className="h-4 w-4" />
+                  )}
+                  {bindingEmail ? t('account.bindingEmail') : t('account.confirmBindEmail')}
+                </button>
+              </form>
+            )}
+          </div>
         </section>
 
         <section className="glass rounded-2xl p-6">
@@ -334,7 +473,7 @@ function InvoiceMetric({ label, value }) {
   );
 }
 
-function TextField({ label, value, onChange, type = 'text', disabled = false }) {
+function TextField({ label, value, onChange, type = 'text', disabled = false, autoComplete }) {
   return (
     <label className="block">
       <span className="block text-sm font-medium text-page-label mb-1.5">{label}</span>
@@ -344,6 +483,7 @@ function TextField({ label, value, onChange, type = 'text', disabled = false }) 
         disabled={disabled}
         onChange={(event) => onChange?.(event.target.value)}
         className="input"
+        autoComplete={autoComplete}
       />
     </label>
   );
