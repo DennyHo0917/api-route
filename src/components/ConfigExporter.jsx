@@ -77,6 +77,12 @@ export const API_ENDPOINTS = [
     nameKey: 'config.apiEndpointAsiaSouthName',
     descKey: 'config.apiEndpointAsiaSouthDesc',
   },
+  {
+    id: 'asia',
+    url: 'https://ai777.up.railway.app',
+    nameKey: 'config.apiEndpointAsiaName',
+    descKey: 'config.apiEndpointAsiaDesc',
+  },
 ];
 
 function getTokenApiKey(token) {

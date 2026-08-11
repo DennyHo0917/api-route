@@ -40,6 +40,11 @@ const SHARED_API_ENDPOINTS = [
     labelKey: 'config.apiEndpointAsiaSouthName',
     url: 'https://asiasouth.up.railway.app',
   },
+  {
+    id: 'asia',
+    labelKey: 'config.apiEndpointAsiaName',
+    url: 'https://ai777.up.railway.app',
+  },
 ];
 
 const normalizeEndpoint = (value = '') => {
