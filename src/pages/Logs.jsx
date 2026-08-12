@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, ChevronRight, Download, RotateCcw, Search } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getTokens, getUserLogs, getUserLogsStat, Q } from '../api';
+import { useAuth } from '../context/AuthContext';
 import { useCurrency } from '../context/SiteContext';
+import { prefetchDefaultLogs } from '../utils/logPrefetch';
 import DateTimePicker from '../components/DateTimePicker';
 
 function formatTime(unix) {
@@ -160,6 +162,7 @@ function getSitePricingDetails(other, symbol, rate, t) {
 
 export default function Logs() {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const { symbol, rate } = useCurrency();
   const [logs, setLogs] = useState([]);
   const [total, setTotal] = useState(0);
@@ -178,6 +181,8 @@ export default function Logs() {
   const [logType, setLogType] = useState('0');
   const [appliedFilters, setAppliedFilters] = useState({ type: '0' });
   const [expandedRows, setExpandedRows] = useState({});
+  const initialLogsLoad = useRef(true);
+  const initialStatLoad = useRef(true);
   const pageSize = 20;
 
   const getAppliedParams = useCallback(() => {
@@ -194,7 +199,12 @@ export default function Logs() {
     setLoading(true);
     try {
       const params = { p: page, page_size: pageSize, ...getAppliedParams() };
-      const res = await getUserLogs(params);
+      const isDefault = page === 1 && params.type === '0' && Object.keys(params).length === 3;
+      const prefetched = initialLogsLoad.current && isDefault
+        ? await prefetchDefaultLogs(user?.id).catch(() => null)
+        : null;
+      initialLogsLoad.current = false;
+      const res = prefetched?.logs || await getUserLogs(params);
       if (res.data.success) {
         const items = res.data.data?.items || [];
         setLogs(items);
@@ -203,18 +213,24 @@ export default function Logs() {
       }
     } catch (e) { /* interceptor */ }
     setLoading(false);
-  }, [getAppliedParams, page]);
+  }, [getAppliedParams, page, user?.id]);
 
   const loadStat = useCallback(async () => {
     setLoadingStat(true);
     try {
-      const res = await getUserLogsStat(getAppliedParams());
+      const params = getAppliedParams();
+      const isDefault = params.type === '0' && Object.keys(params).length === 1;
+      const prefetched = initialStatLoad.current && isDefault
+        ? await prefetchDefaultLogs(user?.id).catch(() => null)
+        : null;
+      initialStatLoad.current = false;
+      const res = prefetched?.stat || await getUserLogsStat(params);
       if (res.data.success) {
         setStat(res.data.data || { quota: 0, rpm: 0, tpm: 0, token: 0 });
       }
     } catch (e) { /* interceptor */ }
     setLoadingStat(false);
-  }, [getAppliedParams]);
+  }, [getAppliedParams, user?.id]);
 
   useEffect(() => { load(); }, [load]);
   useEffect(() => { loadStat(); }, [loadStat]);

@@ -9,6 +9,7 @@ import {
   logout as logoutApi,
 } from '../api';
 import { hasUserApiKey } from '../utils/tokenForm';
+import { clearDefaultLogsPrefetch, prefetchDefaultLogs } from '../utils/logPrefetch';
 import { trackEvent } from '../utils/analytics';
 import toast from 'react-hot-toast';
 
@@ -83,7 +84,12 @@ export function AuthProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    if (user?.id) ensureUserApiKey();
+    if (user?.id) {
+      ensureUserApiKey();
+      prefetchDefaultLogs(user.id).catch(() => {});
+    } else {
+      clearDefaultLogsPrefetch();
+    }
   }, [user?.id]);
 
   const login = useCallback(async (username, password, config) => {

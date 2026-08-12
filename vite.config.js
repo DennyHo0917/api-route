@@ -6,6 +6,9 @@ export default defineConfig({
   server: {
     port: 5173,
     strictPort: true,
+    watch: {
+      ignored: ['**/api-route-video/**'],
+    },
     proxy: {
       '/api': {
         target: 'https://apiroute.subrouter.ai',

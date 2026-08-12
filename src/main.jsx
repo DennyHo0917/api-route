@@ -90,6 +90,7 @@ if (autoLanguageRedirectPath) {
     : import('@fontsource-variable/noto-sans-sc/wght.css').catch(() => {});
 
   Promise.all([i18nReady, fontReady]).then(() => {
+    document.documentElement.classList.add('app-booting');
     ReactDOM.createRoot(document.getElementById('root')).render(
       <React.StrictMode>
         <AppErrorBoundary>

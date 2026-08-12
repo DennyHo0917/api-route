@@ -57,6 +57,31 @@
       "permanent": true
     },
     {
+      "source": "/pricing/packages",
+      "destination": "/packages",
+      "permanent": true
+    },
+    {
+      "source": "/en/pricing/packages",
+      "destination": "/packages",
+      "permanent": true
+    },
+    {
+      "source": "/zh/pricing/packages",
+      "destination": "/zh/packages",
+      "permanent": true
+    },
+    {
+      "source": "/ja/pricing/packages",
+      "destination": "/ja/packages",
+      "permanent": true
+    },
+    {
+      "source": "/ko/pricing/packages",
+      "destination": "/ko/packages",
+      "permanent": true
+    },
+    {
       "source": "/en",
       "destination": "/",
       "permanent": true
@@ -319,6 +344,24 @@
           "value": "noindex, nofollow, noarchive"
         }
       ]
+    },
+    {
+      "source": "/referrals",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/:lang/referrals",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
     }
   ],
   "rewrites": [
@@ -448,6 +491,14 @@
     },
     {
       "source": "/:lang/account",
+      "destination": "/"
+    },
+    {
+      "source": "/referrals",
+      "destination": "/"
+    },
+    {
+      "source": "/:lang/referrals",
       "destination": "/"
     }
   ]

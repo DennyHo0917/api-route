@@ -153,8 +153,8 @@ export const updateUserPassword = (data) => api.put('/api/dist/user/password', d
 export const sendUserEmailBindVerification = (data) => api.post('/api/dist/user/email/bind-verification', data);
 export const bindUserEmail = (data) => api.put('/api/dist/user/email', data);
 export const getUserUsage = (config) => api.get('/api/dist/user/usage', config);
-export const getUserLogs = (params) => api.get('/api/dist/user/logs', { params });
-export const getUserLogsStat = (params) => api.get('/api/dist/user/logs/stat', { params });
+export const getUserLogs = (params, config = {}) => api.get('/api/dist/user/logs', { ...config, params });
+export const getUserLogsStat = (params, config = {}) => api.get('/api/dist/user/logs/stat', { ...config, params });
 export const getUserTasks = (params) => api.get('/api/dist/user/tasks', { params });
 export const getUserMjTasks = (params) => api.get('/api/dist/user/mj', { params });
 

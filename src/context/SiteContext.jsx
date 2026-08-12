@@ -158,7 +158,6 @@ function applySiteDocumentMeta(site) {
 
 export function SiteProvider({ children }) {
   const [site, setSite] = useState(() => loadStoredSite());
-  const [loading, setLoading] = useState(() => !loadStoredSite());
   const [cnyRates, setCnyRates] = useState(() => loadStoredRates());
 
   useEffect(() => {
@@ -220,12 +219,11 @@ export function SiteProvider({ children }) {
           applySiteDocumentMeta(res.data.data);
         }
       })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+      .catch(() => {});
   }, []);
 
   return (
-    <SiteContext.Provider value={{ site, loading, cnyRates }}>
+    <SiteContext.Provider value={{ site, cnyRates }}>
       {children}
     </SiteContext.Provider>
   );
