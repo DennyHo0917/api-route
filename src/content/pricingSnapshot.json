@@ -1,0 +1,66 @@
+{
+  "source": "https://www.api-route.com/api/dist/site/models",
+  "refreshed_at": "2026-08-13T14:24:52.322Z",
+  "models": [
+    {
+      "vendor": "OpenAI",
+      "model_name": "gpt-5.6-sol",
+      "display_name": "gpt-5.6-sol",
+      "input_price": 0.2536764705882353,
+      "output_price": 1.5220588235294117,
+      "cache_read_price": 0.02536764705882353,
+      "cache_creation_price": 0.3170955882352941,
+      "unit": "USD per 1M tokens"
+    },
+    {
+      "vendor": "Anthropic",
+      "model_name": "claude-sonnet-4-6",
+      "display_name": "claude-sonnet-4-6",
+      "input_price": 0.2426470588235294,
+      "output_price": 1.213235294117647,
+      "cache_read_price": 0.02426470588235294,
+      "cache_creation_price": 0.30330882352941174,
+      "unit": "USD per 1M tokens"
+    },
+    {
+      "vendor": "Google",
+      "model_name": "gemini-3.1-pro",
+      "display_name": "gemini-3.1-pro",
+      "input_price": 0.40441176470588236,
+      "output_price": 2.426470588235294,
+      "cache_read_price": 0.40441176470588236,
+      "cache_creation_price": 0.5055147058823529,
+      "unit": "USD per 1M tokens"
+    },
+    {
+      "vendor": "DeepSeek",
+      "model_name": "deepseek-v4-pro",
+      "display_name": "deepseek-v4-pro",
+      "input_price": 0.8823529411764707,
+      "output_price": 1.7647058823529413,
+      "cache_read_price": 0.00735264705882353,
+      "cache_creation_price": 0,
+      "unit": "USD per 1M tokens"
+    },
+    {
+      "vendor": "xAI",
+      "model_name": "grok-4.5",
+      "display_name": "grok-4.5",
+      "input_price": 0.09191176470588236,
+      "output_price": 0.2757352941176471,
+      "cache_read_price": 0.02297794117647059,
+      "cache_creation_price": 0.11488970588235295,
+      "unit": "USD per 1M tokens"
+    },
+    {
+      "vendor": "阿里巴巴",
+      "model_name": "qwen/qwen3.5-plus-20260420",
+      "display_name": "qwen/qwen3.5-plus-20260420",
+      "input_price": 0.525,
+      "output_price": 3.15,
+      "cache_read_price": 0.525,
+      "cache_creation_price": 0.65625,
+      "unit": "USD per 1M tokens"
+    }
+  ]
+}

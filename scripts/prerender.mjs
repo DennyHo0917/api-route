@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { FAQ_COPY } from '../src/content/faqCopy.js';
 import { getLegalCopy } from '../src/content/legalCopy.js';
 import { SEO_COPY } from '../src/content/seoCopy.js';
+import { getPricingCopy } from '../src/content/pricingCopy.js';
 import { getLocalizedPath } from '../src/i18n/languageUtils.js';
 
 const SITE_URL = 'https://www.api-route.com';
@@ -18,6 +19,16 @@ const STRUCTURED_DATA_TOPICS = [
 ];
 const DIST_DIR = new URL('../dist/', import.meta.url);
 const TEMPLATE_PATH = new URL('index.html', DIST_DIR);
+const PRICING_SNAPSHOT_PATH = new URL('../src/content/pricingSnapshot.json', import.meta.url);
+
+let pricingSnapshot = null;
+try {
+  const snapshot = JSON.parse(await readFile(PRICING_SNAPSHOT_PATH, 'utf8'));
+  if (!Array.isArray(snapshot?.models) || snapshot.models.length === 0) throw new Error('snapshot has no models');
+  pricingSnapshot = snapshot;
+} catch (error) {
+  console.warn(`[prerender] Pricing snapshot unavailable; using the existing SEO snapshot only: ${error.message}`);
+}
 
 const languages = {
   en: { hrefLang: 'en', htmlLang: 'en', locale: 'en_US' },
@@ -100,6 +111,25 @@ function renderQuestions(questions) {
   return `<section><h2>FAQ</h2>${questions.map(([question, answer]) => `<article><h3>${escapeHtml(question)}</h3><p>${escapeHtml(answer)}</p></article>`).join('')}</section>`;
 }
 
+function formatSnapshotPrice(value) {
+  if (value == null || !Number.isFinite(Number(value))) return '-';
+  const number = Number(value);
+  return `$${number.toFixed(number >= 1 ? 4 : 6).replace(/0+$/, '').replace(/\.$/, '')}`;
+}
+
+function renderPricingTable(language) {
+  if (!pricingSnapshot) return '';
+  const copy = getPricingCopy(language);
+  const labels = {
+    zh: ['模型', '输入价格', '输出价格', '缓存读取', '缓存创建', '计价单位'],
+    en: ['Model', 'Input', 'Output', 'Cache read', 'Cache creation', 'Billing unit'],
+    ja: ['モデル', '入力', '出力', 'キャッシュ読取', 'キャッシュ作成', '課金単位'],
+    ko: ['모델', '입력', '출력', '캐시 읽기', '캐시 생성', '과금 단위'],
+  }[language] || ['Model', 'Input', 'Output', 'Cache read', 'Cache creation', 'Billing unit'];
+  const rows = pricingSnapshot.models.map((model) => `<tr><th scope="row">${escapeHtml(model.display_name || model.model_name)}</th><td>${formatSnapshotPrice(model.input_price)}</td><td>${formatSnapshotPrice(model.output_price)}</td><td>${formatSnapshotPrice(model.cache_read_price)}</td><td>${formatSnapshotPrice(model.cache_creation_price)}</td><td>${escapeHtml(copy.snapshotUnit)}</td></tr>`).join('');
+  return `<section><h2>${escapeHtml(copy.tableCaption)}</h2><p>${escapeHtml(copy.unitNote)}</p><table><caption>${escapeHtml(copy.tableCaption)}</caption><thead><tr>${labels.map((label) => `<th scope="col">${escapeHtml(label)}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></section>`;
+}
+
 function getPageByKey(key) {
   return pages.find((page) => page.key === key);
 }
@@ -135,7 +165,8 @@ function renderSnapshot(page, language, title, description, questions) {
     ['/terms-of-service', 'Terms of Service'],
   ].map(([path, label]) => `<a href="${SITE_URL}${localizedPath(path, language)}">${label}</a>`).join(' ');
 
-  return `<main data-seo-prerendered="true">${renderBreadcrumb(page, language, title)}<h1>${escapeHtml(title)}</h1><p>${escapeHtml(description)}</p>${renderRelatedPages(page, language)}${renderQuestions(questions)}<nav>${links}</nav></main>`;
+  const pricingTable = page.key === 'pricing' ? renderPricingTable(language) : '';
+  return `<main data-seo-prerendered="true">${renderBreadcrumb(page, language, title)}<h1>${escapeHtml(title)}</h1><p>${escapeHtml(description)}</p>${pricingTable}${renderRelatedPages(page, language)}${renderQuestions(questions)}<nav>${links}</nav></main>`;
 }
 
 function replaceMeta(html, language, page) {

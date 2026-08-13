@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build && node scripts/prerender.mjs",
+    "refresh:pricing-snapshot": "node scripts/refresh-pricing-snapshot.mjs",
     "preview": "vite preview",
     "check:frontend-loading": "node scripts/check-frontend-loading.mjs",
     "check:log-prefetch": "node scripts/check-log-prefetch.mjs",

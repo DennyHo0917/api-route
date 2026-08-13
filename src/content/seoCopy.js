@@ -1,3 +1,5 @@
+import { PRICING_COPY } from './pricingCopy.js';
+
 export const SEO_COPY = {
   zh: {
     home: {
@@ -9,15 +11,7 @@ export const SEO_COPY = {
         ['适合哪些场景？', '适合 AI 产品开发、SaaS 集成、Claude Code、VSCode、LibreChat、自动化工作流，以及需要多模型统一路由的团队。'],
       ],
     },
-    pricing: {
-      title: 'AI API 价格对比、模型费率与 Token 成本',
-      description: '比较 GPT、Claude、Gemini 等模型在 API-Route 的输入价格、输出价格、缓存费用、按次计费和官方参考价，快速估算 AI API token 成本与不同模型费用。',
-      questions: [
-        ['如何比较 OpenAI、Claude 和 Gemini 的 API 价格？', '先看输入和输出 token 单价，再结合缓存、按次计费、上下文长度和你的调用量估算总成本。'],
-        ['AI API token 成本怎么估算？', '文本调用成本约等于输入 token 成本加输出 token 成本，再加缓存相关费用；图片、音频、视频按页面表格的规格或按次价格计算。'],
-        ['为什么要看官方参考价？', '官方参考价用于对照公开价格，实际扣费以 API-Route 页面价格、账户记录和调用日志为准。'],
-      ],
-    },
+    pricing: PRICING_COPY.zh,
     packages: {
       title: '套餐与余额充值',
       description: '先充值账户余额，再按需购买天卡、周卡、月卡等 AI API 套餐；查看套餐额度、有效期与适用场景。',
@@ -78,15 +72,7 @@ export const SEO_COPY = {
         ['What is it for?', 'It fits AI product development, SaaS integrations, Claude Code, VS Code, LibreChat, automation workflows, and teams that need unified multi-model routing.'],
       ],
     },
-    pricing: {
-      title: 'AI API Pricing Comparison and Token Cost',
-      description: 'Compare GPT, Claude, Gemini, and other AI model rates on API-Route to estimate token and per-call costs.',
-      questions: [
-        ['How do I compare OpenAI, Claude, and Gemini API pricing?', 'Start with input and output token rates, then include cache pricing, per-call models, context length, and expected request volume.'],
-        ['How do I estimate AI API token cost?', 'For text models, estimate input tokens times input rate plus output tokens times output rate plus cache-related costs. Image, audio, and video models follow the displayed spec or per-call price.'],
-        ['Why include official reference pricing?', 'Official references help compare public provider prices. Actual billing follows API-Route rates, account records, and usage logs.'],
-      ],
-    },
+    pricing: PRICING_COPY.en,
     packages: {
       title: 'AI API Plans and Packages',
       description: 'Compare daily, weekly, monthly, and quota-based AI API plans for one OpenAI-compatible API. Choose a package by quota, validity period, model access, and use case.',
@@ -145,15 +131,7 @@ export const SEO_COPY = {
         ['どんな用途に向いていますか？', 'AI プロダクト開発、SaaS 連携、Claude Code、VSCode、LibreChat、自動化ワークフロー、複数モデルの統一ルーティングに向いています。'],
       ],
     },
-    pricing: {
-      title: 'AI API 料金比較・モデル単価・トークンコスト',
-      description: 'API-Route で利用できる GPT、Claude、Gemini、Kimi、Qwen などの入力料金、出力料金、キャッシュ料金、回数課金、公式参考価格を比較し、AI API のトークンコストを見積もれます。',
-      questions: [
-        ['OpenAI、Claude、Gemini の API 料金はどう比較しますか？', '入力と出力のトークン単価に加えて、キャッシュ料金、回数課金、コンテキスト長、想定呼び出し回数を合わせて見ます。'],
-        ['AI API のトークンコストはどう見積もりますか？', 'テキストモデルでは、入力トークン数と入力単価、出力トークン数と出力単価、キャッシュ関連費用を合計します。画像、音声、動画は表の仕様や回数単価に従います。'],
-        ['公式参考価格は何に使いますか？', '公開されている公式価格との比較に使います。実際の課金は API-Route の料金、アカウント記録、利用ログに従います。'],
-      ],
-    },
+    pricing: PRICING_COPY.ja,
     packages: {
       title: 'AI API プランと残高チャージ',
       description: 'アカウント残高をチャージしてから、日次、週次、月次、容量ベースの AI API プランを必要に応じて申し込めます。クォータ、有効期間、利用シーンも確認できます。',
@@ -212,15 +190,7 @@ export const SEO_COPY = {
         ['어떤 용도에 적합한가요?', 'AI 제품 개발, SaaS 연동, Claude Code, VSCode, LibreChat, 자동화 워크플로, 멀티 모델 통합 라우팅에 적합합니다.'],
       ],
     },
-    pricing: {
-      title: 'AI API 요금 비교, 모델 단가 및 토큰 비용',
-      description: 'API-Route에서 지원하는 GPT, Claude, Gemini, Kimi, Qwen 등 모델의 입력 요금, 출력 요금, 캐시 요금, 호출당 과금, 공식 참고가를 비교하고 AI API 토큰 비용을 빠르게 추정하세요.',
-      questions: [
-        ['OpenAI, Claude, Gemini API 요금은 어떻게 비교하나요?', '입력/출력 토큰 단가를 먼저 보고 캐시 요금, 호출당 과금, 문맥 길이, 예상 호출량을 함께 계산합니다.'],
-        ['AI API 토큰 비용은 어떻게 추정하나요?', '텍스트 모델은 입력 토큰 비용, 출력 토큰 비용, 캐시 관련 비용을 더해 계산합니다. 이미지, 오디오, 영상 모델은 표의 사양이나 호출당 가격을 따릅니다.'],
-        ['공식 참고가는 왜 보나요?', '공개된 공식 가격과 비교하기 위한 값입니다. 실제 과금은 API-Route 요금, 계정 기록, 사용 로그를 기준으로 합니다.'],
-      ],
-    },
+    pricing: PRICING_COPY.ko,
     packages: {
       title: 'AI API 플랜과 잔액 충전',
       description: '계정 잔액을 먼저 충전한 뒤 일간, 주간, 월간, 용량 기반 AI API 플랜을 필요에 맞게 구독하세요. 쿼터, 유효 기간, 사용 시나리오도 확인할 수 있습니다.',

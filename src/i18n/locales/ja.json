@@ -623,7 +623,7 @@
     "pricing.cacheReadPrice": "キャッシュ読み取り / 100万 tokens",
     "pricing.cacheCreationPrice": "キャッシュ作成 / 100万 tokens",
     "pricing.officialPrice": "公式 入力/出力",
-    "pricing.savings": "節約額",
+    "pricing.savings": "節約",
     "pricing.perCall": "呼び出しごと",
     "pricing.perCallUnit": "回",
     "pricing.vendor": "ベンダー",

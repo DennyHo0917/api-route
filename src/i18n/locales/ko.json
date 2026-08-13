@@ -623,7 +623,7 @@
     "pricing.cacheReadPrice": "캐시 읽기 / 100만 tokens",
     "pricing.cacheCreationPrice": "캐시 생성 / 100만 tokens",
     "pricing.officialPrice": "공식 입력/출력",
-    "pricing.savings": "절감액",
+    "pricing.savings": "절감",
     "pricing.perCall": "호출당",
     "pricing.perCallUnit": "회",
     "pricing.vendor": "벤더",
