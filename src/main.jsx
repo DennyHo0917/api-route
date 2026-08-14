@@ -85,12 +85,11 @@ if (autoLanguageRedirectPath) {
   window.location.replace(autoLanguageRedirectPath);
 } else {
   const routerBasename = getRouterBasename(window.location.pathname);
-  const fontReady = getPathLanguage(window.location.pathname) === 'en'
-    ? Promise.resolve()
-    : import('@fontsource-variable/noto-sans-sc/wght.css').catch(() => {});
+  if (getPathLanguage(window.location.pathname) !== 'en') {
+    import('@fontsource-variable/noto-sans-sc/wght.css').catch(() => {});
+  }
 
-  Promise.all([i18nReady, fontReady]).then(() => {
-    document.documentElement.classList.add('app-booting');
+  i18nReady.then(() => {
     ReactDOM.createRoot(document.getElementById('root')).render(
       <React.StrictMode>
         <AppErrorBoundary>

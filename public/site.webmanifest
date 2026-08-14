@@ -1,10 +1,19 @@
 {
   "name": "API-Route",
   "short_name": "API-Route",
-  "description": "Unified Multi-Model AI API Platform",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#FAF6F1",
-  "theme_color": "#D97757",
-  "lang": "en"
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#FEF8F1",
+  "background_color": "#FEF8F1",
+  "display": "standalone"
 }
