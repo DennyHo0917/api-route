@@ -17,6 +17,9 @@ const STRUCTURED_DATA_TOPICS = [
   'AI API Gateway',
   'OpenAI-compatible API',
   'AI API reseller platform',
+  'Multi-provider AI API routing',
+  'Automatic API failover',
+  'AI API pricing comparison',
 ];
 const DIST_DIR = new URL('../dist/', import.meta.url);
 const TEMPLATE_PATH = new URL('index.html', DIST_DIR);

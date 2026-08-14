@@ -15,6 +15,9 @@ const STRUCTURED_DATA_TOPICS = [
   'AI API Gateway',
   'OpenAI-compatible API',
   'AI API reseller platform',
+  'Multi-provider AI API routing',
+  'Automatic API failover',
+  'AI API pricing comparison',
 ];
 const INDEXABLE_PATHS = new Set(['/', '/pricing', '/packages', '/apps', '/docs/overview', '/docs/quickstart', '/ai-api-reseller-platform', '/faq', '/privacy-policy', '/terms-of-service']);
 const PRIVATE_PATHS = new Set(['/login', '/register', '/dashboard', '/dashboard/logs', '/dashboard/tasks', '/chats', '/tokens', '/api-keys', '/api-connect', '/clients', '/logs', '/tasks', '/topup', '/topup/packages', '/referrals', '/account']);
