@@ -30,7 +30,7 @@ const Account = lazy(() => import('./pages/Account'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const Legal = lazy(() => import('./pages/Legal'));
 
-const Loading = () => (
+export const Loading = () => (
   <div className="flex items-center justify-center min-h-screen" style={{ background: 'var(--page-bg)' }}>
     <div className="w-8 h-8 rounded-full animate-spin"
       style={{ border: '2px solid var(--page-spinner-track)', borderTopColor: 'var(--page-spinner)' }} />

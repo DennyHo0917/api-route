@@ -2,25 +2,22 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import App from './App';
+import App, { Loading } from './App';
 import { AuthProvider } from './context/AuthContext';
 import { SiteProvider } from './context/SiteContext';
 import { getAutoLanguageRedirectPath, getPathLanguage, getRouterBasename, normalizeLanguagePath } from './i18n/languageUtils';
 import { i18nReady } from './i18n';
+import { createChunkRecovery, isChunkLoadError } from './utils/chunkRecovery';
 import '@fontsource-variable/inter/wght.css';
 import '@fontsource-variable/jetbrains-mono/wght.css';
 import './index.css';
 
-const CHUNK_RELOAD_KEY = 'dist_chunk_reload_at';
 const LOAD_ERROR_COPY = {
   en: { title: 'Page failed to load', action: 'Reload' },
   zh: { title: '页面加载失败', action: '重新加载' },
   ja: { title: 'ページを読み込めませんでした', action: '再読み込み' },
   ko: { title: '페이지를 불러오지 못했습니다', action: '새로고침' },
 };
-
-const isChunkLoadError = (error) => /Failed to fetch dynamically imported module|Importing a module script failed|ChunkLoadError|Loading chunk|error loading dynamically imported module/i
-  .test(String(error?.message || error || ''));
 
 function LoadError() {
   const copy = LOAD_ERROR_COPY[getPathLanguage(window.location.pathname)] || LOAD_ERROR_COPY.en;
@@ -37,29 +34,43 @@ function LoadError() {
 class AppErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { failed: false };
+    this.state = { status: 'ready' };
   }
 
-  static getDerivedStateFromError() {
-    return { failed: true };
+  static getDerivedStateFromError(error) {
+    return { status: isChunkLoadError(error) ? 'recovering' : 'fatal' };
   }
 
   componentDidCatch(error) {
     if (!isChunkLoadError(error)) return;
-    try {
-      const lastReloadAt = Number(window.sessionStorage.getItem(CHUNK_RELOAD_KEY) || 0);
-      if (Date.now() - lastReloadAt < 15000) return;
-      window.sessionStorage.setItem(CHUNK_RELOAD_KEY, String(Date.now()));
-      window.location.reload();
-    } catch {
-      // The visible reload button remains available when storage is blocked.
+    if (recoverFromChunkLoadError(error) === 'exhausted') {
+      this.setState({ status: 'fatal' });
     }
   }
 
   render() {
-    return this.state.failed ? <LoadError /> : this.props.children;
+    if (this.state.status === 'recovering') return <Loading />;
+    if (this.state.status === 'fatal') return <LoadError />;
+    return this.props.children;
   }
 }
+
+const recoverFromChunkLoadError = createChunkRecovery({
+  getStorage: () => window.sessionStorage,
+  reload: () => window.location.reload(),
+});
+
+window.addEventListener('vite:preloadError', (event) => {
+  event.preventDefault();
+  recoverFromChunkLoadError(event.payload, { force: true });
+});
+
+window.addEventListener('unhandledrejection', (event) => {
+  if (!isChunkLoadError(event.reason)) return;
+  if (recoverFromChunkLoadError(event.reason) === 'recovering') {
+    event.preventDefault();
+  }
+});
 
 const normalizedLanguagePath = normalizeLanguagePath(
   window.location.pathname,
