@@ -7,6 +7,31 @@
   "trailingSlash": false,
   "redirects": [
     {
+      "source": "/docs",
+      "destination": "/docs/overview",
+      "permanent": true
+    },
+    {
+      "source": "/en/docs",
+      "destination": "/docs/overview",
+      "permanent": true
+    },
+    {
+      "source": "/zh/docs",
+      "destination": "/zh/docs/overview",
+      "permanent": true
+    },
+    {
+      "source": "/ja/docs",
+      "destination": "/ja/docs/overview",
+      "permanent": true
+    },
+    {
+      "source": "/ko/docs",
+      "destination": "/ko/docs/overview",
+      "permanent": true
+    },
+    {
       "source": "/price",
       "destination": "/pricing",
       "permanent": true

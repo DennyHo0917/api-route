@@ -28,7 +28,7 @@ const navGroups = [
     items: [
       { to: '/api-keys', label: 'nav.apiKeys', icon: KeyRound },
       { to: '/api-connect', label: 'nav.apiAccess', icon: Settings2 },
-      { to: '/docs/quickstart', label: 'nav.docs', icon: BookOpen },
+      { to: '/docs/overview', activePrefix: '/docs', label: 'nav.docs', icon: BookOpen },
       { to: '/clients', label: 'nav.clients', icon: Download },
     ],
   },
@@ -50,6 +50,7 @@ export function ConsoleSidebar({ collapsed = false, onToggle = () => {} }) {
   const { t } = useTranslation();
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = async () => {
     await logout();
@@ -79,7 +80,7 @@ export function ConsoleSidebar({ collapsed = false, onToggle = () => {} }) {
                 <span aria-hidden="true" className="h-px flex-1 bg-page-divider" />
               </p>
             )}
-            {group.items.map(({ to, label, icon: Icon, end }) => (
+            {group.items.map(({ to, activePrefix, label, icon: Icon, end }) => (
               <NavLink
                 key={to}
                 to={to}
@@ -88,7 +89,7 @@ export function ConsoleSidebar({ collapsed = false, onToggle = () => {} }) {
                 className={({ isActive }) => `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                   collapsed ? 'justify-center' : ''
                 } ${
-                  isActive
+                  isActive || (activePrefix && location.pathname.startsWith(activePrefix))
                     ? 'bg-page-link/10 text-page-link'
                     : 'text-page-secondary hover:bg-page-surface-hover hover:text-page'
                 }`}

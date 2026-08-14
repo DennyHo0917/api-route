@@ -1,9 +1,7 @@
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { API_ENDPOINTS } from '../components/ConfigExporter';
-import { ConsoleSidebar } from '../components/ConsoleLayout';
-import { useAuth } from '../context/AuthContext';
+import DocsPageFrame, { useDocsActiveSection } from '../components/DocsLayout';
 import { normalizeAppLanguage } from '../i18n/languageUtils';
 
 const COPY = {
@@ -751,12 +749,10 @@ function CodeExample({ title, body, code }) {
 
 export default function DocsQuickstart() {
   const { i18n } = useTranslation();
-  const { user } = useAuth();
   const language = normalizeAppLanguage(i18n.resolvedLanguage || i18n.language);
   const copy = COPY[language] || COPY.en;
   const baseUrl = (API_ENDPOINTS[0]?.url || 'https://your-api-endpoint.example').replace(/\/+$/, '');
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [activeSection, setActiveSection] = useState(copy.directory[0][0]);
+  const activeSection = useDocsActiveSection(copy.directory);
 
   const modelsSnippet = `curl "${baseUrl}/v1/models" \\
   -H "Authorization: Bearer sk-your-api-key"`;
@@ -771,60 +767,8 @@ export default function DocsQuickstart() {
     ]
   }'`;
 
-  useEffect(() => {
-    const updateActiveSection = () => {
-      const lastSection = copy.directory.at(-1)?.[0];
-      const atPageBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
-      const currentSection = atPageBottom
-        ? lastSection
-        : copy.directory.reduce((active, [id]) => {
-          const section = document.getElementById(id);
-          return section && section.getBoundingClientRect().top <= 140 ? id : active;
-        }, copy.directory[0][0]);
-      setActiveSection(currentSection);
-    };
-
-    updateActiveSection();
-    window.addEventListener('scroll', updateActiveSection, { passive: true });
-    return () => window.removeEventListener('scroll', updateActiveSection);
-  }, [copy.directory]);
-
   return (
-    <div className="theme-light theme-claude min-h-[calc(100dvh-72px)] bg-page-bg text-page">
-      {user && (
-        <aside className={`fixed inset-y-0 left-0 top-[72px] z-20 hidden flex-col border-r border-page-divider bg-page-card-bg transition-[width] duration-200 lg:flex ${sidebarCollapsed ? 'w-16' : 'w-60'}`}>
-          <ConsoleSidebar
-            collapsed={sidebarCollapsed}
-            onToggle={() => setSidebarCollapsed((value) => !value)}
-          />
-        </aside>
-      )}
-
-      <div className={`min-h-[calc(100dvh-72px)] ${user ? 'lg:mx-60' : ''}`}>
-        <div className="mx-auto max-w-5xl px-5 py-12 sm:px-8 lg:py-16">
-          <div className="grid gap-10 lg:grid-cols-[170px_minmax(0,1fr)] lg:items-start">
-            <aside className="self-start lg:sticky lg:top-24" aria-label={copy.directoryTitle}>
-              <div className="border-r border-page-divider pr-4">
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-page-secondary">{copy.directoryTitle}</p>
-                <nav className="mt-3 space-y-1">
-                  {copy.directory.map(([id, label], index) => (
-                    <a
-                      key={id}
-                      href={`#${id}`}
-                      aria-current={activeSection === id ? 'location' : undefined}
-                      className={`flex items-center gap-2 py-1.5 text-sm transition-colors hover:text-page-link ${
-                        activeSection === id ? 'font-bold text-page-link' : 'text-page-secondary'
-                      }`}
-                    >
-                      <span className="w-6 shrink-0 text-xs tabular-nums">{String(index + 1).padStart(2, '0')}</span>
-                      <span>{label}</span>
-                    </a>
-                  ))}
-                </nav>
-              </div>
-            </aside>
-
-            <main className="min-w-0 max-w-4xl space-y-16">
+    <DocsPageFrame activeSection={activeSection} directory={copy.directory}>
               <header className="border-b border-page-divider pb-8">
                 <p className="text-xs font-bold uppercase tracking-[0.18em] text-page-link">{copy.eyebrow}</p>
                 <h1 className="mt-3 text-3xl font-bold tracking-[-0.04em] text-page sm:text-4xl">{copy.title}</h1>
@@ -905,10 +849,6 @@ export default function DocsQuickstart() {
                   ))}
                 </div>
               </section>
-            </main>
-          </div>
-        </div>
-      </div>
-    </div>
+    </DocsPageFrame>
   );
 }

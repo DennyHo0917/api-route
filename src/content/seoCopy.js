@@ -1,4 +1,5 @@
 import { PRICING_COPY } from './pricingCopy.js';
+import { DOCS_OVERVIEW_SEO_COPY } from './docsSeoCopy.js';
 
 export const SEO_COPY = {
   zh: {
@@ -24,6 +25,10 @@ export const SEO_COPY = {
         ['LibreChat 如何接入 API-Route？', '在 LibreChat 的自定义 OpenAI endpoint 中填写 API-Route 的 Base URL、API Key 和模型名，即可通过统一账户调用可用模型。'],
         ['Claude Code 或 VSCode 如何接入？', '在客户端里填写 API-Route 的 Base URL、API Key 和定价页显示的模型名，也可以用 cc switch 导入配置。'],
       ],
+    },
+    docsOverview: {
+      title: DOCS_OVERVIEW_SEO_COPY.zh.title,
+      description: DOCS_OVERVIEW_SEO_COPY.zh.description,
     },
     docs: {
       title: 'Codex、Claude Code、Cursor、VS Code、OpenClaw 与 Hermes API 接入',
@@ -86,6 +91,10 @@ export const SEO_COPY = {
         ['How do Claude Code or VS Code connect?', 'Set API-Route as the Base URL, use your API key, and choose a supported model name from the Pricing page, or import the profile with cc switch.'],
       ],
     },
+    docsOverview: {
+      title: DOCS_OVERVIEW_SEO_COPY.en.title,
+      description: DOCS_OVERVIEW_SEO_COPY.en.description,
+    },
     docs: {
       title: 'Connect Codex, Claude Code, Cursor, VS Code, OpenClaw, and Hermes',
       description: 'Use the recommended CC Switch one-click import or manual configuration to connect API-Route to Codex, Claude Code, OpenClaw, Hermes, Gemini CLI, OpenCode, Cursor, or VS Code.',
@@ -145,6 +154,10 @@ export const SEO_COPY = {
         ['Claude Code や VSCode で使うには？', 'API-Route の Base URL、API キー、料金ページのモデル名を設定するか、cc switch でプロファイルを取り込みます。'],
       ],
     },
+    docsOverview: {
+      title: DOCS_OVERVIEW_SEO_COPY.ja.title,
+      description: DOCS_OVERVIEW_SEO_COPY.ja.description,
+    },
     docs: {
       title: 'Codex・Claude Code・Cursor・VS Code・OpenClaw・Hermes API 接続',
       description: '推奨の CC Switch ワンクリック導入または手動設定で、Codex、Claude Code、OpenClaw、Hermes、Gemini CLI、OpenCode、Cursor、VS Code から API-Route を利用できます。',
@@ -203,6 +216,10 @@ export const SEO_COPY = {
         ['LibreChat은 API-Route에 연결할 수 있나요?', 'LibreChat의 사용자 지정 OpenAI endpoint에 API-Route Base URL, API 키, 모델명을 입력하면 됩니다.'],
         ['Claude Code나 VSCode에서는 어떻게 사용하나요?', 'API-Route Base URL, API 키, 요금 페이지의 모델명을 설정하거나 cc switch로 프로필을 가져오면 됩니다.'],
       ],
+    },
+    docsOverview: {
+      title: DOCS_OVERVIEW_SEO_COPY.ko.title,
+      description: DOCS_OVERVIEW_SEO_COPY.ko.description,
     },
     docs: {
       title: 'Codex, Claude Code, Cursor, VS Code, OpenClaw, Hermes API 연결',

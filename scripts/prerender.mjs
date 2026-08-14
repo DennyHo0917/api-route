@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { FAQ_COPY } from '../src/content/faqCopy.js';
+import { DOCS_COPY } from '../src/content/docsCopy.js';
 import { getLegalCopy } from '../src/content/legalCopy.js';
 import { SEO_COPY } from '../src/content/seoCopy.js';
 import { getPricingCopy } from '../src/content/pricingCopy.js';
@@ -42,6 +43,7 @@ const pages = [
   { key: 'pricing', path: '/pricing' },
   { key: 'packages', path: '/packages' },
   { key: 'apps', path: '/apps' },
+  { key: 'docsOverview', path: '/docs/overview' },
   { key: 'docs', path: '/docs/quickstart' },
   { key: 'subSite', path: '/ai-api-reseller-platform' },
   { key: 'faq', path: '/faq' },
@@ -57,11 +59,12 @@ const snapshotLabels = {
 };
 
 const relatedPageKeys = {
-  home: ['pricing', 'packages', 'apps', 'docs', 'faq', 'subSite'],
-  pricing: ['packages', 'apps', 'docs', 'faq'],
+  home: ['pricing', 'packages', 'apps', 'docsOverview', 'faq', 'subSite'],
+  pricing: ['packages', 'apps', 'docsOverview', 'faq'],
   packages: ['pricing', 'faq'],
-  apps: ['pricing', 'docs', 'faq', 'packages'],
-  docs: ['apps', 'pricing', 'faq'],
+  apps: ['pricing', 'docsOverview', 'faq', 'packages'],
+  docsOverview: ['docs', 'apps', 'pricing', 'faq'],
+  docs: ['docsOverview', 'apps', 'pricing', 'faq'],
   subSite: ['pricing', 'faq', 'packages'],
   faq: ['pricing', 'packages', 'subSite'],
   privacy: ['terms', 'faq'],
@@ -130,6 +133,26 @@ function renderPricingTable(language) {
   return `<section><h2>${escapeHtml(copy.tableCaption)}</h2><p>${escapeHtml(copy.unitNote)}</p><table><caption>${escapeHtml(copy.tableCaption)}</caption><thead><tr>${labels.map((label) => `<th scope="col">${escapeHtml(label)}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></section>`;
 }
 
+function renderComparisonTable(section) {
+  return `<table><caption>${escapeHtml(section.title)}</caption><thead><tr>${section.headers.map((header) => `<th scope="col">${escapeHtml(header)}</th>`).join('')}</tr></thead><tbody>${section.rows.map(([label, ...values]) => `<tr><th scope="row">${escapeHtml(label)}</th>${values.map((value) => `<td>${escapeHtml(value)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+}
+
+function renderDocsOverview(language) {
+  const copy = (DOCS_COPY[language] || DOCS_COPY.en).overview;
+  const definitionList = (items) => `<dl>${items.map(([title, body]) => `<dt>${escapeHtml(title)}</dt><dd>${escapeHtml(body)}</dd>`).join('')}</dl>`;
+  const bulletList = (items) => `<ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`;
+  const pageLinks = (items) => `<p>${items.map(([path, label]) => `<a href="${SITE_URL}${localizedPath(path, language)}">${escapeHtml(label)}</a>`).join(' ')}</p>`;
+
+  return [
+    `<section><h2>${escapeHtml(copy.whatIs.title)}</h2><h3>${escapeHtml(copy.whatIs.positionTitle)}</h3>${copy.whatIs.paragraphs.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join('')}${bulletList(copy.whatIs.points)}<h3>${escapeHtml(copy.whatIs.audienceTitle)}</h3><p>${escapeHtml(copy.whatIs.audienceBody)}</p>${definitionList(copy.whatIs.audienceItems)}${pageLinks(copy.whatIs.links)}</section>`,
+    `<section><h2>${escapeHtml(copy.workflow.title)}</h2><h3>${escapeHtml(copy.workflow.stepsTitle)}</h3><p>${escapeHtml(copy.workflow.body)}</p><ol>${copy.workflow.steps.map(([title, body]) => `<li><strong>${escapeHtml(title)}</strong> ${escapeHtml(body)}</li>`).join('')}</ol><h3>${escapeHtml(copy.workflow.interfaceTitle)}</h3><p>${escapeHtml(copy.workflow.interfaceBody)}</p>${definitionList(copy.workflow.interfaceItems)}<p><a href="${SITE_URL}${localizedPath('/docs/quickstart', language)}">${escapeHtml(copy.workflow.link)}</a></p></section>`,
+    `<section><h2>${escapeHtml(copy.routing.title)}</h2><h3>${escapeHtml(copy.routing.multiRouteTitle)}</h3><p>${escapeHtml(copy.routing.multiRouteBody)}</p>${bulletList(copy.routing.multiRouteItems)}<h3>${escapeHtml(copy.routing.failoverTitle)}</h3><p>${escapeHtml(copy.routing.failoverBody)}</p>${bulletList(copy.routing.failoverItems)}<p>${escapeHtml(copy.routing.flow.join(' → '))}</p></section>`,
+    `<section><h2>${escapeHtml(copy.pricing.title)}</h2><h3>${escapeHtml(copy.pricing.billingTitle)}</h3><p>${escapeHtml(copy.pricing.billingBody)}</p>${definitionList(copy.pricing.billingItems)}${pageLinks(copy.pricing.links)}<h3>${escapeHtml(copy.pricing.lowerTitle)}</h3><p>${escapeHtml(copy.pricing.lowerBody)}</p>${definitionList(copy.pricing.lowerItems)}</section>`,
+    `<section><h2>${escapeHtml(copy.alternatives.title)}</h2><p>${escapeHtml(copy.alternatives.body)}</p><h3>${escapeHtml(copy.alternatives.officialApis.title)}</h3><p>${escapeHtml(copy.alternatives.officialApis.body)}</p>${renderComparisonTable(copy.alternatives.officialApis)}<h3>${escapeHtml(copy.alternatives.openRouter.title)}</h3><p>${escapeHtml(copy.alternatives.openRouter.body)}</p>${renderComparisonTable(copy.alternatives.openRouter)}<p>${escapeHtml(copy.alternatives.openRouter.conclusion)}</p></section>`,
+    `<section><h2>${escapeHtml(copy.start.title)}</h2><h3>${escapeHtml(copy.start.modesTitle)}</h3>${definitionList(copy.start.modes)}<h3>${escapeHtml(copy.start.nextTitle)}</h3><p>${escapeHtml(copy.start.body)}</p>${pageLinks(copy.start.actions)}</section>`,
+  ].join('');
+}
+
 function getPageByKey(key) {
   return pages.find((page) => page.key === key);
 }
@@ -158,7 +181,7 @@ function renderSnapshot(page, language, title, description, questions) {
     ['/pricing', 'Pricing'],
     ['/packages', 'Packages'],
     ['/apps', 'Apps'],
-    ['/docs/quickstart', 'Docs'],
+    ['/docs/overview', 'Docs'],
     ['/ai-api-reseller-platform', 'Reseller'],
     ['/faq', 'FAQ'],
     ['/privacy-policy', 'Privacy Policy'],
@@ -166,7 +189,14 @@ function renderSnapshot(page, language, title, description, questions) {
   ].map(([path, label]) => `<a href="${SITE_URL}${localizedPath(path, language)}">${label}</a>`).join(' ');
 
   const pricingTable = page.key === 'pricing' ? renderPricingTable(language) : '';
-  return `<main data-seo-prerendered="true">${renderBreadcrumb(page, language, title)}<h1>${escapeHtml(title)}</h1><p>${escapeHtml(description)}</p>${pricingTable}${renderRelatedPages(page, language)}${renderQuestions(questions)}<nav>${links}</nav></main>`;
+  const overviewCopy = page.key === 'docsOverview' ? (DOCS_COPY[language] || DOCS_COPY.en).overview : null;
+  const snapshotTitle = overviewCopy?.title || title;
+  const snapshotDescription = overviewCopy?.description || description;
+  const docsOverview = overviewCopy ? renderDocsOverview(language) : '';
+  const relatedPages = overviewCopy ? '' : renderRelatedPages(page, language);
+  const snapshotLinks = overviewCopy ? '' : `<nav>${links}</nav>`;
+  const snapshotBreadcrumb = overviewCopy ? '' : renderBreadcrumb(page, language, snapshotTitle);
+  return `<main data-seo-prerendered="true">${snapshotBreadcrumb}<h1>${escapeHtml(snapshotTitle)}</h1><p>${escapeHtml(snapshotDescription)}</p>${pricingTable}${docsOverview}${relatedPages}${renderQuestions(questions)}${snapshotLinks}</main>`;
 }
 
 function replaceMeta(html, language, page) {

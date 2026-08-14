@@ -414,7 +414,7 @@ export default function ClaudeLayout() {
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-[#766657]">
             {isSnapDeckPage && (
               <Link
-                to="/docs/quickstart"
+                to="/docs/overview"
                 className="hover:text-[#D97757]"
               >
                 {t('nav.docs')}
