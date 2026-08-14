@@ -24,7 +24,12 @@ const webChatModels = filterAvailableModels(
       [
         { name: 'claude-opus-4-8', tokenId: 2 },
         { name: 'gpt-5.5', tokenId: 1 },
+        { name: 'gpt-5.5-pro:batch', tokenId: 1 },
         { name: 'gpt-5.7', tokenId: 1 },
+        { name: 'gpt-3.5-turbo:batch', tokenId: 1 },
+        { name: 'gpt-4o:batch', tokenId: 1 },
+        { name: 'gpt-5-codex:batch', tokenId: 1 },
+        { name: 'gpt-5.2-pro:batch', tokenId: 1 },
         { name: 'gpt-5.3-codex-spark', tokenId: 1 },
         { name: 'gpt-5.4-pro', tokenId: 1 },
         { name: 'google/gemini-3.6-flash', tokenId: 1 },
@@ -42,7 +47,12 @@ const webChatModels = filterAvailableModels(
     ],
     [
       { model_name: 'gpt-5.5', category: 'chat', vendor_name: 'OpenAI' },
+      { model_name: 'gpt-5.5-pro:batch', category: 'chat', vendor_name: 'OpenAI' },
       { model_name: 'gpt-5.7', category: 'chat', vendor_name: 'OpenAI' },
+      { model_name: 'gpt-3.5-turbo:batch', category: 'chat', vendor_name: 'OpenAI' },
+      { model_name: 'gpt-4o:batch', category: 'chat', vendor_name: 'OpenAI' },
+      { model_name: 'gpt-5-codex:batch', category: 'chat', vendor_name: 'OpenAI' },
+      { model_name: 'gpt-5.2-pro:batch', category: 'chat', vendor_name: 'OpenAI' },
       { model_name: 'gpt-5.3-codex-spark', category: 'chat', vendor_name: 'OpenAI' },
       { model_name: 'gpt-5.4-pro', category: 'chat', vendor_name: 'OpenAI' },
       { model_name: 'gpt-image-2', category: 'image', vendor_name: 'OpenAI' },
@@ -62,6 +72,7 @@ assert.deepEqual(
   webChatModels.map((model) => model.name),
   [
     'gpt-5.5',
+    'gpt-5.5-pro:batch',
     'gpt-5.7',
     'claude-opus-4-8',
     'google/gemini-3.6-flash',

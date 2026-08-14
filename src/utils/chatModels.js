@@ -1,7 +1,17 @@
 const IMAGE_INPUT_MODEL_PATTERN = /(^|\/)(gpt-|claude-|gemini-|kimi-|grok-)/;
-const WEB_CHAT_EXCLUDED_MODEL_PATTERN = /(^|\/)gpt-5\.(?:3|4)(?:[-.]|$)/;
 
 const normalizeModelName = (name) => String(name || '').toLowerCase();
+const isSupportedWebChatGpt = (name) => {
+  const modelName = normalizeModelName(name).split('/').pop();
+  if (!modelName.startsWith('gpt-')) return true;
+
+  const version = modelName.match(/^gpt-(\d+)(?:\.(\d+))?(?:[-.:]|$)/);
+  if (!version) return false;
+
+  const major = Number(version[1]);
+  const minor = Number(version[2] || 0);
+  return major > 5 || (major === 5 && minor >= 5);
+};
 const compareModelNames = (a, b) => {
   const aName = normalizeModelName(a).split('/').pop();
   const bName = normalizeModelName(b).split('/').pop();
@@ -79,7 +89,7 @@ export function filterAvailableModels(groups, siteModels) {
     .filter((model) => (
       getWebChatFamily(siteModelsByName.get(normalizeModelName(model.name))) >= 0
     ))
-    .filter((model) => !WEB_CHAT_EXCLUDED_MODEL_PATTERN.test(normalizeModelName(model.name)))
+    .filter((model) => isSupportedWebChatGpt(model.name))
     .sort((a, b) => {
       const aName = normalizeModelName(a.name);
       const bName = normalizeModelName(b.name);
