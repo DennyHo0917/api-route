@@ -8,9 +8,12 @@ import { SiteProvider } from './context/SiteContext';
 import { getAutoLanguageRedirectPath, getPathLanguage, getRouterBasename, normalizeLanguagePath } from './i18n/languageUtils';
 import { i18nReady } from './i18n';
 import { createChunkRecovery, isChunkLoadError } from './utils/chunkRecovery';
+import { captureAttribution } from './utils/attribution.js';
 import '@fontsource-variable/inter/wght.css';
 import '@fontsource-variable/jetbrains-mono/wght.css';
 import './index.css';
+
+captureAttribution();
 
 const LOAD_ERROR_COPY = {
   en: { title: 'Page failed to load', action: 'Reload' },

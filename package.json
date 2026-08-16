@@ -15,6 +15,7 @@
     "check:frontend-loading": "node scripts/check-frontend-loading.mjs",
     "check:log-prefetch": "node scripts/check-log-prefetch.mjs",
     "check:auth-return": "node scripts/check-auth-return.mjs",
+    "check:attribution": "node scripts/check-attribution.mjs",
     "check:funnel": "node scripts/check-funnel.mjs",
     "check:customer-emails": "node scripts/check-customer-emails.mjs"
   },
