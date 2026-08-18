@@ -1,8 +1,6 @@
 export function getSiteNavItems({ t, site }) {
   return [
     { to: '/#hero', sectionId: 'hero', label: t('nav.home'), auth: false },
-    { to: '/#features', sectionId: 'features', label: t('nav.audience'), auth: false },
-    { to: '/#ecosystem', sectionId: 'ecosystem', label: t('nav.ecosystem'), auth: false },
     { to: '/pricing', label: t('nav.pricing'), auth: false },
     ...(site?.allow_sub_dist
       ? [{ to: '/ai-api-reseller-platform', label: t('nav.apiAggregation'), auth: false }]
