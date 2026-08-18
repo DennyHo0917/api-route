@@ -127,8 +127,13 @@ export default function DocsOverview() {
       <section id="how-it-works" className="scroll-mt-28">
         <SectionHeading {...copy.workflow} />
         <div className="mt-7">
-          <SubsectionHeading title={copy.workflow.stepsTitle} body={copy.workflow.body} />
+          <SubsectionHeading title={copy.workflow.stepsTitle} />
           <StepList items={copy.workflow.steps} />
+        </div>
+        <div className="mt-10">
+          <SubsectionHeading title={copy.workflow.keySettingsTitle} body={copy.workflow.keySettingsBody} />
+          <DetailList items={copy.workflow.keySettingsItems} />
+          <PageLinks items={copy.workflow.keySettingsLinks} />
         </div>
         <div className="mt-10">
           <SubsectionHeading title={copy.workflow.interfaceTitle} body={copy.workflow.interfaceBody} />

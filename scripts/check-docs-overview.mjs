@@ -58,6 +58,9 @@ for (const [language, config] of Object.entries(languages)) {
   assert.ok(html.includes(`<h3>${copy.alternatives.openRouter.title}</h3>`));
   assert.ok(html.includes(`<h3>${copy.routing.multiRouteTitle}</h3>`));
   assert.ok(html.includes(`<h3>${copy.pricing.lowerTitle}</h3>`));
+  assert.ok(html.includes(`<h3>${copy.workflow.keySettingsTitle}</h3>`));
+  assert.ok(html.includes(`<dt>${copy.workflow.keySettingsItems[1][0]}</dt>`));
+  assert.ok(!html.includes('<p>undefined</p>'));
   assert.ok(html.includes('<main data-seo-prerendered="true">'));
   assert.ok(html.includes('<table><caption>'));
   assert.ok(html.includes('"@type":"BreadcrumbList"'));
