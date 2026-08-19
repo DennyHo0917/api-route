@@ -18,6 +18,7 @@ const ApiConnect = lazy(() => import('./pages/ApiConnect'));
 const Clients = lazy(() => import('./pages/Clients'));
 const Packages = lazy(() => import('./pages/Packages'));
 const Pricing = lazy(() => import('./pages/Pricing'));
+const Enterprise = lazy(() => import('./pages/Enterprise'));
 const AppMarket = lazy(() => import('./pages/AppMarket'));
 const DocsOverview = lazy(() => import('./pages/DocsOverview'));
 const DocsQuickstart = lazy(() => import('./pages/DocsQuickstart'));
@@ -117,6 +118,7 @@ function ThemedRoutes() {
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/pricing" element={<Pricing />} />
+          <Route path="/enterprise" element={<Enterprise />} />
           <Route path="/pricing/packages" element={<Navigate to="/packages" replace />} />
           <Route path="/packages" element={<Packages />} />
           <Route path="/apps" element={<AppMarket />} />

@@ -6,6 +6,7 @@ import { DOCS_COPY } from '../src/content/docsCopy.js';
 import { getLegalCopy } from '../src/content/legalCopy.js';
 import { SEO_COPY } from '../src/content/seoCopy.js';
 import { getPricingCopy } from '../src/content/pricingCopy.js';
+import { getEnterpriseCopy } from '../src/content/enterpriseCopy.js';
 import { getLocalizedPath } from '../src/i18n/languageUtils.js';
 
 const SITE_URL = 'https://www.api-route.com';
@@ -44,6 +45,7 @@ const languages = {
 const pages = [
   { key: 'home', path: '/' },
   { key: 'pricing', path: '/pricing' },
+  { key: 'enterprise', path: '/enterprise' },
   { key: 'packages', path: '/packages' },
   { key: 'apps', path: '/apps' },
   { key: 'docsOverview', path: '/docs/overview' },
@@ -62,8 +64,9 @@ const snapshotLabels = {
 };
 
 const relatedPageKeys = {
-  home: ['pricing', 'packages', 'apps', 'docsOverview', 'faq', 'subSite'],
+  home: ['pricing', 'enterprise', 'packages', 'apps', 'docsOverview', 'faq', 'subSite'],
   pricing: ['packages', 'apps', 'docsOverview', 'faq'],
+  enterprise: ['pricing', 'docsOverview', 'faq'],
   packages: ['pricing', 'faq'],
   apps: ['pricing', 'docsOverview', 'faq', 'packages'],
   docsOverview: ['docs', 'apps', 'pricing', 'faq'],
@@ -115,6 +118,12 @@ function getSeoPage(page, language) {
 function renderQuestions(questions) {
   if (!questions?.length) return '';
   return `<section><h2>FAQ</h2>${questions.map(([question, answer]) => `<article><h3>${escapeHtml(question)}</h3><p>${escapeHtml(answer)}</p></article>`).join('')}</section>`;
+}
+
+function renderEnterpriseCapabilities(language) {
+  const copy = getEnterpriseCopy(language);
+  const reasons = copy.reasons.map((reason) => `<article><h3>${escapeHtml(reason.title)}</h3><p>${escapeHtml(reason.body)}</p></article>`).join('');
+  return `<section><p>${escapeHtml(copy.audience)}</p><h2>${escapeHtml(copy.valueTitle)}</h2>${reasons}<ul>${copy.capabilities.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul><h2>${escapeHtml(copy.comparison.title)}</h2><h3>${escapeHtml(copy.comparison.standardTitle)}</h3><p>${escapeHtml(copy.comparison.standardBody)}</p><h3>${escapeHtml(copy.comparison.enterpriseTitle)}</h3><p>${escapeHtml(copy.comparison.enterpriseBody)}</p><p>${escapeHtml(copy.responseNote)}</p></section>`;
 }
 
 function formatSnapshotPrice(value) {
@@ -182,6 +191,7 @@ function renderRelatedPages(page, language) {
 function renderSnapshot(page, language, title, description, questions) {
   const links = [
     ['/pricing', 'Pricing'],
+    ['/enterprise', 'Enterprise'],
     ['/packages', 'Packages'],
     ['/apps', 'Apps'],
     ['/docs/overview', 'Docs'],
@@ -192,6 +202,7 @@ function renderSnapshot(page, language, title, description, questions) {
   ].map(([path, label]) => `<a href="${SITE_URL}${localizedPath(path, language)}">${label}</a>`).join(' ');
 
   const pricingTable = page.key === 'pricing' ? renderPricingTable(language) : '';
+  const enterpriseCapabilities = page.key === 'enterprise' ? renderEnterpriseCapabilities(language) : '';
   const overviewCopy = page.key === 'docsOverview' ? (DOCS_COPY[language] || DOCS_COPY.en).overview : null;
   const snapshotTitle = overviewCopy?.title || title;
   const snapshotDescription = overviewCopy?.description || description;
@@ -199,7 +210,7 @@ function renderSnapshot(page, language, title, description, questions) {
   const relatedPages = overviewCopy ? '' : renderRelatedPages(page, language);
   const snapshotLinks = overviewCopy ? '' : `<nav>${links}</nav>`;
   const snapshotBreadcrumb = overviewCopy ? '' : renderBreadcrumb(page, language, snapshotTitle);
-  return `<main data-seo-prerendered="true">${snapshotBreadcrumb}<h1>${escapeHtml(snapshotTitle)}</h1><p>${escapeHtml(snapshotDescription)}</p>${pricingTable}${docsOverview}${relatedPages}${renderQuestions(questions)}${snapshotLinks}</main>`;
+  return `<main data-seo-prerendered="true">${snapshotBreadcrumb}<h1>${escapeHtml(snapshotTitle)}</h1><p>${escapeHtml(snapshotDescription)}</p>${pricingTable}${enterpriseCapabilities}${docsOverview}${relatedPages}${renderQuestions(questions)}${snapshotLinks}</main>`;
 }
 
 function replaceMeta(html, language, page) {
@@ -209,7 +220,7 @@ function replaceMeta(html, language, page) {
   const metaTitle = seoPage.metaTitle || title;
   const metaDescription = seoPage.metaDescription || description;
   const questions = seoPage.questions || [];
-  const keywords = SEO_COPY[language]?.keywords || SEO_COPY.en.keywords;
+  const keywords = seoPage.keywords || SEO_COPY[language]?.keywords || SEO_COPY.en.keywords;
   const pageTitle = `${metaTitle} | API-Route`;
   const canonicalPath = localizedPath(page.path, language);
   const canonicalUrl = `${SITE_URL}${canonicalPath}`;
@@ -271,7 +282,24 @@ function replaceMeta(html, language, page) {
       knowsAbout: STRUCTURED_DATA_TOPICS,
       provider: { '@id': organizationId },
     });
-  } else {
+  }
+
+  if (page.key === 'enterprise') {
+    structuredData['@graph'].push({
+      '@type': 'Service',
+      '@id': `${canonicalUrl}#service`,
+      name: metaTitle,
+      serviceType: 'Enterprise AI API integration and operational support',
+      url: canonicalUrl,
+      description: metaDescription,
+      areaServed: 'Worldwide',
+      availableLanguage,
+      knowsAbout: keywords.split(',').map((item) => item.trim()).filter(Boolean),
+      provider: { '@id': organizationId },
+    });
+  }
+
+  if (canonicalUrl !== homeUrl) {
     const labels = snapshotLabels[language] || snapshotLabels.en;
     structuredData['@graph'].push({
       '@type': 'BreadcrumbList',

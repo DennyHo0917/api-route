@@ -6,6 +6,7 @@ export function getSiteNavItems({ t, site }) {
       ? [{ to: '/ai-api-reseller-platform', label: t('nav.apiAggregation'), auth: false }]
       : []),
     { to: '/docs/overview', label: t('nav.docs'), auth: false },
+    { to: '/enterprise', label: t('nav.enterpriseService'), auth: false },
     { to: '/#contact', sectionId: 'contact', label: t('nav.contact'), auth: false },
   ];
 }

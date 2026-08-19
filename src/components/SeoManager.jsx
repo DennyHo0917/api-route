@@ -19,7 +19,7 @@ const STRUCTURED_DATA_TOPICS = [
   'Automatic API failover',
   'AI API pricing comparison',
 ];
-const INDEXABLE_PATHS = new Set(['/', '/pricing', '/packages', '/apps', '/docs/overview', '/docs/quickstart', '/ai-api-reseller-platform', '/faq', '/privacy-policy', '/terms-of-service']);
+const INDEXABLE_PATHS = new Set(['/', '/pricing', '/enterprise', '/packages', '/apps', '/docs/overview', '/docs/quickstart', '/ai-api-reseller-platform', '/faq', '/privacy-policy', '/terms-of-service']);
 const PRIVATE_PATHS = new Set(['/login', '/register', '/dashboard', '/dashboard/logs', '/dashboard/tasks', '/chats', '/tokens', '/api-keys', '/api-connect', '/clients', '/logs', '/tasks', '/topup', '/topup/packages', '/referrals', '/account']);
 const LANGUAGE_HREFLANGS = {
   zh: 'zh-CN',
@@ -150,6 +150,7 @@ async function getPageCopy(pathname, copy, languageKey) {
   }
   if (pathname === '/') return copy.home;
   if (pathname === '/pricing') return copy.pricing;
+  if (pathname === '/enterprise') return copy.enterprise;
   if (pathname === '/packages' || pathname === '/topup/packages') return copy.packages;
   if (pathname === '/apps') return copy.apps;
   if (pathname === '/docs/overview') return copy.docsOverview;
@@ -230,7 +231,24 @@ function setStructuredData({
       knowsAbout: STRUCTURED_DATA_TOPICS,
       provider: { '@id': organizationId },
     });
-  } else {
+  }
+
+  if (page?.keywords && page?.title && canonicalUrl.endsWith('/enterprise')) {
+    graph.push({
+      '@type': 'Service',
+      '@id': `${canonicalUrl}#service`,
+      name: pageTitle,
+      serviceType: 'Enterprise AI API integration and operational support',
+      url: canonicalUrl,
+      description,
+      areaServed: 'Worldwide',
+      availableLanguage,
+      knowsAbout: keywords.split(',').map((item) => item.trim()).filter(Boolean),
+      provider: { '@id': organizationId },
+    });
+  }
+
+  if (canonicalUrl !== languageHomeUrl) {
     graph.push({
       '@type': 'BreadcrumbList',
       '@id': `${canonicalUrl}#breadcrumb`,
@@ -305,6 +323,7 @@ export default function SeoManager() {
     const indexable = INDEXABLE_PATHS.has(pathname);
     const metaTitle = page.metaTitle || page.title;
     const metaDescription = page.metaDescription || page.description;
+    const pageKeywords = page.keywords || copy.keywords;
     const privatePageTitle = pathname === '/api-connect'
       ? i18n.t('nav.apiAccess')
       : pathname === '/clients'
@@ -321,7 +340,7 @@ export default function SeoManager() {
     document.title = pageTitle;
 
     upsertMeta('meta[name="description"]', { name: 'description', content: metaDescription });
-    upsertMeta('meta[name="keywords"]', { name: 'keywords', content: copy.keywords });
+    upsertMeta('meta[name="keywords"]', { name: 'keywords', content: pageKeywords });
     upsertMeta('meta[name="language"]', { name: 'language', content: copy.language });
     upsertMeta('meta[name="robots"]', { name: 'robots', content: robots });
     upsertMeta('meta[name="googlebot"]', { name: 'googlebot', content: robots });
@@ -382,7 +401,7 @@ export default function SeoManager() {
       canonicalUrl,
       description: metaDescription,
       indexable,
-      keywords: copy.keywords,
+      keywords: pageKeywords,
       language: copy.language,
       languageHomeUrl,
       logoUrl,

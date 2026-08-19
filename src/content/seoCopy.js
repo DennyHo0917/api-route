@@ -1,5 +1,6 @@
 import { PRICING_COPY } from './pricingCopy.js';
 import { DOCS_OVERVIEW_SEO_COPY } from './docsSeoCopy.js';
+import { ENTERPRISE_COPY } from './enterpriseCopy.js';
 
 export const SEO_COPY = {
   zh: {
@@ -13,6 +14,13 @@ export const SEO_COPY = {
       ],
     },
     pricing: PRICING_COPY.zh,
+    enterprise: {
+      title: ENTERPRISE_COPY.zh.title,
+      description: ENTERPRISE_COPY.zh.description,
+      metaTitle: ENTERPRISE_COPY.zh.metaTitle,
+      metaDescription: ENTERPRISE_COPY.zh.metaDescription,
+      keywords: ENTERPRISE_COPY.zh.keywords,
+    },
     packages: {
       title: '套餐与余额充值',
       description: '先充值账户余额，再按需购买天卡、周卡、月卡等 AI API 套餐；查看套餐额度、有效期与适用场景。',
@@ -78,6 +86,13 @@ export const SEO_COPY = {
       ],
     },
     pricing: PRICING_COPY.en,
+    enterprise: {
+      title: ENTERPRISE_COPY.en.title,
+      description: ENTERPRISE_COPY.en.description,
+      metaTitle: ENTERPRISE_COPY.en.metaTitle,
+      metaDescription: ENTERPRISE_COPY.en.metaDescription,
+      keywords: ENTERPRISE_COPY.en.keywords,
+    },
     packages: {
       title: 'AI API Plans and Packages',
       description: 'Compare daily, weekly, monthly, and quota-based AI API plans for one OpenAI-compatible API. Choose a package by quota, validity period, model access, and use case.',
@@ -141,6 +156,13 @@ export const SEO_COPY = {
       ],
     },
     pricing: PRICING_COPY.ja,
+    enterprise: {
+      title: ENTERPRISE_COPY.ja.title,
+      description: ENTERPRISE_COPY.ja.description,
+      metaTitle: ENTERPRISE_COPY.ja.metaTitle,
+      metaDescription: ENTERPRISE_COPY.ja.metaDescription,
+      keywords: ENTERPRISE_COPY.ja.keywords,
+    },
     packages: {
       title: 'AI API プランと残高チャージ',
       description: 'アカウント残高をチャージしてから、日次、週次、月次、容量ベースの AI API プランを必要に応じて申し込めます。クォータ、有効期間、利用シーンも確認できます。',
@@ -204,6 +226,13 @@ export const SEO_COPY = {
       ],
     },
     pricing: PRICING_COPY.ko,
+    enterprise: {
+      title: ENTERPRISE_COPY.ko.title,
+      description: ENTERPRISE_COPY.ko.description,
+      metaTitle: ENTERPRISE_COPY.ko.metaTitle,
+      metaDescription: ENTERPRISE_COPY.ko.metaDescription,
+      keywords: ENTERPRISE_COPY.ko.keywords,
+    },
     packages: {
       title: 'AI API 플랜과 잔액 충전',
       description: '계정 잔액을 먼저 충전한 뒤 일간, 주간, 월간, 용량 기반 AI API 플랜을 필요에 맞게 구독하세요. 쿼터, 유효 기간, 사용 시나리오도 확인할 수 있습니다.',
