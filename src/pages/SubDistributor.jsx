@@ -574,9 +574,9 @@ export default function SubDistributor() {
     };
   }, [tourStep]);
 
-  const openTour = (step = 0, source = 'hero') => {
+  const openTour = (step = 0, placement = 'hero') => {
     setTourStep(step);
-    trackEvent('reseller_tour_open', { source, step: step + 1 });
+    trackEvent('reseller_tour_open', { placement, step: step + 1 });
   };
 
   const changeTourStep = (step) => {

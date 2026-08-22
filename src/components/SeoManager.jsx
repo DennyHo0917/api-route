@@ -137,16 +137,18 @@ async function getFaqSeoPage(languageKey) {
   };
 }
 
-async function getPageCopy(pathname, copy, languageKey) {
+function getPageCopy(pathname, copy, languageKey) {
   if (pathname === '/privacy-policy') {
-    const { getLegalCopy } = await import('../content/legalCopy');
-    const { page } = getLegalCopy(languageKey, 'privacy');
-    return { title: page.title, description: page.description };
+    return import('../content/legalCopy').then(({ getLegalCopy }) => {
+      const { page } = getLegalCopy(languageKey, 'privacy');
+      return { title: page.title, description: page.description };
+    });
   }
   if (pathname === '/terms-of-service') {
-    const { getLegalCopy } = await import('../content/legalCopy');
-    const { page } = getLegalCopy(languageKey, 'terms');
-    return { title: page.title, description: page.description };
+    return import('../content/legalCopy').then(({ getLegalCopy }) => {
+      const { page } = getLegalCopy(languageKey, 'terms');
+      return { title: page.title, description: page.description };
+    });
   }
   if (pathname === '/') return copy.home;
   if (pathname === '/pricing') return copy.pricing;
@@ -311,9 +313,9 @@ export default function SeoManager() {
     const copy = SEO_COPY[languageKey];
     const knownPath = INDEXABLE_PATHS.has(pathname) || PRIVATE_PATHS.has(pathname);
     let cancelled = false;
-    const pagePromise = knownPath ? getPageCopy(pathname, copy, languageKey) : Promise.resolve(copy.notFound);
+    const pageResult = knownPath ? getPageCopy(pathname, copy, languageKey) : copy.notFound;
 
-    pagePromise.then((page) => {
+    const updatePage = (page) => {
       if (cancelled) return;
     const siteName = normalizeSiteName(site?.name);
     const siteUrl = getSiteUrl();
@@ -417,7 +419,10 @@ export default function SeoManager() {
       lastTrackedUrlRef.current = trackedUrl;
       trackPageView(pageTitle);
     }
-    });
+    };
+
+    if (typeof pageResult?.then === 'function') pageResult.then(updatePage);
+    else updatePage(pageResult);
 
     return () => {
       cancelled = true;

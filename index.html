@@ -48,23 +48,25 @@
     <meta name="twitter:image" content="https://www.api-route.com/og-image.png" />
     <meta name="twitter:image:alt" content="API-Route" />
     <script>
-      window.dataLayer = window.dataLayer || [];
-      window.gtag = function(){dataLayer.push(arguments);};
-      window.gtag('js', new Date());
-      window.gtag('config', 'G-GZT5KLBKJ8', { send_page_view: false });
+      if (window.location.hostname === 'www.api-route.com' || window.location.hostname === 'api-route.com') {
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function(){window.dataLayer.push(arguments);};
+        window.gtag('js', new Date());
+        window.gtag('config', 'G-GZT5KLBKJ8', { send_page_view: false });
 
-      function loadGoogleAnalytics() {
-        if (document.getElementById('google-analytics')) return;
-        var script = document.createElement('script');
-        script.id = 'google-analytics';
-        script.async = true;
-        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-GZT5KLBKJ8';
-        document.head.appendChild(script);
+        function loadGoogleAnalytics() {
+          if (document.getElementById('google-analytics')) return;
+          var script = document.createElement('script');
+          script.id = 'google-analytics';
+          script.async = true;
+          script.src = 'https://www.googletagmanager.com/gtag/js?id=G-GZT5KLBKJ8';
+          document.head.appendChild(script);
+        }
+
+        ['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach(function(eventName) {
+          window.addEventListener(eventName, loadGoogleAnalytics, { once: true, passive: true });
+        });
       }
-
-      ['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach(function(eventName) {
-        window.addEventListener(eventName, loadGoogleAnalytics, { once: true, passive: true });
-      });
     </script>
     <script id="seo-structured-data" type="application/ld+json">
       {

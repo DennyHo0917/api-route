@@ -5,7 +5,11 @@ import {
   getAnalyticsPageLocation,
   getAttributionEventParams,
 } from '../src/utils/attribution.js';
-import { trackEvent, trackPageView } from '../src/utils/analytics.js';
+import {
+  isProductionAnalyticsHost,
+  trackEvent,
+  trackPageView,
+} from '../src/utils/analytics.js';
 
 const createStorage = () => {
   const values = new Map();
@@ -19,6 +23,13 @@ const capture = (url, referrer = '', storage = createStorage()) => ({
   storage,
   value: captureAttribution({ url, referrer, storage, now: '2026-08-15T00:00:00.000Z' }),
 });
+
+assert.equal(isProductionAnalyticsHost('www.api-route.com'), true);
+assert.equal(isProductionAnalyticsHost('api-route.com'), true);
+assert.equal(isProductionAnalyticsHost('api-route-git-test.vercel.app'), false);
+assert.equal(isProductionAnalyticsHost('localhost'), false);
+assert.equal(isProductionAnalyticsHost('127.0.0.1'), false);
+assert.equal(isProductionAnalyticsHost('staging.api-route.com'), false);
 
 let result = capture('https://www.api-route.com/', 'https://www.google.com/search?q=ai+api');
 assert.equal(result.value.first_touch_source, 'google');
@@ -132,6 +143,7 @@ globalThis.window = {
   localStorage: persistentStorage,
   location: {
     origin: 'https://www.api-route.com',
+    hostname: 'www.api-route.com',
     pathname: '/register',
     search: '?utm_source=x',
     href: 'https://www.api-route.com/register?utm_source=x',
@@ -155,15 +167,71 @@ for (const [, eventName, params] of calls) {
   assert.deepEqual(params.items, [{ item_id: 'plan-1' }]);
 }
 
+const reservedTrafficParams = {
+  source: 'hero',
+  medium: 'internal',
+  campaign: 'tour',
+  campaign_id: 'campaign-id',
+  campaign_source: 'showcase',
+  campaign_medium: 'internal',
+  campaign_name: 'tour-open',
+  campaign_term: 'reseller',
+  campaign_content: 'hero-card',
+  placement: 'hero',
+  first_source: 'original-first',
+  last_source: 'original-last',
+  items: [{ source: 'nested-source', campaign: 'nested-campaign' }],
+};
+assert.equal(trackEvent('reseller_tour_open', reservedTrafficParams), true);
+const reservedParamsCall = calls.at(-1)[2];
+for (const name of [
+  'source',
+  'medium',
+  'campaign',
+  'campaign_id',
+  'campaign_source',
+  'campaign_medium',
+  'campaign_name',
+  'campaign_term',
+  'campaign_content',
+]) {
+  assert.equal(name in reservedParamsCall, false);
+}
+assert.equal(reservedParamsCall.placement, 'hero');
+assert.equal(reservedParamsCall.first_source, 'original-first');
+assert.equal(reservedParamsCall.last_source, 'original-last');
+assert.deepEqual(reservedParamsCall.items, [{ source: 'nested-source', campaign: 'nested-campaign' }]);
+
 globalThis.window.location = {
   origin: 'https://www.api-route.com',
+  hostname: 'www.api-route.com',
   pathname: '/register',
   search: '?utm_source=x&page=2&code=secret&token=secret',
   href: 'https://www.api-route.com/register?utm_source=x&page=2&code=secret&token=secret',
 };
 assert.equal(trackPageView('Register'), true);
-assert.equal(calls[4][1], 'page_view');
-assert.equal(calls[4][2].page_location, 'https://www.api-route.com/register?utm_source=x&page=2');
+assert.equal(calls.at(-1)[1], 'page_view');
+assert.equal(calls.at(-1)[2].page_location, 'https://www.api-route.com/register?utm_source=x&page=2');
+
+const productionCallCount = calls.length;
+globalThis.window.location = {
+  origin: 'https://api-route-git-test.vercel.app',
+  hostname: 'api-route-git-test.vercel.app',
+  pathname: '/register',
+  search: '',
+  href: 'https://api-route-git-test.vercel.app/register',
+};
+assert.equal(trackEvent('reseller_tour_open', { placement: 'hero' }), false);
+assert.equal(trackPageView('Register'), false);
+assert.equal(calls.length, productionCallCount);
+
+globalThis.window.location = {
+  origin: 'https://www.api-route.com',
+  hostname: 'www.api-route.com',
+  pathname: '/register',
+  search: '',
+  href: 'https://www.api-route.com/register',
+};
 
 Object.defineProperty(globalThis.window, 'localStorage', {
   configurable: true,
@@ -173,7 +241,20 @@ assert.doesNotThrow(() => trackEvent('purchase', { transaction_id: 'safe-id' }))
 globalThis.window.gtag = () => { throw new Error('blocked'); };
 assert.equal(trackEvent('purchase', { transaction_id: 'safe-id' }), false);
 
-const registerSource = await readFile(new URL('../src/pages/Register.jsx', import.meta.url), 'utf8');
+const [appSource, registerSource, subDistributorSource, seoManagerSource] = await Promise.all([
+  readFile(new URL('../src/App.jsx', import.meta.url), 'utf8'),
+  readFile(new URL('../src/pages/Register.jsx', import.meta.url), 'utf8'),
+  readFile(new URL('../src/pages/SubDistributor.jsx', import.meta.url), 'utf8'),
+  readFile(new URL('../src/components/SeoManager.jsx', import.meta.url), 'utf8'),
+]);
 assert.equal((registerSource.match(/trackEvent\('sign_up'/g) || []).length, 1);
+assert.match(subDistributorSource, /const openTour = \(step = 0, placement = 'hero'\)/);
+assert.match(subDistributorSource, /trackEvent\('reseller_tour_open', \{ placement, step: step \+ 1 \}\)/);
+assert.doesNotMatch(subDistributorSource, /trackEvent\('reseller_tour_open',\s*\{\s*source\b/);
+assert.equal((seoManagerSource.match(/trackPageView\(pageTitle\)/g) || []).length, 1);
+assert.match(seoManagerSource, /if \(lastTrackedUrlRef\.current !== trackedUrl\)[\s\S]*lastTrackedUrlRef\.current = trackedUrl;[\s\S]*trackPageView\(pageTitle\)/);
+assert.doesNotMatch(seoManagerSource, /async function getPageCopy/);
+assert.match(seoManagerSource, /if \(typeof pageResult\?\.then === 'function'\) pageResult\.then\(updatePage\);\s*else updatePage\(pageResult\);/);
+assert.ok(appSource.indexOf('<SeoManager />') < appSource.indexOf('<ThemedRoutes />'));
 
 console.log('Attribution checks passed.');

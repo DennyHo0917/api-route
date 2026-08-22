@@ -8,6 +8,36 @@ import {
 export const GA_MEASUREMENT_ID = 'G-GZT5KLBKJ8';
 
 const ATTRIBUTED_EVENTS = new Set(['sign_up', 'auth_complete', 'begin_checkout', 'purchase']);
+const PRODUCTION_ANALYTICS_HOSTNAMES = new Set(['www.api-route.com', 'api-route.com']);
+const RESERVED_TRAFFIC_SOURCE_PARAMS = new Set([
+  'source',
+  'medium',
+  'campaign',
+  'campaign_id',
+  'campaign_source',
+  'campaign_medium',
+  'campaign_name',
+  'campaign_term',
+  'campaign_content',
+]);
+
+export const isProductionAnalyticsHost = (hostname = (
+  typeof window !== 'undefined' ? window.location?.hostname : ''
+)) => PRODUCTION_ANALYTICS_HOSTNAMES.has(hostname);
+
+const sanitizeTopLevelEventParams = (params) => {
+  const blockedNames = [];
+  const entries = Object.entries(params || {}).filter(([name]) => {
+    if (!RESERVED_TRAFFIC_SOURCE_PARAMS.has(name)) return true;
+    blockedNames.push(name);
+    return false;
+  });
+
+  if (blockedNames.length > 0 && import.meta.env?.DEV) {
+    console.warn(`[analytics] Ignored reserved GA4 event parameter(s): ${blockedNames.join(', ')}`);
+  }
+  return Object.fromEntries(entries);
+};
 
 const sanitizeEventValue = (name, value) => {
   if (typeof value === 'string') {
@@ -34,10 +64,15 @@ const sanitizeEventParams = (params) => Object.fromEntries(
 );
 
 export function trackEvent(name, params = {}) {
-  if (typeof window === 'undefined' || typeof window.gtag !== 'function') return false;
   try {
+    const eventParams = sanitizeTopLevelEventParams(params);
+    if (
+      typeof window === 'undefined'
+      || !isProductionAnalyticsHost()
+      || typeof window.gtag !== 'function'
+    ) return false;
     const attribution = ATTRIBUTED_EVENTS.has(name) ? getAttributionEventParams() : {};
-    window.gtag('event', name, sanitizeEventParams({ ...params, ...attribution }));
+    window.gtag('event', name, sanitizeEventParams({ ...eventParams, ...attribution }));
     return true;
   } catch {
     return false;
@@ -63,7 +98,11 @@ export function trackEventOnce(storageKey, name, params = {}) {
 }
 
 export function trackPageView(pageTitle) {
-  if (typeof window === 'undefined' || typeof window.gtag !== 'function') return false;
+  if (
+    typeof window === 'undefined'
+    || !isProductionAnalyticsHost()
+    || typeof window.gtag !== 'function'
+  ) return false;
   try {
     window.gtag('event', 'page_view', {
       page_title: pageTitle,
