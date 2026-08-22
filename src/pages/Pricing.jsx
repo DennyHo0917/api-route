@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Calculator, ChevronDown, ChevronRight, ExternalLink, Layers, WalletCards } from 'lucide-react';
+import { ArrowRight, Calculator, ChevronDown, ChevronRight, ExternalLink, Layers, WalletCards } from 'lucide-react';
 import { getSiteModels } from '../api';
 import { useCurrency } from '../context/SiteContext';
 import { getPricingCopy } from '../content/pricingCopy';
 import { normalizeAppLanguage } from '../i18n/languageUtils';
 import { getOfficialPrice } from '../utils/officialEquiv';
+import { trackEvent } from '../utils/analytics';
 
 const MODEL_TYPE_OPTIONS = [
   { value: '', labelKey: 'pricing.allTypes' },
@@ -388,6 +390,14 @@ export default function Pricing() {
         <p className="text-page-secondary max-w-xl mx-auto">
           {t('pricing.subtitle')}
         </p>
+        <Link
+          to="/packages"
+          onClick={() => trackEvent('pricing_packages_click', { placement: 'pricing_intro' })}
+          className="btn-primary mt-5 inline-flex items-center justify-center"
+        >
+          {t('pricing.viewPlans')}
+          <ArrowRight className="ml-2 h-4 w-4" />
+        </Link>
       </div>
 
       {/* Vendor Filter */}

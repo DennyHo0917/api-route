@@ -31,6 +31,14 @@ const sameOriginReferrerPath = () => {
   }
 };
 
+const storedReturnTo = () => {
+  try {
+    return sessionStorage.getItem(AUTH_RETURN_TO_KEY) || '';
+  } catch {
+    return '';
+  }
+};
+
 export const rememberAuthReturnTo = (location) => {
   const currentPath = toPath(location);
   const direct = getDirectReturnTo(location);
@@ -47,6 +55,5 @@ export const rememberAuthReturnTo = (location) => {
 
 export const getAuthReturnTo = (location) => {
   const direct = getDirectReturnTo(location);
-  if (direct) return cleanReturnTo(direct);
-  return '/dashboard';
+  return cleanReturnTo(direct || storedReturnTo() || sameOriginReferrerPath());
 };

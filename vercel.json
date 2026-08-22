@@ -107,6 +107,31 @@
       "permanent": true
     },
     {
+      "source": "/topup/packages",
+      "destination": "/packages",
+      "permanent": true
+    },
+    {
+      "source": "/en/topup/packages",
+      "destination": "/packages",
+      "permanent": true
+    },
+    {
+      "source": "/zh/topup/packages",
+      "destination": "/zh/packages",
+      "permanent": true
+    },
+    {
+      "source": "/ja/topup/packages",
+      "destination": "/ja/packages",
+      "permanent": true
+    },
+    {
+      "source": "/ko/topup/packages",
+      "destination": "/ko/packages",
+      "permanent": true
+    },
+    {
       "source": "/en",
       "destination": "/",
       "permanent": true

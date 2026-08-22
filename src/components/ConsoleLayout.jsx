@@ -14,6 +14,7 @@ import {
   PanelLeftOpen,
   Settings2,
   UserRound,
+  WalletCards,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
@@ -40,6 +41,7 @@ const navGroups = [
     label: 'nav.groupAccount',
     items: [
       { to: '/topup', label: 'nav.topup', icon: Coins },
+      { to: '/packages', label: 'nav.packages', icon: WalletCards },
       { to: '/account', label: 'nav.account', icon: UserRound },
       { to: '/referrals', label: 'topup.inviteTitle', icon: Gift },
     ],

@@ -28,4 +28,15 @@ assert.equal(
   '/topup',
 );
 
+rememberAuthReturnTo({
+  pathname: '/login',
+  search: '',
+  hash: '',
+  state: { from: '/packages?plan=42' },
+});
+assert.equal(
+  getAuthReturnTo({ pathname: '/oauth/google', search: '', hash: '' }),
+  '/packages?plan=42',
+);
+
 console.log('Auth return check passed.');

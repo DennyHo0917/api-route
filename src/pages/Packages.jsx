@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowRight,
@@ -66,6 +66,7 @@ export default function Packages() {
   const { t, i18n } = useTranslation();
   const { user, refreshUser } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { symbol, rate, fmtCNY, cnyPerUsd, decimals } = useCurrency();
   const [packages, setPackages] = useState([]);
   const [models, setModels] = useState([]);
@@ -73,6 +74,11 @@ export default function Packages() {
   const [subscribing, setSubscribing] = useState(null);
   const [activeSubs, setActiveSubs] = useState([]);
   const [confirmPkg, setConfirmPkg] = useState(null);
+  const selectedPackageId = useMemo(
+    () => new URLSearchParams(location.search).get('plan'),
+    [location.search],
+  );
+  const isLoggedIn = Boolean(user);
 
   const getResetLabel = (period) => t(resetLabelKeys[period] || resetLabelKeys.never);
 
@@ -88,11 +94,20 @@ export default function Packages() {
   }, []);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setActiveSubs([]);
+      return;
+    }
     getActiveSubscriptions()
       .then((res) => { if (res.data.success) setActiveSubs(res.data.data || []); })
       .catch(() => {});
   }, [user]);
+
+  useEffect(() => {
+    trackEvent('packages_view', {
+      login_state: isLoggedIn ? 'logged_in' : 'anonymous',
+    });
+  }, [isLoggedIn]);
 
   const enabledModels = useMemo(
     () => models.filter((model) => model.enabled !== false),
@@ -108,8 +123,24 @@ export default function Packages() {
   const recommendedId = visiblePackages.find((pkg) => Number(pkg.duration) === 30)?.id
     || visiblePackages[1]?.id;
 
+  useEffect(() => {
+    if (!user || loading || !selectedPackageId) return;
+    const selectedPackage = enabled.find(
+      (pkg) => String(pkg.id) === String(selectedPackageId),
+    );
+    navigate('/packages', { replace: true });
+    if (selectedPackage) setConfirmPkg(selectedPackage);
+  }, [enabled, loading, navigate, selectedPackageId, user]);
+
   const handleSubscribe = (pkg) => {
     const item = getPackageAnalyticsItem(pkg);
+    trackEvent('package_select', {
+      item_id: item.item_id,
+      item_name: item.item_name,
+      price: item.price,
+      login_state: user ? 'logged_in' : 'anonymous',
+      placement: 'packages',
+    });
     trackEvent('begin_checkout', {
       currency: 'CNY',
       value: item.price,
@@ -118,7 +149,15 @@ export default function Packages() {
       items: [item],
     });
     if (!user) {
-      navigate('/register');
+      trackEvent('package_login_required', {
+        item_id: item.item_id,
+        item_name: item.item_name,
+        price: item.price,
+        placement: 'packages',
+      });
+      navigate('/login', {
+        state: { from: `/packages?plan=${encodeURIComponent(pkg.id)}` },
+      });
       return;
     }
     setConfirmPkg(pkg);

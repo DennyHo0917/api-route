@@ -6,6 +6,7 @@ import NotificationBell from './components/NotificationBell';
 import ConsoleLayout from './components/ConsoleLayout';
 import SeoManager from './components/SeoManager';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { useAuth } from './context/AuthContext';
 import { rememberAuthReturnTo } from './utils/authReturn';
 
 const Login = lazy(() => import('./pages/Login'));
@@ -96,16 +97,18 @@ function MergedPageLayout({ labelKey, tabs }) {
   );
 }
 
-const TOPUP_TABS = [
-  { to: '/topup', labelKey: 'nav.topup', end: true },
-  { to: '/topup/packages', labelKey: 'nav.packages' },
-];
-
 const DASHBOARD_TABS = [
   { to: '/dashboard', labelKey: 'dashboard.analyticsTitle', end: true },
   { to: '/dashboard/logs', labelKey: 'logs.callLogs' },
   { to: '/dashboard/tasks', labelKey: 'tasks.title' },
 ];
+
+function PackagesLayout() {
+  const { user, loading } = useAuth();
+
+  if (loading) return <Loading />;
+  return user ? <ConsoleLayout /> : <Outlet />;
+}
 
 function ThemedRoutes() {
   const { Home, Layout } = useTheme();
@@ -120,7 +123,10 @@ function ThemedRoutes() {
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/enterprise" element={<Enterprise />} />
           <Route path="/pricing/packages" element={<Navigate to="/packages" replace />} />
-          <Route path="/packages" element={<Packages />} />
+          <Route path="/topup/packages" element={<Navigate to="/packages" replace />} />
+          <Route element={<PackagesLayout />}>
+            <Route path="/packages" element={<Packages />} />
+          </Route>
           <Route path="/apps" element={<AppMarket />} />
           <Route path="/docs" element={<Navigate to="/docs/overview" replace />} />
           <Route path="/docs/overview" element={<DocsOverview />} />
@@ -150,13 +156,7 @@ function ThemedRoutes() {
               </Route>
               <Route path="/api-keys" element={<Tokens />} />
               <Route path="/chats" element={<QuickStart />} />
-              <Route
-                path="/topup"
-                element={<MergedPageLayout labelKey="nav.topup" tabs={TOPUP_TABS} />}
-              >
-                <Route index element={<Topup />} />
-                <Route path="packages" element={<Packages />} />
-              </Route>
+              <Route path="/topup" element={<Topup />} />
               <Route path="/api-connect" element={<ApiConnect />} />
               <Route path="/clients" element={<Clients />} />
               <Route path="/referrals" element={<Referrals />} />

@@ -577,6 +577,7 @@
 
     "pricing.title": "AI API Pricing Comparison and Token Costs",
     "pricing.subtitle": "Compare GPT, Claude, Gemini, and other model rates across input tokens, output tokens, cache, and per-call pricing, then estimate AI API token cost by workload.",
+    "pricing.viewPlans": "View Plans",
     "pricing.searchPlaceholder": "Search models...",
     "pricing.noMatch": "No models match your search",
     "pricing.noModels": "No models available",

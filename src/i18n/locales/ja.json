@@ -296,6 +296,7 @@
     "subDist.alreadyOpenDesc": "独自プラットフォーム {{name}} は有効化済みです。同じアカウントで管理画面から設定を続けてください。",
     "pricing.title": "AI API 料金比較・モデル単価・トークンコスト",
     "pricing.subtitle": "GPT、Claude、Gemini などの入力、出力、キャッシュ、回数課金を比較し、用途別に AI API のトークンコストを見積もれます。",
+    "pricing.viewPlans": "料金プランを見る",
     "pricing.searchPlaceholder": "モデルを検索...",
     "pricing.noMatch": "条件に合うモデルがありません",
     "pricing.noModels": "利用できるモデルがありません",
