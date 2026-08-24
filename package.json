@@ -12,6 +12,7 @@
     "preview": "vite preview",
     "check:chunk-recovery": "node scripts/check-chunk-recovery.mjs",
     "check:docs-overview": "node scripts/check-docs-overview.mjs",
+    "check:reseller-prerender": "node scripts/check-reseller-prerender.mjs",
     "check:frontend-loading": "node scripts/check-frontend-loading.mjs",
     "check:log-prefetch": "node scripts/check-log-prefetch.mjs",
     "check:auth-return": "node scripts/check-auth-return.mjs",

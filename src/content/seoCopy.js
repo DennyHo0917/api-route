@@ -55,6 +55,14 @@ export const SEO_COPY = {
       description: '为已有用户或客户搭建白标 AI API 分站，统一管理品牌、模型售价、套餐、充值、API Key 和调用记录，无需自己寻找上游、购买 VPS 或部署服务。',
       metaTitle: '如何搭建 AI API 网关？开通独立 AI API 平台',
       metaDescription: '想搭建自己的 AI API 网关或 API 分发平台？API-Route 已打包上游接入、计费、充值、套餐、用户和日志能力；无需从零部署传统 API 中转站，直接开通独立平台。',
+      snapshotTitle: '搭建和运营自己的 AI API 平台',
+      snapshotDescription: '把 API-Route 的多模型能力包装成你的白标 AI API 平台：自定义品牌、域名、模型售价、充值和套餐。上游接入、VPS 部署、支付和管理后台都已准备好，你可以用自己的入口服务现有客户。',
+      snapshotSections: [
+        { title: '谁适合运营 AI API 分站', body: '适合已经有用户、社群、客户或模型渠道，希望把 AI API 能力包装成自己品牌服务的人。', items: ['AI 工具社群运营者', '开发者和 SaaS 团队', '模型渠道和 API 代理', '已有客户渠道的技术服务商'] },
+        { title: '开通后得到什么', body: '平台把上游接入、部署、用户、支付、计费和日志等基础能力集中到一个后台。', items: ['白标 AI API 分站和品牌展示', '上游模型接入与部署基础', '模型转售、售价和套餐管理', '充值、套餐与支付流程', 'API Key、余额、调用日志和用户管理'] },
+        { title: '利润从哪里来？', body: '你以平台成本价获得上游模型，再按自己的价格转售给用户；售价与成本之间的差额就是利润。收入取决于实际客户充值和使用情况，平台不提供客户或利润保证。' },
+        { title: '平台运维由谁负责？', body: '平台负责上游接入、部署、监控和日常维护；你负责品牌、定价、获客、客户支持和日常运营。上游节点异常时，系统会按路由策略切换到可用节点。' },
+      ],
       questions: [
         ['平台的收入模式是什么？', '你可以为现有客户设置模型售价和套餐，收入取决于客户的实际充值与使用情况；平台不提供客户，也不承诺收入或利润。'],
         ['可以作为 AI API 代理平台使用吗？', '可以。它适合想用自己品牌销售 AI API 套餐、统一管理用户、余额、API Key 和调用记录的人。'],
@@ -125,6 +133,14 @@ export const SEO_COPY = {
     subSite: {
       title: 'AI API Reseller Platform',
       description: 'Start an AI API reseller business with your own white-label platform. Set model pricing, sell plans, accept top-ups, and route traffic automatically.',
+      snapshotTitle: 'Build and operate your own AI API reseller platform',
+      snapshotDescription: 'Give your existing customers a branded AI API platform powered by API-Route. Upstream model access, VPS hosting, payments, balance top-ups, plans, and core administration are already handled.',
+      snapshotSections: [
+        { title: 'Who Should Operate an AI API Platform', body: 'Built for AI API resellers, communities, SaaS teams, and model channels that already have users and want to package AI API access as their own business.', items: ['AI tool community operators', 'Developers and SaaS teams', 'AI API resellers and model channels', 'Technology providers with existing customers'] },
+        { title: 'What You Get', body: 'The platform brings upstream access, deployment, accounts, payments, billing, and usage logs into one branded operation.', items: ['White-label entry point and branded presentation', 'Upstream model access and deployment foundation', 'Model sales, pricing, and plan management', 'Top-ups, plans, and payment flows', 'API keys, balance, usage logs, and customer management'] },
+        { title: 'Where Your Margin Comes From', body: 'You obtain upstream model access at platform cost and resell it at your own prices. The difference between cost and selling price is your margin. Revenue depends on real customer top-ups and usage; the platform does not provide customers or guarantee profit.' },
+        { title: 'Who Handles Operations?', body: 'The platform handles upstream integration, deployment, monitoring, and maintenance. You handle branding, pricing, customer acquisition, support, and day-to-day operations. Route failures can be handled by switching to another available upstream route.' },
+      ],
       questions: [
         ['How does the platform generate revenue?', 'You can set model prices and plans for your existing customers. Revenue depends on actual customer top-ups and usage; the platform does not provide customers or guarantee revenue.'],
         ['Can I start an AI API business without building infrastructure?', 'Yes. Upstream access, hosting, payments, user accounts, API keys, balance, and usage logs are already packaged so you can focus on branding, pricing, and customers.'],
@@ -195,6 +211,14 @@ export const SEO_COPY = {
     subSite: {
       title: 'AI API リセラープラットフォーム',
       description: '既存顧客向けにホワイトラベルの AI API プラットフォームを構築できます。ブランド、モデル価格、プラン、残高、API キー、利用履歴を一元管理し、上流接続や VPS 運用は不要です。',
+      snapshotTitle: '自社ブランドの AI API プラットフォームを構築・運営',
+      snapshotDescription: '既存の顧客に、自社ブランドの AI API プラットフォームを提供できます。上流接続、VPS、デプロイ、決済、残高チャージ、プラン管理は API-Route 側で用意されています。',
+      snapshotSections: [
+        { title: 'どんな人に向いていますか？', body: '既存のユーザー、コミュニティ、顧客、モデルチャネルを持ち、AI API を自社ブランドのサービスとして提供したい人に向いています。', items: ['AI ツールコミュニティ運営者', '開発者・SaaS チーム', 'モデルチャネル・API リセラー', '既存顧客を持つ技術サービス事業者'] },
+        { title: '開設後に得られるもの', body: '上流接続、デプロイ、ユーザー、決済、課金、利用ログを一つの管理基盤にまとめます。', items: ['ホワイトラベルの入口とブランド表示', '上流モデル接続とデプロイ基盤', 'モデル販売、価格、プラン管理', 'チャージ、プラン、決済フロー', 'API キー、残高、利用ログ、顧客管理'] },
+        { title: '収益の仕組み', body: '上流モデルをプラットフォームのコストで利用し、自分で販売価格を設定して提供します。収益は実際のチャージと利用状況によって決まり、顧客や利益を保証するものではありません。' },
+        { title: '運営は誰が担当しますか？', body: '上流接続、デプロイ、監視、日常保守はプラットフォームが担当します。ブランド、価格設定、顧客獲得、サポート、日々の運営は運営者が担当します。' },
+      ],
       questions: [
         ['収益の仕組みはどうなっていますか？', '既存顧客向けにモデル価格やプランを設定できます。収益は実際のチャージと利用状況によって決まり、顧客獲得や収益を保証するものではありません。'],
         ['インフラを作らず AI API ビジネスを始められますか？', 'はい。上流接続、ホスティング、決済、アカウント、API キー、残高、利用ログの基盤が用意されています。'],
@@ -265,6 +289,14 @@ export const SEO_COPY = {
     subSite: {
       title: 'AI API 리셀러 플랫폼',
       description: '기존 고객을 위한 화이트라벨 AI API 플랫폼을 구축할 수 있습니다. 브랜드, 모델 가격, 플랜, 충전, API 키, 사용 기록을 통합 관리하며 상위 연동이나 VPS 운영은 필요하지 않습니다.',
+      snapshotTitle: '자체 브랜드의 AI API 플랫폼을 구축하고 운영하세요',
+      snapshotDescription: '기존 고객에게 자체 브랜드의 AI API 플랫폼을 제공할 수 있습니다. 상위 모델 연동, VPS, 배포, 결제, 잔액 충전, 플랜 관리는 API-Route에서 제공합니다.',
+      snapshotSections: [
+        { title: '누가 운영하면 좋은가요?', body: '기존 사용자, 커뮤니티, 고객 또는 모델 채널이 있고 AI API를 자신의 브랜드 서비스로 제공하려는 사람에게 적합합니다.', items: ['AI 도구 커뮤니티 운영자', '개발자와 SaaS 팀', '모델 채널과 AI API 리셀러', '기존 고객을 보유한 기술 서비스 사업자'] },
+        { title: '개설 후 제공되는 것', body: '상위 연동, 배포, 사용자, 결제, 과금, 사용 로그를 하나의 운영 기반에 모읍니다.', items: ['화이트라벨 진입점과 브랜드 표시', '상위 모델 연동과 배포 기반', '모델 판매, 가격, 플랜 관리', '충전, 플랜, 결제 흐름', 'API 키, 잔액, 사용 로그, 고객 관리'] },
+        { title: '수익은 어디에서 생기나요?', body: '상위 모델을 플랫폼 비용으로 이용한 뒤 판매 가격을 직접 정해 제공합니다. 수익은 실제 충전과 사용량에 따라 달라지며 플랫폼은 고객이나 이익을 보장하지 않습니다.' },
+        { title: '운영은 누가 맡나요?', body: '상위 연동, 배포, 모니터링, 일상 유지보수는 플랫폼이 담당합니다. 브랜딩, 가격 설정, 고객 확보, 지원과 일상 운영은 운영자가 담당합니다.' },
+      ],
       questions: [
         ['수익 구조는 어떻게 되나요?', '기존 고객을 대상으로 모델 가격과 플랜을 설정할 수 있습니다. 수익은 실제 충전과 사용량에 따라 달라지며, 플랫폼은 고객이나 수익을 보장하지 않습니다.'],
         ['인프라를 만들지 않고 AI API 사업을 시작할 수 있나요?', '네. 상위 연동, 호스팅, 결제, 계정, API 키, 잔액, 사용 로그 기반이 이미 패키지로 제공됩니다.'],

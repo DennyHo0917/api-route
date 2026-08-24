@@ -120,6 +120,17 @@ function renderQuestions(questions) {
   return `<section><h2>FAQ</h2>${questions.map(([question, answer]) => `<article><h3>${escapeHtml(question)}</h3><p>${escapeHtml(answer)}</p></article>`).join('')}</section>`;
 }
 
+function renderSnapshotSections(sections) {
+  if (!sections?.length) return '';
+  return sections.map((section) => {
+    const body = section.body ? `<p>${escapeHtml(section.body)}</p>` : '';
+    const items = section.items?.length
+      ? `<ul>${section.items.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`
+      : '';
+    return `<section><h2>${escapeHtml(section.title)}</h2>${body}${items}</section>`;
+  }).join('');
+}
+
 function renderEnterpriseCapabilities(language) {
   const copy = getEnterpriseCopy(language);
   const reasons = copy.reasons.map((reason) => `<article><h3>${escapeHtml(reason.title)}</h3><p>${escapeHtml(reason.body)}</p></article>`).join('');
@@ -204,13 +215,15 @@ function renderSnapshot(page, language, title, description, questions) {
   const pricingTable = page.key === 'pricing' ? renderPricingTable(language) : '';
   const enterpriseCapabilities = page.key === 'enterprise' ? renderEnterpriseCapabilities(language) : '';
   const overviewCopy = page.key === 'docsOverview' ? (DOCS_COPY[language] || DOCS_COPY.en).overview : null;
-  const snapshotTitle = overviewCopy?.title || title;
-  const snapshotDescription = overviewCopy?.description || description;
+  const subSiteCopy = page.key === 'subSite' ? getSeoPage(page, language) : null;
+  const snapshotTitle = overviewCopy?.title || subSiteCopy?.snapshotTitle || title;
+  const snapshotDescription = overviewCopy?.description || subSiteCopy?.snapshotDescription || description;
   const docsOverview = overviewCopy ? renderDocsOverview(language) : '';
+  const subSiteSections = subSiteCopy ? renderSnapshotSections(subSiteCopy.snapshotSections) : '';
   const relatedPages = overviewCopy ? '' : renderRelatedPages(page, language);
   const snapshotLinks = overviewCopy ? '' : `<nav>${links}</nav>`;
   const snapshotBreadcrumb = overviewCopy ? '' : renderBreadcrumb(page, language, snapshotTitle);
-  return `<main data-seo-prerendered="true">${snapshotBreadcrumb}<h1>${escapeHtml(snapshotTitle)}</h1><p>${escapeHtml(snapshotDescription)}</p>${pricingTable}${enterpriseCapabilities}${docsOverview}${relatedPages}${renderQuestions(questions)}${snapshotLinks}</main>`;
+  return `<main data-seo-prerendered="true">${snapshotBreadcrumb}<h1>${escapeHtml(snapshotTitle)}</h1><p>${escapeHtml(snapshotDescription)}</p>${pricingTable}${enterpriseCapabilities}${docsOverview}${subSiteSections}${relatedPages}${renderQuestions(questions)}${snapshotLinks}</main>`;
 }
 
 function replaceMeta(html, language, page) {
