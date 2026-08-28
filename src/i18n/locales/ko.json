@@ -683,6 +683,7 @@
     "logs.typeRefund": "환불",
     "logs.time": "시간",
     "logs.promptTokens": "입력",
+    "logs.cache": "캐시",
     "logs.completionTokens": "출력",
     "logs.totalCost": "총 비용",
     "logs.totalTokens": "총 tokens",

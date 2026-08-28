@@ -931,6 +931,7 @@
     "logs.model": "Model",
     "logs.token": "API Key",
     "logs.promptTokens": "Input",
+    "logs.cache": "Cache",
     "logs.completionTokens": "Output",
     "logs.cost": "Cost",
     "logs.totalCost": "Total Cost",

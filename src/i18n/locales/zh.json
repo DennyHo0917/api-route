@@ -931,6 +931,7 @@
     "logs.model": "模型",
     "logs.token": "API Key",
     "logs.promptTokens": "输入",
+    "logs.cache": "缓存",
     "logs.completionTokens": "输出",
     "logs.cost": "消费",
     "logs.totalCost": "消耗额度",

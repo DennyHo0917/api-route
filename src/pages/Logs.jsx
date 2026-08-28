@@ -580,7 +580,8 @@ export default function Logs() {
                     const expandData = getExpandData(log);
                     const hasExpandData = expandData.length > 0;
                     const isExpanded = expandedRows[log.id];
-                    const billingSourceLabel = getBillingSourceLabel(getLogOther(log.other), t);
+                    const other = getLogOther(log.other);
+                    const billingSourceLabel = getBillingSourceLabel(other, t);
                     return (
                       <React.Fragment key={i}>
                         <tr
@@ -602,7 +603,16 @@ export default function Logs() {
                               {getLogTypeLabel(log.type, t)}
                             </span>
                           </td>
-                          <td className="px-4 py-3 text-right font-mono text-xs text-page-label">{log.prompt_tokens?.toLocaleString() || '0'}</td>
+                          <td className="px-4 py-3 text-right">
+                            <div className="flex flex-col items-end gap-0.5 font-mono text-xs">
+                              <span className="text-page-label">{log.prompt_tokens?.toLocaleString() || '0'}</span>
+                              {Number(other?.cache_tokens || 0) > 0 && (
+                                <span className="text-cyan-500">
+                                  {t('logs.cache')}↓ {Number(other.cache_tokens).toLocaleString()}
+                                </span>
+                              )}
+                            </div>
+                          </td>
                           <td className="px-4 py-3 text-right font-mono text-xs text-page-label">{log.completion_tokens?.toLocaleString() || '0'}</td>
                           <td className="px-4 py-3 text-right">
                             <div className="flex flex-col items-end">
@@ -647,7 +657,8 @@ export default function Logs() {
                 const expandData = getExpandData(log);
                 const hasExpandData = expandData.length > 0;
                 const isExpanded = expandedRows[log.id];
-                const billingSourceLabel = getBillingSourceLabel(getLogOther(log.other), t);
+                const other = getLogOther(log.other);
+                const billingSourceLabel = getBillingSourceLabel(other, t);
                 return (
                   <div key={i} className="px-4 py-3 space-y-1.5">
                     <div
@@ -676,7 +687,14 @@ export default function Logs() {
                     </div>
                     <div className="flex items-center justify-between text-[11px] text-page-secondary">
                       <span>{formatTime(log.created_at)}</span>
-                      <span>{log.prompt_tokens || 0} / {log.completion_tokens || 0} tokens</span>
+                      <span className="flex flex-col items-end gap-0.5">
+                        <span>{log.prompt_tokens || 0} / {log.completion_tokens || 0} tokens</span>
+                        {Number(other?.cache_tokens || 0) > 0 && (
+                          <span className="font-mono text-cyan-500">
+                            {t('logs.cache')}↓ {Number(other.cache_tokens).toLocaleString()}
+                          </span>
+                        )}
+                      </span>
                     </div>
                     {log.token_name && (
                       <div className="text-[11px] text-page-muted">{log.token_name}</div>

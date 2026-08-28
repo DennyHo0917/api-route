@@ -683,6 +683,7 @@
     "logs.typeRefund": "返金",
     "logs.time": "時刻",
     "logs.promptTokens": "入力",
+    "logs.cache": "キャッシュ",
     "logs.completionTokens": "出力",
     "logs.totalCost": "合計コスト",
     "logs.totalTokens": "合計 tokens",
