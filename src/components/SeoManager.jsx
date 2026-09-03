@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { useSite } from '../context/SiteContext';
 import { DIST_SITE_LANGUAGES, getLocalizedPath, normalizeAppLanguage } from '../i18n/languageUtils';
 import { SEO_COPY } from '../content/seoCopy';
+import { DOCS_CODEX_CUSTOM_PROVIDER_SEO_COPY } from '../content/docsSeoCopy';
 import { trackPageView } from '../utils/analytics';
 
 const DEFAULT_SITE_URL = 'https://www.api-route.com';
@@ -19,7 +20,7 @@ const STRUCTURED_DATA_TOPICS = [
   'Automatic API failover',
   'AI API pricing comparison',
 ];
-const INDEXABLE_PATHS = new Set(['/', '/pricing', '/enterprise', '/packages', '/apps', '/docs/overview', '/docs/quickstart', '/ai-api-reseller-platform', '/faq', '/privacy-policy', '/terms-of-service']);
+const INDEXABLE_PATHS = new Set(['/', '/pricing', '/enterprise', '/packages', '/apps', '/docs/overview', '/docs/quickstart', '/docs/codex-custom-provider', '/ai-api-reseller-platform', '/faq', '/privacy-policy', '/terms-of-service']);
 const PRIVATE_PATHS = new Set(['/login', '/register', '/dashboard', '/dashboard/logs', '/dashboard/tasks', '/chats', '/tokens', '/api-keys', '/api-connect', '/clients', '/logs', '/tasks', '/topup', '/topup/packages', '/referrals', '/account']);
 const LANGUAGE_HREFLANGS = {
   zh: 'zh-CN',
@@ -157,6 +158,9 @@ function getPageCopy(pathname, copy, languageKey) {
   if (pathname === '/apps') return copy.apps;
   if (pathname === '/docs/overview') return copy.docsOverview;
   if (pathname === '/docs/quickstart') return copy.docs;
+  if (pathname === '/docs/codex-custom-provider') {
+    return DOCS_CODEX_CUSTOM_PROVIDER_SEO_COPY[languageKey] || DOCS_CODEX_CUSTOM_PROVIDER_SEO_COPY.en;
+  }
   if (pathname === '/ai-api-reseller-platform') return copy.subSite;
   if (pathname === '/faq') return getFaqSeoPage(languageKey);
   return copy.private;

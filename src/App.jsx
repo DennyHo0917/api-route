@@ -23,6 +23,7 @@ const Enterprise = lazy(() => import('./pages/Enterprise'));
 const AppMarket = lazy(() => import('./pages/AppMarket'));
 const DocsOverview = lazy(() => import('./pages/DocsOverview'));
 const DocsQuickstart = lazy(() => import('./pages/DocsQuickstart'));
+const DocsCodexCustomProvider = lazy(() => import('./pages/DocsCodexCustomProvider'));
 const Faq = lazy(() => import('./pages/Faq'));
 const Topup = lazy(() => import('./pages/Topup'));
 const Referrals = lazy(() => import('./pages/Referrals'));
@@ -131,6 +132,7 @@ function ThemedRoutes() {
           <Route path="/docs" element={<Navigate to="/docs/overview" replace />} />
           <Route path="/docs/overview" element={<DocsOverview />} />
           <Route path="/docs/quickstart" element={<DocsQuickstart />} />
+          <Route path="/docs/codex-custom-provider" element={<DocsCodexCustomProvider />} />
           <Route path="/ai-api-reseller-platform" element={<SubDistributor />} />
           <Route path="/sub-site" element={<LegacySubSiteRedirect />} />
           <Route path="/faq" element={<Faq />} />

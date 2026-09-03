@@ -312,6 +312,50 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.api-route.com/docs/codex-custom-provider</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/docs/codex-custom-provider" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/zh/docs/codex-custom-provider" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/docs/codex-custom-provider" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/docs/codex-custom-provider" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/docs/codex-custom-provider" />
+    <lastmod>2026-09-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.api-route.com/zh/docs/codex-custom-provider</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/docs/codex-custom-provider" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/zh/docs/codex-custom-provider" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/docs/codex-custom-provider" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/docs/codex-custom-provider" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/docs/codex-custom-provider" />
+    <lastmod>2026-09-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.api-route.com/ja/docs/codex-custom-provider</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/docs/codex-custom-provider" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/zh/docs/codex-custom-provider" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/docs/codex-custom-provider" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/docs/codex-custom-provider" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/docs/codex-custom-provider" />
+    <lastmod>2026-09-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.api-route.com/ko/docs/codex-custom-provider</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/docs/codex-custom-provider" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/zh/docs/codex-custom-provider" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://www.api-route.com/ja/docs/codex-custom-provider" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://www.api-route.com/ko/docs/codex-custom-provider" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.api-route.com/docs/codex-custom-provider" />
+    <lastmod>2026-09-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.api-route.com/ai-api-reseller-platform</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.api-route.com/ai-api-reseller-platform" />
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.api-route.com/zh/ai-api-reseller-platform" />

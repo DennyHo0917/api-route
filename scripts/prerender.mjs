@@ -3,6 +3,7 @@ import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { FAQ_COPY } from '../src/content/faqCopy.js';
 import { DOCS_COPY } from '../src/content/docsCopy.js';
+import { DOCS_CODEX_CUSTOM_PROVIDER_SEO_COPY } from '../src/content/docsSeoCopy.js';
 import { getLegalCopy } from '../src/content/legalCopy.js';
 import { SEO_COPY } from '../src/content/seoCopy.js';
 import { getPricingCopy } from '../src/content/pricingCopy.js';
@@ -50,6 +51,7 @@ const pages = [
   { key: 'apps', path: '/apps' },
   { key: 'docsOverview', path: '/docs/overview' },
   { key: 'docs', path: '/docs/quickstart' },
+  { key: 'docsCodexCustomProvider', path: '/docs/codex-custom-provider' },
   { key: 'subSite', path: '/ai-api-reseller-platform' },
   { key: 'faq', path: '/faq' },
   { key: 'privacy', path: '/privacy-policy' },
@@ -69,8 +71,9 @@ const relatedPageKeys = {
   enterprise: ['pricing', 'docsOverview', 'faq'],
   packages: ['pricing', 'faq'],
   apps: ['pricing', 'docsOverview', 'faq', 'packages'],
-  docsOverview: ['docs', 'apps', 'pricing', 'faq'],
-  docs: ['docsOverview', 'apps', 'pricing', 'faq'],
+  docsOverview: ['docs', 'docsCodexCustomProvider', 'apps', 'pricing', 'faq'],
+  docs: ['docsOverview', 'docsCodexCustomProvider', 'apps', 'pricing', 'faq'],
+  docsCodexCustomProvider: ['docs', 'docsOverview', 'apps', 'faq'],
   subSite: ['pricing', 'faq', 'packages'],
   faq: ['pricing', 'packages', 'subSite'],
   privacy: ['terms', 'faq'],
@@ -112,6 +115,9 @@ function getLegalPage(key, language) {
 function getSeoPage(page, language) {
   if (page.key === 'faq') return getFaqPage(language);
   if (page.key === 'privacy' || page.key === 'terms') return getLegalPage(page.key, language);
+  if (page.key === 'docsCodexCustomProvider') {
+    return DOCS_CODEX_CUSTOM_PROVIDER_SEO_COPY[language] || DOCS_CODEX_CUSTOM_PROVIDER_SEO_COPY.en;
+  }
   return SEO_COPY[language]?.[page.key] || SEO_COPY.en[page.key];
 }
 
@@ -216,14 +222,16 @@ function renderSnapshot(page, language, title, description, questions) {
   const enterpriseCapabilities = page.key === 'enterprise' ? renderEnterpriseCapabilities(language) : '';
   const overviewCopy = page.key === 'docsOverview' ? (DOCS_COPY[language] || DOCS_COPY.en).overview : null;
   const subSiteCopy = page.key === 'subSite' ? getSeoPage(page, language) : null;
-  const snapshotTitle = overviewCopy?.title || subSiteCopy?.snapshotTitle || title;
-  const snapshotDescription = overviewCopy?.description || subSiteCopy?.snapshotDescription || description;
+  const codexCopy = page.key === 'docsCodexCustomProvider' ? getSeoPage(page, language) : null;
+  const detailedCopy = subSiteCopy || codexCopy;
+  const snapshotTitle = overviewCopy?.title || detailedCopy?.snapshotTitle || title;
+  const snapshotDescription = overviewCopy?.description || detailedCopy?.snapshotDescription || description;
   const docsOverview = overviewCopy ? renderDocsOverview(language) : '';
-  const subSiteSections = subSiteCopy ? renderSnapshotSections(subSiteCopy.snapshotSections) : '';
+  const snapshotSections = detailedCopy ? renderSnapshotSections(detailedCopy.snapshotSections) : '';
   const relatedPages = overviewCopy ? '' : renderRelatedPages(page, language);
   const snapshotLinks = overviewCopy ? '' : `<nav>${links}</nav>`;
   const snapshotBreadcrumb = overviewCopy ? '' : renderBreadcrumb(page, language, snapshotTitle);
-  return `<main data-seo-prerendered="true">${snapshotBreadcrumb}<h1>${escapeHtml(snapshotTitle)}</h1><p>${escapeHtml(snapshotDescription)}</p>${pricingTable}${enterpriseCapabilities}${docsOverview}${subSiteSections}${relatedPages}${renderQuestions(questions)}${snapshotLinks}</main>`;
+  return `<main data-seo-prerendered="true">${snapshotBreadcrumb}<h1>${escapeHtml(snapshotTitle)}</h1><p>${escapeHtml(snapshotDescription)}</p>${pricingTable}${enterpriseCapabilities}${docsOverview}${snapshotSections}${relatedPages}${renderQuestions(questions)}${snapshotLinks}</main>`;
 }
 
 function replaceMeta(html, language, page) {

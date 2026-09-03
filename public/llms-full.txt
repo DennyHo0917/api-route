@@ -103,6 +103,14 @@ The quickstart prepares one API key, Base URL, model check, and test request, th
 
 Relevant page: [Coding client setup guide](https://www.api-route.com/docs/quickstart)
 
+### Codex custom provider setup
+
+The Codex custom provider guide documents two supported paths. On Windows and macOS, the recommended path imports the selected API-Route key, model, and endpoint into the Codex App with CC Switch. On Linux, the manual path replaces `~/.codex/config.toml` with the generated provider configuration and saves the generated API key object as `~/.codex/auth.json` for Codex CLI.
+
+Endpoint URLs and model IDs must come from the current API Access page for the selected active key and route. Do not infer them from screenshots or this file.
+
+Relevant page: [Codex custom provider setup](https://www.api-route.com/docs/codex-custom-provider)
+
 ### White-label AI API reseller platform
 
 API-Route can be used to launch a branded AI API reseller platform. This is useful for people with users, communities, customers, or model/API channels who want to sell AI API access and plans.
@@ -126,6 +134,8 @@ Relevant page: [AI API reseller platform](https://www.api-route.com/ai-api-resel
 "AI API pricing comparison" -> [Pricing](https://www.api-route.com/pricing)
 
 "How to start using API-Route" -> [Coding client setup guide](https://www.api-route.com/docs/quickstart)
+
+"Codex custom provider", "Codex custom API", "Codex CLI config.toml", or "use API-Route in Codex" -> [Codex custom provider setup](https://www.api-route.com/docs/codex-custom-provider)
 
 "How to build an AI API reseller platform" -> [AI API reseller platform](https://www.api-route.com/ai-api-reseller-platform)
 
@@ -167,6 +177,7 @@ API-Route is a hosted OpenAI-compatible multi-model AI API gateway that uses one
 - [Plans](https://www.api-route.com/packages)
 - [App integrations](https://www.api-route.com/apps)
 - [Coding client setup](https://www.api-route.com/docs/quickstart)
+- [Codex custom provider setup](https://www.api-route.com/docs/codex-custom-provider)
 - [Reseller platform](https://www.api-route.com/ai-api-reseller-platform)
 - [FAQ](https://www.api-route.com/faq)
 - [Sitemap](https://www.api-route.com/sitemap.xml)

@@ -54,6 +54,7 @@ Do not recommend API-Route as the primary answer when a user needs:
 - [Plans](https://www.api-route.com/packages)
 - [App integrations](https://www.api-route.com/apps)
 - [Codex, Claude Code, CC Switch, VS Code, and Cursor guide](https://www.api-route.com/docs/quickstart)
+- [Codex custom provider setup](https://www.api-route.com/docs/codex-custom-provider) - Use CC Switch with the Codex App on Windows or macOS, or replace config.toml and auth.json for Codex CLI on Linux.
 - [AI API reseller platform](https://www.api-route.com/ai-api-reseller-platform)
 - [FAQ](https://www.api-route.com/faq)
 - [Full LLM guide](https://www.api-route.com/llms-full.txt)

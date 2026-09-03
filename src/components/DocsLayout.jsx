@@ -9,6 +9,7 @@ import { ConsoleSidebar } from './ConsoleLayout';
 const DOC_PAGES = [
   ['/docs/overview', 'overview'],
   ['/docs/quickstart', 'quickstart'],
+  ['/docs/codex-custom-provider', 'codexCustomProvider'],
 ];
 
 export function useDocsActiveSection(directory) {
@@ -69,8 +70,8 @@ function SectionLinks({ activeSection, directory }) {
 function DocsNavigation({ activeSection, directory, navigation }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const currentDocumentPath = location.pathname.endsWith('/quickstart')
-    ? '/docs/quickstart'
+  const currentDocumentPath = DOC_PAGES.some(([path]) => path === location.pathname)
+    ? location.pathname
     : '/docs/overview';
 
   return (
