@@ -448,6 +448,16 @@
     },
     {
       "source": "/v1/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "hk.api-route.com"
+        }
+      ],
+      "destination": "https://api.43-161-200-52.sslip.io/v1/:path*"
+    },
+    {
+      "source": "/v1/:path*",
       "destination": "https://apiroute.subrouter.ai/v1/:path*"
     },
     {
