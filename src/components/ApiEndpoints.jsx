@@ -8,42 +8,42 @@ const SHARED_API_ENDPOINTS = [
   {
     id: 'overseas-direct',
     labelKey: 'home.apiEndpointOverseasDirect',
-    url: 'https://test1122.up.railway.app/',
+    url: 'https://global.api-route.com',
   },
   {
     id: 'overseas-cdn',
     labelKey: 'home.apiEndpointOverseasCdn',
-    url: 'https://ai.orbitlink.me',
+    url: 'https://cdn.api-route.com',
   },
   {
     id: 'hong-kong',
     labelKey: 'config.apiEndpointHongKongName',
-    url: 'https://api.43-161-200-52.sslip.io',
+    url: 'https://hk.api-route.com',
   },
   {
     id: 'usa-west',
     labelKey: 'config.apiEndpointUsaWestName',
-    url: 'https://usawest.up.railway.app',
+    url: 'https://us-west.api-route.com',
   },
   {
     id: 'usa-east',
     labelKey: 'config.apiEndpointUsaEastName',
-    url: 'https://usaeast.up.railway.app',
+    url: 'https://us-east.api-route.com',
   },
   {
     id: 'europe-west',
     labelKey: 'config.apiEndpointEuropeWestName',
-    url: 'https://euwest.up.railway.app',
+    url: 'https://eu-west.api-route.com',
   },
   {
     id: 'asia-south',
     labelKey: 'config.apiEndpointAsiaSouthName',
-    url: 'https://asiasouth.up.railway.app',
+    url: 'https://asia-south.api-route.com',
   },
   {
     id: 'asia',
     labelKey: 'config.apiEndpointAsiaName',
-    url: 'https://ai777.up.railway.app',
+    url: 'https://asia.api-route.com',
   },
 ];
 

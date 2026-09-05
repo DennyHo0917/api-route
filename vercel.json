@@ -451,10 +451,80 @@
       "has": [
         {
           "type": "host",
+          "value": "global.api-route.com"
+        }
+      ],
+      "destination": "https://test1122.up.railway.app/v1/:path*"
+    },
+    {
+      "source": "/v1/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "cdn.api-route.com"
+        }
+      ],
+      "destination": "https://ai.orbitlink.me/v1/:path*"
+    },
+    {
+      "source": "/v1/:path*",
+      "has": [
+        {
+          "type": "host",
           "value": "hk.api-route.com"
         }
       ],
       "destination": "https://api.43-161-200-52.sslip.io/v1/:path*"
+    },
+    {
+      "source": "/v1/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "us-west.api-route.com"
+        }
+      ],
+      "destination": "https://usawest.up.railway.app/v1/:path*"
+    },
+    {
+      "source": "/v1/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "us-east.api-route.com"
+        }
+      ],
+      "destination": "https://usaeast.up.railway.app/v1/:path*"
+    },
+    {
+      "source": "/v1/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "eu-west.api-route.com"
+        }
+      ],
+      "destination": "https://euwest.up.railway.app/v1/:path*"
+    },
+    {
+      "source": "/v1/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "asia-south.api-route.com"
+        }
+      ],
+      "destination": "https://asiasouth.up.railway.app/v1/:path*"
+    },
+    {
+      "source": "/v1/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "asia.api-route.com"
+        }
+      ],
+      "destination": "https://ai777.up.railway.app/v1/:path*"
     },
     {
       "source": "/v1/:path*",
