@@ -981,6 +981,7 @@ html[data-color-scheme='dark'] .theme-claude [class~='ring-[#E8DDD0]'] {
 html[data-color-scheme='dark'] .theme-claude [class~='hover:bg-white']:hover,
 html[data-color-scheme='dark'] .theme-claude [class~='hover:bg-white/60']:hover,
 html[data-color-scheme='dark'] .theme-claude [class~='hover:bg-white/70']:hover,
+html[data-color-scheme='dark'] .theme-claude [class~='hover:bg-[#FAF6F1]']:hover,
 html[data-color-scheme='dark'] .theme-claude [class~='hover:bg-[#FFF8F2]']:hover,
 html[data-color-scheme='dark'] .theme-claude [class~='hover:bg-[#FFF9F4]']:hover,
 html[data-color-scheme='dark'] .theme-claude [class~='hover:bg-[#F8EAE0]']:hover,
