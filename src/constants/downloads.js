@@ -49,15 +49,15 @@ export const DOWNLOAD_TOOLS = [
   },
   {
     id: 'claude-code',
-    title: 'Claude Code',
+    title: 'Claude Desktop',
     logo: 'https://cdn.prod.website-files.com/6889473510b50328dbb70ae6/689f4a9aff1f63fde75cf733_favicon.png',
-    descZh: 'Anthropic 官方 Claude Code 下载入口，用于在终端和开发工作流中使用 Claude。',
-    descEn: 'Official Claude Code download from Anthropic for using Claude in terminal and development workflows.',
+    descZh: 'Anthropic 官方 Claude Desktop 下载入口，用于在桌面端使用 Claude。',
+    descEn: 'Official Claude Desktop download from Anthropic for using Claude on desktop.',
     groups: [
       {
         title: 'Download',
         links: [
-          { label: 'Claude Code Official Download', href: OFFICIAL_DOWNLOADS.claudeCode, recommended: true, official: true },
+          { label: 'Claude Desktop Official Download', href: OFFICIAL_DOWNLOADS.claudeCode, recommended: true, official: true },
         ],
       },
     ],
