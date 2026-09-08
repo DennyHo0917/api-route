@@ -28,7 +28,6 @@ const TOOLS = [
 const CCSWITCH_APPS = [
   { id: 'codex', name: 'Codex', endpointType: 'openai' },
   { id: 'claude', name: 'Claude Code', endpointType: 'anthropic' },
-  { id: 'claude-desktop', name: 'Claude Desktop', endpointType: 'anthropic' },
   { id: 'gemini', name: 'Gemini CLI', endpointType: 'gemini' },
   { id: 'opencode', name: 'OpenCode', endpointType: 'openai' },
   { id: 'openclaw', name: 'OpenClaw', endpointType: 'openclaw' },
@@ -445,7 +444,6 @@ const ConfigExporter = ({ tokens = [], embedded = false }) => {
   }) => {
     switch (appId) {
       case 'claude':
-      case 'claude-desktop':
         return {
           env: {
             ANTHROPIC_AUTH_TOKEN: apiKey,
