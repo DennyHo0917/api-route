@@ -1,0 +1,23 @@
+{
+  "name": "api_route",
+  "engine": "openai",
+  "display_name": "API Route",
+  "description": "OpenAI-compatible gateway for GPT, Claude, Gemini, Kimi, Qwen, and more through one API key.",
+  "api_key_env": "API_ROUTE_API_KEY",
+  "base_url": "https://global.api-route.com/v1",
+  "dynamic_models": true,
+  "models": [
+    {
+      "name": "gpt-5.4-mini",
+      "context_limit": 400000
+    }
+  ],
+  "supports_streaming": true,
+  "requires_auth": true,
+  "model_doc_link": "https://www.api-route.com/pricing",
+  "setup_steps": [
+    "Sign in to https://www.api-route.com",
+    "Open https://www.api-route.com/api-keys and create an API key",
+    "Copy the key and paste it above"
+  ]
+}
