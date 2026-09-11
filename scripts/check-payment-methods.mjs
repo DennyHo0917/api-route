@@ -13,14 +13,9 @@ const visibleMethods = filterVisibleTopupMethods([
   { type: 'stripe', name: 'alipay' },
   { type: 'epay_alipay', name: 'alipay(平台)' },
   { type: 'epay_alipay', name: '微信支付(平台)' },
+  { type: 'stripe', name: 'Stripe' },
 ]);
-assert.deepEqual(visibleMethods.map((method) => method.name), ['alipay(平台)', '微信支付(平台)']);
+assert.deepEqual(visibleMethods.map((method) => method.name), ['alipay', 'Stripe']);
 assert.deepEqual(getPaymentMethodLogos({ type: 'epay_alipay', name: '微信支付' }), ['/payment-logos/wechat.svg']);
-
-const fallbackMethods = filterVisibleTopupMethods([
-  { type: 'stripe', name: 'alipay' },
-  { type: 'epay_alipay', name: '微信支付(平台)' },
-]);
-assert.deepEqual(fallbackMethods.map((method) => method.name), ['alipay', '微信支付(平台)']);
 
 console.log('Payment method checks passed.');

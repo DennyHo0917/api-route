@@ -8,14 +8,15 @@ function isAlipayMethod(method) {
   return /alipay|支付宝/i.test(`${method?.type || ''} ${method?.name || ''}`);
 }
 
+function isWechatMethod(method) {
+  return /wxpay|wechat|微信/i.test(`${method?.type || ''} ${method?.name || ''}`);
+}
+
 export function filterVisibleTopupMethods(methods) {
-  const hasPlatformAlipay = methods.some((method) => (
-    /alipay|支付宝/i.test(method?.name || '') && /平台/.test(method?.name || '')
-  ));
   return methods.filter((method) => (
     method?.type &&
     method.type !== 'crypto' &&
-    !(hasPlatformAlipay && isAlipayMethod(method) && !/平台/.test(method?.name || ''))
+    !(/平台/.test(method?.name || '') && (isAlipayMethod(method) || isWechatMethod(method)))
   ));
 }
 
