@@ -69,7 +69,7 @@ const COPY = {
       body: 'AI Chat is the shortest path when you want to use a model without configuring an external client.',
       steps: [
         ['Open AI Chat', 'Click AI Chat on the home page after signing in.'],
-        ['Create a key if prompted', 'AI Chat uses your own API key. If no key exists, follow the prompt to create one and then return.'],
+        ['Use your API key', 'AI Chat uses the API key created automatically for your account. If none is available, follow the page prompt and then return.'],
         ['Choose a model', 'Select the model type and a model that is currently available.'],
         ['Send your first request', 'Enter a question or task and send it. A normal model reply means setup is complete.'],
       ],
@@ -95,7 +95,7 @@ const COPY = {
       steps: [
         ['Check your balance', 'Make sure the account has enough balance for a test request.'],
         ['Open API Access', 'Click API Access on the home page.'],
-        ['Create an API key if needed', 'If no enabled key is available, create one and return to API Access.'],
+        ['Use an API key', 'Select the enabled API key created for your account. If none is available, follow the page prompt and return to API Access.'],
         ['Choose the connection details', 'Select an enabled key, an available model, an endpoint, and the target client.'],
         ['Choose a configuration method', 'Use CC Switch for one-click import, or switch to Manual Configuration and download the generated configuration file.'],
         ['Send a test message', 'Open the target client and send: “Reply with OK and tell me the model you are using.”'],
@@ -240,7 +240,7 @@ const COPY = {
       body: '不需要配置外部客户端，登录后即可在网页中选择模型并开始使用。',
       steps: [
         ['打开 AI Chat', '登录后，从首页点击“AI Chat”。'],
-        ['按提示创建密钥', 'AI Chat 使用你自己的 API Key 调用模型。如果页面提示没有密钥，创建后再返回。'],
+        ['使用 API Key', 'AI Chat 使用系统为账户自动创建的 API Key。如果页面确实没有可用密钥，再按提示处理后返回。'],
         ['选择模型', '选择模型类型和当前可用的具体模型。'],
         ['发送第一次请求', '输入问题或任务并发送；模型正常回复即表示可以使用。'],
       ],
@@ -266,7 +266,7 @@ const COPY = {
       steps: [
         ['确认余额', '确保账户余额足够完成一次测试调用。'],
         ['进入 API 接入', '从首页点击“API 接入”。'],
-        ['创建 API Key', '如果页面没有可用密钥，先创建并启用一个密钥，然后返回 API 接入。'],
+        ['使用 API Key', '选择系统为账户创建并启用的 API Key。如果页面确实没有可用密钥，再按提示处理后返回 API 接入。'],
         ['选择接入信息', '选择启用的密钥、当前可用模型、调用节点和目标客户端。'],
         ['选择接入方式', '可以使用 CC Switch 一键导入，也可以切换到“手动配置”并下载对应配置文件。'],
         ['发送测试消息', '打开目标客户端，发送：“请回复 OK，并告诉我你当前使用的模型。”'],
@@ -411,7 +411,7 @@ const COPY = {
       body: '外部クライアントの設定は不要です。ログイン後、モデルを選んですぐに利用できます。',
       steps: [
         ['AI Chat を開く', 'ログイン後、トップページの「AI Chat」をクリックします。'],
-        ['必要なら API キーを作成する', 'AI Chat は自分の API キーを使います。キーがないという案内が出たら、作成してから戻ります。'],
+        ['API キーを使う', 'AI Chat はアカウントに自動作成された API キーを使います。利用できるキーがない場合だけ、画面の案内に従って戻ります。'],
         ['モデルを選ぶ', 'モデルの種類と、現在利用できるモデルを選択します。'],
         ['最初のメッセージを送る', '質問や依頼を入力して送信します。通常の回答が返れば利用準備は完了です。'],
       ],
@@ -437,7 +437,7 @@ const COPY = {
       steps: [
         ['残高を確認する', 'テスト呼び出しに必要な残高があることを確認します。'],
         ['API 連携を開く', 'トップページの「API 連携」をクリックします。'],
-        ['必要なら API キーを作成する', '有効なキーがなければ作成して有効化し、API 連携画面に戻ります。'],
+        ['API キーを使う', 'アカウントに作成された有効な API キーを選びます。利用できるキーがない場合だけ、画面の案内に従って API 連携へ戻ります。'],
         ['接続情報を選ぶ', '有効なキー、利用可能なモデル、接続先、対象クライアントを選択します。'],
         ['設定方法を選ぶ', 'CC Switch でワンクリック導入するか、「手動設定」に切り替えて設定ファイルをダウンロードします。'],
         ['テストする', '対象クライアントで「OK と、現在使っているモデル名を回答してください」と送信します。'],
@@ -582,7 +582,7 @@ const COPY = {
       body: '외부 클라이언트를 설정할 필요 없이 로그인 후 모델을 선택해 바로 사용할 수 있습니다.',
       steps: [
         ['AI Chat 열기', '로그인 후 홈에서 “AI Chat”을 클릭합니다.'],
-        ['필요하면 API 키 생성', 'AI Chat은 자신의 API 키를 사용합니다. 키가 없다는 안내가 나오면 생성한 뒤 돌아옵니다.'],
+        ['API 키 사용', 'AI Chat은 계정에 자동으로 생성된 API 키를 사용합니다. 사용 가능한 키가 없을 때만 화면 안내를 따라 돌아오세요.'],
         ['모델 선택', '모델 유형과 현재 사용 가능한 모델을 선택합니다.'],
         ['첫 요청 전송', '질문이나 작업을 입력해 전송합니다. 모델이 정상적으로 답하면 준비가 끝난 것입니다.'],
       ],
@@ -608,7 +608,7 @@ const COPY = {
       steps: [
         ['잔액 확인', '테스트 호출을 실행할 수 있는 잔액이 있는지 확인합니다.'],
         ['API 연결 열기', '홈에서 “API 연결”을 클릭합니다.'],
-        ['필요하면 API 키 생성', '활성화된 키가 없다면 키를 만들고 활성화한 뒤 API 연결로 돌아옵니다.'],
+        ['API 키 사용', '계정에 생성된 활성 API 키를 선택하세요. 사용 가능한 키가 없을 때만 화면 안내를 따라 API 연결로 돌아오세요.'],
         ['연결 정보 선택', '활성 키, 사용 가능한 모델, 엔드포인트, 대상 클라이언트를 선택합니다.'],
         ['설정 방식 선택', 'CC Switch로 한 번에 가져오거나 “수동 설정”으로 전환해 설정 파일을 다운로드합니다.'],
         ['테스트 메시지 전송', '대상 클라이언트에서 “OK라고 답하고 현재 사용 중인 모델을 알려 주세요.”라고 전송합니다.'],

@@ -18,6 +18,7 @@
     "check:auth-return": "node scripts/check-auth-return.mjs",
     "check:attribution": "node scripts/check-attribution.mjs",
     "check:funnel": "node scripts/check-funnel.mjs",
+    "check:payment-methods": "node scripts/check-payment-methods.mjs",
     "check:customer-emails": "node scripts/check-customer-emails.mjs"
   },
   "dependencies": {

@@ -48,8 +48,8 @@ export const DOCS_COPY = {
         stepsTitle: 'Four-step workflow',
         steps: [
           ['Register an account', 'Create the account that owns the balance and API keys. You can register or sign in with a Google, X, or GitHub account.'],
-          ['Add balance or buy a plan', 'Use the payment options currently shown on the Top Up page, then choose pay-as-you-go balance or an available plan.'],
-          ['Create an API key', 'Create and securely save an enabled key from the API Keys page.'],
+          ['Add balance', 'Top up your account and start using the API with pay-as-you-go billing. Packages are optional if you want bundled quota or a plan suited to regular usage.'],
+          ['Connect and use', 'Use the automatically created API key and endpoint with a supported client or developer tool.'],
           ['Choose a model and call it', 'Use an exact model ID currently available to the key and send a request through the configured endpoint.'],
         ],
         keySettingsTitle: 'API key controls',
@@ -213,8 +213,8 @@ export const DOCS_COPY = {
         stepsTitle: '四步使用流程',
         steps: [
           ['注册账户', '创建用于管理余额和 API Key 的账户，支持使用 Google、X 或 GitHub 账号注册和登录。'],
-          ['充值余额或购买套餐', '使用充值页当前提供的支付方式，再选择按余额用量扣费或购买可用套餐。'],
-          ['创建 API Key', '在 API 密钥页面创建并安全保存一个已启用的密钥。'],
+          ['充值余额', '充值后即可按量付费使用 API。套餐不是必选项，需要套餐额度或更适合长期使用的方案时再按需购买。'],
+          ['连接并开始使用', '使用系统自动创建的 API Key 和调用地址，接入支持的客户端或开发工具。'],
           ['选择模型并发起调用', '使用密钥当前可调用的完整模型 ID，通过配置好的接口发送请求。'],
         ],
         keySettingsTitle: 'API Key 管理与访问控制',
@@ -378,8 +378,8 @@ export const DOCS_COPY = {
         stepsTitle: '4 ステップの利用フロー',
         steps: [
           ['アカウントを登録', '残高と API キーを管理するアカウントを作成します。Google、X、GitHub アカウントでの登録・ログインにも対応しています。'],
-          ['残高をチャージ、またはプランを購入', 'チャージ画面に表示される支払い方法を使い、従量残高または利用可能なプランを選びます。'],
-          ['API キーを作成', 'API キーページで有効なキーを作り、安全に保存します。'],
+          ['残高を追加', 'アカウントにチャージすれば、従量課金ですぐ API を使えます。プランは任意で、継続利用に合うクォータが必要な場合に選べます。'],
+          ['接続して利用開始', '自動作成された API キーとエンドポイントで、対応アプリや開発ツールに接続します。'],
           ['モデルを選んで呼び出す', 'キーで利用できる正確なモデル ID を指定し、設定済みエンドポイントへリクエストします。'],
         ],
         keySettingsTitle: 'API キーの管理とアクセス制御',
@@ -543,8 +543,8 @@ export const DOCS_COPY = {
         stepsTitle: '4단계 사용 흐름',
         steps: [
           ['계정 가입', '잔액과 API 키를 관리할 계정을 만듭니다. Google, X 또는 GitHub 계정으로 가입하고 로그인할 수도 있습니다.'],
-          ['잔액 충전 또는 플랜 구매', '충전 페이지에 현재 표시되는 결제 방식을 사용한 뒤 종량 잔액 또는 이용 가능한 플랜을 선택합니다.'],
-          ['API 키 생성', 'API 키 페이지에서 활성 키를 만들고 안전하게 저장합니다.'],
+          ['잔액 충전', '잔액을 충전하면 종량 과금으로 바로 API를 사용할 수 있습니다. 플랜은 선택 사항이며 묶음 쿼터나 정기 사용에 맞는 구성이 필요할 때 선택합니다.'],
+          ['연결하고 사용 시작', '자동으로 생성된 API 키와 엔드포인트를 지원 앱과 개발 도구에 연결하세요.'],
           ['모델 선택 후 호출', '키에서 사용할 수 있는 정확한 모델 ID를 지정해 설정된 엔드포인트로 요청합니다.'],
         ],
         keySettingsTitle: 'API 키 관리 및 접근 제어',

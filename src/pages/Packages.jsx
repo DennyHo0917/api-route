@@ -19,6 +19,7 @@ import {
 } from '../api';
 import { calcOfficialEquivList } from '../utils/officialEquiv';
 import { localizePackage } from '../utils/packageLocalization';
+import { getPackageReturnPath } from '../utils/funnel';
 import { trackEvent } from '../utils/analytics';
 import toast from 'react-hot-toast';
 
@@ -426,7 +427,20 @@ export default function Packages() {
                   {t('tokens.cancel')}
                 </button>
                 {insufficient ? (
-                  <button onClick={() => navigate('/topup')} disabled={subscribing} className="btn-primary">
+                  <button
+                    onClick={() => {
+                      const packageId = confirmPkg?.id;
+                      navigate('/topup', {
+                        state: {
+                          sourceFunnel: 'package',
+                          packageId,
+                          returnTo: getPackageReturnPath(packageId),
+                        },
+                      });
+                    }}
+                    disabled={subscribing}
+                    className="btn-primary"
+                  >
                     {t('nav.topup')}
                   </button>
                 ) : (

@@ -48,7 +48,7 @@ import {
 
 const DB_NAME = 'api-route-web-chat';
 const STORE_NAME = 'conversations';
-const DEFAULT_MODEL = 'moonshotai/kimi-k3';
+const DEFAULT_MODEL = 'gpt-5.6-sol';
 const MAX_IMAGE_SIZE_MB = 3;
 const MAX_IMAGE_SIZE = MAX_IMAGE_SIZE_MB * 1024 * 1024;
 const SUPPORTED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
@@ -57,7 +57,7 @@ const VIDEO_POLL_INTERVAL = 3000;
 let databasePromise;
 
 const findDefaultChatModel = (models) => models.find((model) => (
-  model.name === DEFAULT_MODEL || String(model.name).split('/').pop() === 'kimi-k3'
+  model.name === DEFAULT_MODEL || String(model.name).split('/').pop() === 'gpt-5.6-sol'
 ))?.name || '';
 
 const findDefaultImageModel = (models) => models.find((model) => (

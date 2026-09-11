@@ -7,3 +7,7 @@ keys.txt
 keys.txt.enc
 keys.txt.secret.txt
 picture/codex cli5.png
+
+.vercel
+.env*
+%SystemDrive%/

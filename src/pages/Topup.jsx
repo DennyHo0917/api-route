@@ -16,14 +16,11 @@ import {
 } from '../api';
 import { useCurrency } from '../context/SiteContext';
 import { trackEvent } from '../utils/analytics';
-import { getDefaultTopupAmount } from '../utils/funnel';
+import { getDefaultTopupAmount, getPackageReturnPath, MIN_TOPUP_AMOUNT } from '../utils/funnel';
+import { formatPaymentMethodName, isVisibleTopupMethod } from '../utils/paymentMethods';
 import { consumePendingChatTopup } from '../utils/pendingChat';
 import CountUp from '../components/bits/CountUp';
 import toast from 'react-hot-toast';
-
-function formatPaymentMethodName(value) {
-  return String(value || '').trim().replace(/支付宝|alipay/gi, 'alipay');
-}
 
 function normalizeCreemProducts(value) {
   if (!value) return [];
@@ -59,7 +56,7 @@ const QUIET_REQUEST_CONFIG = {
   skipErrorHandler: true,
   ...(import.meta.env.DEV ? { timeout: 8000 } : {}),
 };
-const DEFAULT_TOPUP_AMOUNTS = [1, 2, 5, 10, 20, 50, 100, 200];
+const DEFAULT_TOPUP_AMOUNTS = [5, 10, 20, 50, 100, 200, 500, 1000];
 const PENDING_TOPUP_ANALYTICS_KEY = 'ga_pending_topup';
 
 function shouldUseSameTabPaymentRedirect() {
@@ -156,7 +153,7 @@ function trackTopupPurchaseOnce(item, currency, exchangeRate, precision, sourceF
 }
 
 export default function Topup() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user, refreshUser } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -194,28 +191,34 @@ export default function Topup() {
   const [historyLoading, setHistoryLoading] = useState(true);
 
   const presetAmounts = DEFAULT_TOPUP_AMOUNTS;
-  const minTopup = topupInfo?.min_topup || 1;
+  const minTopup = Math.max(MIN_TOPUP_AMOUNT, Number(topupInfo?.min_topup) || 0);
   const payMethods = topupInfo?.pay_methods || [];
   const enableOnline = topupInfo?.enable_online_topup;
   const enableStripe = topupInfo?.enable_stripe_topup;
   const enableCreem = topupInfo?.enable_creem_topup;
   const enableCrypto = topupInfo?.enable_crypto_topup;
-  const sourceFunnel = ['chat', 'api'].includes(location.state?.sourceFunnel)
+  const sourceFunnel = ['chat', 'api', 'package'].includes(location.state?.sourceFunnel)
     ? location.state.sourceFunnel
     : 'direct';
+  const packageId = location.state?.packageId;
+  const returnTo = location.state?.returnTo;
   const suggestedAmount = location.state?.suggestedAmount;
-  const resumePendingFunnel = useCallback((source = sourceFunnel) => {
+  const resumePendingFunnel = useCallback((source = sourceFunnel, context = {}) => {
     const hasPendingChat = consumePendingChatTopup(user?.id);
-    if (hasPendingChat || source === 'chat') {
-      navigate('/chats', { replace: true });
-      return true;
-    }
     if (source === 'api') {
       navigate('/api-keys', { replace: true });
       return true;
     }
+    if (source === 'package') {
+      navigate(getPackageReturnPath(context.packageId ?? packageId, context.returnTo ?? returnTo), { replace: true });
+      return true;
+    }
+    if (hasPendingChat || source === 'chat') {
+      navigate('/chats', { replace: true });
+      return true;
+    }
     return false;
-  }, [navigate, sourceFunnel, user?.id]);
+  }, [navigate, packageId, returnTo, sourceFunnel, user?.id]);
 
   const loadData = useCallback(async () => {
     let historyItems = [];
@@ -275,7 +278,12 @@ export default function Topup() {
           // Best-effort cleanup only.
         }
         await refreshUser({ skipErrorHandler: true });
-        if (!cancelled) resumePendingFunnel(purchaseSource);
+        if (!cancelled) {
+          resumePendingFunnel(purchaseSource, {
+            packageId: pendingTopup?.package_id,
+            returnTo: pendingTopup?.return_to,
+          });
+        }
         return;
       }
       if (!cancelled && attempts < 5) {
@@ -309,8 +317,8 @@ export default function Topup() {
   const toQuotaAmount = useCallback((currencyAmount) => {
     const numeric = Number.parseFloat(currencyAmount);
     if (!Number.isFinite(numeric) || numeric <= 0) return '';
-    return Math.max(minTopup, Math.round(numeric / rate));
-  }, [minTopup, rate]);
+    return Math.round(numeric / rate);
+  }, [rate]);
 
   useEffect(() => {
     if (initializedAmount.current || !topupInfo || presetAmounts.length === 0) return;
@@ -367,23 +375,24 @@ export default function Topup() {
   const getMethodMinTopup = (method) => {
     const payMethod = (payMethods || []).find((item) => item.type === method);
     const methodMinTopup = Number(payMethod?.min_topup);
-    if (Number.isFinite(methodMinTopup) && methodMinTopup > 0) return methodMinTopup;
+    if (Number.isFinite(methodMinTopup) && methodMinTopup > 0) return Math.max(minTopup, methodMinTopup);
     if (isCreemPayment(method)) {
       const configuredMin = Number(topupInfo?.creem_min_topup);
-      return Number.isFinite(configuredMin) && configuredMin > 0
+      const creemMinimum = Number.isFinite(configuredMin) && configuredMin > 0
         ? configuredMin
         : getCreemMinTopup(normalizeCreemProducts(topupInfo?.creem_products));
+      return Math.max(minTopup, creemMinimum);
     }
     if (isStripePayment(method)) {
       const stripeMin = Number(topupInfo?.stripe_min_topup);
-      if (Number.isFinite(stripeMin) && stripeMin > 0) return stripeMin;
+      if (Number.isFinite(stripeMin) && stripeMin > 0) return Math.max(minTopup, stripeMin);
     }
     return minTopup;
   };
 
   const getMethodDisplayName = (method) => {
     const payMethod = (payMethods || []).find((item) => item.type === method);
-    return formatPaymentMethodName(payMethod?.name || (method === 'creem' ? 'Creem' : 'Stripe'));
+    return formatPaymentMethodName(payMethod?.name || (method === 'creem' ? 'Creem' : 'Stripe'), i18n.resolvedLanguage);
   };
 
   const showGatewayMinTopupError = (method, minAmount) => {
@@ -401,11 +410,14 @@ export default function Topup() {
       return;
     }
     const isGatewayPayment = isStripePayment(method) || isCreemPayment(method);
-    if (isGatewayPayment && payAmount < getMethodMinTopup(method)) {
-      showGatewayMinTopupError(method, getMethodMinTopup(method));
+    const methodMinTopup = getMethodMinTopup(method);
+    if (isGatewayPayment && (
+      payAmount < methodMinTopup || Number(displayAmount) < methodMinTopup * rate
+    )) {
+      showGatewayMinTopupError(method, methodMinTopup);
       return;
     }
-    if (!isGatewayPayment && payAmount < minTopup) {
+    if (!isGatewayPayment && (payAmount < minTopup || Number(displayAmount) < minTopup * rate)) {
       toast.error(t('topup.minimumAmount', { min: `${symbol}${formatCurrencyAmount(minTopup * rate)}` }));
       return;
     }
@@ -435,6 +447,10 @@ export default function Topup() {
           amount: payAmount,
           started_at: Math.floor(Date.now() / 1000) - 60,
           source_funnel: sourceFunnel,
+          ...(sourceFunnel === 'package' ? {
+            package_id: packageId,
+            return_to: returnTo,
+          } : {}),
         }));
       } catch {
         // Purchase tracking can still fall back to latest successful top-up.
@@ -543,6 +559,10 @@ export default function Topup() {
     const payAmountVal = parseInt(amount);
     if (!payAmountVal || payAmountVal <= 0) {
       toast.error(t('topup.enterAmount'));
+      return;
+    }
+    if (payAmountVal < minTopup || Number(displayAmount) < minTopup * rate) {
+      toast.error(t('topup.minimumAmount', { min: `${symbol}${formatCurrencyAmount(minTopup * rate)}` }));
       return;
     }
     if (!selectedChain) {
@@ -676,18 +696,18 @@ export default function Topup() {
 
   const topupPayMethods = useMemo(() => {
     const methods = (payMethods || [])
-      .filter((m) => m?.type && m.type !== 'crypto')
+      .filter(isVisibleTopupMethod)
       .map((method) => {
         if (isStripePayment(method.type) && (!method.min_topup || Number(method.min_topup) <= 0)) {
           const stripeMin = Number(topupInfo?.stripe_min_topup);
           if (Number.isFinite(stripeMin) && stripeMin > 0) {
-            return { ...method, name: formatPaymentMethodName(method.name || method.type), min_topup: stripeMin };
+            return { ...method, name: formatPaymentMethodName(method.name || method.type, i18n.resolvedLanguage), min_topup: stripeMin };
           }
         }
         if (method.type === 'creem' && (!method.min_topup || Number(method.min_topup) <= 0)) {
-          return { ...method, name: formatPaymentMethodName(method.name || method.type), min_topup: creemMinTopup };
+          return { ...method, name: formatPaymentMethodName(method.name || method.type, i18n.resolvedLanguage), min_topup: creemMinTopup };
         }
-        return { ...method, name: formatPaymentMethodName(method.name || method.type) };
+        return { ...method, name: formatPaymentMethodName(method.name || method.type, i18n.resolvedLanguage) };
       });
 
     if (enableCreem && creemProducts.length > 0 && !methods.some((method) => method.type === 'creem')) {
@@ -698,7 +718,7 @@ export default function Topup() {
       });
     }
     return methods;
-  }, [payMethods, enableCreem, creemProducts, creemMinTopup]);
+  }, [payMethods, enableCreem, creemProducts, creemMinTopup, i18n.resolvedLanguage]);
 
   const paymentOptions = useMemo(() => {
     const methods = topupPayMethods.filter((method) => {
@@ -848,10 +868,13 @@ export default function Topup() {
               <h2 className="mb-4 text-lg font-semibold text-page">{t('topup.paymentMethod')}</h2>
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
                 {paymentOptions.map((method) => {
-                  const minForMethod = Number(method.min_topup) || 0;
+                  const configuredMin = Number(method.min_topup) || 0;
+                  const minForMethod = configuredMin > 0 ? Math.max(minTopup, configuredMin) : 0;
                   const methodIdentity = `${method.type} ${method.name}`.toLowerCase();
                   const logos = methodIdentity.includes('alipay')
                     ? ['/payment-logos/alipay.svg']
+                    : methodIdentity.includes('wxpay') || methodIdentity.includes('wechat') || methodIdentity.includes('微信')
+                      ? ['/payment-logos/wechat.svg']
                     : methodIdentity.includes('stripe')
                       ? ['/payment-logos/stripe.svg']
                       : methodIdentity.includes('creem')
@@ -1036,7 +1059,7 @@ export default function Topup() {
                     <p className="mt-0.5 text-xs leading-5 text-page-muted">
                       <span className="block sm:inline">{new Date(item.create_time * 1000).toLocaleString()}</span>
                       <span className="hidden sm:inline"> · </span>
-                      <span className="block break-all sm:inline">{formatPaymentMethodName(item.payment_method) || t('topup.redeemCode')}</span>
+                      <span className="block break-all sm:inline">{formatPaymentMethodName(item.payment_method, i18n.resolvedLanguage) || t('topup.redeemCode')}</span>
                     </p>
                   </div>
                   <span className={`shrink-0 rounded-full px-2 py-1 text-xs ${

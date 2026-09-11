@@ -23,7 +23,7 @@ export const SEO_COPY = {
     },
     packages: {
       title: '套餐与余额充值',
-      description: '先充值账户余额，再按需购买天卡、周卡、月卡等 AI API 套餐；查看套餐额度、有效期与适用场景。',
+      description: '套餐不是使用 API 的必选项；充值账户余额即可按量付费使用，也可以按需购买天卡、周卡、月卡等 AI API 套餐并查看额度与有效期。',
     },
     apps: {
       title: 'OpenAI 兼容客户端与 AI 应用接入',
@@ -103,7 +103,7 @@ export const SEO_COPY = {
     },
     packages: {
       title: 'AI API Plans and Packages',
-      description: 'Compare daily, weekly, monthly, and quota-based AI API plans for one OpenAI-compatible API. Choose a package by quota, validity period, model access, and use case.',
+      description: 'Packages are optional: top up your account and use the API with pay-as-you-go billing, or compare daily, weekly, monthly, and quota-based plans when bundled quota fits your usage.',
     },
     apps: {
       title: 'OpenAI-Compatible Clients and AI App Integrations',
@@ -181,7 +181,7 @@ export const SEO_COPY = {
     },
     packages: {
       title: 'AI API プランと残高チャージ',
-      description: 'アカウント残高をチャージしてから、日次、週次、月次、容量ベースの AI API プランを必要に応じて申し込めます。クォータ、有効期間、利用シーンも確認できます。',
+      description: 'プランは必須ではありません。残高を追加すれば従量課金で API を使え、必要な場合だけ日次・週次・月次などのプランをクォータや有効期間で比較できます。',
     },
     apps: {
       title: 'OpenAI 互換クライアントと AI アプリ連携',
@@ -259,7 +259,7 @@ export const SEO_COPY = {
     },
     packages: {
       title: 'AI API 플랜과 잔액 충전',
-      description: '계정 잔액을 먼저 충전한 뒤 일간, 주간, 월간, 용량 기반 AI API 플랜을 필요에 맞게 구독하세요. 쿼터, 유효 기간, 사용 시나리오도 확인할 수 있습니다.',
+      description: '플랜은 필수가 아닙니다. 잔액을 충전해 종량 과금으로 API를 사용하거나, 묶음 쿼터가 필요할 때만 일간·주간·월간 플랜의 쿼터와 유효 기간을 비교하세요.',
     },
     apps: {
       title: 'OpenAI 호환 클라이언트와 AI 앱 연동',
