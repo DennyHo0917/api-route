@@ -4,6 +4,27 @@ export function formatPaymentMethodName(value, language = '') {
   return name.replace(/支付宝|alipay/gi, 'alipay');
 }
 
-export function isVisibleTopupMethod(method) {
-  return Boolean(method?.type && method.type !== 'crypto' && method.type !== 'alipay');
+function isAlipayMethod(method) {
+  return /alipay|支付宝/i.test(`${method?.type || ''} ${method?.name || ''}`);
+}
+
+export function filterVisibleTopupMethods(methods) {
+  const hasPlatformAlipay = methods.some((method) => (
+    /alipay|支付宝/i.test(method?.name || '') && /平台/.test(method?.name || '')
+  ));
+  return methods.filter((method) => (
+    method?.type &&
+    method.type !== 'crypto' &&
+    !(hasPlatformAlipay && isAlipayMethod(method) && !/平台/.test(method?.name || ''))
+  ));
+}
+
+export function getPaymentMethodLogos(method) {
+  const identity = `${method?.type || ''} ${method?.name || ''}`.toLowerCase();
+  if (/wxpay|wechat|微信/.test(identity)) return ['/payment-logos/wechat.svg'];
+  if (/alipay|支付宝/.test(identity)) return ['/payment-logos/alipay.svg'];
+  if (identity.includes('stripe')) return ['/payment-logos/stripe.svg'];
+  if (identity.includes('creem')) return ['/payment-logos/creem.svg'];
+  if (method?.type === 'crypto') return ['/payment-logos/usdt.svg', '/payment-logos/usdc.svg'];
+  return [];
 }

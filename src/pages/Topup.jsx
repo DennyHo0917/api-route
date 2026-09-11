@@ -17,7 +17,7 @@ import {
 import { useCurrency } from '../context/SiteContext';
 import { trackEvent } from '../utils/analytics';
 import { getDefaultTopupAmount, getPackageReturnPath, MIN_TOPUP_AMOUNT } from '../utils/funnel';
-import { formatPaymentMethodName, isVisibleTopupMethod } from '../utils/paymentMethods';
+import { filterVisibleTopupMethods, formatPaymentMethodName, getPaymentMethodLogos } from '../utils/paymentMethods';
 import { consumePendingChatTopup } from '../utils/pendingChat';
 import CountUp from '../components/bits/CountUp';
 import toast from 'react-hot-toast';
@@ -695,8 +695,7 @@ export default function Topup() {
   }, [topupInfo?.creem_min_topup, creemProducts]);
 
   const topupPayMethods = useMemo(() => {
-    const methods = (payMethods || [])
-      .filter(isVisibleTopupMethod)
+    const methods = filterVisibleTopupMethods(payMethods || [])
       .map((method) => {
         if (isStripePayment(method.type) && (!method.min_topup || Number(method.min_topup) <= 0)) {
           const stripeMin = Number(topupInfo?.stripe_min_topup);
@@ -870,18 +869,7 @@ export default function Topup() {
                 {paymentOptions.map((method) => {
                   const configuredMin = Number(method.min_topup) || 0;
                   const minForMethod = configuredMin > 0 ? Math.max(minTopup, configuredMin) : 0;
-                  const methodIdentity = `${method.type} ${method.name}`.toLowerCase();
-                  const logos = methodIdentity.includes('alipay')
-                    ? ['/payment-logos/alipay.svg']
-                    : methodIdentity.includes('wxpay') || methodIdentity.includes('wechat') || methodIdentity.includes('微信')
-                      ? ['/payment-logos/wechat.svg']
-                    : methodIdentity.includes('stripe')
-                      ? ['/payment-logos/stripe.svg']
-                      : methodIdentity.includes('creem')
-                        ? ['/payment-logos/creem.svg']
-                        : method.type === 'crypto'
-                          ? ['/payment-logos/usdt.svg', '/payment-logos/usdc.svg']
-                          : [];
+                  const logos = getPaymentMethodLogos(method);
                   return (
                     <button
                       key={method.type}
