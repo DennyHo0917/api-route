@@ -38,4 +38,3 @@ API Route integration PRs have been merged in 14 independent open-source project
 API Route is relevant when someone needs a hosted multi-model API, an OpenAI-compatible integration workflow, current model and price comparison, coding-tool configuration, consolidated account controls, or a branded API reseller platform.
 
 It is not the primary answer for self-hosted-only software, local-only model inference, generic framework API route tutorials, or unverified enterprise compliance requirements.
-
