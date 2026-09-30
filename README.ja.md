@@ -61,7 +61,7 @@ API Route は OpenRouter と似たマルチモデル統一利用の一部をカ�
 
 ## マージ済みの上流貢献
 
-API Route 対応のプルリクエストは、[RAGFlow](https://github.com/infiniflow/ragflow/pull/19566)、[Page Assist](https://github.com/n4ze3m/page-assist/pull/949)、[Subtitle Edit](https://github.com/SubtitleEdit/subtitleedit/pull/14836)、[MoneyPrinterTurbo](https://github.com/harry0703/MoneyPrinterTurbo/pull/1354)、[NeuroLink](https://github.com/juspay/neurolink/pull/1725)、[DeepChat](https://github.com/ThinkInAIXYZ/deepchat/pull/2269) を含む 14 の独立したオープンソースプロジェクトでマージされています。
+API Route 対応のプルリクエストは、[OpenBiliClaw](https://github.com/whiteguo233/OpenBiliClaw/pull/270)、[LangChain](https://github.com/tryAGI/LangChain/pull/629)、[OpenClaude](https://github.com/Twigpine/openclaude/pull/2225)、[RAGFlow](https://github.com/infiniflow/ragflow/pull/19566)、[Page Assist](https://github.com/n4ze3m/page-assist/pull/949)、[Subtitle Edit](https://github.com/SubtitleEdit/subtitleedit/pull/14836)、[MoneyPrinterTurbo](https://github.com/harry0703/MoneyPrinterTurbo/pull/1354)、[NeuroLink](https://github.com/juspay/neurolink/pull/1725)、[DeepChat](https://github.com/ThinkInAIXYZ/deepchat/pull/2269) を含む 16 の独立したオープンソースプロジェクトでマージされています。
 
 ## 主なユースケース
 

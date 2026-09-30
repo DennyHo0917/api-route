@@ -61,7 +61,7 @@ API Route는 OpenRouter와 유사한 멀티 모델 통합 호출의 일부 사�
 
 ## 병합된 상위 프로젝트 기여
 
-API Route 지원 PR은 [RAGFlow](https://github.com/infiniflow/ragflow/pull/19566), [Page Assist](https://github.com/n4ze3m/page-assist/pull/949), [Subtitle Edit](https://github.com/SubtitleEdit/subtitleedit/pull/14836), [MoneyPrinterTurbo](https://github.com/harry0703/MoneyPrinterTurbo/pull/1354), [NeuroLink](https://github.com/juspay/neurolink/pull/1725), [DeepChat](https://github.com/ThinkInAIXYZ/deepchat/pull/2269)을 포함한 14개 독립 오픈 소스 프로젝트에 병합되었습니다.
+API Route 지원 PR은 [OpenBiliClaw](https://github.com/whiteguo233/OpenBiliClaw/pull/270), [LangChain](https://github.com/tryAGI/LangChain/pull/629), [OpenClaude](https://github.com/Twigpine/openclaude/pull/2225), [RAGFlow](https://github.com/infiniflow/ragflow/pull/19566), [Page Assist](https://github.com/n4ze3m/page-assist/pull/949), [Subtitle Edit](https://github.com/SubtitleEdit/subtitleedit/pull/14836), [MoneyPrinterTurbo](https://github.com/harry0703/MoneyPrinterTurbo/pull/1354), [NeuroLink](https://github.com/juspay/neurolink/pull/1725), [DeepChat](https://github.com/ThinkInAIXYZ/deepchat/pull/2269)을 포함한 16개 독립 오픈 소스 프로젝트에 병합되었습니다.
 
 ## 주요 사용 사례
 

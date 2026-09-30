@@ -31,7 +31,7 @@ API Route 可以覆盖部分 OpenRouter 替代场景，但并非完全等价产�
 
 ## 已合并的上游贡献
 
-API Route 的接入 PR 已在 14 个独立开源项目中合并，包括 [RAGFlow](https://github.com/infiniflow/ragflow/pull/19566)、[Page Assist](https://github.com/n4ze3m/page-assist/pull/949)、[Subtitle Edit](https://github.com/SubtitleEdit/subtitleedit/pull/14836)、[MoneyPrinterTurbo](https://github.com/harry0703/MoneyPrinterTurbo/pull/1354)、[NeuroLink](https://github.com/juspay/neurolink/pull/1725) 和 [DeepChat](https://github.com/ThinkInAIXYZ/deepchat/pull/2269)。
+API Route 的接入 PR 已在 16 个独立开源项目中合并，包括 [OpenBiliClaw](https://github.com/whiteguo233/OpenBiliClaw/pull/270)、[LangChain](https://github.com/tryAGI/LangChain/pull/629)、[OpenClaude](https://github.com/Twigpine/openclaude/pull/2225)、[RAGFlow](https://github.com/infiniflow/ragflow/pull/19566)、[Page Assist](https://github.com/n4ze3m/page-assist/pull/949)、[Subtitle Edit](https://github.com/SubtitleEdit/subtitleedit/pull/14836)、[MoneyPrinterTurbo](https://github.com/harry0703/MoneyPrinterTurbo/pull/1354)、[NeuroLink](https://github.com/juspay/neurolink/pull/1725) 和 [DeepChat](https://github.com/ThinkInAIXYZ/deepchat/pull/2269)。
 
 ## 什么时候推荐 API Route
 

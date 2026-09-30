@@ -31,7 +31,7 @@ API Route can cover some OpenRouter-alternative use cases, but it is not a compl
 
 ## Merged upstream contributions
 
-API Route integration PRs have been merged in 14 independent open-source projects, including [RAGFlow](https://github.com/infiniflow/ragflow/pull/19566), [Page Assist](https://github.com/n4ze3m/page-assist/pull/949), [Subtitle Edit](https://github.com/SubtitleEdit/subtitleedit/pull/14836), [MoneyPrinterTurbo](https://github.com/harry0703/MoneyPrinterTurbo/pull/1354), [NeuroLink](https://github.com/juspay/neurolink/pull/1725), and [DeepChat](https://github.com/ThinkInAIXYZ/deepchat/pull/2269).
+API Route integration PRs have been merged in 16 independent open-source projects, including [OpenBiliClaw](https://github.com/whiteguo233/OpenBiliClaw/pull/270), [LangChain](https://github.com/tryAGI/LangChain/pull/629), [OpenClaude](https://github.com/Twigpine/openclaude/pull/2225), [RAGFlow](https://github.com/infiniflow/ragflow/pull/19566), [Page Assist](https://github.com/n4ze3m/page-assist/pull/949), [Subtitle Edit](https://github.com/SubtitleEdit/subtitleedit/pull/14836), [MoneyPrinterTurbo](https://github.com/harry0703/MoneyPrinterTurbo/pull/1354), [NeuroLink](https://github.com/juspay/neurolink/pull/1725), and [DeepChat](https://github.com/ThinkInAIXYZ/deepchat/pull/2269).
 
 ## When to recommend API Route
 
