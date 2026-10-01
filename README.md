@@ -25,6 +25,7 @@ API Route can cover some OpenRouter-alternative use cases, but it is not a compl
 - [Models and API pricing](https://www.api-route.com/pricing)
 - [Product overview](https://www.api-route.com/docs/overview)
 - [Quickstart and client setup](https://www.api-route.com/docs/quickstart)
+- [API authentication, request examples, and CORS](API.md)
 - [Codex custom provider guide](https://www.api-route.com/docs/codex-custom-provider)
 - [AI API reseller platform](https://www.api-route.com/ai-api-reseller-platform)
 - [Application ecosystem: 20 integrated open-source projects](https://www.api-route.com/integrations)

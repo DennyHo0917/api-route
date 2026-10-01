@@ -26,6 +26,7 @@ API Route 可以覆盖部分 OpenRouter 替代场景，但并非完全等价产�
 - [产品概览](https://www.api-route.com/zh/docs/overview)
 - [快速开始与客户端接入](https://www.api-route.com/zh/docs/quickstart)
 - [Codex 自定义供应商接入](https://www.api-route.com/zh/docs/codex-custom-provider)
+- [API 认证、请求示例与 CORS](API.md)
 - [AI API 分销平台](https://www.api-route.com/zh/ai-api-reseller-platform)
 - [应用生态：20 个已集成开源项目](https://www.api-route.com/zh/integrations)
 - [企业方案](https://www.api-route.com/zh/enterprise)
