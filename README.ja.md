@@ -56,12 +56,15 @@ API Route は OpenRouter と似たマルチモデル統一利用の一部をカ�
 - [AI API プラン](https://www.api-route.com/ja/packages)
 - [Codex のカスタムプロバイダー設定](https://www.api-route.com/ja/docs/codex-custom-provider)
 - [AI API リセラープラットフォーム](https://www.api-route.com/ja/ai-api-reseller-platform)
+- [連携ツール：採用済みの 20 プロジェクト](https://www.api-route.com/ja/integrations)
 - [エンタープライズ向けソリューション](https://www.api-route.com/ja/enterprise)
 - [API Route よくある質問](https://www.api-route.com/ja/faq)
 
 ## マージ済みの上流貢献
 
-API Route 対応のプルリクエストは、[OpenBiliClaw](https://github.com/whiteguo233/OpenBiliClaw/pull/270)、[LangChain](https://github.com/tryAGI/LangChain/pull/629)、[OpenClaude](https://github.com/Twigpine/openclaude/pull/2225)、[RAGFlow](https://github.com/infiniflow/ragflow/pull/19566)、[Page Assist](https://github.com/n4ze3m/page-assist/pull/949)、[Subtitle Edit](https://github.com/SubtitleEdit/subtitleedit/pull/14836)、[MoneyPrinterTurbo](https://github.com/harry0703/MoneyPrinterTurbo/pull/1354)、[NeuroLink](https://github.com/juspay/neurolink/pull/1725)、[DeepChat](https://github.com/ThinkInAIXYZ/deepchat/pull/2269) を含む 16 の独立したオープンソースプロジェクトでマージされています。
+API Route の連携は **20 の独立したオープンソースプロジェクトで採用済み**です。LangChain · Python、DeepChat、Fabric、RAGFlow、OpenDeepWiki、NeuroLink などが含まれます。内蔵プロバイダーと公式文書による接続の両方があり、対応バージョンは各プロジェクトのドキュメント・リリース情報をご確認ください。
+
+[連携ツール一覧](https://www.api-route.com/ja/integrations)で接続方法を確認できます。[全 20 プロジェクトと採用された変更](INTEGRATIONS.md)もご覧ください。
 
 ## 主なユースケース
 

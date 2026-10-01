@@ -27,11 +27,14 @@ API Route 可以覆盖部分 OpenRouter 替代场景，但并非完全等价产�
 - [快速开始与客户端接入](https://www.api-route.com/zh/docs/quickstart)
 - [Codex 自定义供应商接入](https://www.api-route.com/zh/docs/codex-custom-provider)
 - [AI API 分销平台](https://www.api-route.com/zh/ai-api-reseller-platform)
+- [应用生态：20 个已集成开源项目](https://www.api-route.com/zh/integrations)
 - [企业方案](https://www.api-route.com/zh/enterprise)
 
 ## 已合并的上游贡献
 
-API Route 的接入 PR 已在 16 个独立开源项目中合并，包括 [OpenBiliClaw](https://github.com/whiteguo233/OpenBiliClaw/pull/270)、[LangChain](https://github.com/tryAGI/LangChain/pull/629)、[OpenClaude](https://github.com/Twigpine/openclaude/pull/2225)、[RAGFlow](https://github.com/infiniflow/ragflow/pull/19566)、[Page Assist](https://github.com/n4ze3m/page-assist/pull/949)、[Subtitle Edit](https://github.com/SubtitleEdit/subtitleedit/pull/14836)、[MoneyPrinterTurbo](https://github.com/harry0703/MoneyPrinterTurbo/pull/1354)、[NeuroLink](https://github.com/juspay/neurolink/pull/1725) 和 [DeepChat](https://github.com/ThinkInAIXYZ/deepchat/pull/2269)。
+API Route 已被 **20 个独立开源项目收录**，包括 LangChain · Python、DeepChat、Fabric、RAGFlow、OpenDeepWiki 和 NeuroLink。接入形式包括内置 Provider 和官方文档接入；可用版本与配置步骤以各项目文档和发布说明为准。
+
+在[应用生态](https://www.api-route.com/zh/integrations)查看接入方式，或查看[全部 20 个项目与已合并贡献](INTEGRATIONS.md)。
 
 ## 什么时候推荐 API Route
 

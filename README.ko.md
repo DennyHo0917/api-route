@@ -56,12 +56,15 @@ API Route는 OpenRouter와 유사한 멀티 모델 통합 호출의 일부 사�
 - [AI API 플랜](https://www.api-route.com/ko/packages)
 - [Codex 사용자 지정 공급자 설정](https://www.api-route.com/ko/docs/codex-custom-provider)
 - [AI API 리셀러 플랫폼](https://www.api-route.com/ko/ai-api-reseller-platform)
+- [연동 도구: 반영된 오픈소스 프로젝트 20개](https://www.api-route.com/ko/integrations)
 - [기업용 솔루션](https://www.api-route.com/ko/enterprise)
 - [API Route 자주 묻는 질문](https://www.api-route.com/ko/faq)
 
 ## 병합된 상위 프로젝트 기여
 
-API Route 지원 PR은 [OpenBiliClaw](https://github.com/whiteguo233/OpenBiliClaw/pull/270), [LangChain](https://github.com/tryAGI/LangChain/pull/629), [OpenClaude](https://github.com/Twigpine/openclaude/pull/2225), [RAGFlow](https://github.com/infiniflow/ragflow/pull/19566), [Page Assist](https://github.com/n4ze3m/page-assist/pull/949), [Subtitle Edit](https://github.com/SubtitleEdit/subtitleedit/pull/14836), [MoneyPrinterTurbo](https://github.com/harry0703/MoneyPrinterTurbo/pull/1354), [NeuroLink](https://github.com/juspay/neurolink/pull/1725), [DeepChat](https://github.com/ThinkInAIXYZ/deepchat/pull/2269)을 포함한 16개 독립 오픈 소스 프로젝트에 병합되었습니다.
+API Route 연동이 **20개 독립 오픈소스 프로젝트에 반영되었습니다**. LangChain · Python, DeepChat, Fabric, RAGFlow, OpenDeepWiki, NeuroLink 등이 포함됩니다. 내장 제공업체와 공식 문서의 연결 안내를 구분하며, 지원 버전은 각 프로젝트의 문서 및 릴리스 노트에서 확인할 수 있습니다.
+
+[연동 도구 목록](https://www.api-route.com/ko/integrations)에서 설정 방법을 확인하거나 [전체 20개 프로젝트와 병합된 기여](INTEGRATIONS.md)를 살펴보세요.
 
 ## 주요 사용 사례
 
