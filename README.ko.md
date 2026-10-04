@@ -56,15 +56,15 @@ API Route는 OpenRouter와 유사한 멀티 모델 통합 호출의 일부 사�
 - [AI API 플랜](https://www.api-route.com/ko/packages)
 - [Codex 사용자 지정 공급자 설정](https://www.api-route.com/ko/docs/codex-custom-provider)
 - [AI API 리셀러 플랫폼](https://www.api-route.com/ko/ai-api-reseller-platform)
-- [연동 도구: 반영된 오픈소스 프로젝트 20개](https://www.api-route.com/ko/integrations)
+- [연동 도구: 반영된 오픈소스 프로젝트 27개](https://www.api-route.com/ko/integrations)
 - [기업용 솔루션](https://www.api-route.com/ko/enterprise)
 - [API Route 자주 묻는 질문](https://www.api-route.com/ko/faq)
 
 ## 병합된 상위 프로젝트 기여
 
-API Route 연동이 **20개 독립 오픈소스 프로젝트에 반영되었습니다**. LangChain · Python, DeepChat, Fabric, RAGFlow, OpenDeepWiki, NeuroLink 등이 포함됩니다. 내장 제공업체와 공식 문서의 연결 안내를 구분하며, 지원 버전은 각 프로젝트의 문서 및 릴리스 노트에서 확인할 수 있습니다.
+API Route의 기여가 **27개 독립 오픈소스 프로젝트에 병합되었습니다**. 내장 제공업체 또는 프리셋 23개, 문서의 연결 안내 3개, API 디렉터리 수록 1개를 포함합니다. 최근 AIRI, tgpt, AITuberKit, nanocoder, claude-mem, CareerOps, public-apis가 추가되었습니다. 지원 버전과 설정 방법은 각 프로젝트의 문서 및 릴리스 노트를 확인하세요.
 
-[연동 도구 목록](https://www.api-route.com/ko/integrations)에서 설정 방법을 확인하거나 [전체 20개 프로젝트와 병합된 기여](INTEGRATIONS.md)를 살펴보세요.
+[연동 도구 목록](https://www.api-route.com/ko/integrations)에서 설정 방법을 확인하거나 [전체 27개 프로젝트와 병합된 기여](INTEGRATIONS.md)를 살펴보세요.
 
 ## 주요 사용 사례
 
