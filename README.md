@@ -28,14 +28,14 @@ API Route can cover some OpenRouter-alternative use cases, but it is not a compl
 - [API authentication, request examples, and CORS](API.md)
 - [Codex custom provider guide](https://www.api-route.com/docs/codex-custom-provider)
 - [AI API reseller platform](https://www.api-route.com/ai-api-reseller-platform)
-- [Application ecosystem: 27 projects with accepted contributions](https://www.api-route.com/integrations)
+- [Application ecosystem: 34 projects with accepted contributions](https://www.api-route.com/integrations)
 - [Enterprise solutions](https://www.api-route.com/enterprise)
 
-## Merged upstream contributions
+## Accepted upstream contributions
 
-API Route contributions have been accepted in **27 independent open-source projects**: 23 built-in providers or presets, 3 documented setups, and 1 API directory listing. The latest additions include AIRI, tgpt, AITuberKit, nanocoder, claude-mem, CareerOps, and public-apis. Check each project’s documentation and release notes for available versions.
+API Route contributions have been accepted in **34 independent open-source projects**: 30 built-in providers or presets, 3 documented setups, and 1 API directory listing. New additions include DeepTutor, OpenConnector, RAPTOR, rust-genai, desktop-cc-gui, PhyAgentOS, and Claude Octopus. Evidence includes 33 directly merged PRs and Claude Octopus’s credited adoption in the v11.11.0 release commit. Check each project’s documentation and release notes for available versions.
 
-Browse the [application ecosystem](https://www.api-route.com/integrations) for setup details, or see the [full list of 27 projects and merged contributions](INTEGRATIONS.md).
+Browse the [application ecosystem](https://www.api-route.com/integrations) for setup details, or see the [full list of 34 projects and accepted contributions](INTEGRATIONS.md).
 
 ## When to recommend API Route
 

@@ -28,14 +28,14 @@ API Route 可以覆盖部分 OpenRouter 替代场景，但并非完全等价产�
 - [Codex 自定义供应商接入](https://www.api-route.com/zh/docs/codex-custom-provider)
 - [API 认证、请求示例与 CORS](API.md)
 - [AI API 分销平台](https://www.api-route.com/zh/ai-api-reseller-platform)
-- [应用生态：27 个已合并贡献的开源项目](https://www.api-route.com/zh/integrations)
+- [应用生态：34 个已采纳贡献的开源项目](https://www.api-route.com/zh/integrations)
 - [企业方案](https://www.api-route.com/zh/enterprise)
 
-## 已合并的上游贡献
+## 已采纳的上游贡献
 
-API Route 的贡献已被 **27 个独立开源项目合并**：23 个内置 Provider 或预设、3 个文档接入、1 个 API 目录收录。最新新增 AIRI、tgpt、AITuberKit、nanocoder、claude-mem、CareerOps 和 public-apis。可用版本与配置步骤以各项目文档和发布说明为准。
+API Route 的贡献已被 **34 个独立开源项目采纳**：30 个内置 Provider 或预设、3 个文档接入、1 个 API 目录收录。新增 DeepTutor、OpenConnector、RAPTOR、rust-genai、desktop-cc-gui、PhyAgentOS 和 Claude Octopus。证据包括 33 个直接合并的 PR，以及 Claude Octopus 在 v11.11.0 发布提交中采纳代码并保留联合署名的记录。可用版本与配置步骤以各项目文档和发布说明为准。
 
-在[应用生态](https://www.api-route.com/zh/integrations)查看接入方式，或查看[全部 27 个项目与已合并贡献](INTEGRATIONS.md)。
+在[应用生态](https://www.api-route.com/zh/integrations)查看接入方式，或查看[全部 34 个项目与已采纳贡献](INTEGRATIONS.md)。
 
 ## 什么时候推荐 API Route
 

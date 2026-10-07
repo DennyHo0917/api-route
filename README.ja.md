@@ -56,15 +56,15 @@ API Route は OpenRouter と似たマルチモデル統一利用の一部をカ�
 - [AI API プラン](https://www.api-route.com/ja/packages)
 - [Codex のカスタムプロバイダー設定](https://www.api-route.com/ja/docs/codex-custom-provider)
 - [AI API リセラープラットフォーム](https://www.api-route.com/ja/ai-api-reseller-platform)
-- [連携ツール：採用済みの 27 プロジェクト](https://www.api-route.com/ja/integrations)
+- [連携ツール：採用済みの 34 プロジェクト](https://www.api-route.com/ja/integrations)
 - [エンタープライズ向けソリューション](https://www.api-route.com/ja/enterprise)
 - [API Route よくある質問](https://www.api-route.com/ja/faq)
 
-## マージ済みの上流貢献
+## 採用された上流貢献
 
-API Route の貢献は **27 の独立したオープンソースプロジェクトで採用済み**です。内蔵プロバイダー・プリセットが 23 件、文書による接続が 3 件、API 一覧への掲載が 1 件あります。新たに AIRI、tgpt、AITuberKit、nanocoder、claude-mem、CareerOps、public-apis が加わりました。対応バージョンは各プロジェクトのドキュメント・リリース情報をご確認ください。
+API Route の貢献は **34 の独立したオープンソースプロジェクトで採用済み**です。内蔵プロバイダー・プリセット 30 件、文書による接続 3 件、API 一覧への掲載 1 件を含みます。DeepTutor、OpenConnector、RAPTOR、rust-genai、desktop-cc-gui、PhyAgentOS、Claude Octopus が加わりました。33 件の直接マージと、Claude Octopus の v11.11.0 リリースコミットでの共同著者としての採用を確認しています。対応バージョンは各プロジェクトのリリース情報をご確認ください。
 
-[連携ツール一覧](https://www.api-route.com/ja/integrations)で接続方法を確認できます。[全 27 プロジェクトと採用された変更](INTEGRATIONS.md)もご覧ください。
+[連携ツール一覧](https://www.api-route.com/ja/integrations)で接続方法を確認できます。[全 34 プロジェクトと採用された変更](INTEGRATIONS.md)もご覧ください。
 
 ## 主なユースケース
 
