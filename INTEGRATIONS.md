@@ -1,11 +1,15 @@
 # Accepted upstream contributions
 
-As of 2026-10-07, API Route contributions have been accepted in 34 independent open-source projects: 30 built-in providers or presets, 3 documented setups, and 1 API directory listing. This includes 33 directly merged PRs and 1 provider adopted through a maintainer release commit with co-author credit. Adoption or merge may require a newer release; check each project's documentation and release notes.
+As of 2026-10-09, API Route contributions have been accepted in 38 independent open-source projects: 32 built-in providers or presets, 4 documented setups, 1 provider plugin, and 1 API directory listing. This includes 37 directly merged PRs and 1 provider adopted through a maintainer release commit with co-author credit. Adoption or merge may require a newer release; check each project's documentation and release notes.
 
 Browse the [application ecosystem](https://www.api-route.com/integrations) for localized descriptions and setup links.
 
 | Project | Contribution | Upstream evidence | Accepted date (Asia/Shanghai) |
 | --- | --- | --- | --- |
+| [gpt4free](https://github.com/xtekky/gpt4free) | Built-in authenticated provider | [#3537](https://github.com/xtekky/gpt4free/pull/3537) | 2026-10-09 |
+| [SourceGit](https://github.com/sourcegit-scm/sourcegit) | Documented setup | [#2767](https://github.com/sourcegit-scm/sourcegit/pull/2767) | 2026-10-09 |
+| [SQLKit](https://github.com/geek-fun/sqlkit) | Built-in provider preset | [#172](https://github.com/geek-fun/sqlkit/pull/172) | 2026-10-08 |
+| [Dify](https://github.com/langgenius/dify) | Installable provider plugin | [dify-plugins #3192](https://github.com/langgenius/dify-plugins/pull/3192) | 2026-10-07 |
 | [Claude Octopus](https://github.com/nyldn/claude-octopus) | Built-in provider | [Release commit · co-author credit](https://github.com/nyldn/claude-octopus/commit/f655eb0846cba2cd7ab1f0aabcbe0437e5e23215) | 2026-10-06 |
 | [rust-genai](https://github.com/jeremychone/rust-genai) | Built-in provider | [#323](https://github.com/jeremychone/rust-genai/pull/323) | 2026-10-05 |
 | [desktop-cc-gui](https://github.com/zhukunpenglinyutong/desktop-cc-gui) | Built-in provider | [#1327](https://github.com/zhukunpenglinyutong/desktop-cc-gui/pull/1327) | 2026-10-05 |
@@ -46,3 +50,7 @@ Claude Octopus: [original PR #1162](https://github.com/nyldn/claude-octopus/pull
 LangChain · Python is listed in the [official LangChain provider directory](https://docs.langchain.com/oss/python/integrations/providers/overview), using ChatOpenAI with a custom Base URL. LangChain · .NET is the independent tryAGI/LangChain project. CareerOps documents the standalone evaluator only. public-apis is a directory listing, not a built-in provider.
 
 AITuberKit, DeepTutor and PhyAgentOS were merged into development branches; desktop-cc-gui was merged into v1.1.1. Check release notes for availability in published versions.
+
+New setup references: [gpt4free authenticated provider](https://github.com/xtekky/gpt4free/blob/main/docs/api-route.md), [SourceGit OpenAI-compatible service configuration](https://github.com/sourcegit-scm/sourcegit/blob/develop/README.md#openai), [SQLKit](https://github.com/geek-fun/sqlkit#readme), and [Dify API Route plugin](https://github.com/DennyHo0917/dify-plugin-api-route#readme).
+
+gpt4free's API Route provider requires an API key and uses your API Route account balance. Dify's contribution is a chat provider plugin accepted in the official plugin repository; install the plugin before configuring a key and exact model ID. Embeddings use another provider. SourceGit's documentation was merged into develop. These merge records do not establish availability in every published app version or in Dify Marketplace.
