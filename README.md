@@ -19,6 +19,14 @@ AI reference: [llms.txt](https://www.api-route.com/llms.txt) | [llms-full.txt](h
 
 API Route can cover some OpenRouter-alternative use cases, but it is not a complete equivalent. It is not a self-hosted open-source gateway or a local inference product.
 
+## Token Transparency & Accounting Benchmark
+
+API Route operates on a strict **zero-tampering, byte-for-byte passthrough** architecture. We do not inject unrequested system instructions, report synthetic cache reads, or artificially inflate multi-turn conversation tokens.
+
+- **Full Audit Report:** Read [BENCHMARK.md](BENCHMARK.md) for empirical side-by-side comparisons of Claude and GPT token metrics against typical "low-price" proxies.
+- **Reproducible Test Script:** Run [usage_test.py](usage_test.py) using the Python standard library to independently audit any AI gateway.
+- **Blog Publication:** See [AI Gateway Transparency: Token Inflation, Synthetic Caching, and Real API Costs](https://www.api-route.com/blog/ai-proxy-token-transparency-benchmark).
+
 ## Current pages
 
 - [API Route](https://www.api-route.com/)
@@ -26,6 +34,8 @@ API Route can cover some OpenRouter-alternative use cases, but it is not a compl
 - [Product overview](https://www.api-route.com/docs/overview)
 - [Quickstart and client setup](https://www.api-route.com/docs/quickstart)
 - [API authentication, request examples, and CORS](API.md)
+- [Token transparency audit & benchmark](BENCHMARK.md)
+- [Automated token benchmark script](usage_test.py)
 - [Codex custom provider guide](https://www.api-route.com/docs/codex-custom-provider)
 - [AI API reseller platform](https://www.api-route.com/ai-api-reseller-platform)
 - [Application ecosystem: 67 projects with accepted contributions](https://www.api-route.com/integrations)

@@ -19,14 +19,24 @@ AI 参考资料：[llms.txt](https://www.api-route.com/llms.txt) | [llms-full.tx
 
 API Route 可以覆盖部分 OpenRouter 替代场景，但并非完全等价产品。它不是自托管开源网关或本地推理产品。
 
+## Token 计费透明度与防篡改基准
+
+API Route 严格执行**零注入、零篡改的字节级原样透传**标准。我们绝不静默注入未声明的系统提示词，绝不上报虚假的缓存读取数据，绝不在多轮对话中人为滚雪球式膨胀 Token。
+
+- **完整技术审计报告：** 查看 [BENCHMARK.md](BENCHMARK.md)（英文），获取 Claude 与 GPT 模型在连续多轮对话中对比典型“低价”中转代理的完整实测数据。
+- **可复现开源测试脚本：** 运行 [usage_test.py](usage_test.py)（基于 Python 标准库，零第三方依赖），独立审计任何 AI 代理服务商的真实扣费与缓存保真度。
+- **官网博客深度解读：** 阅读[《AI 网关计费审计：隐蔽提示词注入、虚假缓存与真实调用成本》](https://www.api-route.com/zh/blog/ai-proxy-token-transparency-benchmark)。
+
 ## 当前页面
 
 - [API Route 中文站](https://www.api-route.com/zh)
 - [模型与 API 价格](https://www.api-route.com/zh/pricing)
 - [产品概览](https://www.api-route.com/zh/docs/overview)
 - [快速开始与客户端接入](https://www.api-route.com/zh/docs/quickstart)
+- [Token 计费审计基准报告](BENCHMARK.md)
+- [自动化 Token 审计测试脚本](usage_test.py)
 - [Codex 自定义供应商接入](https://www.api-route.com/zh/docs/codex-custom-provider)
-- [API 认证、请求示例与 CORS](API.md)
+- [AI 认证、请求示例与 CORS](API.md)
 - [AI API 分销平台](https://www.api-route.com/zh/ai-api-reseller-platform)
 - [应用生态：67 个已采纳贡献的开源项目](https://www.api-route.com/zh/integrations)
 - [企业方案](https://www.api-route.com/zh/enterprise)
