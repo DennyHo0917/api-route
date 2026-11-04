@@ -56,15 +56,15 @@ API Route は OpenRouter と似たマルチモデル統一利用の一部をカ�
 - [AI API プラン](https://www.api-route.com/ja/packages)
 - [Codex のカスタムプロバイダー設定](https://www.api-route.com/ja/docs/codex-custom-provider)
 - [AI API リセラープラットフォーム](https://www.api-route.com/ja/ai-api-reseller-platform)
-- [連携ツール：採用済みの 38 プロジェクト](https://www.api-route.com/ja/integrations)
+- [連携ツール：採用済みの 67 プロジェクト](https://www.api-route.com/ja/integrations)
 - [エンタープライズ向けソリューション](https://www.api-route.com/ja/enterprise)
 - [API Route よくある質問](https://www.api-route.com/ja/faq)
 
 ## 採用された上流貢献
 
-API Route の貢献は **38 の独立したオープンソースプロジェクトで採用済み**です。内蔵プロバイダー・プリセット 32 件、設定ガイド 4 件、提供元プラグイン 1 件、API 一覧への掲載 1 件を含みます。新たに gpt4free、SourceGit、SQLKit、Dify が加わりました。37 件の直接マージに加え、Claude Octopus の v11.11.0 リリースコミットへの共同著者としての採用を確認しています。Dify はチャットモデルのプラグインをインストールして利用し、gpt4free は API キー認証と API Route の残高を使用します。対応バージョンと手順は各プロジェクトの案内をご確認ください。
+2026-10-28 時点で、API Route の貢献は **67 の独立したオープンソースプロジェクトで採用済み**です。内蔵プロバイダー・プリセット 56 件、設定ガイド 9 件、提供元プラグイン 1 件、API 一覧への掲載 1 件を含みます。新たに ChunkHound、Gortex、nanoMuse、opencode-mem が加わりました。66 件の直接マージに加え、Claude Octopus の v11.11.0 リリースコミットへの共同著者としての採用を確認しています。Dify はチャットモデルのプラグインをインストールして利用し、gpt4free は API キー認証と API Route の残高を使用します。対応バージョンと手順は各プロジェクトの案内をご確認ください。
 
-[連携ツール一覧](https://www.api-route.com/ja/integrations)で接続方法を確認できます。[全 38 プロジェクトと採用された変更](INTEGRATIONS.md)もご覧ください。
+[連携ツール一覧](https://www.api-route.com/ja/integrations)で接続方法を確認できます。[全 67 プロジェクトと採用された変更](INTEGRATIONS.md)もご覧ください。
 
 ## 主なユースケース
 
