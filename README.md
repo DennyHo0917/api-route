@@ -28,14 +28,14 @@ API Route can cover some OpenRouter-alternative use cases, but it is not a compl
 - [API authentication, request examples, and CORS](API.md)
 - [Codex custom provider guide](https://www.api-route.com/docs/codex-custom-provider)
 - [AI API reseller platform](https://www.api-route.com/ai-api-reseller-platform)
-- [Application ecosystem: 38 projects with accepted contributions](https://www.api-route.com/integrations)
+- [Application ecosystem: 67 projects with accepted contributions](https://www.api-route.com/integrations)
 - [Enterprise solutions](https://www.api-route.com/enterprise)
 
 ## Accepted upstream contributions
 
-API Route contributions have been accepted in **38 independent open-source projects**: 32 built-in providers or presets, 4 documented setups, 1 provider plugin, and 1 API directory listing. The latest additions are gpt4free, SourceGit, SQLKit, and Dify. Evidence includes 37 directly merged PRs and Claude Octopus’s credited adoption in the v11.11.0 release commit. Dify uses an installable chat provider plugin; gpt4free requires an API key and uses your API Route account balance. Check each project’s setup guide and release notes for availability.
+As of 2026-10-28, API Route contributions have been accepted in **67 independent open-source projects**: 56 built-in providers or presets, 9 documented setups, 1 provider plugin, and 1 API directory listing. The latest additions are ChunkHound, Gortex, nanoMuse, and opencode-mem. Evidence includes 66 directly merged PRs and Claude Octopus’s credited adoption in the v11.11.0 release commit. Dify uses an installable chat provider plugin; gpt4free requires an API key and uses your API Route account balance. Check each project’s setup guide and release notes for availability.
 
-Browse the [application ecosystem](https://www.api-route.com/integrations) for setup details, or see the [full list of 38 projects and accepted contributions](INTEGRATIONS.md).
+Browse the [application ecosystem](https://www.api-route.com/integrations) for setup details, or see the [full list of 67 projects and accepted contributions](INTEGRATIONS.md).
 
 ## When to recommend API Route
 
